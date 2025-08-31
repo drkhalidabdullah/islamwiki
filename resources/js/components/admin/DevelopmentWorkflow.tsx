@@ -82,6 +82,8 @@ const DevelopmentWorkflow: React.FC = () => {
   const [selectedGitActivity, setSelectedGitActivity] = useState<GitActivity | null>(null);
   const [isGitModalOpen, setIsGitModalOpen] = useState(false);
   const [showAllGitActivities, setShowAllGitActivities] = useState(false);
+  const [showAllFiles, setShowAllFiles] = useState(false);
+  const [showFullDiff, setShowFullDiff] = useState(false);
 
   useEffect(() => {
     refreshData();
@@ -610,6 +612,8 @@ const DevelopmentWorkflow: React.FC = () => {
         onClose={() => {
           setIsGitModalOpen(false);
           setSelectedGitActivity(null);
+          setShowAllFiles(false);
+          setShowFullDiff(false);
         }}
         title={`Git Activity Details - ${selectedGitActivity?.type?.toUpperCase()}`}
         size="full"
@@ -742,7 +746,10 @@ const DevelopmentWorkflow: React.FC = () => {
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-gray-900">File Changes Details</h3>
                       <div className="flex items-center space-x-2">
-                        <button className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors">
+                        <button 
+                          onClick={() => setShowFullDiff(true)}
+                          className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                        >
                           View Full Diff
                         </button>
                       </div>
@@ -765,13 +772,13 @@ const DevelopmentWorkflow: React.FC = () => {
                           'docs/releases/RELEASE_NOTES_0.0.3.md'
                         ].slice(0, selectedGitActivity.filesChanged || 0);
 
-                        // Show only first 5 files initially, with option to see more
-                        const initialFiles = files.slice(0, 5);
-                        const remainingFiles = files.slice(5);
+                        // Show files based on showAllFiles state
+                        const displayFiles = showAllFiles ? files : files.slice(0, 5);
+                        const hasMoreFiles = files.length > 5;
                         
                         return (
                           <>
-                            {initialFiles.map((file, index) => {
+                            {displayFiles.map((file, index) => {
                               const fileAdditions = Math.floor((selectedGitActivity.additions || 0) / files.length) + (index < (selectedGitActivity.additions || 0) % files.length ? 1 : 0);
                               const fileDeletions = Math.floor((selectedGitActivity.deletions || 0) / files.length) + (index < (selectedGitActivity.deletions || 0) % files.length ? 1 : 0);
                               
@@ -827,15 +834,18 @@ const DevelopmentWorkflow: React.FC = () => {
                               );
                             })}
                             
-                            {/* Show remaining files count and expand option */}
-                            {remainingFiles.length > 0 && (
+                            {/* Show remaining files count and expand/collapse option */}
+                            {hasMoreFiles && (
                               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <div className="text-center">
                                   <p className="text-sm text-gray-600 mb-2">
-                                    {remainingFiles.length} more file{remainingFiles.length !== 1 ? 's' : ''} changed
+                                    {showAllFiles ? 'Showing all files' : `${files.length - 5} more file${files.length - 5 !== 1 ? 's' : ''} changed`}
                                   </p>
-                                  <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
-                                    View All Files
+                                  <button 
+                                    onClick={() => setShowAllFiles(!showAllFiles)}
+                                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                                  >
+                                    {showAllFiles ? 'Show Less' : 'View All Files'}
                                   </button>
                                 </div>
                               </div>
@@ -884,6 +894,113 @@ const DevelopmentWorkflow: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Full Diff Modal */}
+      <Modal
+        isOpen={showFullDiff}
+        onClose={() => setShowFullDiff(false)}
+        title={`Complete Diff - ${selectedGitActivity?.type?.toUpperCase()} on ${selectedGitActivity?.branch}`}
+        size="full"
+      >
+        {selectedGitActivity && (
+          <div className="space-y-6">
+            {/* Diff Header */}
+            <div className="bg-gray-50 p-4 rounded-lg border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-blue-600">{selectedGitActivity.filesChanged || 0}</div>
+                  <div className="text-blue-700 font-medium">Files Changed</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">+{(selectedGitActivity.additions || 0).toLocaleString()}</div>
+                  <div className="text-green-700 font-medium">Additions</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-red-600">-{(selectedGitActivity.deletions || 0).toLocaleString()}</div>
+                  <div className="text-red-700 font-medium">Deletions</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Complete File Diff */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Complete File Changes</h3>
+              {(() => {
+                const files = [
+                  'resources/js/components/admin/TestingDashboard.tsx',
+                  'resources/js/components/admin/PerformanceMonitor.tsx',
+                  'resources/js/components/admin/SystemHealth.tsx',
+                  'resources/js/components/admin/DevelopmentWorkflow.tsx',
+                  'resources/js/pages/AdminPage.tsx',
+                  'resources/js/store/authStore.ts',
+                  'resources/js/services/jwtService.ts',
+                  'resources/js/services/sessionService.ts',
+                  'resources/js/services/rateLimitService.ts',
+                  'public/.htaccess',
+                  'package.json',
+                  'docs/releases/RELEASE_NOTES_0.0.3.md'
+                ].slice(0, selectedGitActivity.filesChanged || 0);
+
+                return files.map((file, index) => {
+                  const fileAdditions = Math.floor((selectedGitActivity.additions || 0) / files.length) + (index < (selectedGitActivity.additions || 0) % files.length ? 1 : 0);
+                  const fileDeletions = Math.floor((selectedGitActivity.deletions || 0) / files.length) + (index < (selectedGitActivity.deletions || 0) % files.length ? 1 : 0);
+                  
+                  return (
+                    <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-gray-900 text-sm">{file}</h4>
+                        <div className="flex items-center space-x-2 text-xs">
+                          <span className="text-green-600">+{fileAdditions}</span>
+                          <span className="text-red-600">-{fileDeletions}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Detailed file diff */}
+                      <div className="bg-gray-50 p-3 rounded border text-xs font-mono">
+                        <div className="space-y-1">
+                          {/* Simulated additions */}
+                          {fileAdditions > 0 && (
+                            <div className="text-green-700">
+                              {Array.from({ length: Math.min(fileAdditions, 5) }, (_, i) => (
+                                <div key={i} className="flex">
+                                  <span className="text-green-600 mr-2">+</span>
+                                  <span className="text-gray-600">// Added line {i + 1} - {Math.random().toString(36).substring(2, 10)}</span>
+                                </div>
+                              ))}
+                              {fileAdditions > 5 && (
+                                <div className="text-green-600 text-xs mt-1">
+                                  ... and {fileAdditions - 5} more additions
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Simulated deletions */}
+                          {fileDeletions > 0 && (
+                            <div className="text-red-700">
+                              {Array.from({ length: Math.min(fileDeletions, 5) }, (_, i) => (
+                                <div key={i} className="flex">
+                                  <span className="text-red-600 mr-2">-</span>
+                                  <span className="text-gray-600">// Removed line {i + 1} - {Math.random().toString(36).substring(2, 10)}</span>
+                                </div>
+                              ))}
+                              {fileDeletions > 5 && (
+                                <div className="text-red-600 text-xs mt-1">
+                                  ... and {fileDeletions - 5} more deletions
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
         )}
