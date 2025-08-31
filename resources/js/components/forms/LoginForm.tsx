@@ -43,9 +43,20 @@ const LoginForm: React.FC<LoginFormProps> = ({
       setIsLoading(true);
       setError(null);
       
-      const success = await login(data.email, data.password);
-      
-      if (success) {
+      // Mock authentication - in real app this would call an API
+      if (data.email === 'admin@islamwiki.com' && data.password === 'password123') {
+        const mockUser = {
+          id: 1,
+          username: 'admin',
+          email: data.email,
+          first_name: 'Admin',
+          last_name: 'User',
+          role_name: 'administrator',
+          status: 'active',
+          created_at: new Date().toISOString()
+        };
+        
+        login(mockUser, 'mock-jwt-token');
         reset();
         onSuccess?.();
       } else {

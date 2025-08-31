@@ -61,9 +61,6 @@ const Header: React.FC = () => {
             <Link to="/" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
               Home
             </Link>
-            <Link to="/tests" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
-              Tests
-            </Link>
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
@@ -81,18 +78,18 @@ const Header: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => alert('Login functionality coming soon!')}
+                <Link
+                  to="/login"
                   className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Login
-                </button>
-                <button
-                  onClick={() => alert('Register functionality coming soon!')}
+                </Link>
+                <Link
+                  to="/register"
                   className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                 >
                   Register
-                </button>
+                </Link>
               </div>
             )}
           </nav>

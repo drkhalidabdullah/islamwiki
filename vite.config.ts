@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   publicDir: false,
   build: {
-    outDir: 'dist',
+    outDir: 'public',
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {

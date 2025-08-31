@@ -57,16 +57,16 @@ export const useAuthStore = create<AuthStore>()(
         }),
 
       setUser: (user: User) =>
-        set((state) => ({
+        set({
           user,
           isAuthenticated: !!user,
-        })),
+        }),
 
       setToken: (token: string) =>
-        set((state) => ({
+        set({
           token,
           isAuthenticated: !!token,
-        })),
+        }),
 
       setLoading: (isLoading: boolean) =>
         set({ isLoading }),
