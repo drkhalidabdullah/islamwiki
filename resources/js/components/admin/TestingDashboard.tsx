@@ -407,29 +407,111 @@ const TestingDashboard: React.FC = () => {
     ];
   };
 
-  // Real performance metrics
-  const performanceMetrics: PerformanceMetric[] = [
-    {
-      endpoint: '/api/health',
-      method: 'GET',
-      avgResponseTime: 45,
-      p95ResponseTime: 120,
-      requestsPerSecond: 150,
-      errorRate: 0.1,
-      lastTested: new Date().toISOString(),
-      status: 'optimal'
-    },
-    {
-      endpoint: '/api/admin/dashboard',
-      method: 'GET',
-      avgResponseTime: 180,
-      p95ResponseTime: 450,
-      requestsPerSecond: 25,
-      errorRate: 0.5,
-      lastTested: new Date().toISOString(),
-      status: 'good'
+  // Performance monitoring state
+  const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetric[]>([]);
+  const [isCollectingPerformance, setIsCollectingPerformance] = useState(false);
+  const [performanceHistory, setPerformanceHistory] = useState<Record<string, PerformanceMetric[]>>({});
+
+  // Real performance metrics collection
+  const collectPerformanceMetrics = async () => {
+    if (isCollectingPerformance) return;
+    
+    setIsCollectingPerformance(true);
+    
+    try {
+      // Define endpoints to monitor
+      const endpoints = [
+        { path: '/', method: 'GET', name: 'Homepage' },
+        { path: '/admin', method: 'GET', name: 'Admin Dashboard' },
+        { path: '/api/health', method: 'GET', name: 'Health Check' },
+        { path: '/api/admin/dashboard', method: 'GET', name: 'Admin API' },
+        { path: '/api/test', method: 'POST', name: 'Test Endpoint' }
+      ];
+
+      const newMetrics: PerformanceMetric[] = [];
+      
+      for (const endpoint of endpoints) {
+        const startTime = performance.now();
+        let responseTime = 0;
+        let errorRate = 0;
+        let requestsPerSecond = 0;
+        
+        try {
+          // Make actual HTTP request to measure performance
+          const response = await fetch(`http://localhost${endpoint.path}`, {
+            method: endpoint.method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // Add a small payload for POST requests
+            body: endpoint.method === 'POST' ? JSON.stringify({ test: true }) : undefined
+          });
+          
+          responseTime = performance.now() - startTime;
+          
+          if (!response.ok) {
+            errorRate = 1.0; // 100% error rate for non-200 responses
+          }
+          
+          // Calculate requests per second (simplified)
+          requestsPerSecond = Math.round(1000 / responseTime);
+          
+        } catch (error) {
+          responseTime = performance.now() - startTime;
+          errorRate = 1.0; // 100% error rate for network errors
+          requestsPerSecond = 0;
+        }
+        
+        // Calculate p95 response time (simplified - in real implementation this would use historical data)
+        const p95ResponseTime = responseTime * 2.5; // Rough estimate
+        
+        // Determine status based on performance thresholds
+        let status: 'optimal' | 'good' | 'warning' | 'critical' = 'optimal';
+        if (responseTime > 1000) status = 'critical';
+        else if (responseTime > 500) status = 'warning';
+        else if (responseTime > 200) status = 'good';
+        
+        if (errorRate > 0.1) status = 'critical';
+        else if (errorRate > 0.05) status = 'warning';
+        
+        const metric: PerformanceMetric = {
+          endpoint: endpoint.path,
+          method: endpoint.method,
+          avgResponseTime: Math.round(responseTime),
+          p95ResponseTime: Math.round(p95ResponseTime),
+          requestsPerSecond,
+          errorRate: Math.round(errorRate * 100) / 100,
+          lastTested: new Date().toISOString(),
+          status
+        };
+        
+        newMetrics.push(metric);
+        
+        // Store in history for trend analysis
+        setPerformanceHistory(prev => ({
+          ...prev,
+          [endpoint.path]: [...(prev[endpoint.path] || []).slice(-9), metric] // Keep last 10 measurements
+        }));
+      }
+      
+      setPerformanceMetrics(newMetrics);
+      
+    } catch (error) {
+      console.error('Error collecting performance metrics:', error);
+    } finally {
+      setIsCollectingPerformance(false);
     }
-  ];
+  };
+
+  // Load performance metrics on component mount
+  useEffect(() => {
+    collectPerformanceMetrics();
+    
+    // Set up periodic collection every 30 seconds
+    const interval = setInterval(collectPerformanceMetrics, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Real security scanning
   const securityScans: SecurityScan[] = [
@@ -872,7 +954,27 @@ const TestingDashboard: React.FC = () => {
 
       {/* Performance Metrics */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Performance Metrics</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Performance Metrics</h2>
+          <div className="flex items-center space-x-3">
+            {isCollectingPerformance && (
+              <div className="flex items-center text-sm text-blue-600">
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Collecting...
+              </div>
+            )}
+            <Button
+              onClick={collectPerformanceMetrics}
+              disabled={isCollectingPerformance}
+              variant="outline"
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Refresh Metrics</span>
+            </Button>
+          </div>
+        </div>
         <div className="space-y-4">
           {performanceMetrics.map((metric, index) => (
             <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -1240,6 +1342,55 @@ const TestingDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Performance Trends */}
+            {performanceHistory[selectedPerformanceMetric.endpoint] && performanceHistory[selectedPerformanceMetric.endpoint].length > 1 && (
+              <div>
+                <h3 className="text-lg font-medium mb-3">Performance Trends</h3>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">Response Time Trend</span>
+                    <span className="text-xs text-gray-500">
+                      Last {performanceHistory[selectedPerformanceMetric.endpoint].length} measurements
+                    </span>
+                  </div>
+                  <div className="flex items-end space-x-1 h-20">
+                    {performanceHistory[selectedPerformanceMetric.endpoint].map((metric, index) => {
+                      const maxResponseTime = Math.max(...performanceHistory[selectedPerformanceMetric.endpoint].map(m => m.avgResponseTime));
+                      const height = (metric.avgResponseTime / maxResponseTime) * 100;
+                      return (
+                        <div key={index} className="flex-1">
+                          <div 
+                            className={`w-full rounded-t ${
+                              metric.status === 'optimal' ? 'bg-green-400' :
+                              metric.status === 'good' ? 'bg-blue-400' :
+                              metric.status === 'warning' ? 'bg-yellow-400' :
+                              'bg-red-400'
+                            }`}
+                            style={{ height: `${height}%` }}
+                            title={`${metric.avgResponseTime}ms - ${new Date(metric.lastTested).toLocaleTimeString()}`}
+                          ></div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs text-gray-600 mt-2">
+                    {(() => {
+                      const history = performanceHistory[selectedPerformanceMetric.endpoint];
+                      const recent = history.slice(-3);
+                      const older = history.slice(-6, -3);
+                      if (recent.length && older.length) {
+                        const recentAvg = recent.reduce((sum, m) => sum + m.avgResponseTime, 0) / recent.length;
+                        const olderAvg = older.reduce((sum, m) => sum + m.avgResponseTime, 0) / older.length;
+                        const change = ((recentAvg - olderAvg) / olderAvg) * 100;
+                        return change > 0 ? `Trend: +${change.toFixed(1)}% (slower)` : `Trend: ${change.toFixed(1)}% (faster)`;
+                      }
+                      return 'Collecting trend data...';
+                    })()}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Error Rate */}
             <div>
