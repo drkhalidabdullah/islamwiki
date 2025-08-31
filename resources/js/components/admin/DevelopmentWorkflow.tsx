@@ -741,11 +741,13 @@ const DevelopmentWorkflow: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-gray-900">File Changes Details</h3>
-                      <button className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
-                        View Full Diff
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors">
+                          View Full Diff
+                        </button>
+                      </div>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {/* Simulated file changes - in real implementation, this would come from Git diff */}
                       {(() => {
                         const files = [
@@ -763,61 +765,93 @@ const DevelopmentWorkflow: React.FC = () => {
                           'docs/releases/RELEASE_NOTES_0.0.3.md'
                         ].slice(0, selectedGitActivity.filesChanged || 0);
 
-                        return files.map((file, index) => {
-                          const fileAdditions = Math.floor((selectedGitActivity.additions || 0) / files.length) + (index < (selectedGitActivity.additions || 0) % files.length ? 1 : 0);
-                          const fileDeletions = Math.floor((selectedGitActivity.deletions || 0) / files.length) + (index < (selectedGitActivity.deletions || 0) % files.length ? 1 : 0);
-                          
-                          return (
-                            <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
-                              <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-medium text-gray-900 text-sm">{file}</h4>
-                                <div className="flex items-center space-x-2 text-xs">
-                                  <span className="text-green-600">+{fileAdditions}</span>
-                                  <span className="text-red-600">-{fileDeletions}</span>
+                        // Show only first 5 files initially, with option to see more
+                        const initialFiles = files.slice(0, 5);
+                        const remainingFiles = files.slice(5);
+                        
+                        return (
+                          <>
+                            {initialFiles.map((file, index) => {
+                              const fileAdditions = Math.floor((selectedGitActivity.additions || 0) / files.length) + (index < (selectedGitActivity.additions || 0) % files.length ? 1 : 0);
+                              const fileDeletions = Math.floor((selectedGitActivity.deletions || 0) / files.length) + (index < (selectedGitActivity.deletions || 0) % files.length ? 1 : 0);
+                              
+                              return (
+                                <div key={index} className="bg-white p-3 rounded-lg border border-gray-200">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <h4 className="font-medium text-gray-900 text-sm truncate max-w-xs">{file}</h4>
+                                    <div className="flex items-center space-x-2 text-xs ml-2">
+                                      <span className="text-green-600">+{fileAdditions}</span>
+                                      <span className="text-red-600">-{fileDeletions}</span>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Compact file diff preview */}
+                                  <div className="bg-gray-50 p-2 rounded border text-xs font-mono">
+                                    <div className="space-y-1">
+                                      {/* Simulated additions */}
+                                      {fileAdditions > 0 && (
+                                        <div className="text-green-700">
+                                          {Array.from({ length: Math.min(fileAdditions, 2) }, (_, i) => (
+                                            <div key={i} className="flex">
+                                              <span className="text-green-600 mr-2">+</span>
+                                              <span className="text-gray-600">// Added line {i + 1}</span>
+                                            </div>
+                                          ))}
+                                          {fileAdditions > 2 && (
+                                            <div className="text-green-600 text-xs mt-1">
+                                              +{fileAdditions - 2} more
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                      
+                                      {/* Simulated deletions */}
+                                      {fileDeletions > 0 && (
+                                        <div className="text-red-700">
+                                          {Array.from({ length: Math.min(fileDeletions, 2) }, (_, i) => (
+                                            <div key={i} className="flex">
+                                              <span className="text-red-600 mr-2">-</span>
+                                              <span className="text-gray-600">// Removed line {i + 1}</span>
+                                            </div>
+                                          ))}
+                                          {fileDeletions > 2 && (
+                                            <div className="text-red-600 text-xs mt-1">
+                                              -{fileDeletions - 2} more
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            
+                            {/* Show remaining files count and expand option */}
+                            {remainingFiles.length > 0 && (
+                              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <div className="text-center">
+                                  <p className="text-sm text-gray-600 mb-2">
+                                    {remainingFiles.length} more file{remainingFiles.length !== 1 ? 's' : ''} changed
+                                  </p>
+                                  <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
+                                    View All Files
+                                  </button>
                                 </div>
                               </div>
-                              
-                              {/* File diff preview */}
-                              <div className="bg-gray-50 p-3 rounded border text-xs font-mono">
-                                <div className="space-y-1">
-                                  {/* Simulated additions */}
-                                  {fileAdditions > 0 && (
-                                    <div className="text-green-700">
-                                      {Array.from({ length: Math.min(fileAdditions, 3) }, (_, i) => (
-                                        <div key={i} className="flex">
-                                          <span className="text-green-600 mr-2">+</span>
-                                          <span className="text-gray-600">// Added line {i + 1}</span>
-                                        </div>
-                                      ))}
-                                      {fileAdditions > 3 && (
-                                        <div className="text-green-600 text-xs mt-1">
-                                          ... and {fileAdditions - 3} more additions
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                  
-                                  {/* Simulated deletions */}
-                                  {fileDeletions > 0 && (
-                                    <div className="text-red-700">
-                                      {Array.from({ length: Math.min(fileDeletions, 3) }, (_, i) => (
-                                        <div key={i} className="flex">
-                                          <span className="text-red-600 mr-2">-</span>
-                                          <span className="text-gray-600">// Removed line {i + 1}</span>
-                                        </div>
-                                      ))}
-                                      {fileDeletions > 3 && (
-                                        <div className="text-red-600 text-xs mt-1">
-                                          ... and {fileDeletions - 3} more deletions
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
+                            )}
+                            
+                            {/* Show total summary */}
+                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                              <div className="text-center text-sm text-blue-800">
+                                <p className="font-medium">Total Changes Summary</p>
+                                <p className="text-xs mt-1">
+                                  {files.length} files • +{(selectedGitActivity.additions || 0).toLocaleString()} additions • -{(selectedGitActivity.deletions || 0).toLocaleString()} deletions
+                                </p>
                               </div>
                             </div>
-                          );
-                        });
+                          </>
+                        );
                       })()}
                     </div>
                   </div>
