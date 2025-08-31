@@ -862,84 +862,158 @@ const DevelopmentWorkflow: React.FC = () => {
           setSelectedGitActivity(null);
         }}
         title={`Git Activity Details - ${selectedGitActivity?.type?.toUpperCase()}`}
-        size="lg"
+        size="full"
       >
         {selectedGitActivity && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium">Activity Information</h3>
-              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
-                <div>
-                  <span className="text-gray-500">Type:</span>
-                  <span className="ml-2 font-medium capitalize">{selectedGitActivity.type}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Status:</span>
-                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedGitActivity.status)}`}>
-                    {selectedGitActivity.status}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Branch:</span>
-                  <span className="ml-2 font-medium">{selectedGitActivity.branch}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Author:</span>
-                  <span className="ml-2 font-medium">{selectedGitActivity.author}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Timestamp:</span>
-                  <span className="ml-2">{new Date(selectedGitActivity.timestamp).toLocaleString()}</span>
-                </div>
-                {selectedGitActivity.hash && (
-                  <div>
-                    <span className="text-gray-500">Commit Hash:</span>
-                    <span className="ml-2 font-mono text-sm">{selectedGitActivity.hash}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-medium">Message</h3>
-              <div className="bg-gray-50 p-3 rounded-lg mt-2">
-                <p className="text-sm text-gray-700">{selectedGitActivity.message}</p>
-              </div>
-            </div>
-            
-            {selectedGitActivity.filesChanged && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Activity Information */}
+            <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium">File Changes</h3>
-                <div className="grid grid-cols-3 gap-4 mt-2 text-sm">
-                  <div className="bg-blue-50 p-3 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-blue-600">{selectedGitActivity.filesChanged}</div>
-                    <div className="text-blue-700">Files Changed</div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Activity Information</h3>
+                <div className="grid grid-cols-1 gap-4 text-sm">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-500 font-medium">Type:</span>
+                    <span className="font-medium capitalize text-gray-900">{selectedGitActivity.type}</span>
                   </div>
-                  {selectedGitActivity.additions && (
-                    <div className="bg-green-50 p-3 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-green-600">+{selectedGitActivity.additions}</div>
-                      <div className="text-green-700">Additions</div>
-                    </div>
-                  )}
-                  {selectedGitActivity.deletions && (
-                    <div className="bg-red-50 p-3 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-red-600">-{selectedGitActivity.deletions}</div>
-                      <div className="text-red-700">Deletions</div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-500 font-medium">Status:</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedGitActivity.status)}`}>
+                      {selectedGitActivity.status}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-500 font-medium">Branch:</span>
+                    <span className="font-medium text-gray-900">{selectedGitActivity.branch}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-500 font-medium">Author:</span>
+                    <span className="font-medium text-gray-900">{selectedGitActivity.author}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-500 font-medium">Timestamp:</span>
+                    <span className="font-medium text-gray-900">{new Date(selectedGitActivity.timestamp).toLocaleString()}</span>
+                  </div>
+                  {selectedGitActivity.hash && (
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-500 font-medium">Commit Hash:</span>
+                      <span className="font-mono text-sm text-gray-900 bg-gray-100 px-2 py-1 rounded">{selectedGitActivity.hash}</span>
                     </div>
                   )}
                 </div>
               </div>
-            )}
+              
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Commit Message</h3>
+                <div className="bg-gray-50 p-4 rounded-lg border">
+                  <p className="text-sm text-gray-700 leading-relaxed">{selectedGitActivity.message}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Activity Summary</h3>
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="text-sm text-blue-800 leading-relaxed">
+                    <p><strong>{selectedGitActivity.author}</strong> performed a <strong>{selectedGitActivity.type}</strong> operation on the <strong>{selectedGitActivity.branch}</strong> branch.</p>
+                    {selectedGitActivity.filesChanged && (
+                      <p className="mt-2">This activity involved <strong>{selectedGitActivity.filesChanged}</strong> files with <strong>{selectedGitActivity.additions || 0} additions</strong> and <strong>{selectedGitActivity.deletions || 0} deletions</strong>.</p>
+                    )}
+                    <p className="mt-2">The activity was completed at <strong>{new Date(selectedGitActivity.timestamp).toLocaleString()}</strong> with a status of <strong>{selectedGitActivity.status}</strong>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <div>
-              <h3 className="text-lg font-medium">Activity Summary</h3>
-              <div className="bg-gray-50 p-3 rounded-lg mt-2">
-                <div className="text-sm text-gray-600">
-                  <p><strong>{selectedGitActivity.author}</strong> performed a <strong>{selectedGitActivity.type}</strong> operation on the <strong>{selectedGitActivity.branch}</strong> branch.</p>
-                  {selectedGitActivity.filesChanged && (
-                    <p className="mt-2">This activity involved <strong>{selectedGitActivity.filesChanged}</strong> files with <strong>{selectedGitActivity.additions || 0} additions</strong> and <strong>{selectedGitActivity.deletions || 0} deletions</strong>.</p>
-                  )}
-                  <p className="mt-2">The activity was completed at <strong>{new Date(selectedGitActivity.timestamp).toLocaleString()}</strong> with a status of <strong>{selectedGitActivity.status}</strong>.</p>
+            {/* Right Column - File Changes and Statistics */}
+            <div className="space-y-6">
+              {selectedGitActivity.filesChanged && (
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">File Changes Overview</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                      <div className="text-3xl font-bold text-blue-600 mb-1">{selectedGitActivity.filesChanged}</div>
+                      <div className="text-blue-700 font-medium">Files Changed</div>
+                      <div className="text-xs text-blue-600 mt-1">Total modified files</div>
+                    </div>
+                    {selectedGitActivity.additions && (
+                      <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
+                        <div className="text-3xl font-bold text-green-600 mb-1">+{selectedGitActivity.additions.toLocaleString()}</div>
+                        <div className="text-green-700 font-medium">Additions</div>
+                        <div className="text-xs text-green-600 mt-1">Lines of code added</div>
+                      </div>
+                    )}
+                    {selectedGitActivity.deletions && (
+                      <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
+                        <div className="text-3xl font-bold text-red-600 mb-1">-{selectedGitActivity.deletions.toLocaleString()}</div>
+                        <div className="text-red-700 font-medium">Deletions</div>
+                        <div className="text-xs text-red-600 mt-1">Lines of code removed</div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Detailed File Changes Analysis */}
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h4 className="font-medium text-gray-900 mb-3">Change Analysis</h4>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Net Change:</span>
+                        <span className={`font-medium ${
+                          (selectedGitActivity.additions || 0) - (selectedGitActivity.deletions || 0) > 0 
+                            ? 'text-green-600' 
+                            : (selectedGitActivity.additions || 0) - (selectedGitActivity.deletions || 0) < 0 
+                            ? 'text-red-600' 
+                            : 'text-gray-600'
+                        }`}>
+                          {((selectedGitActivity.additions || 0) - (selectedGitActivity.deletions || 0)) > 0 ? '+' : ''}
+                          {(selectedGitActivity.additions || 0) - (selectedGitActivity.deletions || 0)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Change Ratio:</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedGitActivity.additions && selectedGitActivity.deletions 
+                            ? `${((selectedGitActivity.additions / (selectedGitActivity.additions + selectedGitActivity.deletions)) * 100).toFixed(1)}% additions`
+                            : 'N/A'
+                          }
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Average per File:</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedGitActivity.filesChanged 
+                            ? `${Math.round(((selectedGitActivity.additions || 0) + (selectedGitActivity.deletions || 0)) / selectedGitActivity.filesChanged)} lines`
+                            : 'N/A'
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Activity Impact Assessment */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Impact Assessment</h3>
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <div className="text-sm text-yellow-800">
+                    <div className="flex items-center mb-2">
+                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-medium">Change Impact</span>
+                    </div>
+                    <p className="mb-2">
+                      {(() => {
+                        const totalChanges = (selectedGitActivity.additions || 0) + (selectedGitActivity.deletions || 0);
+                        if (totalChanges > 1000) return "This is a significant change affecting many lines of code.";
+                        if (totalChanges > 500) return "This is a substantial change with moderate impact.";
+                        if (totalChanges > 100) return "This is a moderate change affecting several files.";
+                        return "This is a small, focused change with minimal impact.";
+                      })()}
+                    </p>
+                    <p className="text-xs opacity-75">
+                      Impact assessment based on total lines changed and files affected.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
