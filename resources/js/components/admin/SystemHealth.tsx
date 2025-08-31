@@ -357,72 +357,78 @@ const SystemHealth: React.FC = () => {
       // Collect system resources
       await collectSystemResources();
       
-      // Wait a bit for state updates to complete, then get the latest data
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Use a more reliable approach - wait for state updates and use callback pattern
+      await new Promise(resolve => setTimeout(resolve, 200));
       
-      // Generate diagnostic report - get the latest state after async operations
-      const currentHealthChecks = [...healthChecks];
-      const currentResources = [...systemResources];
-      
-      const criticalHealthChecks = currentHealthChecks.filter(check => check.status === 'critical').length;
-      const criticalResources = currentResources.filter(resource => resource.status === 'critical').length;
-      const issues = criticalHealthChecks + criticalResources;
-      const warnings = currentHealthChecks.filter(check => check.status === 'warning').length;
-      
-      console.log('🔍 Diagnostic Report Breakdown:', {
-        criticalHealthChecks,
-        criticalResources,
-        totalIssues: issues,
-        warnings,
-        healthCheckStatuses: currentHealthChecks.map(hc => ({ name: hc.name, status: hc.status })),
-        resourceStatuses: currentResources.map(r => ({ name: r.name, status: r.status, value: r.current }))
+      // Get the latest state using callback pattern to ensure we have current data
+      setHealthChecks(currentHealthChecks => {
+        setSystemResources(currentResources => {
+          // Generate diagnostic report with the current data
+          const criticalHealthChecks = currentHealthChecks.filter(check => check.status === 'critical').length;
+          const criticalResources = currentResources.filter(resource => resource.status === 'critical').length;
+          const issues = criticalHealthChecks + criticalResources;
+          const warnings = currentHealthChecks.filter(check => check.status === 'warning').length;
+          
+          console.log('🔍 Diagnostic Report Breakdown:', {
+            criticalHealthChecks,
+            criticalResources,
+            totalIssues: issues,
+            warnings,
+            healthCheckStatuses: currentHealthChecks.map(hc => ({ name: hc.name, status: hc.status })),
+            resourceStatuses: currentResources.map(r => ({ name: r.name, status: r.status, value: r.current }))
+          });
+          
+          let overallHealth: 'excellent' | 'good' | 'fair' | 'poor' = 'excellent';
+          if (issues > 0) overallHealth = 'poor';
+          else if (warnings > 2) overallHealth = 'fair';
+          else if (warnings > 0) overallHealth = 'good';
+          
+          const recommendations: string[] = [];
+          
+          // Generate recommendations based on health check results
+          currentHealthChecks.forEach(check => {
+            if (check.status === 'critical') {
+              recommendations.push(`Immediate action required: ${check.name} is critical`);
+            } else if (check.status === 'warning') {
+              recommendations.push(`Monitor closely: ${check.name} is showing warning signs`);
+            }
+          });
+          
+          // Generate recommendations based on resource usage
+          currentResources.forEach(resource => {
+            if (resource.status === 'critical') {
+              recommendations.push(`Resource critical: ${resource.name} is at ${resource.current.toFixed(1)}${resource.unit}`);
+            } else if (resource.status === 'warning') {
+              recommendations.push(`Resource warning: ${resource.name} is approaching limits at ${resource.current.toFixed(1)}${resource.unit}`);
+            }
+          });
+          
+          const diagnosticReport: DiagnosticReport = {
+            id: `diag-${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            overallHealth,
+            issues,
+            warnings,
+            recommendations,
+            systemInfo: {
+              'OS': 'Linux 6.14.0-29-generic',
+              'Kernel': '6.14.0-29-generic',
+              'Architecture': 'x86_64',
+              'Hostname': 'muslimwiki-dev',
+              'Uptime': `${Math.floor(Math.random() * 30) + 1} days`,
+              'Load Average': `${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}`
+            },
+            healthChecks: currentHealthChecks,
+            resources: currentResources
+          };
+          
+          setDiagnosticReports(prev => [diagnosticReport, ...prev]);
+          
+          return currentResources;
+        });
+        
+        return currentHealthChecks;
       });
-      
-      let overallHealth: 'excellent' | 'good' | 'fair' | 'poor' = 'excellent';
-      if (issues > 0) overallHealth = 'poor';
-      else if (warnings > 2) overallHealth = 'fair';
-      else if (warnings > 0) overallHealth = 'good';
-      
-      const recommendations: string[] = [];
-      
-      // Generate recommendations based on health check results
-      currentHealthChecks.forEach(check => {
-        if (check.status === 'critical') {
-          recommendations.push(`Immediate action required: ${check.name} is critical`);
-        } else if (check.status === 'warning') {
-          recommendations.push(`Monitor closely: ${check.name} is showing warning signs`);
-        }
-      });
-      
-      // Generate recommendations based on resource usage
-      currentResources.forEach(resource => {
-        if (resource.status === 'critical') {
-          recommendations.push(`Resource critical: ${resource.name} is at ${resource.current.toFixed(1)}${resource.unit}`);
-        } else if (resource.status === 'warning') {
-          recommendations.push(`Resource warning: ${resource.name} is approaching limits at ${resource.current.toFixed(1)}${resource.unit}`);
-        }
-      });
-      
-      const diagnosticReport: DiagnosticReport = {
-        id: `diag-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        overallHealth,
-        issues,
-        warnings,
-        recommendations,
-        systemInfo: {
-          'OS': 'Linux 6.14.0-29-generic',
-          'Kernel': '6.14.0-29-generic',
-          'Architecture': 'x86_64',
-          'Hostname': 'muslimwiki-dev',
-          'Uptime': `${Math.floor(Math.random() * 30) + 1} days`,
-          'Load Average': `${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}`
-        },
-        healthChecks: currentHealthChecks,
-        resources: currentResources
-      };
-      
-      setDiagnosticReports(prev => [diagnosticReport, ...prev]);
       
     } catch (error) {
       console.error('Error running system diagnostics:', error);
