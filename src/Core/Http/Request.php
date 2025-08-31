@@ -56,6 +56,11 @@ class Request
     protected array $headers;
     
     /**
+     * @var mixed
+     */
+    protected $user = null;
+    
+    /**
      * Create a new request instance from global variables
      */
     public static function createFromGlobals(): self
@@ -285,6 +290,25 @@ class Request
     }
     
     /**
+     * Get client IP address
+     */
+    public function getClientIp(): string
+    {
+        return $this->server['HTTP_X_FORWARDED_FOR'] 
+            ?? $this->server['HTTP_CLIENT_IP'] 
+            ?? $this->server['REMOTE_ADDR'] 
+            ?? '127.0.0.1';
+    }
+    
+    /**
+     * Get user agent
+     */
+    public function getUserAgent(): string
+    {
+        return $this->server['HTTP_USER_AGENT'] ?? 'Unknown';
+    }
+    
+    /**
      * Get the base URL
      */
     public function getBaseUrl(): string
@@ -294,6 +318,31 @@ class Request
         $host = $this->server['HTTP_HOST'] ?? 'localhost';
         
         return $scheme . '://' . $host;
+    }
+    
+    /**
+     * Set the authenticated user
+     */
+    public function setUser($user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+    
+    /**
+     * Get the authenticated user
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+    
+    /**
+     * Check if user is authenticated
+     */
+    public function isAuthenticated(): bool
+    {
+        return $this->user !== null;
     }
     
     /**

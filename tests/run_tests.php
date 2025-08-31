@@ -23,7 +23,8 @@ $failedTests = 0;
 // Test categories
 $testCategories = [
     'Core Framework' => 'tests/Unit/Core/CoreFrameworkTest.php',
-    'API Endpoints' => 'tests/Feature/ApiEndpointsTest.php'
+    'API Endpoints' => 'tests/Feature/ApiEndpointsTest.php',
+    'New Components' => 'tests/Unit/Core/NewComponentsTest.php'
 ];
 
 // Run each test category
