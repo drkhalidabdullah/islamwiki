@@ -703,18 +703,154 @@ const PerformanceMonitor: React.FC = () => {
               <p className="text-sm text-gray-600">{selectedMetric.description}</p>
             </div>
             
+            {/* Performance Averages Section */}
             {selectedMetric.history.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium">Performance History</h3>
+                <h3 className="text-lg font-medium">Performance Averages (Last 20 Data Points)</h3>
+                <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <span className="text-gray-500">Average Value:</span>
+                    <span className="ml-2 font-medium text-blue-700">
+                      {(selectedMetric.history.reduce((sum, point) => sum + point.value, 0) / selectedMetric.history.length).toFixed(1)}{selectedMetric.unit}
+                    </span>
+                  </div>
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <span className="text-gray-500">Peak Value:</span>
+                    <span className="ml-2 font-medium text-green-700">
+                      {Math.max(...selectedMetric.history.map(p => p.value)).toFixed(1)}{selectedMetric.unit}
+                    </span>
+                  </div>
+                  <div className="bg-yellow-50 p-3 rounded-lg">
+                    <span className="text-gray-500">Lowest Value:</span>
+                    <span className="ml-2 font-medium text-yellow-700">
+                      {Math.min(...selectedMetric.history.map(p => p.value)).toFixed(1)}{selectedMetric.unit}
+                    </span>
+                  </div>
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <span className="text-gray-500">Data Points:</span>
+                    <span className="ml-2 font-medium text-purple-700">
+                      {selectedMetric.history.length}/20
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Trend Analysis Section */}
+            {selectedMetric.history.length > 1 && (
+              <div>
+                <h3 className="text-lg font-medium">Trend Analysis</h3>
+                <div className="bg-white p-3 rounded border">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Current vs Average:</span>
+                      <span className={`ml-2 font-medium ${
+                        selectedMetric.value > (selectedMetric.history.reduce((sum, point) => sum + point.value, 0) / selectedMetric.history.length)
+                          ? 'text-red-600'
+                          : selectedMetric.value < (selectedMetric.history.reduce((sum, point) => sum + point.value, 0) / selectedMetric.history.length)
+                          ? 'text-green-600'
+                          : 'text-gray-600'
+                      }`}>
+                        {selectedMetric.value > (selectedMetric.history.reduce((sum, point) => sum + point.value, 0) / selectedMetric.history.length)
+                          ? 'Above Average'
+                          : selectedMetric.value < (selectedMetric.history.reduce((sum, point) => sum + point.value, 0) / selectedMetric.history.length)
+                          ? 'Below Average'
+                          : 'At Average'
+                        }
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Variability:</span>
+                      <span className="ml-2 font-medium text-gray-700">
+                        {(() => {
+                          const values = selectedMetric.history.map(p => p.value);
+                          const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                          const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+                          const stdDev = Math.sqrt(variance);
+                          const coefficient = (stdDev / avg) * 100;
+                          if (coefficient < 10) return 'Low';
+                          if (coefficient < 25) return 'Medium';
+                          return 'High';
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Enhanced Performance History Section */}
+            {selectedMetric.history.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium">Performance History (Last 20 Data Points)</h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-2">Last 20 measurements:</div>
-                  <div className="space-y-1">
-                    {selectedMetric.history.slice(-10).map((point, index) => (
-                      <div key={index} className="flex justify-between text-xs">
-                        <span>{new Date(point.timestamp).toLocaleTimeString()}</span>
-                        <span className="font-medium">{point.value.toFixed(1)}{selectedMetric.unit}</span>
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+                    <span>Showing last {selectedMetric.history.length} measurements</span>
+                    <span className="text-xs">
+                      {selectedMetric.history.length < 20 ? 'Collecting more data...' : 'Full history available'}
+                    </span>
+                  </div>
+                  
+                  {/* History Chart */}
+                  <div className="flex items-end space-x-1 h-32 bg-white p-3 rounded border mb-3">
+                    {selectedMetric.history.map((point, index) => {
+                      const maxValue = Math.max(...selectedMetric.history.map(p => p.value));
+                      const height = (point.value / maxValue) * 100;
+                      const isRecent = index >= selectedMetric.history.length - 5;
+                      return (
+                        <div key={index} className="flex-1 flex flex-col items-center">
+                          <div 
+                            className={`w-full rounded-t ${
+                              isRecent ? 'bg-blue-500' : 'bg-gray-400'
+                            }`}
+                            style={{ height: `${height}%` }}
+                            title={`${point.value.toFixed(1)}${selectedMetric.unit} - ${new Date(point.timestamp).toLocaleString()}`}
+                          ></div>
+                          {index % 5 === 0 && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              {new Date(point.timestamp).toLocaleTimeString()}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* History Table */}
+                  <div className="max-h-48 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="text-left p-2">Timestamp</th>
+                          <th className="text-right p-2">Value</th>
+                          <th className="text-right p-2">Change</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedMetric.history.slice().reverse().map((point, index) => {
+                          const prevPoint = selectedMetric.history[selectedMetric.history.length - index - 2];
+                          const change = prevPoint ? point.value - prevPoint.value : 0;
+                          const changePercent = prevPoint ? ((change / prevPoint.value) * 100) : 0;
+                          
+                          return (
+                            <tr key={index} className="border-t border-gray-200">
+                              <td className="p-2 text-gray-600">
+                                {new Date(point.timestamp).toLocaleString()}
+                              </td>
+                              <td className="p-2 text-right font-medium">
+                                {point.value.toFixed(1)}{selectedMetric.unit}
+                              </td>
+                              <td className={`p-2 text-right text-xs ${
+                                change > 0 ? 'text-red-600' : change < 0 ? 'text-green-600' : 'text-gray-500'
+                              }`}>
+                                {change > 0 ? '+' : ''}{change.toFixed(1)}{selectedMetric.unit}
+                                {prevPoint && ` (${changePercent > 0 ? '+' : ''}${changePercent.toFixed(1)}%)`}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
