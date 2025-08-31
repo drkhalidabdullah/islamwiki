@@ -44,11 +44,16 @@ interface DiagnosticReport {
 const SystemHealth: React.FC = () => {
   const [selectedHealthCheck, setSelectedHealthCheck] = useState<HealthCheck | null>(null);
   const [selectedResource, setSelectedResource] = useState<SystemResource | null>(null);
+  const [selectedReport, setSelectedReport] = useState<DiagnosticReport | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
   const [isRunningHealthChecks, setIsRunningHealthChecks] = useState(false);
   const [activeChecks, setActiveChecks] = useState<string[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const [isCollectingResources, setIsCollectingResources] = useState(false);
 
   // Real health checks with actual commands
   const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([
@@ -288,6 +293,10 @@ const SystemHealth: React.FC = () => {
 
   // Collect system resource data
   const collectSystemResources = useCallback(async () => {
+    if (isCollectingResources) return;
+    
+    setIsCollectingResources(true);
+    
     try {
       // Simulate collecting real system resource data
       const newResources = systemResources.map(resource => {
@@ -341,8 +350,10 @@ const SystemHealth: React.FC = () => {
       
     } catch (error) {
       console.error('Error collecting system resources:', error);
+    } finally {
+      setIsCollectingResources(false);
     }
-  }, []);
+  }, [isCollectingResources]);
 
   // Run comprehensive system diagnostics
   const runSystemDiagnostics = async () => {
@@ -448,6 +459,29 @@ const SystemHealth: React.FC = () => {
     ));
   };
 
+  // Show toast notification
+  const showToastNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  // Refresh system health monitor
+  const refreshSystemHealth = async () => {
+    try {
+      await runAllHealthChecks();
+      await collectSystemResources();
+      showToastNotification('System health monitor refreshed successfully! 🏥');
+    } catch (error) {
+      showToastNotification('Failed to refresh system health monitor. Please try again.', 'error');
+    }
+  };
+
   // Initial data collection effect
   useEffect(() => {
     // Collect initial system resources data
@@ -511,6 +545,52 @@ const SystemHealth: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className={`fixed top-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 ${
+          toastType === 'success' ? 'border-green-500' : 'border-red-500'
+        } transform transition-all duration-300 ease-in-out ${
+          showToast ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+        }`}>
+          <div className="p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {toastType === 'success' ? (
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM15 12a3 3 0 11-6 0 3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className={`text-sm font-medium ${
+                  toastType === 'success' ? 'text-green-800' : 'text-red-800'
+                }`}>
+                  {toastMessage}
+                </p>
+              </div>
+              <div className="ml-4 flex-shrink-0">
+                <button
+                  onClick={() => setShowToast(false)}
+                  className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Control Panel */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
@@ -550,6 +630,34 @@ const SystemHealth: React.FC = () => {
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
               Auto-refresh
+            </Button>
+            <Button
+              onClick={refreshSystemHealth}
+              disabled={isRunningHealthChecks}
+              className={`bg-green-600 hover:bg-green-700 transition-all duration-200 ${
+                isRunningHealthChecks ? 'animate-pulse shadow-lg' : ''
+              }`}
+            >
+              <svg 
+                className={`w-5 h-5 mr-2 ${isRunningHealthChecks ? 'animate-spin' : 'hover:rotate-90 transition-transform duration-200'}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+                />
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                />
+              </svg>
+              {isRunningHealthChecks ? 'Refreshing...' : 'Refresh Now'}
             </Button>
           </div>
         </div>
@@ -676,13 +784,36 @@ const SystemHealth: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">System Resources</h2>
           <Button
-            onClick={collectSystemResources}
+            onClick={() => {
+              collectSystemResources();
+              showToastNotification('System resources refreshed successfully! 💾');
+            }}
             variant="outline"
             size="sm"
-            className="flex items-center space-x-2"
+            className={`flex items-center space-x-2 transition-all duration-200 ${
+              isCollectingResources ? 'animate-pulse shadow-lg' : ''
+            }`}
           >
-            <RefreshCw className="w-4 h-4" />
-            Refresh Now
+            <svg 
+              className={`w-4 h-4 ${isCollectingResources ? 'animate-spin' : 'hover:rotate-90 transition-transform duration-200'}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+              />
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+              />
+            </svg>
+            {isCollectingResources ? 'Refreshing...' : 'Refresh Now'}
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -764,6 +895,8 @@ const SystemHealth: React.FC = () => {
                   <Button
                     onClick={() => {
                       setSelectedHealthCheck(null);
+                      setSelectedResource(null);
+                      setSelectedReport(report);
                       setIsModalOpen(true);
                     }}
                     size="sm"
@@ -773,14 +906,32 @@ const SystemHealth: React.FC = () => {
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
                   <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-600">{report.issues}</div>
-                    <div className="text-gray-600">Critical Issues</div>
+                    <div className={`text-2xl font-bold ${
+                      report.overallHealth === 'excellent' ? 'text-green-600' :
+                      report.overallHealth === 'good' ? 'text-blue-600' :
+                      report.overallHealth === 'fair' ? 'text-orange-600' :
+                      report.overallHealth === 'poor' ? 'text-red-600' :
+                      'text-gray-600'
+                    }`}>
+                      {report.overallHealth.toUpperCase()}
+                    </div>
+                    <div className="text-gray-600">Overall Health</div>
+                  </div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {report.healthChecks.filter(hc => hc.status === 'healthy').length}
+                    </div>
+                    <div className="text-gray-600">Healthy</div>
                   </div>
                   <div className="text-center p-3 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-yellow-600">{report.warnings}</div>
                     <div className="text-gray-600">Warnings</div>
+                  </div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-red-600">{report.issues}</div>
+                    <div className="text-gray-600">Critical Issues</div>
                   </div>
                   <div className="text-center p-3 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">{report.recommendations.length}</div>
@@ -819,10 +970,12 @@ const SystemHealth: React.FC = () => {
           setIsModalOpen(false);
           setSelectedHealthCheck(null);
           setSelectedResource(null);
+          setSelectedReport(null);
         }}
         title={
           selectedHealthCheck ? `${selectedHealthCheck.name} Details` :
           selectedResource ? `${selectedResource.name} Details` :
+          selectedReport ? `Diagnostic Report - ${new Date(selectedReport.timestamp).toLocaleString()}` :
           'System Diagnostic Report'
         }
         size="lg"
@@ -1096,6 +1249,147 @@ const SystemHealth: React.FC = () => {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+        ) : selectedReport ? (
+          <div className="space-y-6">
+            {/* Report Summary */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-medium mb-3">Report Summary</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                <div className="text-center p-3 bg-white rounded-lg">
+                  <div className={`text-2xl font-bold ${
+                    selectedReport.overallHealth === 'excellent' ? 'text-green-600' :
+                    selectedReport.overallHealth === 'good' ? 'text-blue-600' :
+                    selectedReport.overallHealth === 'fair' ? 'text-orange-600' :
+                    selectedReport.overallHealth === 'poor' ? 'text-red-600' :
+                    'text-gray-600'
+                  }`}>
+                    {selectedReport.overallHealth.toUpperCase()}
+                  </div>
+                  <div className="text-gray-600">Overall Health</div>
+                </div>
+                <div className="text-center p-3 bg-white rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {selectedReport.healthChecks.filter(hc => hc.status === 'healthy').length}
+                  </div>
+                  <div className="text-gray-600">Healthy</div>
+                </div>
+                <div className="text-center p-3 bg-white rounded-lg">
+                  <div className="text-2xl font-bold text-yellow-600">{selectedReport.warnings}</div>
+                  <div className="text-gray-600">Warnings</div>
+                </div>
+                <div className="text-center p-3 bg-white rounded-lg">
+                  <div className="text-2xl font-bold text-red-600">{selectedReport.issues}</div>
+                  <div className="text-gray-600">Critical Issues</div>
+                </div>
+                <div className="text-center p-3 bg-white rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{selectedReport.recommendations.length}</div>
+                  <div className="text-gray-600">Recommendations</div>
+                </div>
+              </div>
+            </div>
+
+            {/* System Information */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">System Information</h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(selectedReport.systemInfo).map(([key, value]) => (
+                    <div key={key} className="flex justify-between text-sm py-2 border-b border-gray-200 last:border-b-0">
+                      <span className="font-medium text-gray-700">{key}:</span>
+                      <span className="text-gray-600">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Health Check Details */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">Health Check Details</h3>
+              <div className="space-y-3">
+                {selectedReport.healthChecks.map((check) => (
+                  <div key={check.id} className="border border-gray-200 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{check.name}</h4>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(check.status)}`}>
+                        {check.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
+                      <div>
+                        <span className="font-medium">Category:</span> {check.category}
+                      </div>
+                      <div>
+                        <span className="font-medium">Response Time:</span> {check.responseTime.toFixed(0)}ms
+                      </div>
+                      <div>
+                        <span className="font-medium">Last Check:</span> {check.lastCheck === 'Never' ? 'Never' : new Date(check.lastCheck).toLocaleString()}
+                      </div>
+                      <div>
+                        <span className="font-medium">Details:</span> {check.details}
+                      </div>
+                    </div>
+                    {check.lastError && (
+                      <div className="mt-2 p-2 bg-red-50 rounded text-xs text-red-800">
+                        <div className="font-medium mb-1">Last Error:</div>
+                        <pre className="whitespace-pre-wrap">{check.lastError}</pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Resource Details */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">System Resource Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedReport.resources.map((resource) => (
+                  <div key={resource.name} className="border border-gray-200 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{resource.name}</h4>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(resource.status)}`}>
+                        {resource.status}
+                      </span>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Current Value:</span>
+                        <span className="font-medium">{resource.current.toFixed(1)}{resource.unit}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Utilization:</span>
+                        <span className="font-medium">{((resource.current / resource.max) * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Warning Threshold:</span>
+                        <span className="text-yellow-600">{resource.threshold.warning}{resource.unit}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Critical Threshold:</span>
+                        <span className="text-red-600">{resource.threshold.critical}{resource.unit}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* All Recommendations */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">All Recommendations</h3>
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <ul className="space-y-2">
+                  {selectedReport.recommendations.map((rec, index) => (
+                    <li key={index} className="flex items-start text-sm text-blue-800">
+                      <span className="text-blue-500 mr-2 mt-0.5">•</span>
+                      <span>{rec}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
