@@ -40,7 +40,7 @@ interface CodeQualityMetric {
   metric: string;
   value: number;
   target: number;
-  status: 'excellent' | 'good' | 'warning' | 'critical';
+  status: 'excellent' | 'good' | 'warning' | 'critical' | 'not-run';
   trend: 'improving' | 'stable' | 'declining';
   description: string;
 }
@@ -371,6 +371,39 @@ const TestingDashboard: React.FC = () => {
   const calculateCodeQuality = (): CodeQualityMetric[] => {
     // Use current test suites with updated results
     const currentTestSuites = getCurrentTestSuites();
+    
+    // Check if any tests have been run
+    const hasRunTests = currentTestSuites.some(suite => suite.status !== 'not-run');
+    
+    if (!hasRunTests) {
+      // Return metrics with "not run" status when no tests have been executed
+      return [
+        {
+          metric: 'Test Success Rate',
+          value: 0,
+          target: 95,
+          status: 'not-run',
+          trend: 'stable',
+          description: 'No tests have been run yet'
+        },
+        {
+          metric: 'Code Coverage',
+          value: 0,
+          target: 80,
+          status: 'not-run',
+          trend: 'stable',
+          description: 'No tests have been run yet'
+        },
+        {
+          metric: 'Test Execution Time',
+          value: 0,
+          target: 30,
+          status: 'not-run',
+          trend: 'stable',
+          description: 'No tests have been run yet'
+        }
+      ];
+    }
     
     const totalTests = currentTestSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
     const passedTests = currentTestSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
@@ -930,22 +963,28 @@ const TestingDashboard: React.FC = () => {
           {codeQualityMetrics.map((metric, index) => (
             <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
               <div className={`text-3xl font-bold mb-2 ${
+                metric.status === 'not-run' ? 'text-gray-500' :
                 metric.status === 'excellent' ? 'text-green-600' :
                 metric.status === 'good' ? 'text-blue-600' :
                 metric.status === 'warning' ? 'text-yellow-600' :
                 'text-red-600'
               }`}>
-                {metric.value.toFixed(1)}
+                {metric.status === 'not-run' ? (
+                  <span className="text-lg">No Data</span>
+                ) : (
+                  metric.value.toFixed(1)
+                )}
               </div>
               <div className="text-sm font-medium text-gray-900 mb-1">{metric.metric}</div>
               <div className="text-xs text-gray-600">Target: {metric.target}</div>
               <div className={`text-xs mt-1 ${
+                metric.status === 'not-run' ? 'text-gray-500' :
                 metric.status === 'excellent' ? 'text-green-600' :
                 metric.status === 'good' ? 'text-blue-600' :
                 metric.status === 'warning' ? 'text-yellow-600' :
                 'text-red-600'
               }`}>
-                {metric.status.toUpperCase()}
+                {metric.status === 'not-run' ? 'NOT RUN' : metric.status.toUpperCase()}
               </div>
             </div>
           ))}
