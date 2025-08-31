@@ -85,7 +85,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 - **Core Service Enhancement**: Enhanced service layer with real data
 - **API Expansion**: Extended API endpoints with real functionality
 
-### **🎯 Ready for v0.1.0 Development**
+### **🎯 Ready for v0.0.4 Development**
 
 - **Core Framework**: ✅ Complete and tested
 - **Services**: ✅ Implemented and functional

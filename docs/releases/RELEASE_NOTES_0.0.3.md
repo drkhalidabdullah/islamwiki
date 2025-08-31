@@ -144,7 +144,7 @@ The v0.0.3 release represents a significant enhancement to the IslamWiki Framewo
 - **Security Headers**: Enhanced Apache configuration
 - **Environment Variables**: New JWT and security configurations
 
-## 🎯 **What's Next - v0.1.0 Planning**
+## 🎯 **What's Next - v0.0.4 Planning**
 
 ### **Planned Features**
 - **User Management**: Advanced user roles and permissions
@@ -197,5 +197,6 @@ Special thanks to the development community and contributors who have helped mak
 ---
 
 **Download:** [v0.0.3 Release](https://github.com/drkhalidabdullah/islamwiki/releases/tag/v0.0.3)  
-**Documentation:** [Complete Documentation](docs/)  
-**Support:** [GitHub Issues](https://github.com/drkhalidabdullah/islamwiki/issues) 
+**Documentation:** [Complete Documentation](../)  
+**Support:** [GitHub Issues](https://github.com/drkhalidabdullah/islamwiki/issues)  
+**Next Release:** [v0.0.4 Planning](../ROADMAP.md) 

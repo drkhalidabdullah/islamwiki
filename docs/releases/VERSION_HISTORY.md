@@ -84,9 +84,9 @@ resources/js/services/
 
 ### **What's Next**
 v0.0.3 provides the foundation for:
-- **v0.1.0**: User authentication and content management
-- **v0.2.0**: Advanced content features and media handling
-- **v0.3.0**: Social features and learning management
+- **v0.0.4**: Database implementation and core services
+- **v0.0.5**: User authentication and basic content management
+- **v0.1.0**: Advanced content features and media handling
 
 ---
 
