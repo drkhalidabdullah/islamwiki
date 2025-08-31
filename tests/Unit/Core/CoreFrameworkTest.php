@@ -9,7 +9,7 @@
  * @license AGPL-3.0
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use IslamWiki\Core\Container\Container;
 use IslamWiki\Core\Database\Database;

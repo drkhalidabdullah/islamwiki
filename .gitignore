@@ -70,6 +70,9 @@ composer.lock
 # Testing
 /coverage/
 .phpunit.result.cache
+/tests/storage/
+/tests/*.log
+/tests/*.cache
 
 # Cache
 .cache/

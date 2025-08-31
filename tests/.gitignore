@@ -1,0 +1,34 @@
+# Test-specific files to ignore
+# Author: Khalid Abdullah
+# Version: 0.0.1
+# Date: 2025-08-30
+# License: AGPL-3.0
+
+# Test cache files
+*.cache
+*.tmp
+
+# Test logs
+*.log
+
+# Test database files
+*.sqlite
+*.db
+
+# Test coverage reports
+coverage/
+*.cov
+
+# Test artifacts
+artifacts/
+test-results/
+
+# Environment-specific test files
+.env.testing
+.env.local.testing
+
+# IDE test files
+.vscode/
+.idea/
+*.swp
+*.swo 
