@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button, Input, Card } from '../components/index';
 
@@ -15,6 +15,18 @@ const LoginPage: React.FC = () => {
   
   const { login } = useAuthStore();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  // Get redirect URL and message from URL parameters
+  const redirectTo = searchParams.get('redirect') || '/admin';
+  const message = searchParams.get('message') || '';
+  
+  // Show message if redirected from protected route
+  useEffect(() => {
+    if (message) {
+      setErrors({ general: message });
+    }
+  }, [message]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -67,9 +79,9 @@ const LoginPage: React.FC = () => {
       // Store authentication data
       login(mockUser, mockToken);
       
-      // Redirect based on role
+      // Redirect based on role and original destination
       if (mockUser.role_name === 'admin') {
-        navigate('/admin');
+        navigate(redirectTo);
       } else {
         navigate('/dashboard');
       }

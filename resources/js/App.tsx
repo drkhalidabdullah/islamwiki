@@ -11,11 +11,13 @@ const ProtectedRoute = ({ children, requiredRole = 'admin' }: { children: React.
   const { isAuthenticated, user } = useAuthStore();
   
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // Redirect to login with a message about accessing admin area
+    return <Navigate to="/login?redirect=/admin&message=Please log in to access the admin area" replace />;
   }
   
   if (user?.role_name !== requiredRole) {
-    return <Navigate to="/" replace />;
+    // Redirect to home with a message about insufficient permissions
+    return <Navigate to="/?message=Insufficient permissions to access admin area" replace />;
   }
   
   return <>{children}</>;

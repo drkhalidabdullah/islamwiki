@@ -1,10 +1,40 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Card } from '../components/index';
 
 const HomePage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const [message, setMessage] = useState<string | null>(null);
+  
+  // Check for message in URL parameters
+  useEffect(() => {
+    const urlMessage = searchParams.get('message');
+    if (urlMessage) {
+      setMessage(urlMessage);
+      // Clear message from URL after showing it
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [searchParams]);
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+      {/* Message Display */}
+      {message && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-3 rounded-lg shadow-lg max-w-md text-center">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">{message}</span>
+              <button
+                onClick={() => setMessage(null)}
+                className="ml-4 text-yellow-600 hover:text-yellow-800"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Hero Section */}
       <section className="text-center py-20 px-4">
         <div className="max-w-4xl mx-auto">
