@@ -476,8 +476,20 @@ const SystemHealth: React.FC = () => {
     if (isRunningHealthChecks || isCollectingResources) return; // Prevent multiple simultaneous refreshes
     
     try {
+      // Temporarily disable auto-refresh to prevent conflicts
+      const wasAutoRefresh = autoRefresh;
+      if (wasAutoRefresh) {
+        setAutoRefresh(false);
+      }
+      
       await runAllHealthChecks();
       await collectSystemResources();
+      
+      // Re-enable auto-refresh if it was on before
+      if (wasAutoRefresh) {
+        setTimeout(() => setAutoRefresh(true), 1000); // Re-enable after 1 second
+      }
+      
       showToastNotification('System health monitor refreshed successfully! 🏥');
     } catch (error) {
       showToastNotification('Failed to refresh system health monitor. Please try again.', 'error');
@@ -787,12 +799,13 @@ const SystemHealth: React.FC = () => {
           <h2 className="text-xl font-semibold text-gray-900">System Resources</h2>
           <Button
             onClick={() => {
+              if (isCollectingResources) return; // Prevent multiple simultaneous calls
               collectSystemResources();
               showToastNotification('System resources refreshed successfully! 💾');
             }}
-            variant="outline"
+            disabled={isCollectingResources}
             size="sm"
-            className={`flex items-center space-x-2 transition-all duration-200 ${
+            className={`bg-green-600 hover:bg-green-700 text-white transition-all duration-200 ${
               isCollectingResources ? 'animate-pulse shadow-lg' : ''
             }`}
           >
