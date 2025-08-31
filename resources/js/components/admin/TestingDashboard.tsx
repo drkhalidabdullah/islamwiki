@@ -61,6 +61,7 @@ const TestingDashboard: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [testResults, setTestResults] = useState<Record<string, any>>({});
   const [isRunningTests, setIsRunningTests] = useState(false);
+  const [metricsUpdateTrigger, setMetricsUpdateTrigger] = useState(0);
 
   // Real test suites with actual commands
   const testSuites: TestSuite[] = [
@@ -148,11 +149,15 @@ const TestingDashboard: React.FC = () => {
 
   // Real code quality metrics calculation
   const calculateCodeQuality = (): CodeQualityMetric[] => {
-    const totalTests = testSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
-    const passedTests = testSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
+    // Use current test suites with updated results
+    const currentTestSuites = getCurrentTestSuites();
+    
+    const totalTests = currentTestSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
+    const passedTests = currentTestSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
     
     const testSuccessRate = totalTests > 0 ? (passedTests / totalTests) * 100 : 0;
-    const avgCoverage = testSuites.reduce((sum, suite) => sum + suite.coverage, 0) / testSuites.length || 0;
+    const avgCoverage = currentTestSuites.reduce((sum, suite) => sum + suite.coverage, 0) / currentTestSuites.length || 0;
+    const totalExecutionTime = currentTestSuites.reduce((sum, suite) => sum + suite.duration, 0);
     
     return [
       {
@@ -173,9 +178,9 @@ const TestingDashboard: React.FC = () => {
       },
       {
         metric: 'Test Execution Time',
-        value: testSuites.reduce((sum, suite) => sum + suite.duration, 0),
+        value: totalExecutionTime,
         target: 30,
-        status: 'good',
+        status: totalExecutionTime <= 30 ? 'good' : totalExecutionTime <= 60 ? 'warning' : 'critical',
         trend: 'stable',
         description: 'Total time to execute all test suites'
       }
@@ -259,6 +264,7 @@ const TestingDashboard: React.FC = () => {
       };
       
       setTestResults(prev => ({ ...prev, [suite.id]: finalSuite }));
+      setMetricsUpdateTrigger(prev => prev + 1);
       
     } catch (error) {
       const errorSuite = {
@@ -267,6 +273,7 @@ const TestingDashboard: React.FC = () => {
         errorOutput: `Error executing tests: ${error}`
       };
       setTestResults(prev => ({ ...prev, [suite.id]: errorSuite }));
+      setMetricsUpdateTrigger(prev => prev + 1);
     } finally {
       setActiveTests(prev => prev.filter(id => id !== suite.id));
       setIsRunningTests(false);
@@ -334,6 +341,11 @@ const TestingDashboard: React.FC = () => {
 
   const currentTestSuites = getCurrentTestSuites();
   const codeQualityMetrics = calculateCodeQuality();
+  
+  // Force re-calculation when metrics update trigger changes
+  useEffect(() => {
+    // This effect will trigger re-calculation when metricsUpdateTrigger changes
+  }, [metricsUpdateTrigger]);
 
   return (
     <div className="space-y-6">
@@ -487,7 +499,15 @@ const TestingDashboard: React.FC = () => {
 
       {/* Code Quality Metrics */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Code Quality Metrics</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Code Quality Metrics</h2>
+          {isRunningTests && (
+            <div className="flex items-center text-sm text-blue-600">
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              Updating...
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {codeQualityMetrics.map((metric, index) => (
             <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
