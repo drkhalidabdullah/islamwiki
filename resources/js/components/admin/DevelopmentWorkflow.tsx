@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Modal } from '../index';
-import { GitBranch, GitCommit, GitPullRequest, GitMerge, Code, RefreshCw, Play, CheckCircle, XCircle, Clock } from 'lucide-react';
+import Modal from '../ui/Modal';
+import { 
+  GitBranch, 
+  GitCommit, 
+  GitPullRequest, 
+  GitMerge, 
+  Users, 
+  Calendar, 
+  FileText,
+  RefreshCw
+} from 'lucide-react';
 
 interface GitActivity {
   id: string;
-  type: 'commit' | 'branch' | 'merge' | 'pull-request';
+  type: 'commit' | 'pull-request' | 'merge' | 'branch';
   author: string;
   message: string;
   timestamp: string;
@@ -18,85 +27,67 @@ interface GitActivity {
 
 interface Deployment {
   id: string;
-  environment: 'development' | 'staging' | 'production';
+  environment: string;
   version: string;
-  status: 'deploying' | 'success' | 'failed' | 'rolled-back';
+  status: 'success' | 'pending' | 'failed' | 'deploying';
+  author: string;
   timestamp: string;
   duration: number;
-  author: string;
   commit: string;
   changes: string[];
   logs?: string[];
+}
+
+interface BuildStatus {
+  id: string;
+  branch: string;
+  status: 'success' | 'pending' | 'failed' | 'building';
+  timestamp: string;
+  duration: number;
+  passed: number;
+  total: number;
+  coverage: number;
 }
 
 interface TeamMember {
   id: string;
   name: string;
   role: string;
-  avatar: string;
-  status: 'online' | 'offline' | 'busy';
+  status: 'online' | 'offline' | 'away';
   currentTask: string;
-  lastActivity: string;
   commits: number;
-  pullRequests: number;
+  prs: number;
   branches: number;
 }
 
-interface BuildStatus {
-  id: string;
-  branch: string;
-  commit: string;
-  status: 'building' | 'success' | 'failed' | 'cancelled';
-  startTime: string;
-  endTime?: string;
-  duration?: number;
-  tests: {
-    total: number;
-    passed: number;
-    failed: number;
-    skipped: number;
-  };
-  coverage: number;
-}
-
 const DevelopmentWorkflow: React.FC = () => {
-  const [selectedDeployment, setSelectedDeployment] = useState<Deployment | null>(null);
-  const [selectedGitActivity, setSelectedGitActivity] = useState<GitActivity | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGitModalOpen, setIsGitModalOpen] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [activeDeployments, setActiveDeployments] = useState<string[]>([]);
-  const [showAllGitActivities, setShowAllGitActivities] = useState(false);
-
-  // Real Git activities with live data
   const [gitActivities, setGitActivities] = useState<GitActivity[]>([]);
-
-  // Real deployment tracking
   const [deployments, setDeployments] = useState<Deployment[]>([]);
-
-  // Real team collaboration data
+  const [buildStatuses, setBuildStatuses] = useState<BuildStatus[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
-      id: 'khalid',
+      id: '1',
       name: 'Khalid Abdullah',
       role: 'Lead Developer',
-      avatar: 'KA',
       status: 'online',
       currentTask: 'Implementing v0.0.4 database features',
-      lastActivity: new Date().toISOString(),
       commits: 0,
-      pullRequests: 0,
+      prs: 0,
       branches: 0
     }
   ]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedDeployment, setSelectedDeployment] = useState<Deployment | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedGitActivity, setSelectedGitActivity] = useState<GitActivity | null>(null);
+  const [isGitModalOpen, setIsGitModalOpen] = useState(false);
+  const [showAllGitActivities, setShowAllGitActivities] = useState(false);
 
-  // Real build status tracking
-  const [buildStatuses, setBuildStatuses] = useState<BuildStatus[]>([]);
+  useEffect(() => {
+    refreshData();
+  }, []);
 
-  // Collect real Git data
-  const collectGitData = async () => {
-    if (isRefreshing) return;
-    
+  const refreshData = async () => {
     setIsRefreshing(true);
     
     try {
@@ -124,7 +115,10 @@ const DevelopmentWorkflow: React.FC = () => {
           message: 'Merge feature/v0.0.3-real-testing into develop',
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'develop',
-          status: 'pending'
+          status: 'pending',
+          filesChanged: Math.floor(Math.random() * 8) + 2,
+          additions: Math.floor(Math.random() * 150) + 20,
+          deletions: Math.floor(Math.random() * 50) + 5
         },
         {
           id: `git-${Date.now()}-3`,
@@ -133,7 +127,10 @@ const DevelopmentWorkflow: React.FC = () => {
           message: 'Merge develop into main for v0.0.3 release',
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'main',
-          status: 'success'
+          status: 'success',
+          filesChanged: Math.floor(Math.random() * 12) + 3,
+          additions: Math.floor(Math.random() * 200) + 30,
+          deletions: Math.floor(Math.random() * 80) + 10
         },
         {
           id: `git-${Date.now()}-4`,
@@ -155,7 +152,10 @@ const DevelopmentWorkflow: React.FC = () => {
           message: 'Create feature branch for v0.0.4 development',
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'feature/v0.0.4-database',
-          status: 'success'
+          status: 'success',
+          filesChanged: 0, // New branch, no files changed yet
+          additions: 0,
+          deletions: 0
         },
         {
           id: `git-${Date.now()}-6`,
@@ -177,7 +177,10 @@ const DevelopmentWorkflow: React.FC = () => {
           message: 'Enhance Performance Monitor with trend analysis',
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'feature/v0.0.3-performance',
-          status: 'success'
+          status: 'success',
+          filesChanged: Math.floor(Math.random() * 18) + 5,
+          additions: Math.floor(Math.random() * 400) + 60,
+          deletions: Math.floor(Math.random() * 120) + 15
         },
         {
           id: `git-${Date.now()}-8`,
@@ -200,42 +203,40 @@ const DevelopmentWorkflow: React.FC = () => {
       setTeamMembers(prev => prev.map(member => ({
         ...member,
         commits: newGitActivities.filter(activity => 
-          activity.author === member.name && activity.type === 'commit'
+          activity.type === 'commit' && activity.status === 'success'
         ).length,
-        pullRequests: newGitActivities.filter(activity => 
-          activity.author === member.name && activity.type === 'pull-request'
+        prs: newGitActivities.filter(activity => 
+          activity.type === 'pull-request'
         ).length,
         branches: newGitActivities.filter(activity => 
-          activity.author === member.name && activity.type === 'branch'
+          activity.type === 'branch'
         ).length
       })));
-      
-    } catch (error) {
-      console.error('Error collecting Git data:', error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
 
-  // Collect real deployment data
-  const collectDeploymentData = async () => {
-    try {
-      // Simulate collecting real deployment data
+      // Simulate deployment data
       const newDeployments: Deployment[] = [
         {
           id: `deploy-${Date.now()}-1`,
           environment: 'production',
           version: 'v0.0.3',
           status: 'success',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-          duration: Math.floor(Math.random() * 120) + 30,
           author: 'Khalid Abdullah',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          duration: Math.floor(Math.random() * 300) + 60,
           commit: Math.random().toString(36).substring(2, 10),
           changes: [
-            'Enhanced admin dashboard with real testing functionality',
-            'Implemented performance monitoring with live metrics',
-            'Added development workflow tracking',
-            'Fixed SPA routing issues'
+            'Enhanced testing dashboard with real-time execution',
+            'Added comprehensive performance monitoring',
+            'Implemented system health diagnostics',
+            'Improved development workflow tracking'
+          ],
+          logs: [
+            'Starting deployment to production...',
+            'Building application...',
+            'Running tests...',
+            'Deploying to production servers...',
+            'Health checks passed',
+            'Deployment completed successfully'
           ]
         },
         {
@@ -243,550 +244,295 @@ const DevelopmentWorkflow: React.FC = () => {
           environment: 'staging',
           version: 'v0.0.4-alpha',
           status: 'deploying',
-          timestamp: new Date().toISOString(),
-          duration: 0,
           author: 'Khalid Abdullah',
+          timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+          duration: 0,
           commit: Math.random().toString(36).substring(2, 10),
           changes: [
-            'Database integration preparation',
-            'Core service enhancements',
-            'API endpoint expansion'
+            'Database optimization features',
+            'Enhanced security middleware',
+            'Performance improvements'
           ]
         }
       ];
       
       setDeployments(newDeployments);
-      
-      // Update active deployments
-      setActiveDeployments(newDeployments
-        .filter(d => d.status === 'deploying')
-        .map(d => d.id)
-      );
-      
-    } catch (error) {
-      console.error('Error collecting deployment data:', error);
-    }
-  };
 
-  // Collect real build status data
-  const collectBuildData = async () => {
-    try {
-      // Simulate collecting real build data
+      // Simulate build statuses
       const newBuildStatuses: BuildStatus[] = [
         {
           id: `build-${Date.now()}-1`,
           branch: 'feature/v0.0.3-real-testing',
-          commit: Math.random().toString(36).substring(2, 10),
           status: 'success',
-          startTime: new Date(Date.now() - Math.random() * 3600000).toISOString(),
-          endTime: new Date().toISOString(),
-          duration: Math.floor(Math.random() * 300) + 60,
-          tests: {
-            total: Math.floor(Math.random() * 100) + 50,
-            passed: Math.floor(Math.random() * 45) + 45, // Ensure passed <= total
-            failed: Math.floor(Math.random() * 5),
-            skipped: Math.floor(Math.random() * 3)
-          },
-          coverage: Math.floor(Math.random() * 30) + 70
+          timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+          duration: Math.floor(Math.random() * 300) + 120,
+          passed: Math.floor(Math.random() * 45) + 45,
+          total: 75,
+          coverage: Math.floor(Math.random() * 20) + 75
         },
         {
           id: `build-${Date.now()}-2`,
           branch: 'develop',
-          commit: Math.random().toString(36).substring(2, 10),
           status: 'building',
-          startTime: new Date().toISOString(),
-          tests: {
-            total: 0,
-            passed: 0,
-            failed: 0,
-            skipped: 0
-          },
+          timestamp: new Date(Date.now() - Math.random() * 1800000).toISOString(),
+          duration: 0,
+          passed: 0,
+          total: 0,
           coverage: 0
         }
       ];
       
       setBuildStatuses(newBuildStatuses);
-      
+
     } catch (error) {
-      console.error('Error collecting build data:', error);
+      console.error('Error refreshing data:', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
-  // Trigger a new deployment
-  const triggerDeployment = async (environment: 'development' | 'staging' | 'production') => {
-    const newDeployment: Deployment = {
-      id: `deploy-${Date.now()}-${Math.random()}`,
-      environment,
-      version: `v0.0.4-${environment === 'production' ? 'rc' : 'alpha'}`,
-      status: 'deploying',
-      timestamp: new Date().toISOString(),
-      duration: 0,
-      author: 'Khalid Abdullah',
-      commit: Math.random().toString(36).substring(2, 10),
-      changes: [
-        'Latest development changes',
-        'Bug fixes and improvements',
-        'Performance optimizations'
-      ]
-    };
-    
-    setDeployments(prev => [newDeployment, ...prev]);
-    setActiveDeployments(prev => [...prev, newDeployment.id]);
-    
-    // Simulate deployment process
-    setTimeout(() => {
-      setDeployments(prev => prev.map(d => 
-        d.id === newDeployment.id 
-          ? { ...d, status: 'success', duration: Math.floor(Math.random() * 120) + 30 }
-          : d
-      ));
-      setActiveDeployments(prev => prev.filter(id => id !== newDeployment.id));
-    }, 5000 + Math.random() * 10000);
-  };
-
-  // Rollback a deployment
-  const rollbackDeployment = async (deploymentId: string) => {
-    setDeployments(prev => prev.map(d => 
-      d.id === deploymentId 
-        ? { ...d, status: 'rolled-back' as const }
-        : d
-    ));
-  };
-
-  // Refresh all data
-  const refreshAllData = async () => {
-    await Promise.all([
-      collectGitData(),
-      collectDeploymentData(),
-      collectBuildData()
-    ]);
-  };
-
-  // Auto-refresh effect
-  useEffect(() => {
-    // Initial data collection
-    refreshAllData();
-    
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      refreshAllData();
-    }, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'success':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
+      case 'success': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'failed': return 'bg-red-100 text-red-800';
       case 'deploying':
-        return 'bg-blue-100 text-blue-800';
-      case 'rolled-back':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'building': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  // Get environment color
   const getEnvironmentColor = (environment: string) => {
     switch (environment) {
-      case 'production':
-        return 'bg-red-100 text-red-800';
-      case 'staging':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'development':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'production': return 'bg-red-100 text-red-800';
+      case 'staging': return 'bg-yellow-100 text-yellow-800';
+      case 'development': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  // Get build status color
-  const getBuildStatusColor = (status: string) => {
-    switch (status) {
-      case 'success':
-        return 'bg-green-100 text-green-800';
-      case 'building':
-        return 'bg-blue-100 text-blue-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
-      case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'commit': return <GitCommit className="w-4 h-4" />;
+      case 'pull-request': return <GitPullRequest className="w-4 h-4" />;
+      case 'merge': return <GitMerge className="w-4 h-4" />;
+      case 'branch': return <GitBranch className="w-4 h-4" />;
+      default: return <GitCommit className="w-4 h-4" />;
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Control Panel */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
           <h2 className="text-xl font-semibold text-gray-900">Development Workflow</h2>
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={refreshAllData}
-              disabled={isRefreshing}
-              loading={isRefreshing}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button
-              onClick={() => triggerDeployment('staging')}
-              disabled={activeDeployments.length > 0}
-              variant="outline"
-              className="border-yellow-600 text-yellow-600 hover:bg-yellow-50"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Deploy to Staging
-            </Button>
-            <Button
-              onClick={() => triggerDeployment('production')}
-              disabled={activeDeployments.length > 0}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Deploy to Production
-            </Button>
-          </div>
+          <p className="text-gray-600">Track Git activities, deployments, and team collaboration</p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">
-              {gitActivities.filter(a => a.type === 'commit').length}
-            </div>
-            <div className="text-gray-600">Commits</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">
-              {gitActivities.filter(a => a.type === 'pull-request').length}
-            </div>
-            <div className="text-gray-600">Pull Requests</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">
-              {deployments.filter(d => d.status === 'success').length}
-            </div>
-            <div className="text-gray-600">Successful Deployments</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600">
-              {activeDeployments.length}
-            </div>
-            <div className="text-gray-600">Active Deployments</div>
-          </div>
-        </div>
-      </Card>
+        <button
+          onClick={refreshData}
+          disabled={isRefreshing}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center space-x-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+        </button>
+      </div>
 
       {/* Git Activities */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Git Activities</h2>
-        <div className="space-y-4">
-          {gitActivities.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <GitCommit className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No recent Git activities</p>
-            </div>
-          ) : (
-            <>
-              {/* Show first 3 activities */}
-              {gitActivities.slice(0, showAllGitActivities ? gitActivities.length : 3).map((activity) => (
-                <div key={activity.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        {activity.type === 'commit' && <GitCommit className="w-4 h-4 text-green-500" />}
-                        {activity.type === 'pull-request' && <GitPullRequest className="w-4 h-4 text-blue-500" />}
-                        {activity.type === 'merge' && <GitMerge className="w-4 h-4 text-purple-500" />}
-                        {activity.type === 'branch' && <GitBranch className="w-4 h-4 text-orange-500" />}
-                        
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                          {activity.status}
-                        </span>
-                        
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          {activity.branch}
-                        </span>
-                      </div>
-                      
-                      <h3 className="font-medium text-gray-900 mb-1">{activity.message}</h3>
-                      
-                      <div className="text-sm text-gray-600 mb-2">
-                        <span className="font-medium">{activity.author}</span> • {new Date(activity.timestamp).toLocaleString()}
-                      </div>
-                      
-                      {activity.hash && (
-                        <div className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
-                          {activity.hash}
-                        </div>
-                      )}
-                      
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-gray-900">Recent Git Activities</h3>
+            <button
+              onClick={() => setShowAllGitActivities(!showAllGitActivities)}
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              {showAllGitActivities ? 'Show Less' : 'Show More'}
+            </button>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="space-y-4">
+            {gitActivities.slice(0, showAllGitActivities ? gitActivities.length : 3).map((activity) => (
+              <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    {getActivityIcon(activity.type)}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                      {activity.status}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{activity.message}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                      <span className="flex items-center space-x-1">
+                        <GitBranch className="w-3 h-3" />
+                        <span>{activity.branch}</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <Users className="w-3 h-3" />
+                        <span>{activity.author}</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <Calendar className="w-3 h-3" />
+                        <span>{new Date(activity.timestamp).toLocaleDateString()}</span>
+                      </span>
                       {activity.filesChanged && (
-                        <div className="text-xs text-gray-500 mt-2">
-                          Files: {activity.filesChanged} | 
-                          {activity.additions && ` +${activity.additions}`} | 
-                          {activity.deletions && ` -${activity.deletions}`}
-                        </div>
+                        <span className="flex items-center space-x-1">
+                          <FileText className="w-3 h-3" />
+                          <span>Files: {activity.filesChanged} | +{activity.additions || 0} | -{activity.deletions || 0}</span>
+                        </span>
                       )}
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        onClick={() => {
-                          setSelectedGitActivity(activity);
-                          setIsGitModalOpen(true);
-                        }}
-                        size="sm"
-                        variant="outline"
-                      >
-                        Details
-                      </Button>
                     </div>
                   </div>
                 </div>
-              ))}
-              
-              {/* Show More/Less Button */}
-              {gitActivities.length > 3 && (
-                <div className="text-center pt-4">
-                  <Button
-                    onClick={() => setShowAllGitActivities(!showAllGitActivities)}
-                    variant="outline"
-                    size="sm"
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setSelectedGitActivity(activity);
+                      setIsGitModalOpen(true);
+                    }}
+                    className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
                   >
-                    {showAllGitActivities ? 'Show Less' : `Show More (${gitActivities.length - 3} more)`}
-                  </Button>
+                    Details
+                  </button>
                 </div>
-              )}
-            </>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Deployments */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Deployments</h2>
-        <div className="space-y-4">
-          {deployments.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Play className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No deployments found</p>
-            </div>
-          ) : (
-            deployments.map((deployment) => (
-              <div key={deployment.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getEnvironmentColor(deployment.environment)}`}>
-                        {deployment.environment}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(deployment.status)}`}>
-                        {deployment.status}
-                      </span>
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        {deployment.version}
-                      </span>
-                    </div>
-                    
-                    <h3 className="font-medium text-gray-900 mb-1">
+      {/* Deployments and Builds */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Deployments */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Recent Deployments</h3>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {deployments.map((deployment) => (
+                <div key={deployment.id} className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">
                       Deployment to {deployment.environment} ({deployment.version})
-                    </h3>
-                    
-                    <div className="text-sm text-gray-600 mb-2">
-                      <span className="font-medium">{deployment.author}</span> • {new Date(deployment.timestamp).toLocaleString()}
-                      {deployment.duration > 0 && ` • Duration: ${deployment.duration}s`}
-                    </div>
-                    
-                    <div className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded mb-2">
-                      {deployment.commit}
-                    </div>
-                    
-                    <div className="text-sm text-gray-600">
-                      <div className="font-medium mb-1">Changes:</div>
-                      <ul className="list-disc list-inside space-y-1">
+                    </h4>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(deployment.status)}`}>
+                      {deployment.status}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>Author: {deployment.author}</p>
+                    <p>Duration: {deployment.duration > 0 ? `${deployment.duration}s` : 'In progress...'}</p>
+                    <p>Commit: {deployment.commit}</p>
+                    <div className="mt-2">
+                      <p className="font-medium mb-1">Changes:</p>
+                      <ul className="list-disc list-inside space-y-1 text-xs">
                         {deployment.changes.map((change, index) => (
                           <li key={index}>{change}</li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                  
-                  <div className="flex space-x-2">
-                    {deployment.status === 'success' && (
-                      <Button
-                        onClick={() => rollbackDeployment(deployment.id)}
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 border-red-600 hover:bg-red-50"
-                      >
-                        Rollback
-                      </Button>
-                    )}
-                    <Button
+                  <div className="flex items-center space-x-2 mt-3">
+                    <button
                       onClick={() => {
                         setSelectedDeployment(deployment);
                         setIsModalOpen(true);
                       }}
-                      size="sm"
-                      variant="outline"
+                      className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
                     >
                       Details
-                    </Button>
+                    </button>
+                    {deployment.status === 'success' && (
+                      <button className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors">
+                        Rollback
+                      </button>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      </Card>
-
-      {/* Build Status */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Build Status</h2>
-        <div className="space-y-4">
-          {buildStatuses.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <Code className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>No build information available</p>
+              ))}
             </div>
-          ) : (
-            buildStatuses.map((build) => (
-              <div key={build.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getBuildStatusColor(build.status)}`}>
-                        {build.status}
-                      </span>
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        {build.branch}
-                      </span>
-                    </div>
-                    
-                    <h3 className="font-medium text-gray-900 mb-1">
-                      Build for {build.branch}
-                    </h3>
-                    
-                    <div className="text-sm text-gray-600 mb-2">
-                      Commit: <span className="font-mono">{build.commit}</span> • 
-                      Started: {new Date(build.startTime).toLocaleString()}
-                      {build.endTime && ` • Duration: ${build.duration}s`}
-                    </div>
-                    
-                    {build.status === 'success' && (
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-600">Tests:</span>
-                          <span className="ml-2 font-medium">
-                            {build.tests.passed}/{build.tests.total} passed
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Coverage:</span>
-                          <span className="ml-2 font-medium">{build.coverage}%</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Status:</span>
-                          <span className="ml-2">
-                            {build.tests.failed > 0 ? (
-                              <span className="text-red-600">Failed</span>
-                            ) : (
-                              <span className="text-green-600">Passed</span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+          </div>
+        </div>
+
+        {/* Build Statuses */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Build Status</h3>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {buildStatuses.map((build) => (
+                <div key={build.id} className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">Build for {build.branch}</h4>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(build.status)}`}>
+                      {build.status === 'building' ? 'Building...' : build.status}
+                    </span>
                   </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    {build.status === 'building' && (
-                      <div className="flex items-center text-blue-600">
-                        <Clock className="w-4 h-4 mr-1 animate-pulse" />
-                        Building...
-                      </div>
-                    )}
-                    {build.status === 'success' && (
-                      <CheckCircle className="w-6 h-6 text-green-500" />
-                    )}
-                    {build.status === 'failed' && (
-                      <XCircle className="w-6 h-6 text-red-500" />
-                    )}
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>Tests: {build.passed}/{build.total} passed</p>
+                    <p>Coverage: {build.coverage}%</p>
+                    <p>Duration: {build.duration > 0 ? `${build.duration}s` : 'In progress...'}</p>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))}
+            </div>
+          </div>
         </div>
-      </Card>
+      </div>
 
       {/* Team Members */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Team Members</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-medium">
-                  {member.avatar}
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">{member.name}</h3>
-                  <p className="text-sm text-gray-600">{member.role}</p>
-                </div>
-              </div>
-              
-              <div className="space-y-2 mb-3">
-                <div className="flex items-center space-x-2">
-                  <span className={`w-2 h-2 rounded-full ${
-                    member.status === 'online' ? 'bg-green-500' :
-                    member.status === 'busy' ? 'bg-yellow-500' :
-                    'bg-gray-500'
-                  }`}></span>
-                  <span className="text-sm text-gray-600 capitalize">{member.status}</span>
-                </div>
-                
-                <div className="text-sm text-gray-600">
-                  <div className="font-medium">Current Task:</div>
-                  <div className="text-xs">{member.currentTask}</div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="bg-gray-50 p-2 rounded">
-                  <div className="font-medium text-blue-600">{member.commits}</div>
-                  <div className="text-gray-600">Commits</div>
-                </div>
-                <div className="bg-gray-50 p-2 rounded">
-                  <div className="font-medium text-purple-600">{member.pullRequests}</div>
-                  <div className="text-gray-600">PRs</div>
-                </div>
-                <div className="bg-gray-50 p-2 rounded">
-                  <div className="font-medium text-orange-600">{member.branches}</div>
-                  <div className="text-gray-600">Branches</div>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Team Members</h3>
         </div>
-      </Card>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {teamMembers.map((member) => (
+              <div key={member.id} className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className={`w-3 h-3 rounded-full ${
+                    member.status === 'online' ? 'bg-green-500' : 
+                    member.status === 'away' ? 'bg-yellow-500' : 'bg-gray-500'
+                  }`} />
+                  <div>
+                    <h4 className="font-medium text-gray-900">{member.name}</h4>
+                    <p className="text-sm text-gray-600">{member.role}</p>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>Current Task: {member.currentTask}</p>
+                  <div className="flex items-center space-x-4 mt-2 text-xs">
+                    <span className="flex items-center space-x-1">
+                      <GitCommit className="w-3 h-3" />
+                      <span>{member.commits}</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <GitPullRequest className="w-3 h-3" />
+                      <span>{member.prs}</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <GitBranch className="w-3 h-3" />
+                      <span>{member.branches}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Deployment Details Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={`Deployment Details - ${selectedDeployment?.environment}`}
-        size="lg"
+        size="full"
       >
         {selectedDeployment && (
           <div className="space-y-4">
@@ -925,32 +671,29 @@ const DevelopmentWorkflow: React.FC = () => {
             
             {/* Right Column - File Changes and Statistics */}
             <div className="space-y-6">
-              {selectedGitActivity.filesChanged && (
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">File Changes Overview</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
-                      <div className="text-3xl font-bold text-blue-600 mb-1">{selectedGitActivity.filesChanged}</div>
-                      <div className="text-blue-700 font-medium">Files Changed</div>
-                      <div className="text-xs text-blue-600 mt-1">Total modified files</div>
-                    </div>
-                    {selectedGitActivity.additions && (
-                      <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
-                        <div className="text-3xl font-bold text-green-600 mb-1">+{selectedGitActivity.additions.toLocaleString()}</div>
-                        <div className="text-green-700 font-medium">Additions</div>
-                        <div className="text-xs text-green-600 mt-1">Lines of code added</div>
-                      </div>
-                    )}
-                    {selectedGitActivity.deletions && (
-                      <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
-                        <div className="text-3xl font-bold text-red-600 mb-1">-{selectedGitActivity.deletions.toLocaleString()}</div>
-                        <div className="text-red-700 font-medium">Deletions</div>
-                        <div className="text-xs text-red-600 mt-1">Lines of code removed</div>
-                      </div>
-                    )}
+              {/* File Changes Overview - Show for all activities */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">File Changes Overview</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                    <div className="text-3xl font-bold text-blue-600 mb-1">{selectedGitActivity.filesChanged || 0}</div>
+                    <div className="text-blue-700 font-medium">Files Changed</div>
+                    <div className="text-xs text-blue-600 mt-1">Total modified files</div>
                   </div>
-                  
-                  {/* Detailed File Changes Analysis */}
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-center">
+                    <div className="text-3xl font-bold text-green-600 mb-1">+{(selectedGitActivity.additions || 0).toLocaleString()}</div>
+                    <div className="text-green-700 font-medium">Additions</div>
+                    <div className="text-xs text-green-600 mt-1">Lines of code added</div>
+                  </div>
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-center">
+                    <div className="text-3xl font-bold text-red-600 mb-1">-{(selectedGitActivity.deletions || 0).toLocaleString()}</div>
+                    <div className="text-red-700 font-medium">Deletions</div>
+                    <div className="text-xs text-red-600 mt-1">Lines of code removed</div>
+                  </div>
+                </div>
+                
+                {/* Detailed File Changes Analysis - Only show when there are actual changes */}
+                {(selectedGitActivity.additions || selectedGitActivity.deletions) && (
                   <div className="bg-gray-50 p-4 rounded-lg border">
                     <h4 className="font-medium text-gray-900 mb-3">Change Analysis</h4>
                     <div className="space-y-3 text-sm">
@@ -987,32 +730,119 @@ const DevelopmentWorkflow: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Activity Impact Assessment */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Impact Assessment</h3>
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <div className="text-sm text-yellow-800">
-                    <div className="flex items-center mb-2">
-                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                      <span className="font-medium">Change Impact</span>
+                )}
+
+                {/* File Changes Details - Show actual file-by-file changes */}
+                {(selectedGitActivity.additions || selectedGitActivity.deletions) && (
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-medium text-gray-900">File Changes Details</h3>
+                      <button className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors">
+                        View Full Diff
+                      </button>
                     </div>
-                    <p className="mb-2">
+                    <div className="space-y-4">
+                      {/* Simulated file changes - in real implementation, this would come from Git diff */}
                       {(() => {
-                        const totalChanges = (selectedGitActivity.additions || 0) + (selectedGitActivity.deletions || 0);
-                        if (totalChanges > 1000) return "This is a significant change affecting many lines of code.";
-                        if (totalChanges > 500) return "This is a substantial change with moderate impact.";
-                        if (totalChanges > 100) return "This is a moderate change affecting several files.";
-                        return "This is a small, focused change with minimal impact.";
+                        const files = [
+                          'resources/js/components/admin/TestingDashboard.tsx',
+                          'resources/js/components/admin/PerformanceMonitor.tsx',
+                          'resources/js/components/admin/SystemHealth.tsx',
+                          'resources/js/components/admin/DevelopmentWorkflow.tsx',
+                          'resources/js/pages/AdminPage.tsx',
+                          'resources/js/store/authStore.ts',
+                          'resources/js/services/jwtService.ts',
+                          'resources/js/services/sessionService.ts',
+                          'resources/js/services/rateLimitService.ts',
+                          'public/.htaccess',
+                          'package.json',
+                          'docs/releases/RELEASE_NOTES_0.0.3.md'
+                        ].slice(0, selectedGitActivity.filesChanged || 0);
+
+                        return files.map((file, index) => {
+                          const fileAdditions = Math.floor((selectedGitActivity.additions || 0) / files.length) + (index < (selectedGitActivity.additions || 0) % files.length ? 1 : 0);
+                          const fileDeletions = Math.floor((selectedGitActivity.deletions || 0) / files.length) + (index < (selectedGitActivity.deletions || 0) % files.length ? 1 : 0);
+                          
+                          return (
+                            <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-medium text-gray-900 text-sm">{file}</h4>
+                                <div className="flex items-center space-x-2 text-xs">
+                                  <span className="text-green-600">+{fileAdditions}</span>
+                                  <span className="text-red-600">-{fileDeletions}</span>
+                                </div>
+                              </div>
+                              
+                              {/* File diff preview */}
+                              <div className="bg-gray-50 p-3 rounded border text-xs font-mono">
+                                <div className="space-y-1">
+                                  {/* Simulated additions */}
+                                  {fileAdditions > 0 && (
+                                    <div className="text-green-700">
+                                      {Array.from({ length: Math.min(fileAdditions, 3) }, (_, i) => (
+                                        <div key={i} className="flex">
+                                          <span className="text-green-600 mr-2">+</span>
+                                          <span className="text-gray-600">// Added line {i + 1}</span>
+                                        </div>
+                                      ))}
+                                      {fileAdditions > 3 && (
+                                        <div className="text-green-600 text-xs mt-1">
+                                          ... and {fileAdditions - 3} more additions
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                  
+                                  {/* Simulated deletions */}
+                                  {fileDeletions > 0 && (
+                                    <div className="text-red-700">
+                                      {Array.from({ length: Math.min(fileDeletions, 3) }, (_, i) => (
+                                        <div key={i} className="flex">
+                                          <span className="text-red-600 mr-2">-</span>
+                                          <span className="text-gray-600">// Removed line {i + 1}</span>
+                                        </div>
+                                      ))}
+                                      {fileDeletions > 3 && (
+                                        <div className="text-red-600 text-xs mt-1">
+                                          ... and {fileDeletions - 3} more deletions
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        });
                       })()}
-                    </p>
-                    <p className="text-xs opacity-75">
-                      Impact assessment based on total lines changed and files affected.
-                    </p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Activity Impact Assessment */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Impact Assessment</h3>
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <div className="text-sm text-yellow-800">
+                      <div className="flex items-center mb-2">
+                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <span className="font-medium">Change Impact</span>
+                      </div>
+                      <p className="mb-2">
+                        {(() => {
+                          const totalChanges = (selectedGitActivity.additions || 0) + (selectedGitActivity.deletions || 0);
+                          if (totalChanges > 1000) return "This is a significant change affecting many lines of code.";
+                          if (totalChanges > 500) return "This is a substantial change with moderate impact.";
+                          if (totalChanges > 100) return "This is a moderate change affecting several files.";
+                          return "This is a small, focused change with minimal impact.";
+                        })()}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        Impact assessment based on total lines changed and files affected.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
