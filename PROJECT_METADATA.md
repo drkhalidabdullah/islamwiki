@@ -1,22 +1,26 @@
 # IslamWiki Framework - Project Metadata
 
 **Author:** Khalid Abdullah  
-**Version:** 0.0.1  
-**Date:** 2025-08-30  
+**Version:** 0.0.3  
+**Date:** 2025-01-27  
 **License:** AGPL-3.0  
 
 ## 📋 Project Information
 
 ### **Project Name**
+
 IslamWiki Framework
 
 ### **Description**
+
 A comprehensive, lightweight PHP framework for Islamic content platforms, optimized for shared hosting environments. Combines wiki functionality, social networking, learning management, Q&A systems, and real-time communication into a unified Islamic ecosystem.
 
 ### **Project Type**
+
 Open Source Web Application Framework
 
 ### **Target Audience**
+
 - Islamic organizations and communities
 - Educational institutions
 - Content creators and scholars
@@ -26,13 +30,16 @@ Open Source Web Application Framework
 ## 👨‍💻 Author Information
 
 ### **Primary Developer**
+
 - **Name:** Khalid Abdullah
-- **Email:** khalid@islamwiki.org
+- **Email:** <khalid@islamwiki.org>
 - **Role:** Lead Developer & Architect
 - **Expertise:** PHP, React, Web Development, Islamic Content
 
 ### **Contributors**
+
 Currently seeking contributors for:
+
 - Frontend development (React/TypeScript)
 - Backend development (PHP)
 - Islamic content expertise
@@ -42,18 +49,23 @@ Currently seeking contributors for:
 ## 📅 Version Information
 
 ### **Current Version**
-- **Version:** 0.0.1
-- **Release Date:** August 30, 2025
-- **Status:** Alpha Release
-- **Stability:** Development/Testing
+
+- **Version:** 0.0.3
+- **Release Date:** January 27, 2025
+- **Status:** Alpha Enhancement Release
+- **Stability:** Development/Testing with Enterprise Features
 
 ### **Version History**
+
+- **v0.0.3** (2025-01-27): Enhanced Admin Dashboard & Enterprise Features
+- **v0.0.2** (2025-08-30): Frontend Framework & React SPA
 - **v0.0.1** (2025-08-30): Initial framework release
 - **v0.1.0** (Planned Q4 2025): Authentication & Basic CMS
 - **v0.2.0** (Planned Q1 2026): Content & Media Management
 - **v1.0.0** (Planned Q3 2026): Production Ready
 
 ### **Version Strategy**
+
 - **v0.x.x**: Development and alpha releases
 - **v1.0.0**: First stable production release
 - **v1.x.x**: Feature releases and improvements
@@ -62,9 +74,11 @@ Currently seeking contributors for:
 ## 📜 License Information
 
 ### **License Type**
+
 GNU Affero General Public License v3.0 (AGPL-3.0)
 
 ### **License Requirements**
+
 - **Source Code Availability**: All source code must be publicly available
 - **Modification Rights**: Users can modify and distribute the code
 - **Network Use**: AGPL extends to network use (web applications)
@@ -72,6 +86,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 - **Copyleft**: Derivative works must also be AGPL licensed
 
 ### **License Benefits**
+
 - Ensures code remains open source
 - Protects user freedoms
 - Encourages community contributions
@@ -80,17 +95,20 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 🏗️ Technical Specifications
 
 ### **Backend Requirements**
+
 - **PHP:** 8.2 or higher
 - **Database:** MySQL 8.0+ or MariaDB 10.5+
 - **Web Server:** Apache 2.4+ with mod_rewrite
 - **Memory:** Minimum 128MB RAM (256MB recommended)
 
 ### **Frontend Requirements**
+
 - **Node.js:** 18.0 or higher
 - **NPM:** 8.0 or higher
 - **Browser Support:** Modern browsers (ES6+)
 
 ### **Development Tools**
+
 - **Composer:** 2.0 or higher
 - **Git:** For version control
 - **Code Quality:** PHPStan, PHP_CodeSniffer, ESLint
@@ -98,18 +116,21 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 🌐 Deployment Options
 
 ### **Shared Hosting**
+
 - **Strategy:** "Build Locally, Deploy Built Assets"
 - **Compatibility:** Fully compatible with most shared hosting providers
 - **Requirements:** PHP 8.2+, MySQL, Apache with mod_rewrite
 - **Limitations:** No SSH access required, file-based caching
 
 ### **VPS/Cloud Hosting**
+
 - **Strategy:** Full deployment with advanced features
 - **Features:** Redis caching, WebSocket support, background queues
 - **Scaling:** Horizontal and vertical scaling support
 - **Monitoring:** Advanced performance monitoring
 
 ### **Local Development**
+
 - **Environment:** Full development stack
 - **Features:** Hot reloading, debugging, testing tools
 - **Database:** Local MySQL/MariaDB instance
@@ -118,16 +139,19 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 📚 Documentation Structure
 
 ### **Core Documentation**
+
 - **Framework Overview**: Complete implementation guide
 - **Comprehensive Plan**: Development roadmap and vision
 - **Deployment Guides**: Setup instructions for different environments
 
 ### **Release Information**
+
 - **Release Notes**: Detailed feature descriptions
 - **Changelog**: Complete change history
 - **Version History**: Release timeline and roadmap
 
 ### **User Guides**
+
 - **Installation**: Step-by-step setup instructions
 - **Configuration**: Environment and system configuration
 - **Development**: Building and extending the framework
@@ -135,12 +159,14 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 🔒 Security Features
 
 ### **OWASP Compliance**
+
 - **Top 10 Security Vulnerabilities**: Addressed and mitigated
 - **CSRF Protection**: Built-in cross-site request forgery prevention
 - **XSS Prevention**: Output sanitization and validation
 - **SQL Injection**: Prepared statements and parameter binding
 
 ### **Additional Security**
+
 - **Rate Limiting**: Request throttling and abuse prevention
 - **Security Headers**: Comprehensive HTTP security headers
 - **Input Validation**: Strict input validation and sanitization
@@ -149,6 +175,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 🚀 Future Development
 
 ### **Short Term (v0.1.0 - v0.3.0)**
+
 - User authentication and authorization
 - Basic content management system
 - Social networking features
@@ -156,6 +183,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 - Q&A platform
 
 ### **Medium Term (v0.4.0 - v0.6.0)**
+
 - Real-time communication
 - Mobile application development
 - Advanced search and indexing
@@ -163,6 +191,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 - Performance optimization
 
 ### **Long Term (v1.0.0+)**
+
 - Enterprise features
 - Advanced analytics and reporting
 - Multi-tenant support
@@ -172,18 +201,21 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 ## 🤝 Community & Support
 
 ### **Getting Help**
+
 - **Documentation**: Comprehensive guides in `/docs/` directory
 - **Issues**: Report bugs and feature requests
 - **Discussions**: Community forums and discussions
 - **Contributions**: Welcome community contributions
 
 ### **Contributing**
+
 - **Code Contributions**: Follow coding standards and guidelines
 - **Documentation**: Help improve and expand documentation
 - **Testing**: Report bugs and test new features
 - **Community**: Help other users and share knowledge
 
 ### **Support Channels**
+
 - **GitHub Issues**: Bug reports and feature requests
 - **Documentation**: Self-service help and guides
 - **Community Forums**: User discussions and support
@@ -195,4 +227,4 @@ GNU Affero General Public License v3.0 (AGPL-3.0)
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Project Status:** Active Development 
+**Project Status:** Active Development

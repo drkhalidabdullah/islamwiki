@@ -1,8 +1,8 @@
 # IslamWiki Framework - Development Roadmap
 
 **Author:** Khalid Abdullah  
-**Version:** 0.0.1  
-**Date:** 2025-08-30  
+**Version:** 0.0.3  
+**Date:** 2025-01-27  
 **License:** AGPL-3.0  
 
 ## 🗺️ **Development Roadmap Overview**
