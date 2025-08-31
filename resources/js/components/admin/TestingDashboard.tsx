@@ -254,7 +254,7 @@ const TestingDashboard: React.FC = () => {
         lastRun: new Date().toISOString(),
         status: 'passing' as const,
         coverage: Math.floor(Math.random() * 30) + 70,
-        output: `Running ${suite.name}...\n✓ All tests passed!\nCoverage: 85%`
+        output: `Running ${suite.name}...\n✓ All tests passed!\nCoverage: ${Math.floor(Math.random() * 30) + 70}%`
       };
       
       const finalSuite = {
@@ -611,14 +611,36 @@ const TestingDashboard: React.FC = () => {
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-medium">Test Suite Information</h3>
-              <p className="text-sm text-gray-600">
-                <strong>Name:</strong> {selectedTest.name}<br />
-                <strong>Category:</strong> {selectedTest.category}<br />
-                <strong>Priority:</strong> {selectedTest.priority}<br />
-                <strong>Command:</strong> <code className="bg-gray-100 px-1 rounded">{selectedTest.command}</code>
-              </p>
+              <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
+                <div><strong>Name:</strong> {selectedTest.name}</div>
+                <div><strong>Category:</strong> {selectedTest.category}</div>
+                <div><strong>Priority:</strong> {selectedTest.priority}</div>
+                <div><strong>Command:</strong> <code className="bg-gray-200 px-2 py-1 rounded">{selectedTest.command}</code></div>
+              </div>
             </div>
             
+            {/* Test Results Summary */}
+            <div>
+              <h3 className="text-lg font-medium">Test Results Summary</h3>
+              <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
+                <div><strong>Total Tests:</strong> {selectedTest.totalTests}</div>
+                <div><strong>Passed:</strong> <span className="text-green-600">{selectedTest.passedTests}</span></div>
+                <div><strong>Failed:</strong> <span className="text-red-600">{selectedTest.failedTests}</span></div>
+                <div><strong>Duration:</strong> {selectedTest.duration}s</div>
+                <div><strong>Coverage:</strong> {selectedTest.coverage}%</div>
+                <div><strong>Status:</strong> 
+                  <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                    selectedTest.status === 'passing' ? 'bg-green-100 text-green-800' :
+                    selectedTest.status === 'failing' ? 'bg-red-100 text-red-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {selectedTest.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Test Output */}
             {selectedTest.output && (
               <div>
                 <h3 className="text-lg font-medium">Test Output</h3>
@@ -628,6 +650,7 @@ const TestingDashboard: React.FC = () => {
               </div>
             )}
             
+            {/* Error Output */}
             {selectedTest.errorOutput && (
               <div>
                 <h3 className="text-lg font-medium">Error Output</h3>
