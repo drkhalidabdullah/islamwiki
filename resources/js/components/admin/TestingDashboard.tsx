@@ -199,7 +199,10 @@ const TestingDashboard: React.FC = () => {
     contentToCopy += `=== COMPLETE TESTING DASHBOARD REPORT ===\n`;
     contentToCopy += `Generated: ${new Date().toLocaleString()}\n\n`;
     
-    testSuites.forEach((suite, index) => {
+    // Use currentTestSuites to get the latest test results
+    const currentSuites = getCurrentTestSuites();
+    
+    currentSuites.forEach((suite, index) => {
       contentToCopy += `=== TEST SUITE ${index + 1}: ${suite.name} ===\n`;
       contentToCopy += `Status: ${suite.status}\n`;
       contentToCopy += `Total Tests: ${suite.totalTests}\n`;
@@ -207,22 +210,53 @@ const TestingDashboard: React.FC = () => {
       contentToCopy += `Failed: ${suite.failedTests}\n`;
       contentToCopy += `Skipped: ${suite.skippedTests}\n`;
       contentToCopy += `Coverage: ${suite.coverage}%\n`;
-      contentToCopy += `Last Run: ${suite.lastRun}\n\n`;
+      contentToCopy += `Last Run: ${suite.lastRun}\n`;
+      
+      // Add test results if available
+      if (suite.testResults && suite.testResults.length > 0) {
+        contentToCopy += `\nTest Results:\n`;
+        suite.testResults
+          .sort((a: TestResult, b: TestResult) => {
+            const priorityOrder: Record<string, number> = { failed: 0, skipped: 1, passed: 2 };
+            return priorityOrder[a.status] - priorityOrder[b.status];
+          })
+          .forEach((test: TestResult, testIndex: number) => {
+            contentToCopy += `  ${testIndex + 1}. ${test.name} (${test.status.toUpperCase()})\n`;
+            if (test.status === 'failed' && test.message) {
+              contentToCopy += `     Error: ${test.message}\n`;
+            } else if (test.status === 'skipped' && test.message) {
+              contentToCopy += `     Reason: ${test.message}\n`;
+            }
+          });
+      }
+      
+      contentToCopy += `\n`;
     });
     
-    // Add overall statistics
-    const totalTests = testSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
-    const totalPassed = testSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
-    const totalFailed = testSuites.reduce((sum, suite) => sum + suite.failedTests, 0);
-    const totalSkipped = testSuites.reduce((sum, suite) => sum + suite.skippedTests, 0);
+    // Add overall statistics using current data
+    const totalTests = currentSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
+    const totalPassed = currentSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
+    const totalFailed = currentSuites.reduce((sum, suite) => sum + suite.failedTests, 0);
+    const totalSkipped = currentSuites.reduce((sum, suite) => sum + suite.skippedTests, 0);
     
     contentToCopy += `=== OVERALL STATISTICS ===\n`;
-    contentToCopy += `Total Test Suites: ${testSuites.length}\n`;
+    contentToCopy += `Total Test Suites: ${currentSuites.length}\n`;
     contentToCopy += `Total Tests: ${totalTests}\n`;
     contentToCopy += `Total Passed: ${totalPassed}\n`;
     contentToCopy += `Total Failed: ${totalFailed}\n`;
     contentToCopy += `Total Skipped: ${totalSkipped}\n`;
     contentToCopy += `Overall Success Rate: ${totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0}%\n`;
+    
+    // Add summary of failures if any
+    if (totalFailed > 0) {
+      contentToCopy += `\n=== FAILURE SUMMARY ===\n`;
+      contentToCopy += `🚨 ${totalFailed} test(s) are currently failing\n`;
+      currentSuites
+        .filter(suite => suite.failedTests > 0)
+        .forEach(suite => {
+          contentToCopy += `• ${suite.name}: ${suite.failedTests} failure(s)\n`;
+        });
+    }
 
     try {
       await navigator.clipboard.writeText(contentToCopy);
