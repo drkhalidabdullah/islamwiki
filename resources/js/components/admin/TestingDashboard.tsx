@@ -78,6 +78,8 @@ const TestingDashboard: React.FC = () => {
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [metricsUpdateTrigger, setMetricsUpdateTrigger] = useState(0);
   const [copyFeedback, setCopyFeedback] = useState<string>('');
+  const [selectedPerformanceMetric, setSelectedPerformanceMetric] = useState<PerformanceMetric | null>(null);
+  const [isPerformanceModalOpen, setIsPerformanceModalOpen] = useState(false);
 
   // Function to copy test details to clipboard
   const copyTestDetails = async (test: TestResult) => {
@@ -273,6 +275,12 @@ const TestingDashboard: React.FC = () => {
       setCopyFeedback('Copied complete testing dashboard report!');
       setTimeout(() => setCopyFeedback(''), 2000);
     }
+  };
+
+  // Function to show performance metric details
+  const showPerformanceDetails = (metric: PerformanceMetric) => {
+    setSelectedPerformanceMetric(metric);
+    setIsPerformanceModalOpen(true);
   };
 
   // Real test suites with actual commands
@@ -883,7 +891,11 @@ const TestingDashboard: React.FC = () => {
                 }`}>
                   {metric.status}
                 </span>
-                <Button size="sm" variant="outline">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => showPerformanceDetails(metric)}
+                >
                   <BarChart3 className="w-4 h-4 mr-1" />
                   Details
                 </Button>
@@ -1138,6 +1150,195 @@ const TestingDashboard: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+      </Modal>
+
+      {/* Performance Details Modal */}
+      <Modal
+        isOpen={isPerformanceModalOpen}
+        onClose={() => setIsPerformanceModalOpen(false)}
+        title="Performance Metric Details"
+        size="lg"
+      >
+        {selectedPerformanceMetric && (
+          <div className="space-y-6">
+            {/* Basic Information */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">Endpoint Information</h3>
+              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                <div className="flex justify-between">
+                  <span className="font-medium">Method:</span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    selectedPerformanceMetric.method === 'GET' ? 'bg-blue-100 text-blue-800' :
+                    selectedPerformanceMetric.method === 'POST' ? 'bg-green-100 text-green-800' :
+                    selectedPerformanceMetric.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
+                    selectedPerformanceMetric.method === 'DELETE' ? 'bg-red-100 text-red-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {selectedPerformanceMetric.method}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Endpoint:</span>
+                  <code className="bg-gray-200 px-2 py-1 rounded text-sm">{selectedPerformanceMetric.endpoint}</code>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Status:</span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    selectedPerformanceMetric.status === 'optimal' ? 'bg-green-100 text-green-800' :
+                    selectedPerformanceMetric.status === 'good' ? 'bg-blue-100 text-blue-800' :
+                    selectedPerformanceMetric.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }`}>
+                    {selectedPerformanceMetric.status.toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Last Tested:</span>
+                  <span className="text-gray-600">{selectedPerformanceMetric.lastTested}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">Performance Data</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {selectedPerformanceMetric.avgResponseTime}ms
+                  </div>
+                  <div className="text-sm text-gray-600">Average Response</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {selectedPerformanceMetric.avgResponseTime < 100 ? 'Excellent' :
+                     selectedPerformanceMetric.avgResponseTime < 200 ? 'Good' :
+                     selectedPerformanceMetric.avgResponseTime < 500 ? 'Acceptable' : 'Slow'}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">
+                    {selectedPerformanceMetric.p95ResponseTime}ms
+                  </div>
+                  <div className="text-sm text-gray-600">95th Percentile</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {selectedPerformanceMetric.p95ResponseTime < 200 ? 'Excellent' :
+                     selectedPerformanceMetric.p95ResponseTime < 400 ? 'Good' :
+                     selectedPerformanceMetric.p95ResponseTime < 1000 ? 'Acceptable' : 'Slow'}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {selectedPerformanceMetric.requestsPerSecond}
+                  </div>
+                  <div className="text-sm text-gray-600">Requests/Second</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {selectedPerformanceMetric.requestsPerSecond > 1000 ? 'Excellent' :
+                     selectedPerformanceMetric.requestsPerSecond > 500 ? 'Good' :
+                     selectedPerformanceMetric.requestsPerSecond > 100 ? 'Acceptable' : 'Low'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Rate */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">Error Analysis</h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-medium">Error Rate:</span>
+                  <span className={`text-lg font-bold ${
+                    selectedPerformanceMetric.errorRate < 0.1 ? 'text-green-600' :
+                    selectedPerformanceMetric.errorRate < 1 ? 'text-yellow-600' :
+                    'text-red-600'
+                  }`}>
+                    {selectedPerformanceMetric.errorRate.toFixed(2)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full ${
+                      selectedPerformanceMetric.errorRate < 0.1 ? 'bg-green-500' :
+                      selectedPerformanceMetric.errorRate < 1 ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`}
+                    style={{ width: `${Math.min(selectedPerformanceMetric.errorRate * 10, 100)}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-600 mt-2">
+                  {selectedPerformanceMetric.errorRate < 0.1 ? 'Excellent error rate' :
+                   selectedPerformanceMetric.errorRate < 1 ? 'Acceptable error rate' :
+                   'High error rate - needs attention'}
+                </div>
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">Recommendations</h3>
+              <div className="space-y-3">
+                {selectedPerformanceMetric.status === 'optimal' && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-green-600 mr-2">✅</span>
+                      <span className="text-green-800">Performance is optimal. No action needed.</span>
+                    </div>
+                  </div>
+                )}
+                {selectedPerformanceMetric.status === 'good' && (
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-blue-600 mr-2">ℹ️</span>
+                      <span className="text-blue-800">Performance is good. Consider monitoring for trends.</span>
+                    </div>
+                  </div>
+                )}
+                {selectedPerformanceMetric.status === 'warning' && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-yellow-600 mr-2">⚠️</span>
+                      <span className="text-yellow-800">Performance is acceptable but could be improved. Consider optimization.</span>
+                    </div>
+                  </div>
+                )}
+                {selectedPerformanceMetric.status === 'critical' && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-red-600 mr-2">🚨</span>
+                      <span className="text-red-800">Performance is critical. Immediate optimization required.</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Specific recommendations based on metrics */}
+                {selectedPerformanceMetric.avgResponseTime > 500 && (
+                  <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-orange-600 mr-2">💡</span>
+                      <span className="text-orange-800">High response time detected. Consider database query optimization, caching, or code refactoring.</span>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedPerformanceMetric.errorRate > 1 && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-red-600 mr-2">🔧</span>
+                      <span className="text-red-800">High error rate detected. Investigate server logs, check for bugs, and verify error handling.</span>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedPerformanceMetric.requestsPerSecond < 100 && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center">
+                      <span className="text-yellow-600 mr-2">📈</span>
+                      <span className="text-yellow-800">Low throughput detected. Consider load balancing, server scaling, or performance optimization.</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </Modal>
