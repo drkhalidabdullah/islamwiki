@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Modal } from '../index';
-import { Play, StopCircle, RefreshCw, BarChart3 } from 'lucide-react';
+import { Play, StopCircle, RefreshCw, BarChart3, Copy } from 'lucide-react';
 
 interface TestResult {
   id: string;
@@ -77,6 +77,50 @@ const TestingDashboard: React.FC = () => {
   const [testResults, setTestResults] = useState<Record<string, any>>({});
   const [isRunningTests, setIsRunningTests] = useState(false);
   const [metricsUpdateTrigger, setMetricsUpdateTrigger] = useState(0);
+  const [copyFeedback, setCopyFeedback] = useState<string>('');
+
+  // Function to copy test details to clipboard
+  const copyTestDetails = async (test: TestResult) => {
+    let contentToCopy = '';
+    
+    if (test.status === 'failed') {
+      contentToCopy = `Test: ${test.name}\n`;
+      contentToCopy += `Status: FAILED\n`;
+      contentToCopy += `File: ${test.file}${test.line ? `:${test.line}` : ''}\n`;
+      contentToCopy += `Duration: ${test.duration.toFixed(2)}s\n`;
+      if (test.message) contentToCopy += `Error: ${test.message}\n`;
+      if (test.expected) contentToCopy += `Expected: ${test.expected}\n`;
+      if (test.actual) contentToCopy += `Actual: ${test.actual}\n`;
+      if (test.stackTrace) contentToCopy += `Stack Trace:\n${test.stackTrace}\n`;
+    } else if (test.status === 'skipped') {
+      contentToCopy = `Test: ${test.name}\n`;
+      contentToCopy += `Status: SKIPPED\n`;
+      contentToCopy += `File: ${test.file}${test.line ? `:${test.line}` : ''}\n`;
+      contentToCopy += `Duration: ${test.duration.toFixed(2)}s\n`;
+      if (test.message) contentToCopy += `Reason: ${test.message}\n`;
+    } else {
+      contentToCopy = `Test: ${test.name}\n`;
+      contentToCopy += `Status: PASSED\n`;
+      contentToCopy += `File: ${test.file}${test.line ? `:${test.line}` : ''}\n`;
+      contentToCopy += `Duration: ${test.duration.toFixed(2)}s\n`;
+    }
+
+    try {
+      await navigator.clipboard.writeText(contentToCopy);
+      setCopyFeedback(`Copied ${test.name} details!`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = contentToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopyFeedback(`Copied ${test.name} details!`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    }
+  };
 
   // Real test suites with actual commands
   const testSuites: TestSuite[] = [
@@ -720,6 +764,12 @@ const TestingDashboard: React.FC = () => {
       >
         {selectedTest && (
           <div className="space-y-4">
+            {/* Copy Feedback Message */}
+            {copyFeedback && (
+              <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
+                {copyFeedback}
+              </div>
+            )}
             <div>
               <h3 className="text-lg font-medium">Test Suite Information</h3>
               <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
@@ -819,6 +869,13 @@ const TestingDashboard: React.FC = () => {
                             }`}>
                               {test.status}
                             </span>
+                            <button
+                              onClick={() => copyTestDetails(test)}
+                              className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors duration-200"
+                              title="Copy test details to clipboard"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
                           </div>
                         </div>
                         
