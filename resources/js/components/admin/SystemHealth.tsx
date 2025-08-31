@@ -473,6 +473,8 @@ const SystemHealth: React.FC = () => {
 
   // Refresh system health monitor
   const refreshSystemHealth = async () => {
+    if (isRunningHealthChecks || isCollectingResources) return; // Prevent multiple simultaneous refreshes
+    
     try {
       await runAllHealthChecks();
       await collectSystemResources();
@@ -633,13 +635,13 @@ const SystemHealth: React.FC = () => {
             </Button>
             <Button
               onClick={refreshSystemHealth}
-              disabled={isRunningHealthChecks}
+              disabled={isRunningHealthChecks || isCollectingResources}
               className={`bg-green-600 hover:bg-green-700 transition-all duration-200 ${
-                isRunningHealthChecks ? 'animate-pulse shadow-lg' : ''
+                (isRunningHealthChecks || isCollectingResources) ? 'animate-pulse shadow-lg' : ''
               }`}
             >
               <svg 
-                className={`w-5 h-5 mr-2 ${isRunningHealthChecks ? 'animate-spin' : 'hover:rotate-90 transition-transform duration-200'}`} 
+                className={`w-5 h-5 mr-2 ${(isRunningHealthChecks || isCollectingResources) ? 'animate-spin' : 'hover:rotate-90 transition-transform duration-200'}`} 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -657,7 +659,7 @@ const SystemHealth: React.FC = () => {
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
                 />
               </svg>
-              {isRunningHealthChecks ? 'Refreshing...' : 'Refresh Now'}
+              {(isRunningHealthChecks || isCollectingResources) ? 'Refreshing...' : 'Refresh Now'}
             </Button>
           </div>
         </div>
@@ -978,7 +980,7 @@ const SystemHealth: React.FC = () => {
           selectedReport ? `Diagnostic Report - ${new Date(selectedReport.timestamp).toLocaleString()}` :
           'System Diagnostic Report'
         }
-        size="lg"
+        size="xl"
       >
         {selectedHealthCheck ? (
           <div className="space-y-4">
