@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import jwtService from '../services/jwtService';
 
 interface User {
   id: number;
@@ -17,6 +18,7 @@ interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  tokenExpiration: Date | null;
 }
 
 interface AuthActions {
@@ -26,27 +28,39 @@ interface AuthActions {
   setToken: (token: string) => void;
   setLoading: (loading: boolean) => void;
   clearAuth: () => void;
+  refreshToken: () => string | null;
+  isTokenValid: () => boolean;
 }
 
 type AuthStore = AuthState & AuthActions;
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // State
       user: null,
       token: null,
       isAuthenticated: false,
       isLoading: false,
+      tokenExpiration: null,
 
       // Actions
-      login: (user: User, token: string) =>
+      login: (user: User, token: string) => {
+        // Verify the token is valid
+        if (!jwtService.verifyToken(token)) {
+          console.error('Invalid token provided');
+          return;
+        }
+        
+        const expiration = jwtService.getTokenExpiration(token);
         set({
           user,
           token,
           isAuthenticated: true,
           isLoading: false,
-        }),
+          tokenExpiration: expiration,
+        });
+      },
 
       logout: () =>
         set({
@@ -54,6 +68,7 @@ export const useAuthStore = create<AuthStore>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
+          tokenExpiration: null,
         }),
 
       setUser: (user: User) =>
@@ -77,7 +92,26 @@ export const useAuthStore = create<AuthStore>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
+          tokenExpiration: null,
         }),
+
+      refreshToken: () => {
+        const { token } = get();
+        if (!token) return null;
+        
+        const newToken = jwtService.refreshToken(token);
+        if (newToken) {
+          const expiration = jwtService.getTokenExpiration(newToken);
+          set({ token: newToken, tokenExpiration: expiration });
+        }
+        return newToken;
+      },
+
+      isTokenValid: () => {
+        const { token } = get();
+        if (!token) return false;
+        return !jwtService.isTokenExpired(token);
+      },
     }),
     {
       name: 'auth-storage',

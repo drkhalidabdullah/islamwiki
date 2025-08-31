@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button, Input, Card } from '../components/index';
+import jwtService from '../services/jwtService';
+import rateLimitService from '../services/rateLimitService';
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -56,9 +58,30 @@ const LoginPage: React.FC = () => {
       return;
     }
     
+    // Check rate limiting
+    const rateLimitStatus = rateLimitService.getStatus('login', formData.email);
+    
+    if (rateLimitStatus.blocked) {
+      const minutesLeft = Math.ceil(rateLimitStatus.timeUntilReset / 60000);
+      setErrors({ 
+        general: `Too many login attempts. Please try again in ${minutesLeft} minutes.` 
+      });
+      return;
+    }
+    
+    if (!rateLimitService.isAllowed('login', formData.email)) {
+      setErrors({ 
+        general: `Too many login attempts. Please wait before trying again.` 
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
+      // Record login attempt
+      rateLimitService.recordAttempt('login', formData.email);
+      
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -74,10 +97,19 @@ const LoginPage: React.FC = () => {
         created_at: new Date().toISOString()
       };
       
-      const mockToken = 'mock-jwt-token-' + Date.now();
+      // Generate real JWT token
+      const token = jwtService.generateToken({
+        userId: mockUser.id,
+        email: mockUser.email,
+        role: mockUser.role_name,
+        username: mockUser.username
+      });
       
       // Store authentication data
-      login(mockUser, mockToken);
+      login(mockUser, token);
+      
+      // Reset rate limit on successful login
+      rateLimitService.reset('login', formData.email);
       
       // Redirect based on role and original destination
       if (mockUser.role_name === 'admin') {
@@ -127,6 +159,26 @@ const LoginPage: React.FC = () => {
                 {errors.general}
               </div>
             )}
+            
+            {/* Rate Limit Status */}
+            {(() => {
+              const rateLimitStatus = rateLimitService.getStatus('login', formData.email);
+              if (rateLimitStatus.remaining < 5 && formData.email) {
+                return (
+                  <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-md text-sm">
+                    <div className="flex items-center justify-between">
+                      <span>Login attempts remaining: {rateLimitStatus.remaining}</span>
+                      {rateLimitStatus.timeUntilReset > 0 && (
+                        <span className="text-xs">
+                          Resets in {Math.ceil(rateLimitStatus.timeUntilReset / 60000)}m
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
