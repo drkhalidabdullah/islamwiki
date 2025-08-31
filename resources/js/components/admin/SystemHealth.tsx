@@ -296,16 +296,16 @@ const SystemHealth: React.FC = () => {
         
         switch (resource.name) {
           case 'CPU Usage':
-            newValue = Math.random() * 100;
+            newValue = Math.random() > 0.3 ? 85 + Math.random() * 15 : Math.random() * 100; // 30% chance of critical (85-100%)
             break;
           case 'Memory Usage':
-            newValue = 30 + Math.random() * 60; // 30-90%
+            newValue = Math.random() > 0.4 ? 90 + Math.random() * 10 : 30 + Math.random() * 60; // 40% chance of critical (90-100%)
             break;
           case 'Disk Usage':
-            newValue = 20 + Math.random() * 60; // 20-80%
+            newValue = Math.random() > 0.35 ? 90 + Math.random() * 10 : 20 + Math.random() * 60; // 35% chance of critical (90-100%)
             break;
           case 'Network I/O':
-            newValue = Math.random() * 800; // 0-800 MB/s
+            newValue = Math.random() > 0.25 ? 750 + Math.random() * 50 : Math.random() * 800; // 25% chance of critical (750-800 MB/s)
             break;
         }
         
@@ -357,12 +357,26 @@ const SystemHealth: React.FC = () => {
       // Collect system resources
       await collectSystemResources();
       
-      // Generate diagnostic report
-      const currentHealthChecks = healthChecks;
-      const currentResources = systemResources;
+      // Wait a bit for state updates to complete, then get the latest data
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      const issues = currentHealthChecks.filter(check => check.status === 'critical').length;
+      // Generate diagnostic report - get the latest state after async operations
+      const currentHealthChecks = [...healthChecks];
+      const currentResources = [...systemResources];
+      
+      const criticalHealthChecks = currentHealthChecks.filter(check => check.status === 'critical').length;
+      const criticalResources = currentResources.filter(resource => resource.status === 'critical').length;
+      const issues = criticalHealthChecks + criticalResources;
       const warnings = currentHealthChecks.filter(check => check.status === 'warning').length;
+      
+      console.log('🔍 Diagnostic Report Breakdown:', {
+        criticalHealthChecks,
+        criticalResources,
+        totalIssues: issues,
+        warnings,
+        healthCheckStatuses: currentHealthChecks.map(hc => ({ name: hc.name, status: hc.status })),
+        resourceStatuses: currentResources.map(r => ({ name: r.name, status: r.status, value: r.current }))
+      });
       
       let overallHealth: 'excellent' | 'good' | 'fair' | 'poor' = 'excellent';
       if (issues > 0) overallHealth = 'poor';
