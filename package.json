@@ -8,11 +8,13 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
-        "build:shared-hosting": "tsc && vite build --mode production && npm run optimize-assets",
+        "build:shared-hosting": "npm run preserve-htaccess && tsc && vite build --mode production && npm run restore-htaccess && npm run optimize-assets",
         "preview": "vite preview",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "type-check": "tsc --noEmit",
-        "optimize-assets": "echo 'Assets optimized for shared hosting deployment'"
+        "optimize-assets": "echo 'Assets optimized for shared hosting deployment'",
+        "preserve-htaccess": "./scripts/preserve-htaccess.sh",
+        "restore-htaccess": "./scripts/restore-htaccess.sh"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.3.2",
