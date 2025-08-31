@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Modal } from '../index';
 import { Play, StopCircle, RefreshCw, BarChart3 } from 'lucide-react';
 
+interface TestResult {
+  id: string;
+  name: string;
+  status: 'passed' | 'failed' | 'skipped';
+  duration: number;
+  file: string;
+  line?: number;
+  message?: string;
+  expected?: string;
+  actual?: string;
+  stackTrace?: string;
+  category?: string;
+}
+
 interface TestSuite {
   id: string;
   name: string;
@@ -19,6 +33,7 @@ interface TestSuite {
   command: string;
   output?: string;
   errorOutput?: string;
+  testResults?: TestResult[];
 }
 
 interface CodeQualityMetric {
@@ -244,24 +259,117 @@ const TestingDashboard: React.FC = () => {
       // For now, we'll simulate the execution
       await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
       
-      // Simulate test results
-      const coverage = Math.floor(Math.random() * 30) + 70; // Generate coverage once
+      // Simulate test results with realistic data
+      const totalTests = Math.floor(Math.random() * 50) + 10;
+      const failedTests = Math.floor(Math.random() * 5);
+      const passedTests = totalTests - failedTests;
+      const skippedTests = Math.floor(Math.random() * 3);
+      const coverage = Math.floor(Math.random() * 30) + 70;
+      const duration = Math.random() * 10 + 1;
+      
+      // Generate detailed test results
+      const testResults: TestResult[] = [];
+      
+      // Generate passed tests
+      for (let i = 0; i < passedTests; i++) {
+        testResults.push({
+          id: `test-${suite.id}-${i}`,
+          name: `Test ${suite.name} ${i + 1}`,
+          status: 'passed',
+          duration: Math.random() * 2 + 0.1,
+          file: `tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php`,
+          line: Math.floor(Math.random() * 100) + 1,
+          category: suite.category
+        });
+      }
+      
+      // Generate failed tests with detailed failure information
+      for (let i = 0; i < failedTests; i++) {
+        const failureTypes = [
+          {
+            message: 'Assertion failed: Expected true but got false',
+            expected: 'true',
+            actual: 'false',
+            stackTrace: `AssertionError: Expected true but got false
+  at /var/www/html/tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/vendor/phpunit/phpunit/src/Framework/TestResult.php:${Math.floor(Math.random() * 100) + 1}`
+          },
+          {
+            message: 'Exception: Database connection failed',
+            expected: 'Successful database connection',
+            actual: 'Connection refused',
+            stackTrace: `DatabaseException: Connection refused
+  at /var/www/html/src/Core/Database/Database.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php:${Math.floor(Math.random() * 100) + 1}`
+          },
+          {
+            message: 'Timeout: Test exceeded 30 second limit',
+            expected: 'Test completion within 30 seconds',
+            actual: 'Test ran for 45.2 seconds',
+            stackTrace: `TimeoutException: Test exceeded 30 second limit
+  at /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php:${Math.floor(Math.random() * 100) + 1}`
+          },
+          {
+            message: 'TypeError: Argument 1 must be of type string, null given',
+            expected: 'string',
+            actual: 'null',
+            stackTrace: `TypeError: Argument 1 must be of type string, null given
+  at /var/www/html/src/Core/Container/Container.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php:${Math.floor(Math.random() * 100) + 1}
+  at /var/www/html/vendor/phpunit/phpunit/src/Framework/TestCase.php:${Math.floor(Math.random() * 100) + 1}`
+          }
+        ];
+        
+        const failure = failureTypes[Math.floor(Math.random() * failureTypes.length)];
+        
+        testResults.push({
+          id: `test-${suite.id}-failed-${i}`,
+          name: `Test ${suite.name} Failed ${i + 1}`,
+          status: 'failed',
+          duration: Math.random() * 5 + 1,
+          file: `tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php`,
+          line: Math.floor(Math.random() * 100) + 1,
+          message: failure.message,
+          expected: failure.expected,
+          actual: failure.actual,
+          stackTrace: failure.stackTrace,
+          category: suite.category
+        });
+      }
+      
+      // Generate skipped tests
+      for (let i = 0; i < skippedTests; i++) {
+        testResults.push({
+          id: `test-${suite.id}-skipped-${i}`,
+          name: `Test ${suite.name} Skipped ${i + 1}`,
+          status: 'skipped',
+          duration: 0,
+          file: `tests/${suite.category}/${suite.name.toLowerCase().replace(/\s+/g, '')}Test.php`,
+          line: Math.floor(Math.random() * 100) + 1,
+          message: 'Test skipped: Database not available',
+          category: suite.category
+        });
+      }
+      
       const mockResults = {
-        totalTests: Math.floor(Math.random() * 50) + 10,
-        passedTests: Math.floor(Math.random() * 45) + 8,
-        failedTests: Math.floor(Math.random() * 5),
-        skippedTests: Math.floor(Math.random() * 3),
-        duration: Math.random() * 10 + 1,
+        totalTests,
+        passedTests,
+        failedTests,
+        skippedTests,
+        duration,
         lastRun: new Date().toISOString(),
-        status: 'passing' as const,
-        coverage: coverage,
-        output: `Running ${suite.name}...\n✓ All tests passed!\nCoverage: ${coverage}%`
+        status: failedTests > 0 ? 'failing' as const : 'passing' as const,
+        coverage,
+        output: `Running ${suite.name}...\n${passedTests} tests passed, ${failedTests} failed, ${skippedTests} skipped\nCoverage: ${coverage}%`,
+        testResults
       };
       
       const finalSuite = {
         ...suite,
-        ...mockResults,
-        status: mockResults.failedTests > 0 ? 'failing' : 'passing'
+        ...mockResults
       };
       
       console.log(`Test suite ${suite.name} - Generated coverage: ${mockResults.coverage}%, Output coverage: ${mockResults.output.match(/Coverage: (\d+)%/)?.[1]}%`);
@@ -629,6 +737,7 @@ const TestingDashboard: React.FC = () => {
                 <div><strong>Total Tests:</strong> {selectedTest.totalTests}</div>
                 <div><strong>Passed:</strong> <span className="text-green-600">{selectedTest.passedTests}</span></div>
                 <div><strong>Failed:</strong> <span className="text-red-600">{selectedTest.failedTests}</span></div>
+                <div><strong>Skipped:</strong> <span className="text-yellow-600">{selectedTest.skippedTests}</span></div>
                 <div><strong>Duration:</strong> {selectedTest.duration}s</div>
                 <div><strong>Coverage:</strong> {selectedTest.coverage}%</div>
                 <div><strong>Status:</strong> 
@@ -641,7 +750,118 @@ const TestingDashboard: React.FC = () => {
                   </span>
                 </div>
               </div>
+              
+              {/* Quick Failure Summary */}
+              {selectedTest.failedTests > 0 && selectedTest.testResults && (
+                <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
+                  <h4 className="text-sm font-medium text-red-800 mb-2">🚨 Failure Summary</h4>
+                  <div className="space-y-1 text-xs text-red-700">
+                    {selectedTest.testResults
+                      .filter(test => test.status === 'failed')
+                      .slice(0, 3)
+                      .map((test, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                          <span className="truncate">{test.name}</span>
+                          <span className="text-red-600">•</span>
+                          <span className="truncate">{test.message}</span>
+                        </div>
+                      ))}
+                    {selectedTest.failedTests > 3 && (
+                      <div className="text-xs text-red-600 italic">
+                        +{selectedTest.failedTests - 3} more failures...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+            
+            {/* Detailed Test Results */}
+            {selectedTest.testResults && selectedTest.testResults.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium">Detailed Test Results</h3>
+                <div className="space-y-3">
+                  {selectedTest.testResults.map((test) => (
+                    <div key={test.id} className={`border rounded-lg p-3 ${
+                      test.status === 'passed' ? 'border-green-200 bg-green-50' :
+                      test.status === 'failed' ? 'border-red-200 bg-red-50' :
+                      'border-yellow-200 bg-yellow-50'
+                    }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className={`w-2 h-2 rounded-full ${
+                            test.status === 'passed' ? 'bg-green-500' :
+                            test.status === 'failed' ? 'bg-red-500' :
+                            'bg-yellow-500'
+                          }`}></span>
+                          <span className="font-medium text-sm">{test.name}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-xs text-gray-600">
+                          <span>{test.duration.toFixed(2)}s</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            test.status === 'passed' ? 'bg-green-100 text-green-800' :
+                            test.status === 'failed' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {test.status}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="text-xs text-gray-600 mb-2">
+                        <span className="font-medium">File:</span> {test.file}
+                        {test.line && <span className="ml-2">Line: {test.line}</span>}
+                      </div>
+                      
+                      {test.status === 'failed' && (
+                        <div className="space-y-2">
+                          {test.message && (
+                            <div className="text-sm">
+                              <span className="font-medium text-red-700">Error:</span>
+                              <span className="ml-2 text-red-600">{test.message}</span>
+                            </div>
+                          )}
+                          
+                          {test.expected && test.actual && (
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="font-medium text-green-700">Expected:</span>
+                                <div className="mt-1 p-2 bg-green-100 rounded font-mono text-xs text-green-800">
+                                  {test.expected}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-red-700">Actual:</span>
+                                <div className="mt-1 p-2 bg-red-100 rounded font-mono text-xs text-red-800">
+                                  {test.actual}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {test.stackTrace && (
+                            <div className="mt-3">
+                              <span className="font-medium text-red-700 text-sm">Stack Trace:</span>
+                              <div className="mt-1 p-3 bg-red-900 text-red-400 rounded font-mono text-xs overflow-x-auto">
+                                <pre className="whitespace-pre-wrap">{test.stackTrace}</pre>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {test.status === 'skipped' && test.message && (
+                        <div className="text-sm text-yellow-700">
+                          <span className="font-medium">Reason:</span>
+                          <span className="ml-2">{test.message}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {/* Test Output */}
             {selectedTest.output && (
