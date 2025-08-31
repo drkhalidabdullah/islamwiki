@@ -780,9 +780,20 @@ const TestingDashboard: React.FC = () => {
             {/* Detailed Test Results */}
             {selectedTest.testResults && selectedTest.testResults.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium">Detailed Test Results</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-medium">Detailed Test Results</h3>
+                  <div className="text-xs text-gray-600">
+                    <span className="text-red-600 font-medium">Failed tests appear first</span>
+                  </div>
+                </div>
                 <div className="space-y-3">
-                  {selectedTest.testResults.map((test) => (
+                  {selectedTest.testResults
+                    .sort((a, b) => {
+                      // Sort by priority: failed first, then skipped, then passed
+                      const priorityOrder = { failed: 0, skipped: 1, passed: 2 };
+                      return priorityOrder[a.status] - priorityOrder[b.status];
+                    })
+                    .map((test) => (
                     <div key={test.id} className={`border rounded-lg p-3 ${
                       test.status === 'passed' ? 'border-green-200 bg-green-50' :
                       test.status === 'failed' ? 'border-red-200 bg-red-50' :
