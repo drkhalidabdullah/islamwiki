@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Modal } from '../index';
 import { Activity, Monitor, RefreshCw, Play, StopCircle } from 'lucide-react';
 
@@ -287,7 +287,7 @@ const SystemHealth: React.FC = () => {
   };
 
   // Collect system resource data
-  const collectSystemResources = async () => {
+  const collectSystemResources = useCallback(async () => {
     try {
       // Simulate collecting real system resource data
       const newResources = systemResources.map(resource => {
@@ -342,7 +342,7 @@ const SystemHealth: React.FC = () => {
     } catch (error) {
       console.error('Error collecting system resources:', error);
     }
-  };
+  }, []);
 
   // Run comprehensive system diagnostics
   const runSystemDiagnostics = async () => {
@@ -428,19 +428,22 @@ const SystemHealth: React.FC = () => {
     ));
   };
 
+  // Initial data collection effect
+  useEffect(() => {
+    // Collect initial system resources data
+    collectSystemResources();
+  }, [collectSystemResources]);
+
   // Auto-refresh effect
   useEffect(() => {
     if (!autoRefresh) return;
-    
-    // Initial collection
-    collectSystemResources();
     
     const interval = setInterval(() => {
       collectSystemResources();
     }, 30000); // Every 30 seconds
     
     return () => clearInterval(interval);
-  }, [autoRefresh]);
+  }, [autoRefresh, collectSystemResources]);
 
   // Get status color
   const getStatusColor = (status: string) => {
@@ -650,7 +653,18 @@ const SystemHealth: React.FC = () => {
 
       {/* System Resources */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">System Resources</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">System Resources</h2>
+          <Button
+            onClick={collectSystemResources}
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh Now
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {systemResources.map((resource) => (
             <div key={resource.name} className="border border-gray-200 rounded-lg p-4">
