@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AdminDashboard from '../components/admin/AdminDashboard';
@@ -11,6 +11,30 @@ type AdminView = 'overview' | 'testing' | 'performance' | 'workflow' | 'health';
 
 const AdminPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<AdminView>('overview');
+
+  // Persist current view across page refreshes
+  useEffect(() => {
+    // Check URL hash first
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['overview', 'testing', 'performance', 'workflow', 'health'].includes(hash)) {
+      setCurrentView(hash as AdminView);
+    } else {
+      // Fall back to localStorage if no hash
+      const savedView = localStorage.getItem('adminCurrentView') as AdminView;
+      if (savedView && ['overview', 'testing', 'performance', 'workflow', 'health'].includes(savedView)) {
+        setCurrentView(savedView);
+        // Update URL hash to match
+        window.location.hash = savedView;
+      }
+    }
+  }, []);
+
+  // Update localStorage and URL hash when view changes
+  const handleViewChange = (view: AdminView) => {
+    setCurrentView(view);
+    localStorage.setItem('adminCurrentView', view);
+    window.location.hash = view;
+  };
 
   const renderCurrentView = () => {
     switch (currentView) {
@@ -42,7 +66,7 @@ const AdminPage: React.FC = () => {
             
             <nav className="space-y-2">
               <button
-                onClick={() => setCurrentView('overview')}
+                onClick={() => handleViewChange('overview')}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   currentView === 'overview'
                     ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
@@ -58,7 +82,7 @@ const AdminPage: React.FC = () => {
               </button>
               
               <button
-                onClick={() => setCurrentView('testing')}
+                onClick={() => handleViewChange('testing')}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   currentView === 'testing'
                     ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
@@ -74,7 +98,7 @@ const AdminPage: React.FC = () => {
               </button>
               
               <button
-                onClick={() => setCurrentView('performance')}
+                onClick={() => handleViewChange('performance')}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   currentView === 'performance'
                     ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
@@ -90,7 +114,7 @@ const AdminPage: React.FC = () => {
               </button>
               
               <button
-                onClick={() => setCurrentView('workflow')}
+                onClick={() => handleViewChange('workflow')}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   currentView === 'workflow'
                     ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
@@ -106,7 +130,7 @@ const AdminPage: React.FC = () => {
               </button>
               
               <button
-                onClick={() => setCurrentView('health')}
+                onClick={() => handleViewChange('health')}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   currentView === 'health'
                     ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
