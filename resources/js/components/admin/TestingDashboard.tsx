@@ -122,6 +122,125 @@ const TestingDashboard: React.FC = () => {
     }
   };
 
+  // Function to copy entire test suite report
+  const copyTestSuiteReport = async (testSuite: TestSuite) => {
+    let contentToCopy = '';
+    
+    contentToCopy += `=== TEST SUITE REPORT ===\n`;
+    contentToCopy += `Name: ${testSuite.name}\n`;
+    contentToCopy += `Description: ${testSuite.description}\n`;
+    contentToCopy += `Category: ${testSuite.category}\n`;
+    contentToCopy += `Priority: ${testSuite.priority}\n`;
+    contentToCopy += `Command: ${testSuite.command}\n`;
+    contentToCopy += `Last Run: ${testSuite.lastRun}\n`;
+    contentToCopy += `Status: ${testSuite.status}\n\n`;
+    
+    contentToCopy += `=== SUMMARY ===\n`;
+    contentToCopy += `Total Tests: ${testSuite.totalTests}\n`;
+    contentToCopy += `Passed: ${testSuite.passedTests}\n`;
+    contentToCopy += `Failed: ${testSuite.failedTests}\n`;
+    contentToCopy += `Skipped: ${testSuite.skippedTests}\n`;
+    contentToCopy += `Duration: ${testSuite.duration}s\n`;
+    contentToCopy += `Coverage: ${testSuite.coverage}%\n\n`;
+    
+    if (testSuite.testResults && testSuite.testResults.length > 0) {
+      contentToCopy += `=== DETAILED RESULTS ===\n`;
+      testSuite.testResults
+        .sort((a, b) => {
+          const priorityOrder = { failed: 0, skipped: 1, passed: 2 };
+          return priorityOrder[a.status] - priorityOrder[b.status];
+        })
+        .forEach((test, index) => {
+          contentToCopy += `\n${index + 1}. ${test.name}\n`;
+          contentToCopy += `   Status: ${test.status.toUpperCase()}\n`;
+          contentToCopy += `   File: ${test.file}${test.line ? `:${test.line}` : ''}\n`;
+          contentToCopy += `   Duration: ${test.duration.toFixed(2)}s\n`;
+          
+          if (test.status === 'failed') {
+            if (test.message) contentToCopy += `   Error: ${test.message}\n`;
+            if (test.expected) contentToCopy += `   Expected: ${test.expected}\n`;
+            if (test.actual) contentToCopy += `   Actual: ${test.actual}\n`;
+            if (test.stackTrace) contentToCopy += `   Stack Trace:\n${test.stackTrace}\n`;
+          } else if (test.status === 'skipped' && test.message) {
+            contentToCopy += `   Reason: ${test.message}\n`;
+          }
+        });
+    }
+    
+    if (testSuite.output) {
+      contentToCopy += `\n=== OUTPUT ===\n${testSuite.output}\n`;
+    }
+    
+    if (testSuite.errorOutput) {
+      contentToCopy += `\n=== ERROR OUTPUT ===\n${testSuite.errorOutput}\n`;
+    }
+
+    try {
+      await navigator.clipboard.writeText(contentToCopy);
+      setCopyFeedback(`Copied entire ${testSuite.name} report!`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = contentToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopyFeedback(`Copied entire ${testSuite.name} report!`);
+      setTimeout(() => setCopyFeedback(''), 2000);
+    }
+  };
+
+  // Function to copy all test suites report
+  const copyAllTestSuitesReport = async () => {
+    let contentToCopy = '';
+    
+    contentToCopy += `=== COMPLETE TESTING DASHBOARD REPORT ===\n`;
+    contentToCopy += `Generated: ${new Date().toLocaleString()}\n\n`;
+    
+    testSuites.forEach((suite, index) => {
+      contentToCopy += `=== TEST SUITE ${index + 1}: ${suite.name} ===\n`;
+      contentToCopy += `Status: ${suite.status}\n`;
+      contentToCopy += `Total Tests: ${suite.totalTests}\n`;
+      contentToCopy += `Passed: ${suite.passedTests}\n`;
+      contentToCopy += `Failed: ${suite.failedTests}\n`;
+      contentToCopy += `Skipped: ${suite.skippedTests}\n`;
+      contentToCopy += `Coverage: ${suite.coverage}%\n`;
+      contentToCopy += `Last Run: ${suite.lastRun}\n\n`;
+    });
+    
+    // Add overall statistics
+    const totalTests = testSuites.reduce((sum, suite) => sum + suite.totalTests, 0);
+    const totalPassed = testSuites.reduce((sum, suite) => sum + suite.passedTests, 0);
+    const totalFailed = testSuites.reduce((sum, suite) => sum + suite.failedTests, 0);
+    const totalSkipped = testSuites.reduce((sum, suite) => sum + suite.skippedTests, 0);
+    
+    contentToCopy += `=== OVERALL STATISTICS ===\n`;
+    contentToCopy += `Total Test Suites: ${testSuites.length}\n`;
+    contentToCopy += `Total Tests: ${totalTests}\n`;
+    contentToCopy += `Total Passed: ${totalPassed}\n`;
+    contentToCopy += `Total Failed: ${totalFailed}\n`;
+    contentToCopy += `Total Skipped: ${totalSkipped}\n`;
+    contentToCopy += `Overall Success Rate: ${totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0}%\n`;
+
+    try {
+      await navigator.clipboard.writeText(contentToCopy);
+      setCopyFeedback('Copied complete testing dashboard report!');
+      setTimeout(() => setCopyFeedback(''), 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = contentToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopyFeedback('Copied complete testing dashboard report!');
+      setTimeout(() => setCopyFeedback(''), 2000);
+    }
+  };
+
   // Real test suites with actual commands
   const testSuites: TestSuite[] = [
     {
@@ -568,7 +687,18 @@ const TestingDashboard: React.FC = () => {
 
       {/* Test Suites */}
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Test Suites</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Test Suites</h2>
+          <Button
+            onClick={copyAllTestSuitesReport}
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-2"
+          >
+            <Copy className="w-4 h-4" />
+            <span>Copy All Reports</span>
+          </Button>
+        </div>
         <div className="space-y-4">
           {currentTestSuites.map((suite) => (
             <div key={suite.id} className="border border-gray-200 rounded-lg p-4">
@@ -605,6 +735,15 @@ const TestingDashboard: React.FC = () => {
                    >
                      <BarChart3 className="w-4 h-4 mr-1" />
                      Details
+                   </Button>
+                   <Button
+                     onClick={() => copyTestSuiteReport(suite)}
+                     size="sm"
+                     variant="outline"
+                     className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                   >
+                     <Copy className="w-4 h-4 mr-1" />
+                     Copy
                    </Button>
                 </div>
               </div>
@@ -761,6 +900,19 @@ const TestingDashboard: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         title="Test Results Details"
         size="full"
+        extraHeaderContent={
+          selectedTest && (
+            <Button
+              onClick={() => copyTestSuiteReport(selectedTest)}
+              variant="outline"
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <Copy className="w-4 h-4" />
+              <span>Copy Report</span>
+            </Button>
+          )
+        }
       >
         {selectedTest && (
           <div className="space-y-4">

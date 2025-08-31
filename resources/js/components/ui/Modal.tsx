@@ -11,6 +11,7 @@ export interface ModalProps {
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
   className?: string;
+  extraHeaderContent?: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -21,7 +22,8 @@ const Modal: React.FC<ModalProps> = ({
   size = 'md',
   closeOnBackdrop = true,
   closeOnEscape = true,
-  className
+  className,
+  extraHeaderContent
 }) => {
   useEffect(() => {
     if (!isOpen) return;
@@ -74,14 +76,17 @@ const Modal: React.FC<ModalProps> = ({
           {title && (
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div className="flex items-center space-x-3">
+                {extraHeaderContent}
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
           
