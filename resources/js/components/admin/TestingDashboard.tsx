@@ -716,7 +716,7 @@ const TestingDashboard: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Test Results Details"
-        size="lg"
+        size="full"
       >
         {selectedTest && (
           <div className="space-y-4">
@@ -733,21 +733,23 @@ const TestingDashboard: React.FC = () => {
             {/* Test Results Summary */}
             <div>
               <h3 className="text-lg font-medium">Test Results Summary</h3>
-              <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
-                <div><strong>Total Tests:</strong> {selectedTest.totalTests}</div>
-                <div><strong>Passed:</strong> <span className="text-green-600">{selectedTest.passedTests}</span></div>
-                <div><strong>Failed:</strong> <span className="text-red-600">{selectedTest.failedTests}</span></div>
-                <div><strong>Skipped:</strong> <span className="text-yellow-600">{selectedTest.skippedTests}</span></div>
-                <div><strong>Duration:</strong> {selectedTest.duration}s</div>
-                <div><strong>Coverage:</strong> {selectedTest.coverage}%</div>
-                <div><strong>Status:</strong> 
-                  <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
-                    selectedTest.status === 'passing' ? 'bg-green-100 text-green-800' :
-                    selectedTest.status === 'failing' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {selectedTest.status}
-                  </span>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                  <div><strong>Total Tests:</strong> {selectedTest.totalTests}</div>
+                  <div><strong>Passed:</strong> <span className="text-green-600">{selectedTest.passedTests}</span></div>
+                  <div><strong>Failed:</strong> <span className="text-red-600">{selectedTest.failedTests}</span></div>
+                  <div><strong>Skipped:</strong> <span className="text-yellow-600">{selectedTest.skippedTests}</span></div>
+                  <div><strong>Duration:</strong> {selectedTest.duration}s</div>
+                  <div><strong>Coverage:</strong> {selectedTest.coverage}%</div>
+                  <div><strong>Status:</strong> 
+                    <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                      selectedTest.status === 'passing' ? 'bg-green-100 text-green-800' :
+                      selectedTest.status === 'failing' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {selectedTest.status}
+                    </span>
+                  </div>
                 </div>
               </div>
               
@@ -786,7 +788,7 @@ const TestingDashboard: React.FC = () => {
                     <span className="text-red-600 font-medium">Failed tests appear first</span>
                   </div>
                 </div>
-                <div className="space-y-3">
+                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   {selectedTest.testResults
                     .sort((a, b) => {
                       // Sort by priority: failed first, then skipped, then passed
@@ -794,82 +796,82 @@ const TestingDashboard: React.FC = () => {
                       return priorityOrder[a.status] - priorityOrder[b.status];
                     })
                     .map((test) => (
-                    <div key={test.id} className={`border rounded-lg p-3 ${
-                      test.status === 'passed' ? 'border-green-200 bg-green-50' :
-                      test.status === 'failed' ? 'border-red-200 bg-red-50' :
-                      'border-yellow-200 bg-yellow-50'
-                    }`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <span className={`w-2 h-2 rounded-full ${
-                            test.status === 'passed' ? 'bg-green-500' :
-                            test.status === 'failed' ? 'bg-red-500' :
-                            'bg-yellow-500'
-                          }`}></span>
-                          <span className="font-medium text-sm">{test.name}</span>
+                      <div key={test.id} className={`border rounded-lg p-4 ${
+                        test.status === 'passed' ? 'border-green-200 bg-green-50' :
+                        test.status === 'failed' ? 'border-red-200 bg-red-50' :
+                        'border-yellow-200 bg-yellow-50'
+                      }`}>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <span className={`w-3 h-3 rounded-full ${
+                              test.status === 'passed' ? 'bg-green-500' :
+                              test.status === 'failed' ? 'bg-red-500' :
+                              'bg-yellow-500'
+                            }`}></span>
+                            <span className="font-medium">{test.name}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <span>{test.duration.toFixed(2)}s</span>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              test.status === 'passed' ? 'bg-green-100 text-green-800' :
+                              test.status === 'failed' ? 'bg-red-100 text-red-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {test.status}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2 text-xs text-gray-600">
-                          <span>{test.duration.toFixed(2)}s</span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            test.status === 'passed' ? 'bg-green-100 text-green-800' :
-                            test.status === 'failed' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {test.status}
-                          </span>
+                        
+                        <div className="text-sm text-gray-600 mb-3">
+                          <span className="font-medium">File:</span> {test.file}
+                          {test.line && <span className="ml-2">Line: {test.line}</span>}
                         </div>
-                      </div>
-                      
-                      <div className="text-xs text-gray-600 mb-2">
-                        <span className="font-medium">File:</span> {test.file}
-                        {test.line && <span className="ml-2">Line: {test.line}</span>}
-                      </div>
-                      
-                      {test.status === 'failed' && (
-                        <div className="space-y-2">
-                          {test.message && (
-                            <div className="text-sm">
-                              <span className="font-medium text-red-700">Error:</span>
-                              <span className="ml-2 text-red-600">{test.message}</span>
-                            </div>
-                          )}
-                          
-                          {test.expected && test.actual && (
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="font-medium text-green-700">Expected:</span>
-                                <div className="mt-1 p-2 bg-green-100 rounded font-mono text-xs text-green-800">
-                                  {test.expected}
+                        
+                        {test.status === 'failed' && (
+                          <div className="space-y-3">
+                            {test.message && (
+                              <div className="text-sm">
+                                <span className="font-medium text-red-700">Error:</span>
+                                <span className="ml-2 text-red-600">{test.message}</span>
+                              </div>
+                            )}
+                            
+                            {test.expected && test.actual && (
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                  <span className="font-medium text-green-700">Expected:</span>
+                                  <div className="mt-1 p-3 bg-green-100 rounded font-mono text-sm text-green-800">
+                                    {test.expected}
+                                  </div>
+                                </div>
+                                <div>
+                                  <span className="font-medium text-red-700">Actual:</span>
+                                  <div className="mt-1 p-3 bg-red-100 rounded font-mono text-sm text-red-800">
+                                    {test.actual}
+                                  </div>
                                 </div>
                               </div>
-                              <div>
-                                <span className="font-medium text-red-700">Actual:</span>
-                                <div className="mt-1 p-2 bg-red-100 rounded font-mono text-xs text-red-800">
-                                  {test.actual}
+                            )}
+                            
+                            {test.stackTrace && (
+                              <div className="mt-3">
+                                <span className="font-medium text-red-700 text-sm">Stack Trace:</span>
+                                <div className="mt-1 p-3 bg-red-900 text-red-400 rounded font-mono text-xs overflow-x-auto max-h-32">
+                                  <pre className="whitespace-pre-wrap">{test.stackTrace}</pre>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                          
-                          {test.stackTrace && (
-                            <div className="mt-3">
-                              <span className="font-medium text-red-700 text-sm">Stack Trace:</span>
-                              <div className="mt-1 p-3 bg-red-900 text-red-400 rounded font-mono text-xs overflow-x-auto">
-                                <pre className="whitespace-pre-wrap">{test.stackTrace}</pre>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      
-                      {test.status === 'skipped' && test.message && (
-                        <div className="text-sm text-yellow-700">
-                          <span className="font-medium">Reason:</span>
-                          <span className="ml-2">{test.message}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                            )}
+                          </div>
+                        )}
+                        
+                        {test.status === 'skipped' && test.message && (
+                          <div className="text-sm text-yellow-700">
+                            <span className="font-medium">Reason:</span>
+                            <span className="ml-2">{test.message}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
