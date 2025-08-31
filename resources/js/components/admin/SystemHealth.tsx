@@ -43,6 +43,7 @@ interface DiagnosticReport {
 
 const SystemHealth: React.FC = () => {
   const [selectedHealthCheck, setSelectedHealthCheck] = useState<HealthCheck | null>(null);
+  const [selectedResource, setSelectedResource] = useState<SystemResource | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
@@ -683,6 +684,19 @@ const SystemHealth: React.FC = () => {
                     style={{ width: `${Math.min(100, (resource.current / resource.max) * 100)}%` }}
                   ></div>
                 </div>
+                
+                <Button
+                  onClick={() => {
+                    setSelectedResource(resource);
+                    setSelectedHealthCheck(null);
+                    setIsModalOpen(true);
+                  }}
+                  size="sm"
+                  variant="outline"
+                  className="w-full mt-3"
+                >
+                  Details
+                </Button>
               </div>
             </div>
           ))}
@@ -764,11 +778,19 @@ const SystemHealth: React.FC = () => {
         </div>
       </Card>
 
-      {/* Health Check Details Modal */}
+      {/* Health Check & Resource Details Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={selectedHealthCheck ? `${selectedHealthCheck.name} Details` : 'System Diagnostic Report'}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedHealthCheck(null);
+          setSelectedResource(null);
+        }}
+        title={
+          selectedHealthCheck ? `${selectedHealthCheck.name} Details` :
+          selectedResource ? `${selectedResource.name} Details` :
+          'System Diagnostic Report'
+        }
         size="lg"
       >
         {selectedHealthCheck ? (
@@ -828,6 +850,140 @@ const SystemHealth: React.FC = () => {
                 </ul>
               </div>
             )}
+          </div>
+        ) : selectedResource ? (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium">Resource Information</h3>
+              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                <div>
+                  <span className="text-gray-500">Name:</span>
+                  <span className="ml-2 font-medium">{selectedResource.name}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Current Value:</span>
+                  <span className="ml-2 font-medium">{selectedResource.current.toFixed(1)}{selectedResource.unit}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Maximum:</span>
+                  <span className="ml-2 font-medium">{selectedResource.max}{selectedResource.unit}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Status:</span>
+                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedResource.status)}`}>
+                    {selectedResource.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Trend:</span>
+                  <span className="ml-2 flex items-center">
+                    {getTrendIcon(selectedResource.trend)}
+                    <span className="ml-1 capitalize">{selectedResource.trend}</span>
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Utilization:</span>
+                  <span className="ml-2 font-medium">{((selectedResource.current / selectedResource.max) * 100).toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium">Thresholds</h3>
+              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                <div>
+                  <span className="text-gray-500">Warning Level:</span>
+                  <span className="ml-2 font-medium text-yellow-600">{selectedResource.threshold.warning}{selectedResource.unit}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Critical Level:</span>
+                  <span className="ml-2 font-medium text-red-600">{selectedResource.threshold.critical}{selectedResource.unit}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium">Performance History (Last 20 Data Points)</h3>
+              <div className="bg-gray-50 p-4 rounded-lg mt-2">
+                {selectedResource.history.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500">
+                    <p>No historical data available</p>
+                    <p className="text-sm">Data will be collected as system diagnostics run</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>Showing last {selectedResource.history.length} measurements</span>
+                      <span className="text-xs">
+                        {selectedResource.history.length < 20 ? 'Collecting more data...' : 'Full history available'}
+                      </span>
+                    </div>
+                    
+                    {/* History Chart */}
+                    <div className="flex items-end space-x-1 h-32 bg-white p-3 rounded border">
+                      {selectedResource.history.map((point, index) => {
+                        const maxValue = Math.max(...selectedResource.history.map(p => p.value));
+                        const height = (point.value / maxValue) * 100;
+                        const isRecent = index >= selectedResource.history.length - 5;
+                        return (
+                          <div key={index} className="flex-1 flex flex-col items-center">
+                            <div 
+                              className={`w-full rounded-t ${
+                                isRecent ? 'bg-blue-500' : 'bg-gray-400'
+                              }`}
+                              style={{ height: `${height}%` }}
+                              title={`${point.value.toFixed(1)}${selectedResource.unit} - ${new Date(point.timestamp).toLocaleString()}`}
+                            ></div>
+                            {index % 5 === 0 && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                {new Date(point.timestamp).toLocaleTimeString()}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* History Table */}
+                    <div className="max-h-48 overflow-y-auto">
+                      <table className="w-full text-xs">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="text-left p-2">Timestamp</th>
+                            <th className="text-right p-2">Value</th>
+                            <th className="text-right p-2">Change</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedResource.history.slice().reverse().map((point, index) => {
+                            const prevPoint = selectedResource.history[selectedResource.history.length - index - 2];
+                            const change = prevPoint ? point.value - prevPoint.value : 0;
+                            const changePercent = prevPoint ? ((change / prevPoint.value) * 100) : 0;
+                            
+                            return (
+                              <tr key={index} className="border-t border-gray-200">
+                                <td className="p-2 text-gray-600">
+                                  {new Date(point.timestamp).toLocaleString()}
+                                </td>
+                                <td className="p-2 text-right font-medium">
+                                  {point.value.toFixed(1)}{selectedResource.unit}
+                                </td>
+                                <td className={`p-2 text-right text-xs ${
+                                  change > 0 ? 'text-red-600' : change < 0 ? 'text-green-600' : 'text-gray-500'
+                                }`}>
+                                  {change > 0 ? '+' : ''}{change.toFixed(1)}{selectedResource.unit}
+                                  {prevPoint && ` (${changePercent > 0 ? '+' : ''}${changePercent.toFixed(1)}%)`}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
