@@ -22,14 +22,14 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (user: User, token: string) => void;
+  login: (user: User, token: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
   setLoading: (loading: boolean) => void;
   clearAuth: () => void;
-  refreshToken: () => string | null;
-  isTokenValid: () => boolean;
+  refreshToken: () => Promise<string | null>;
+  isTokenValid: () => Promise<boolean>;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -45,14 +45,15 @@ export const useAuthStore = create<AuthStore>()(
       tokenExpiration: null,
 
       // Actions
-      login: (user: User, token: string) => {
+      login: async (user: User, token: string) => {
         // Verify the token is valid
-        if (!jwtService.verifyToken(token)) {
+        const isValid = await jwtService.verifyToken(token);
+        if (!isValid) {
           console.error('Invalid token provided');
           return;
         }
         
-        const expiration = jwtService.getTokenExpiration(token);
+        const expiration = await jwtService.getTokenExpiration(token);
         set({
           user,
           token,
@@ -95,22 +96,22 @@ export const useAuthStore = create<AuthStore>()(
           tokenExpiration: null,
         }),
 
-      refreshToken: () => {
+      refreshToken: async () => {
         const { token } = get();
         if (!token) return null;
         
-        const newToken = jwtService.refreshToken(token);
+        const newToken = await jwtService.refreshToken(token);
         if (newToken) {
-          const expiration = jwtService.getTokenExpiration(newToken);
+          const expiration = await jwtService.getTokenExpiration(newToken);
           set({ token: newToken, tokenExpiration: expiration });
         }
         return newToken;
       },
 
-      isTokenValid: () => {
+      isTokenValid: async () => {
         const { token } = get();
         if (!token) return false;
-        return !jwtService.isTokenExpired(token);
+        return !(await jwtService.isTokenExpired(token));
       },
     }),
     {

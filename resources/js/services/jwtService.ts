@@ -1,8 +1,8 @@
 // JWT Service for handling authentication tokens
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 
 // In production, this would come from environment variables
-const JWT_SECRET = 'islamwiki-secret-key-change-in-production';
+const JWT_SECRET = new TextEncoder().encode('islamwiki-secret-key-change-in-production');
 const JWT_EXPIRES_IN = '24h';
 
 export interface JWTPayload {
@@ -10,6 +10,7 @@ export interface JWTPayload {
   email: string;
   role: string;
   username: string;
+  [key: string]: any; // Allow additional properties for jose compatibility
 }
 
 export interface DecodedToken extends JWTPayload {
@@ -19,14 +20,25 @@ export interface DecodedToken extends JWTPayload {
 
 class JWTService {
   // Generate JWT token
-  generateToken(payload: JWTPayload): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  async generateToken(payload: JWTPayload): Promise<string> {
+    try {
+      const token = await new jose.SignJWT(payload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime(JWT_EXPIRES_IN)
+        .sign(JWT_SECRET);
+      return token;
+    } catch (error) {
+      console.error('JWT generation failed:', error);
+      throw new Error('Failed to generate JWT token');
+    }
   }
 
   // Verify and decode JWT token
-  verifyToken(token: string): DecodedToken | null {
+  async verifyToken(token: string): Promise<DecodedToken | null> {
     try {
-      return jwt.verify(token, JWT_SECRET) as DecodedToken;
+      const { payload } = await jose.jwtVerify(token, JWT_SECRET);
+      return payload as DecodedToken;
     } catch (error) {
       console.error('JWT verification failed:', error);
       return null;
@@ -34,8 +46,8 @@ class JWTService {
   }
 
   // Check if token is expired
-  isTokenExpired(token: string): boolean {
-    const decoded = this.verifyToken(token);
+  async isTokenExpired(token: string): Promise<boolean> {
+    const decoded = await this.verifyToken(token);
     if (!decoded) return true;
     
     const currentTime = Math.floor(Date.now() / 1000);
@@ -43,20 +55,20 @@ class JWTService {
   }
 
   // Get token expiration time
-  getTokenExpiration(token: string): Date | null {
-    const decoded = this.verifyToken(token);
+  async getTokenExpiration(token: string): Promise<Date | null> {
+    const decoded = await this.verifyToken(token);
     if (!decoded) return null;
     
     return new Date(decoded.exp * 1000);
   }
 
   // Refresh token (generate new token with same payload)
-  refreshToken(token: string): string | null {
-    const decoded = this.verifyToken(token);
+  async refreshToken(token: string): Promise<string | null> {
+    const decoded = await this.verifyToken(token);
     if (!decoded) return null;
     
-    const { iat, exp, ...payload } = decoded;
-    return this.generateToken(payload);
+    const { iat, exp, ...payload } = decoded as any;
+    return this.generateToken(payload as JWTPayload);
   }
 
   // Extract token from Authorization header

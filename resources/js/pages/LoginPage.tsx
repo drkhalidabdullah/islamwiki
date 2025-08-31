@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
       };
       
       // Generate real JWT token
-      const token = jwtService.generateToken({
+      const token = await jwtService.generateToken({
         userId: mockUser.id,
         email: mockUser.email,
         role: mockUser.role_name,
@@ -106,7 +106,7 @@ const LoginPage: React.FC = () => {
       });
       
       // Store authentication data
-      login(mockUser, token);
+      await login(mockUser, token);
       
       // Reset rate limit on successful login
       rateLimitService.reset('login', formData.email);
