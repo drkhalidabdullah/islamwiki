@@ -917,6 +917,45 @@ const SystemHealth: React.FC = () => {
             </div>
             
             <div>
+              <h3 className="text-lg font-medium">Performance Averages (Last 20 Data Points)</h3>
+              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <span className="text-gray-500">Average Value:</span>
+                  <span className="ml-2 font-medium text-blue-700">
+                    {selectedResource.history.length > 0 
+                      ? (selectedResource.history.reduce((sum, point) => sum + point.value, 0) / selectedResource.history.length).toFixed(1)
+                      : '0.0'
+                    }{selectedResource.unit}
+                  </span>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg">
+                  <span className="text-gray-500">Peak Value:</span>
+                  <span className="ml-2 font-medium text-green-700">
+                    {selectedResource.history.length > 0 
+                      ? Math.max(...selectedResource.history.map(p => p.value)).toFixed(1)
+                      : '0.0'
+                    }{selectedResource.unit}
+                  </span>
+                </div>
+                <div className="bg-yellow-50 p-3 rounded-lg">
+                  <span className="text-gray-500">Lowest Value:</span>
+                  <span className="ml-2 font-medium text-yellow-700">
+                    {selectedResource.history.length > 0 
+                      ? Math.min(...selectedResource.history.map(p => p.value)).toFixed(1)
+                      : '0.0'
+                    }{selectedResource.unit}
+                  </span>
+                </div>
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <span className="text-gray-500">Data Points:</span>
+                  <span className="ml-2 font-medium text-purple-700">
+                    {selectedResource.history.length}/20
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
               <h3 className="text-lg font-medium">Performance History (Last 20 Data Points)</h3>
               <div className="bg-gray-50 p-4 rounded-lg mt-2">
                 {selectedResource.history.length === 0 ? (
@@ -932,6 +971,47 @@ const SystemHealth: React.FC = () => {
                         {selectedResource.history.length < 20 ? 'Collecting more data...' : 'Full history available'}
                       </span>
                     </div>
+                    
+                    {/* Trend Analysis */}
+                    {selectedResource.history.length > 1 && (
+                      <div className="bg-white p-3 rounded border">
+                        <h4 className="font-medium text-gray-700 mb-2">Trend Analysis</h4>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-gray-500">Current vs Average:</span>
+                            <span className={`ml-2 font-medium ${
+                              selectedResource.current > (selectedResource.history.reduce((sum, point) => sum + point.value, 0) / selectedResource.history.length)
+                                ? 'text-red-600'
+                                : selectedResource.current < (selectedResource.history.reduce((sum, point) => sum + point.value, 0) / selectedResource.history.length)
+                                ? 'text-green-600'
+                                : 'text-gray-600'
+                            }`}>
+                              {selectedResource.current > (selectedResource.history.reduce((sum, point) => sum + point.value, 0) / selectedResource.history.length)
+                                ? 'Above Average'
+                                : selectedResource.current < (selectedResource.history.reduce((sum, point) => sum + point.value, 0) / selectedResource.history.length)
+                                ? 'Below Average'
+                                : 'At Average'
+                              }
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Variability:</span>
+                            <span className="ml-2 font-medium text-gray-700">
+                              {(() => {
+                                const values = selectedResource.history.map(p => p.value);
+                                const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                                const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+                                const stdDev = Math.sqrt(variance);
+                                const coefficient = (stdDev / avg) * 100;
+                                if (coefficient < 10) return 'Low';
+                                if (coefficient < 25) return 'Medium';
+                                return 'High';
+                              })()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
                     {/* History Chart */}
                     <div className="flex items-end space-x-1 h-32 bg-white p-3 rounded border">
