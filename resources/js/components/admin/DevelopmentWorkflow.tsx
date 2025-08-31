@@ -61,9 +61,12 @@ interface BuildStatus {
 
 const DevelopmentWorkflow: React.FC = () => {
   const [selectedDeployment, setSelectedDeployment] = useState<Deployment | null>(null);
+  const [selectedGitActivity, setSelectedGitActivity] = useState<GitActivity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGitModalOpen, setIsGitModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeDeployments, setActiveDeployments] = useState<string[]>([]);
+  const [showAllGitActivities, setShowAllGitActivities] = useState(false);
 
   // Real Git activities with live data
   const [gitActivities, setGitActivities] = useState<GitActivity[]>([]);
@@ -131,6 +134,63 @@ const DevelopmentWorkflow: React.FC = () => {
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'main',
           status: 'success'
+        },
+        {
+          id: `git-${Date.now()}-4`,
+          type: 'commit',
+          author: 'Khalid Abdullah',
+          message: 'fix: Resolve System Health history collection issue',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          branch: 'feature/v0.0.3-system-health',
+          status: 'success',
+          hash: Math.random().toString(36).substring(2, 10),
+          filesChanged: Math.floor(Math.random() * 15) + 1,
+          additions: Math.floor(Math.random() * 300) + 30,
+          deletions: Math.floor(Math.random() * 100) + 5
+        },
+        {
+          id: `git-${Date.now()}-5`,
+          type: 'branch',
+          author: 'Khalid Abdullah',
+          message: 'Create feature branch for v0.0.4 development',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          branch: 'feature/v0.0.4-database',
+          status: 'success'
+        },
+        {
+          id: `git-${Date.now()}-6`,
+          type: 'commit',
+          author: 'Khalid Abdullah',
+          message: 'feat: Add comprehensive performance averages to System Health',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          branch: 'feature/v0.0.3-system-health',
+          status: 'success',
+          hash: Math.random().toString(36).substring(2, 10),
+          filesChanged: Math.floor(Math.random() * 25) + 1,
+          additions: Math.floor(Math.random() * 600) + 80,
+          deletions: Math.floor(Math.random() * 150) + 10
+        },
+        {
+          id: `git-${Date.now()}-7`,
+          type: 'pull-request',
+          author: 'Khalid Abdullah',
+          message: 'Enhance Performance Monitor with trend analysis',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          branch: 'feature/v0.0.3-performance',
+          status: 'success'
+        },
+        {
+          id: `git-${Date.now()}-8`,
+          type: 'commit',
+          author: 'Khalid Abdullah',
+          message: 'docs: Update release notes for v0.0.3 completion',
+          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          branch: 'main',
+          status: 'success',
+          hash: Math.random().toString(36).substring(2, 10),
+          filesChanged: Math.floor(Math.random() * 10) + 1,
+          additions: Math.floor(Math.random() * 200) + 20,
+          deletions: Math.floor(Math.random() * 50) + 5
         }
       ];
       
@@ -223,7 +283,7 @@ const DevelopmentWorkflow: React.FC = () => {
           duration: Math.floor(Math.random() * 300) + 60,
           tests: {
             total: Math.floor(Math.random() * 100) + 50,
-            passed: Math.floor(Math.random() * 95) + 45,
+            passed: Math.floor(Math.random() * 45) + 45, // Ensure passed <= total
             failed: Math.floor(Math.random() * 5),
             skipped: Math.floor(Math.random() * 3)
           },
@@ -437,48 +497,77 @@ const DevelopmentWorkflow: React.FC = () => {
               <p>No recent Git activities</p>
             </div>
           ) : (
-            gitActivities.map((activity) => (
-              <div key={activity.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      {activity.type === 'commit' && <GitCommit className="w-4 h-4 text-green-500" />}
-                      {activity.type === 'pull-request' && <GitPullRequest className="w-4 h-4 text-blue-500" />}
-                      {activity.type === 'merge' && <GitMerge className="w-4 h-4 text-purple-500" />}
-                      {activity.type === 'branch' && <GitBranch className="w-4 h-4 text-orange-500" />}
+            <>
+              {/* Show first 3 activities */}
+              {gitActivities.slice(0, showAllGitActivities ? gitActivities.length : 3).map((activity) => (
+                <div key={activity.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        {activity.type === 'commit' && <GitCommit className="w-4 h-4 text-green-500" />}
+                        {activity.type === 'pull-request' && <GitPullRequest className="w-4 h-4 text-blue-500" />}
+                        {activity.type === 'merge' && <GitMerge className="w-4 h-4 text-purple-500" />}
+                        {activity.type === 'branch' && <GitBranch className="w-4 h-4 text-orange-500" />}
+                        
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                          {activity.status}
+                        </span>
+                        
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          {activity.branch}
+                        </span>
+                      </div>
                       
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                        {activity.status}
-                      </span>
+                      <h3 className="font-medium text-gray-900 mb-1">{activity.message}</h3>
                       
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        {activity.branch}
-                      </span>
+                      <div className="text-sm text-gray-600 mb-2">
+                        <span className="font-medium">{activity.author}</span> • {new Date(activity.timestamp).toLocaleString()}
+                      </div>
+                      
+                      {activity.hash && (
+                        <div className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
+                          {activity.hash}
+                        </div>
+                      )}
+                      
+                      {activity.filesChanged && (
+                        <div className="text-xs text-gray-500 mt-2">
+                          Files: {activity.filesChanged} | 
+                          {activity.additions && ` +${activity.additions}`} | 
+                          {activity.deletions && ` -${activity.deletions}`}
+                        </div>
+                      )}
                     </div>
                     
-                    <h3 className="font-medium text-gray-900 mb-1">{activity.message}</h3>
-                    
-                    <div className="text-sm text-gray-600 mb-2">
-                      <span className="font-medium">{activity.author}</span> • {new Date(activity.timestamp).toLocaleString()}
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={() => {
+                          setSelectedGitActivity(activity);
+                          setIsGitModalOpen(true);
+                        }}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Details
+                      </Button>
                     </div>
-                    
-                    {activity.hash && (
-                      <div className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
-                        {activity.hash}
-                      </div>
-                    )}
-                    
-                    {activity.filesChanged && (
-                      <div className="text-xs text-gray-500 mt-2">
-                        Files: {activity.filesChanged} | 
-                        {activity.additions && ` +${activity.additions}`} | 
-                        {activity.deletions && ` -${activity.deletions}`}
-                      </div>
-                    )}
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+              
+              {/* Show More/Less Button */}
+              {gitActivities.length > 3 && (
+                <div className="text-center pt-4">
+                  <Button
+                    onClick={() => setShowAllGitActivities(!showAllGitActivities)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {showAllGitActivities ? 'Show Less' : `Show More (${gitActivities.length - 3} more)`}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </Card>
@@ -761,6 +850,99 @@ const DevelopmentWorkflow: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+      </Modal>
+
+      {/* Git Activity Details Modal */}
+      <Modal
+        isOpen={isGitModalOpen}
+        onClose={() => {
+          setIsGitModalOpen(false);
+          setSelectedGitActivity(null);
+        }}
+        title={`Git Activity Details - ${selectedGitActivity?.type?.toUpperCase()}`}
+        size="lg"
+      >
+        {selectedGitActivity && (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium">Activity Information</h3>
+              <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                <div>
+                  <span className="text-gray-500">Type:</span>
+                  <span className="ml-2 font-medium capitalize">{selectedGitActivity.type}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Status:</span>
+                  <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedGitActivity.status)}`}>
+                    {selectedGitActivity.status}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Branch:</span>
+                  <span className="ml-2 font-medium">{selectedGitActivity.branch}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Author:</span>
+                  <span className="ml-2 font-medium">{selectedGitActivity.author}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Timestamp:</span>
+                  <span className="ml-2">{new Date(selectedGitActivity.timestamp).toLocaleString()}</span>
+                </div>
+                {selectedGitActivity.hash && (
+                  <div>
+                    <span className="text-gray-500">Commit Hash:</span>
+                    <span className="ml-2 font-mono text-sm">{selectedGitActivity.hash}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium">Message</h3>
+              <div className="bg-gray-50 p-3 rounded-lg mt-2">
+                <p className="text-sm text-gray-700">{selectedGitActivity.message}</p>
+              </div>
+            </div>
+            
+            {selectedGitActivity.filesChanged && (
+              <div>
+                <h3 className="text-lg font-medium">File Changes</h3>
+                <div className="grid grid-cols-3 gap-4 mt-2 text-sm">
+                  <div className="bg-blue-50 p-3 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-600">{selectedGitActivity.filesChanged}</div>
+                    <div className="text-blue-700">Files Changed</div>
+                  </div>
+                  {selectedGitActivity.additions && (
+                    <div className="bg-green-50 p-3 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-green-600">+{selectedGitActivity.additions}</div>
+                      <div className="text-green-700">Additions</div>
+                    </div>
+                  )}
+                  {selectedGitActivity.deletions && (
+                    <div className="bg-red-50 p-3 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-red-600">-{selectedGitActivity.deletions}</div>
+                      <div className="text-red-700">Deletions</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            <div>
+              <h3 className="text-lg font-medium">Activity Summary</h3>
+              <div className="bg-gray-50 p-3 rounded-lg mt-2">
+                <div className="text-sm text-gray-600">
+                  <p><strong>{selectedGitActivity.author}</strong> performed a <strong>{selectedGitActivity.type}</strong> operation on the <strong>{selectedGitActivity.branch}</strong> branch.</p>
+                  {selectedGitActivity.filesChanged && (
+                    <p className="mt-2">This activity involved <strong>{selectedGitActivity.filesChanged}</strong> files with <strong>{selectedGitActivity.additions || 0} additions</strong> and <strong>{selectedGitActivity.deletions || 0} deletions</strong>.</p>
+                  )}
+                  <p className="mt-2">The activity was completed at <strong>{new Date(selectedGitActivity.timestamp).toLocaleString()}</strong> with a status of <strong>{selectedGitActivity.status}</strong>.</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </Modal>
