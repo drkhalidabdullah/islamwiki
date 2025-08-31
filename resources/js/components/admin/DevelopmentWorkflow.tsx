@@ -84,15 +84,18 @@ const DevelopmentWorkflow: React.FC = () => {
   const [showAllGitActivities, setShowAllGitActivities] = useState(false);
   const [showAllFiles, setShowAllFiles] = useState(false);
   const [showFullDiff, setShowFullDiff] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date>(new Date());
 
   useEffect(() => {
     refreshData();
   }, []);
 
   const refreshData = async () => {
+    console.log('🔄 Refresh started...');
     setIsRefreshing(true);
     
     try {
+      console.log('📊 Collecting Git data...');
       // Simulate collecting real Git data
       // In a real implementation, this would call Git APIs or execute Git commands
       
@@ -115,7 +118,7 @@ const DevelopmentWorkflow: React.FC = () => {
           type: 'pull-request',
           author: 'Khalid Abdullah',
           message: 'Merge feature/v0.0.3-real-testing into develop',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
           branch: 'develop',
           status: 'pending',
           filesChanged: 8,
@@ -201,9 +204,11 @@ const DevelopmentWorkflow: React.FC = () => {
         }
       ];
       
+      console.log('💾 Setting Git activities:', newGitActivities.length, 'activities');
       setGitActivities(newGitActivities);
       
       // Update team member stats
+      console.log('👥 Updating team members...');
       setTeamMembers(prev => prev.map(member => ({
         ...member,
         commits: newGitActivities.filter(activity => 
@@ -287,10 +292,14 @@ const DevelopmentWorkflow: React.FC = () => {
       ];
       
       setBuildStatuses(newBuildStatuses);
+      
+      console.log('✅ Refresh completed successfully');
+      setLastRefreshTime(new Date());
 
     } catch (error) {
-      console.error('Error refreshing data:', error);
+      console.error('❌ Error refreshing data:', error);
     } finally {
+      console.log('🔄 Setting isRefreshing to false');
       setIsRefreshing(false);
     }
   };
@@ -334,9 +343,15 @@ const DevelopmentWorkflow: React.FC = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Development Workflow</h2>
               <p className="text-gray-600">Track Git activities, deployments, and team collaboration</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Last refreshed: {lastRefreshTime.toLocaleTimeString()}
+              </p>
             </div>
             <button
-              onClick={refreshData}
+              onClick={() => {
+                console.log('🖱️ Refresh button clicked!');
+                refreshData();
+              }}
               disabled={isRefreshing}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center space-x-2"
             >
