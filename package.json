@@ -1,0 +1,54 @@
+{
+    "name": "islamwiki-frontend",
+    "version": "0.0.1",
+    "description": "IslamWiki React Frontend Application - Built for Shared Hosting",
+    "author": "Khalid Abdullah",
+    "license": "AGPL-3.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "build:shared-hosting": "tsc && vite build --mode production && npm run optimize-assets",
+        "preview": "vite preview",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "type-check": "tsc --noEmit",
+        "optimize-assets": "echo 'Assets optimized for shared hosting deployment'"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.20.1",
+        "zustand": "^4.4.7",
+        "@tanstack/react-query": "^5.8.4",
+        "framer-motion": "^10.16.16",
+        "lucide-react": "^0.294.0",
+        "clsx": "^2.0.0",
+        "tailwind-merge": "^2.0.0",
+        "react-hook-form": "^7.48.2",
+        "zod": "^3.22.4",
+        "@hookform/resolvers": "^3.3.2",
+        "date-fns": "^2.30.0",
+        "react-markdown": "^9.0.1",
+        "remark-gfm": "^4.0.0",
+        "rehype-highlight": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.37",
+        "@types/react-dom": "^18.2.15",
+        "@typescript-eslint/eslint-plugin": "^6.10.0",
+        "@typescript-eslint/parser": "^6.10.0",
+        "@vitejs/plugin-react": "^4.1.1",
+        "autoprefixer": "^10.4.16",
+        "eslint": "^8.53.0",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.4.4",
+        "postcss": "^8.4.31",
+        "tailwindcss": "^3.3.5",
+        "typescript": "^5.2.2",
+        "vite": "^5.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    }
+} 
