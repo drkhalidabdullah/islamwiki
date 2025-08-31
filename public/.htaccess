@@ -7,10 +7,10 @@
 # Enable URL rewriting
 RewriteEngine On
 
-# Redirect all requests to index.php (front controller pattern)
+# For React SPA - serve index.html for all routes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+RewriteRule ^(.*)$ index.html [QSA,L]
 
 # Security Headers
 <IfModule mod_headers.c>

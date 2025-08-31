@@ -11,7 +11,7 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      alert(`Search functionality coming soon! You searched for: "${searchQuery.trim()}"`);
       setSearchQuery('');
     }
   };
@@ -61,8 +61,8 @@ const Header: React.FC = () => {
             <Link to="/" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
               Home
             </Link>
-            <Link to="/categories" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
-              Categories
+            <Link to="/tests" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
+              Tests
             </Link>
             
             {isAuthenticated ? (
@@ -72,9 +72,6 @@ const Header: React.FC = () => {
                     Admin
                   </Link>
                 )}
-                <Link to="/profile" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Profile
-                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium"
@@ -84,15 +81,18 @@ const Header: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
+                <button
+                  onClick={() => alert('Login functionality coming soon!')}
+                  className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium"
+                >
                   Login
-                </Link>
-                <Link
-                  to="/register"
+                </button>
+                <button
+                  onClick={() => alert('Register functionality coming soon!')}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                 >
                   Register
-                </Link>
+                </button>
               </div>
             )}
           </nav>
@@ -136,11 +136,11 @@ const Header: React.FC = () => {
                 Home
               </Link>
               <Link
-                to="/categories"
+                to="/tests"
                 className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Categories
+                Tests
               </Link>
               
               {isAuthenticated ? (
@@ -154,13 +154,6 @@ const Header: React.FC = () => {
                       Admin
                     </Link>
                   )}
-                  <Link
-                    to="/profile"
-                    className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
                   <button
                     onClick={() => {
                       handleLogout();
@@ -173,20 +166,24 @@ const Header: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
-                    onClick={() => setIsMenuOpen(false)}
+                  <button
+                    onClick={() => {
+                      alert('Login functionality coming soon!');
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
                   >
                     Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="bg-green-600 text-white block px-3 py-2 rounded-lg text-base font-medium hover:bg-green-700 transition-colors text-center"
-                    onClick={() => setIsMenuOpen(false)}
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert('Register functionality coming soon!');
+                      setIsMenuOpen(false);
+                    }}
+                    className="bg-green-600 text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-green-700 transition-colors w-full text-left"
                   >
                     Register
-                  </Link>
+                  </button>
                 </>
               )}
             </div>
