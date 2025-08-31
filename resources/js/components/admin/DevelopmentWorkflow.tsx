@@ -397,7 +397,7 @@ const DevelopmentWorkflow: React.FC = () => {
                       setSelectedGitActivity(activity);
                       setIsGitModalOpen(true);
                     }}
-                    className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                    className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
                   >
                     Details
                   </button>
@@ -446,12 +446,12 @@ const DevelopmentWorkflow: React.FC = () => {
                         setSelectedDeployment(deployment);
                         setIsModalOpen(true);
                       }}
-                      className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                      className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
                     >
                       Details
                     </button>
                     {deployment.status === 'success' && (
-                      <button className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors">
+                      <button className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
                         Rollback
                       </button>
                     )}
@@ -741,7 +741,7 @@ const DevelopmentWorkflow: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-gray-900">File Changes Details</h3>
-                      <button className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors">
+                      <button className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
                         View Full Diff
                       </button>
                     </div>
