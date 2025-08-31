@@ -55,11 +55,11 @@ const App: React.FC = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isAuthenticated]);
-
+  
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route 
@@ -71,7 +71,7 @@ const App: React.FC = () => {
           } 
         />
         <Route path="*" element={<ErrorPage />} />
-      </Routes>
+        </Routes>
     </Router>
   );
 };
