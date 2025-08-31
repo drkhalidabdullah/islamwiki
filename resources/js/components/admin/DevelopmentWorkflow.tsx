@@ -324,19 +324,23 @@ const DevelopmentWorkflow: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900">Development Workflow</h2>
-          <p className="text-gray-600">Track Git activities, deployments, and team collaboration</p>
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Development Workflow</h2>
+              <p className="text-gray-600">Track Git activities, deployments, and team collaboration</p>
+            </div>
+            <button
+              onClick={refreshData}
+              disabled={isRefreshing}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center space-x-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
         </div>
-        <button
-          onClick={refreshData}
-          disabled={isRefreshing}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center space-x-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
-        </button>
       </div>
 
       {/* Git Activities */}
