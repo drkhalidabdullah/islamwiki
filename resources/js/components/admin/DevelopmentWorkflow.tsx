@@ -98,104 +98,106 @@ const DevelopmentWorkflow: React.FC = () => {
       
       const newGitActivities: GitActivity[] = [
         {
-          id: `git-${Date.now()}-1`,
+          id: 'git-commit-1',
           type: 'commit',
           author: 'Khalid Abdullah',
           message: 'feat: Implement real testing dashboard functionality',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
           branch: 'feature/v0.0.3-real-testing',
           status: 'success',
-          hash: Math.random().toString(36).substring(2, 10),
-          filesChanged: Math.floor(Math.random() * 20) + 1,
-          additions: Math.floor(Math.random() * 500) + 50,
-          deletions: Math.floor(Math.random() * 200) + 10
+          hash: 'a1b2c3d4',
+          filesChanged: 12,
+          additions: 370,
+          deletions: 109
         },
         {
-          id: `git-${Date.now()}-2`,
+          id: 'git-pr-1',
           type: 'pull-request',
           author: 'Khalid Abdullah',
           message: 'Merge feature/v0.0.3-real-testing into develop',
           timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
           branch: 'develop',
           status: 'pending',
-          filesChanged: Math.floor(Math.random() * 8) + 2,
-          additions: Math.floor(Math.random() * 150) + 20,
-          deletions: Math.floor(Math.random() * 50) + 5
+          filesChanged: 8,
+          additions: 125,
+          deletions: 45
         },
         {
-          id: `git-${Date.now()}-3`,
+          id: 'git-merge-1',
           type: 'merge',
           author: 'Khalid Abdullah',
           message: 'Merge develop into main for v0.0.3 release',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
           branch: 'main',
           status: 'success',
-          filesChanged: Math.floor(Math.random() * 12) + 3,
-          additions: Math.floor(Math.random() * 200) + 30,
-          deletions: Math.floor(Math.random() * 80) + 10
+          filesChanged: 15,
+          additions: 280,
+          deletions: 95
         },
         {
-          id: `git-${Date.now()}-4`,
+          id: 'git-commit-2',
           type: 'commit',
           author: 'Khalid Abdullah',
           message: 'fix: Resolve System Health history collection issue',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8 hours ago
           branch: 'feature/v0.0.3-system-health',
           status: 'success',
-          hash: Math.random().toString(36).substring(2, 10),
-          filesChanged: Math.floor(Math.random() * 15) + 1,
-          additions: Math.floor(Math.random() * 300) + 30,
-          deletions: Math.floor(Math.random() * 100) + 5
+          hash: 'm3n4o5p6',
+          filesChanged: 18,
+          additions: 320,
+          deletions: 85
         },
         {
-          id: `git-${Date.now()}-5`,
+          id: 'git-branch-1',
           type: 'branch',
           author: 'Khalid Abdullah',
           message: 'Create feature branch for v0.0.4 development',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
           branch: 'feature/v0.0.4-database',
           status: 'success',
+          hash: 'q7r8s9t0',
           filesChanged: 0, // New branch, no files changed yet
           additions: 0,
           deletions: 0
         },
         {
-          id: `git-${Date.now()}-6`,
+          id: 'git-commit-3',
           type: 'commit',
           author: 'Khalid Abdullah',
           message: 'feat: Add comprehensive performance averages to System Health',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 16 * 60 * 60 * 1000).toISOString(), // 16 hours ago
           branch: 'feature/v0.0.3-system-health',
           status: 'success',
-          hash: Math.random().toString(36).substring(2, 10),
-          filesChanged: Math.floor(Math.random() * 25) + 1,
-          additions: Math.floor(Math.random() * 600) + 80,
-          deletions: Math.floor(Math.random() * 150) + 10
+          hash: 'u1v2w3x4',
+          filesChanged: 22,
+          additions: 580,
+          deletions: 125
         },
         {
-          id: `git-${Date.now()}-7`,
+          id: 'git-pr-2',
           type: 'pull-request',
           author: 'Khalid Abdullah',
           message: 'Enhance Performance Monitor with trend analysis',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(), // 20 hours ago
           branch: 'feature/v0.0.3-performance',
           status: 'success',
-          filesChanged: Math.floor(Math.random() * 18) + 5,
-          additions: Math.floor(Math.random() * 400) + 60,
-          deletions: Math.floor(Math.random() * 120) + 15
+          hash: 'y5z6a7b8',
+          filesChanged: 16,
+          additions: 420,
+          deletions: 110
         },
         {
-          id: `git-${Date.now()}-8`,
+          id: 'git-commit-4',
           type: 'commit',
           author: 'Khalid Abdullah',
           message: 'docs: Update release notes for v0.0.3 completion',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 24 hours ago
           branch: 'main',
           status: 'success',
-          hash: Math.random().toString(36).substring(2, 10),
-          filesChanged: Math.floor(Math.random() * 10) + 1,
-          additions: Math.floor(Math.random() * 200) + 20,
-          deletions: Math.floor(Math.random() * 50) + 5
+          hash: 'c9d0e1f2',
+          filesChanged: 9,
+          additions: 180,
+          deletions: 35
         }
       ];
       
@@ -218,14 +220,14 @@ const DevelopmentWorkflow: React.FC = () => {
       // Simulate deployment data
       const newDeployments: Deployment[] = [
         {
-          id: `deploy-${Date.now()}-1`,
+          id: 'deploy-prod-1',
           environment: 'production',
           version: 'v0.0.3',
           status: 'success',
           author: 'Khalid Abdullah',
-          timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-          duration: Math.floor(Math.random() * 300) + 60,
-          commit: Math.random().toString(36).substring(2, 10),
+          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+          duration: 245,
+          commit: 'a1b2c3d4',
           changes: [
             'Enhanced testing dashboard with real-time execution',
             'Added comprehensive performance monitoring',
@@ -242,14 +244,14 @@ const DevelopmentWorkflow: React.FC = () => {
           ]
         },
         {
-          id: `deploy-${Date.now()}-2`,
+          id: 'deploy-staging-1',
           environment: 'staging',
           version: 'v0.0.4-alpha',
           status: 'deploying',
           author: 'Khalid Abdullah',
-          timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
           duration: 0,
-          commit: Math.random().toString(36).substring(2, 10),
+          commit: 'e5f6g7h8',
           changes: [
             'Database optimization features',
             'Enhanced security middleware',
@@ -263,20 +265,20 @@ const DevelopmentWorkflow: React.FC = () => {
       // Simulate build statuses
       const newBuildStatuses: BuildStatus[] = [
         {
-          id: `build-${Date.now()}-1`,
+          id: 'build-feature-1',
           branch: 'feature/v0.0.3-real-testing',
           status: 'success',
-          timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
-          duration: Math.floor(Math.random() * 300) + 120,
-          passed: Math.floor(Math.random() * 45) + 45,
+          timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
+          duration: 287,
+          passed: 73,
           total: 75,
-          coverage: Math.floor(Math.random() * 20) + 75
+          coverage: 89
         },
         {
-          id: `build-${Date.now()}-2`,
+          id: 'build-develop-1',
           branch: 'develop',
           status: 'building',
-          timestamp: new Date(Date.now() - Math.random() * 1800000).toISOString(),
+          timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
           duration: 0,
           passed: 0,
           total: 0,
