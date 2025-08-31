@@ -245,6 +245,7 @@ const TestingDashboard: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
       
       // Simulate test results
+      const coverage = Math.floor(Math.random() * 30) + 70; // Generate coverage once
       const mockResults = {
         totalTests: Math.floor(Math.random() * 50) + 10,
         passedTests: Math.floor(Math.random() * 45) + 8,
@@ -253,8 +254,8 @@ const TestingDashboard: React.FC = () => {
         duration: Math.random() * 10 + 1,
         lastRun: new Date().toISOString(),
         status: 'passing' as const,
-        coverage: Math.floor(Math.random() * 30) + 70,
-        output: `Running ${suite.name}...\n✓ All tests passed!\nCoverage: ${Math.floor(Math.random() * 30) + 70}%`
+        coverage: coverage,
+        output: `Running ${suite.name}...\n✓ All tests passed!\nCoverage: ${coverage}%`
       };
       
       const finalSuite = {
@@ -262,6 +263,8 @@ const TestingDashboard: React.FC = () => {
         ...mockResults,
         status: mockResults.failedTests > 0 ? 'failing' : 'passing'
       };
+      
+      console.log(`Test suite ${suite.name} - Generated coverage: ${mockResults.coverage}%, Output coverage: ${mockResults.output.match(/Coverage: (\d+)%/)?.[1]}%`);
       
       setTestResults(prev => ({ ...prev, [suite.id]: finalSuite }));
       setMetricsUpdateTrigger(prev => prev + 1);
