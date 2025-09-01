@@ -1,15 +1,25 @@
 # IslamWiki Framework
 
 **Author:** Khalid Abdullah  
-**Version:** 0.0.3 (Alpha)  
-**Date:** 2025-01-27  
+**Version:** 0.0.4 (Alpha)  
+**Date:** 2025-08-31  
 **License:** AGPL-3.0  
 
-## 🎉 **v0.0.3 Alpha Release - COMPLETED!**
+## 🎉 **v0.0.4 Alpha Release - ✅ COMPLETED!**
 
 IslamWiki is a comprehensive Islamic knowledge platform that combines wiki functionality, social networking, learning management, and Q&A platforms into a single, modern web application. Built for shared hosting with enterprise-grade features.
 
-## ✨ **What's New in v0.0.3**
+## ✨ **What's New in v0.0.4**
+
+### **🎯 Database & Core Services - ✅ COMPLETED**
+
+- **Enhanced Database Manager** ✅ - Real MySQL connection with query logging and performance monitoring
+- **Migration System** ✅ - Version-controlled database schema management with rollback support
+- **Enhanced Wiki Service** ✅ - Complete CRUD operations with real database persistence
+- **Enhanced User Service** ✅ - Complete user management with roles and profiles
+- **Enhanced Content Service** ✅ - Comprehensive content management with versioning
+- **Database Testing** ✅ - Comprehensive test suite for database functionality
+- **Performance Optimization** ✅ - Query optimization and caching strategies
 
 ### **✅ Core Framework - COMPLETE**
 
@@ -126,6 +136,22 @@ Run the API tests:
 php test_api.php
 ```
 
+**NEW: Test v0.0.4 database functionality:**
+
+```bash
+# Test database setup
+php test_database_setup.php
+
+# Test database functionality
+php test_database_v0_0_4.php
+
+# Test User Service functionality
+php test_user_service_v0_0_4.php
+
+# Setup actual database (interactive)
+php setup_database_v0_0_4.php
+```
+
 ## 🏗️ **Architecture**
 
 ### **Backend Structure**
@@ -135,13 +161,16 @@ src/
 ├── Core/                    # Framework core
 │   ├── Container/          # Dependency injection
 │   ├── Database/           # Database abstraction
+│   │   ├── DatabaseManager.php    # NEW: Enhanced database management
+│   │   ├── MigrationManager.php   # NEW: Database migrations
+│   │   └── Database.php           # Legacy database class
 │   ├── Http/               # Request/Response handling
 │   ├── Routing/            # URL routing system
 │   ├── Middleware/         # HTTP middleware stack
 │   ├── Authentication/     # JWT authentication
 │   └── Cache/              # Caching system
 ├── Services/                # Business logic
-│   ├── Wiki/               # Wiki functionality
+│   ├── Wiki/               # Wiki functionality (ENHANCED)
 │   ├── User/               # User management
 │   ├── Content/            # Content management
 │   └── ...                 # Other services
@@ -210,13 +239,14 @@ The framework includes optimized `.htaccess` files with:
 - `GET /api/statistics` - Platform statistics
 - `GET /api/health` - Health check
 
-## 🎯 **What's Next (v0.0.4)**
+## 🎯 **What's Next (v0.0.5 Planning)**
 
-- **User Interface** - Complete React component implementation
-- **Database Integration** - Real database connection and testing
-- **Authentication Flow** - Complete login/register system
-- **Content Management** - Article creation and editing
-- **Admin Panel** - Basic administration interface
+- **Frontend Admin Dashboard** - Complete React-based admin interface
+- **Advanced Search & Filtering** - Full-text search and content discovery
+- **Media Management System** - File upload, storage, and management
+- **Analytics & Reporting** - User activity and content analytics
+- **Multi-language Support** - Internationalization and localization
+- **Advanced Security Features** - Enhanced authentication and authorization
 
 ## 🤝 **Contributing**
 
@@ -239,6 +269,15 @@ This project is licensed under the AGPL-3.0 License - see the [LICENSE](LICENSE)
 
 ---
 
-**Status:** ✅ **v0.0.3 Alpha Enhancement Release Complete**  
-**Next Release:** v0.0.4 Database & Core Services (Q4 2025)  
+**Status:** ✅ **v0.0.4 Alpha Enhancement Release - COMPLETED**  
+**Next Release:** v0.0.5 User Management & Authentication (Q1 2026)  
 **Repository:** <https://github.com/drkhalidabdullah/islamwiki>
+
+**v0.0.4 Progress:**
+- ✅ Database Manager: Complete
+- ✅ Migration System: Complete  
+- ✅ Enhanced Wiki Service: Complete
+- ✅ Enhanced User Service: Complete
+- ✅ Enhanced Content Service: Complete
+- ✅ API Endpoints with Real Data: Complete
+- ✅ Final Testing & Validation: Complete

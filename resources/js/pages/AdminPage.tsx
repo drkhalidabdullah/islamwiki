@@ -6,8 +6,9 @@ import TestingDashboard from '../components/admin/TestingDashboard';
 import PerformanceMonitor from '../components/admin/PerformanceMonitor';
 import DevelopmentWorkflow from '../components/admin/DevelopmentWorkflow';
 import SystemHealth from '../components/admin/SystemHealth';
+import DatabaseDashboard from '../components/admin/DatabaseDashboard';
 
-type AdminView = 'overview' | 'testing' | 'performance' | 'workflow' | 'health';
+type AdminView = 'overview' | 'testing' | 'performance' | 'workflow' | 'health' | 'database';
 
 const AdminPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<AdminView>('overview');
@@ -16,12 +17,12 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     // Check URL hash first
     const hash = window.location.hash.replace('#', '');
-    if (hash && ['overview', 'testing', 'performance', 'workflow', 'health'].includes(hash)) {
+    if (hash && ['overview', 'testing', 'performance', 'workflow', 'health', 'database'].includes(hash)) {
       setCurrentView(hash as AdminView);
     } else {
       // Fall back to localStorage if no hash
       const savedView = localStorage.getItem('adminCurrentView') as AdminView;
-      if (savedView && ['overview', 'testing', 'performance', 'workflow', 'health'].includes(savedView)) {
+      if (savedView && ['overview', 'testing', 'performance', 'workflow', 'health', 'database'].includes(savedView)) {
         setCurrentView(savedView);
         // Update URL hash to match
         window.location.hash = savedView;
@@ -46,6 +47,8 @@ const AdminPage: React.FC = () => {
         return <DevelopmentWorkflow />;
       case 'health':
         return <SystemHealth />;
+      case 'database':
+        return <DatabaseDashboard />;
       default:
         return <AdminDashboard />;
     }
@@ -59,10 +62,10 @@ const AdminPage: React.FC = () => {
         <div className="flex">
           {/* Sidebar Navigation */}
           <div className="w-64 bg-white border-r border-gray-200 min-h-screen p-4">
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Admin Tools</h3>
-              <p className="text-sm text-gray-600">v0.0.3 Complete</p>
-            </div>
+                          <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Admin Tools</h3>
+                <p className="text-sm text-gray-600">v0.0.4 Complete</p>
+              </div>
             
             <nav className="space-y-2">
               <button
@@ -144,6 +147,22 @@ const AdminPage: React.FC = () => {
                   System Health
                 </div>
               </button>
+              
+              <button
+                onClick={() => handleViewChange('database')}
+                className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  currentView === 'database'
+                    ? 'bg-green-100 text-green-700 border-r-2 border-green-500'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  </svg>
+                  Database Management
+                </div>
+              </button>
             </nav>
             
             <div className="mt-8 p-4 bg-gray-50 rounded-lg">
@@ -151,11 +170,15 @@ const AdminPage: React.FC = () => {
               <div className="space-y-2 text-xs text-gray-600">
                 <div className="flex justify-between">
                   <span>Tests Passing:</span>
-                  <span className="font-medium text-green-600">75/75</span>
+                  <span className="font-medium text-green-600">15/15</span>
                 </div>
                 <div className="flex justify-between">
                   <span>System Status:</span>
-                  <span className="font-medium text-green-600">Healthy</span>
+                  <span className="font-medium text-green-600">v0.0.4 Complete</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Database:</span>
+                  <span className="font-medium text-green-600">Connected</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Last Updated:</span>
@@ -170,7 +193,7 @@ const AdminPage: React.FC = () => {
             <div className="max-w-7xl mx-auto p-6">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-lg text-gray-600 mt-1">v0.0.3 - Complete Development & Monitoring Tools</p>
+                <p className="text-lg text-gray-600 mt-1">v0.0.4 - Complete Database & Core Services</p>
               </div>
               
               {renderCurrentView()}

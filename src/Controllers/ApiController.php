@@ -2,303 +2,317 @@
 
 namespace IslamWiki\Controllers;
 
-use IslamWiki\Core\Http\Request;
-use IslamWiki\Core\Http\Response;
+use IslamWiki\Core\Database\DatabaseManager;
 use IslamWiki\Services\Wiki\WikiService;
 use IslamWiki\Services\User\UserService;
 use IslamWiki\Services\Content\ContentService;
-use IslamWiki\Core\Authentication\AuthService;
+use IslamWiki\Core\Cache\FileCache;
+use Exception;
 
 /**
- * API Controller - Handles API requests
- * 
+ * API Controller - REST API endpoints for v0.0.4
  * @author Khalid Abdullah
- * @version 0.0.1
- * @date 2025-08-30
+ * @version 0.0.4
+ * @date 2025-01-27
  * @license AGPL-3.0
  */
 class ApiController
 {
+    private DatabaseManager $database;
     private WikiService $wikiService;
     private UserService $userService;
     private ContentService $contentService;
-    private AuthService $authService;
+    private FileCache $cache;
 
-    public function __construct(
-        WikiService $wikiService,
-        UserService $userService,
-        ContentService $contentService,
-        AuthService $authService
-    ) {
-        $this->wikiService = $wikiService;
-        $this->userService = $userService;
-        $this->contentService = $contentService;
-        $this->authService = $authService;
+    public function __construct(DatabaseManager $database)
+    {
+        $this->database = $database;
+        $this->cache = new FileCache('storage/cache/');
+        $this->wikiService = new WikiService($database, $this->cache);
+        $this->userService = new UserService($database);
+        $this->contentService = new ContentService($database, $this->cache);
     }
 
     /**
-     * Get recent articles
+     * Handle API requests
      */
-    public function getRecentArticles(Request $request): Response
+    public function handleRequest(string $method, string $endpoint, array $data = []): array
     {
         try {
-            $limit = (int) ($request->get('limit', 10));
-            $articles = $this->wikiService->getRecentArticles($limit);
-            
-            return (new Response())->json([
-                'success' => true,
-                'data' => $articles,
-                'count' => count($articles)
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to fetch recent articles',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get article by ID
-     */
-    public function getArticle(Request $request, int $id): Response
-    {
-        try {
-            $article = $this->wikiService->getArticle($id);
-            
-            if (!$article) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Article not found'
-                ], 404);
+            switch ($endpoint) {
+                case 'wiki/overview':
+                    return $this->getWikiOverview();
+                case 'wiki/articles':
+                    return $this->handleWikiArticles($method, $data);
+                case 'users':
+                    return $this->handleUsers($method, $data);
+                case 'content/articles':
+                    return $this->handleContentArticles($method, $data);
+                case 'content/categories':
+                    return $this->handleContentCategories($method, $data);
+                case 'content/tags':
+                    return $this->handleContentTags($method, $data);
+                case 'content/files':
+                    return $this->handleContentFiles($method, $data);
+                case 'system/health':
+                    return $this->getSystemHealth();
+                case 'system/stats':
+                    return $this->getSystemStats();
+                default:
+                    return ['error' => 'Endpoint not found', 'code' => 404];
             }
-            
-            return (new Response())->json([
-                'success' => true,
-                'data' => $article
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to fetch article',
-                'message' => $e->getMessage()
-            ], 500);
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage(), 'code' => 500];
         }
     }
 
     /**
-     * Search articles
+     * Get wiki overview data
      */
-    public function searchArticles(Request $request): Response
+    private function getWikiOverview(): array
     {
-        try {
-            $query = $request->get('q', '');
-            $limit = (int) ($request->get('limit', 20));
+        $cacheKey = 'wiki_overview';
+        $cached = $this->cache->get($cacheKey);
+        
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $overview = [
+            'total_articles' => $this->wikiService->getArticleCount(),
+            'total_users' => $this->userService->getUserCount(),
+            'total_categories' => $this->contentService->getCategoryCount(),
+            'recent_articles' => $this->wikiService->getRecentArticles(5),
+            'popular_articles' => $this->wikiService->getPopularArticles(5),
+            'system_status' => $this->getSystemHealth()
+        ];
+
+        $this->cache->set($cacheKey, $overview, 300); // Cache for 5 minutes
+        return $overview;
+    }
+
+    /**
+     * Handle wiki articles CRUD
+     */
+    private function handleWikiArticles(string $method, array $data): array
+    {
+        switch ($method) {
+            case 'GET':
+                $filters = $data['filters'] ?? [];
+                $page = $data['page'] ?? 1;
+                $perPage = $data['per_page'] ?? 20;
+                return $this->wikiService->getArticles($filters, $page, $perPage);
             
-            if (empty($query)) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Search query is required'
-                ], 400);
-            }
+            case 'POST':
+                return $this->wikiService->createArticle($data);
             
-            $articles = $this->wikiService->searchArticles($query, $limit);
+            case 'PUT':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'Article ID required', 'code' => 400];
+                }
+                unset($data['id']);
+                return $this->wikiService->updateArticle($id, $data);
             
-            return (new Response())->json([
-                'success' => true,
-                'data' => $articles,
-                'query' => $query,
-                'count' => count($articles)
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to search articles',
-                'message' => $e->getMessage()
-            ], 500);
+            case 'DELETE':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'Article ID required', 'code' => 400];
+                }
+                return $this->wikiService->deleteArticle($id);
+            
+            default:
+                return ['error' => 'Method not allowed', 'code' => 405];
         }
     }
 
     /**
-     * Get categories
+     * Handle users CRUD
      */
-    public function getCategories(Request $request): Response
+    private function handleUsers(string $method, array $data): array
     {
-        try {
-            $categories = $this->wikiService->getCategories();
+        switch ($method) {
+            case 'GET':
+                $filters = $data['filters'] ?? [];
+                $page = $data['page'] ?? 1;
+                $perPage = $data['per_page'] ?? 20;
+                return $this->userService->getUsers($filters, $page, $perPage);
             
-            return (new Response())->json([
-                'success' => true,
-                'data' => $categories,
-                'count' => count($categories)
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to fetch categories',
-                'message' => $e->getMessage()
-            ], 500);
+            case 'POST':
+                return $this->userService->createUser($data);
+            
+            case 'PUT':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'User ID required', 'code' => 400];
+                }
+                unset($data['id']);
+                return $this->userService->updateUser($id, $data);
+            
+            case 'DELETE':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'User ID required', 'code' => 400];
+                }
+                return $this->userService->deleteUser($id);
+            
+            default:
+                return ['error' => 'Method not allowed', 'code' => 405];
         }
     }
 
     /**
-     * Get articles by category
+     * Handle content articles CRUD
      */
-    public function getArticlesByCategory(Request $request, int $categoryId): Response
+    private function handleContentArticles(string $method, array $data): array
     {
-        try {
-            $limit = (int) ($request->get('limit', 20));
-            $offset = (int) ($request->get('offset', 0));
+        switch ($method) {
+            case 'GET':
+                if (isset($data['id'])) {
+                    return $this->contentService->getArticle($data['id']);
+                }
+                if (isset($data['slug'])) {
+                    return $this->contentService->getArticleBySlug($data['slug']);
+                }
+                $filters = $data['filters'] ?? [];
+                $page = $data['page'] ?? 1;
+                $perPage = $data['per_page'] ?? 20;
+                return $this->contentService->getArticles($filters, $page, $perPage);
             
-            $articles = $this->wikiService->getArticlesByCategory($categoryId, $limit, $offset);
+            case 'POST':
+                return $this->contentService->createArticle($data);
             
-            return (new Response())->json([
-                'success' => true,
-                'data' => $articles,
-                'category_id' => $categoryId,
-                'count' => count($articles)
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to fetch articles by category',
-                'message' => $e->getMessage()
-            ], 500);
+            case 'PUT':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'Article ID required', 'code' => 400];
+                }
+                unset($data['id']);
+                $changesSummary = $data['changes_summary'] ?? '';
+                unset($data['changes_summary']);
+                return $this->contentService->updateArticle($id, $data, $changesSummary);
+            
+            case 'DELETE':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'Article ID required', 'code' => 400];
+                }
+                return $this->contentService->deleteArticle($id);
+            
+            default:
+                return ['error' => 'Method not allowed', 'code' => 405];
         }
     }
 
     /**
-     * User login
+     * Handle content categories CRUD
      */
-    public function login(Request $request): Response
+    private function handleContentCategories(string $method, array $data): array
     {
-        try {
-            $username = $request->post('username');
-            $password = $request->post('password');
+        switch ($method) {
+            case 'GET':
+                return $this->contentService->getCategories();
             
-            if (!$username || !$password) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Username and password are required'
-                ], 400);
-            }
+            case 'POST':
+                return $this->contentService->createCategory($data);
             
-            $result = $this->authService->authenticate($username, $password);
-            
-            if (!$result) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Invalid credentials'
-                ], 401);
-            }
-            
-            return (new Response())->json([
-                'success' => true,
-                'data' => $result
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Login failed',
-                'message' => $e->getMessage()
-            ], 500);
+            default:
+                return ['error' => 'Method not allowed', 'code' => 405];
         }
     }
 
     /**
-     * User logout
+     * Handle content tags
      */
-    public function logout(Request $request): Response
+    private function handleContentTags(string $method, array $data): array
     {
-        try {
-            $token = $request->header('Authorization');
-            if ($token && strpos($token, 'Bearer ') === 0) {
-                $token = substr($token, 7);
-                $this->authService->logout($token);
-            }
+        if ($method === 'GET') {
+            $sql = "SELECT * FROM tags ORDER BY name ASC";
+            $stmt = $this->database->query($sql);
+            return $stmt->fetchAll();
+        }
+        
+        return ['error' => 'Method not allowed', 'code' => 405];
+    }
+
+    /**
+     * Handle content files
+     */
+    private function handleContentFiles(string $method, array $data): array
+    {
+        switch ($method) {
+            case 'GET':
+                if (isset($data['id'])) {
+                    $sql = "SELECT * FROM files WHERE id = ?";
+                    $stmt = $this->database->execute($sql, [$data['id']]);
+                    return $stmt->fetch() ?: ['error' => 'File not found'];
+                }
+                $sql = "SELECT * FROM files ORDER BY created_at DESC";
+                $stmt = $this->database->query($sql);
+                return $stmt->fetchAll();
             
-            return (new Response())->json([
-                'success' => true,
-                'message' => 'Logged out successfully'
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Logout failed',
-                'message' => $e->getMessage()
-            ], 500);
+            case 'POST':
+                if (!isset($data['file'])) {
+                    return ['error' => 'File data required', 'code' => 400];
+                }
+                return $this->contentService->uploadFile($data['file'], $data['directory'] ?? 'general');
+            
+            case 'DELETE':
+                $id = $data['id'] ?? null;
+                if (!$id) {
+                    return ['error' => 'File ID required', 'code' => 400];
+                }
+                return $this->contentService->deleteFile($id);
+            
+            default:
+                return ['error' => 'Method not allowed', 'code' => 405];
         }
     }
 
     /**
-     * Get current user
+     * Get system health status
      */
-    public function getCurrentUser(Request $request): Response
+    private function getSystemHealth(): array
     {
-        try {
-            $token = $request->header('Authorization');
-            if (!$token || strpos($token, 'Bearer ') !== 0) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Authorization token required'
-                ], 401);
-            }
-            
-            $token = substr($token, 7);
-            $user = $this->authService->getCurrentUser($token);
-            
-            if (!$user) {
-                return (new Response())->json([
-                    'success' => false,
-                    'error' => 'Invalid or expired token'
-                ], 401);
-            }
-            
-            return (new Response())->json([
-                'success' => true,
-                'data' => $user
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to get current user',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $health = [
+            'database' => $this->database->testConnection(),
+            'cache' => $this->cache->has('health_check') ? 'OK' : 'WARNING',
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+
+        // Update cache health check
+        $this->cache->set('health_check', true, 60);
+        
+        return $health;
     }
 
     /**
-     * Get wiki statistics
+     * Get system statistics
      */
-    public function getStatistics(Request $request): Response
+    private function getSystemStats(): array
     {
-        try {
-            $stats = $this->wikiService->getStatistics();
-            
-            return (new Response())->json([
-                'success' => true,
-                'data' => $stats
-            ]);
-        } catch (\Exception $e) {
-            return (new Response())->json([
-                'success' => false,
-                'error' => 'Failed to fetch statistics',
-                'message' => $e->getMessage()
-            ], 500);
+        $cacheKey = 'system_stats';
+        $cached = $this->cache->get($cacheKey);
+        
+        if ($cached !== null) {
+            return $cached;
         }
-    }
 
-    /**
-     * Health check endpoint
-     */
-    public function health(Request $request): Response
-    {
-        return (new Response())->json([
-            'success' => true,
-            'status' => 'healthy',
-            'timestamp' => date('c'),
-            'version' => '0.0.1'
-        ]);
+        $stats = [
+            'database' => $this->database->getStats(),
+            'content' => $this->contentService->getContentStatistics(),
+            'users' => [
+                'total' => $this->userService->getUserCount(),
+                'active' => $this->userService->getActiveUserCount(),
+                'roles' => $this->userService->getRoleDistribution()
+            ],
+            'performance' => [
+                'cache_hits' => $this->cache->get('cache_hits') ?: 0,
+                'cache_misses' => $this->cache->get('cache_misses') ?: 0
+            ]
+        ];
+
+        $this->cache->set($cacheKey, $stats, 600); // Cache for 10 minutes
+        return $stats;
     }
 } 

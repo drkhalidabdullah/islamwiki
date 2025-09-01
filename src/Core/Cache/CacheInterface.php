@@ -3,11 +3,11 @@
 namespace IslamWiki\Core\Cache;
 
 /**
- * Cache interface for different cache implementations
+ * Cache Interface - Defines contract for cache implementations
  * 
  * @author Khalid Abdullah
- * @version 0.0.1
- * @date 2025-08-30
+ * @version 0.0.4
+ * @date 2025-01-27
  * @license AGPL-3.0
  */
 interface CacheInterface
@@ -28,7 +28,7 @@ interface CacheInterface
     public function delete(string $key): bool;
 
     /**
-     * Check if key exists in cache
+     * Check if a key exists in cache
      */
     public function has(string $key): bool;
 
@@ -51,4 +51,9 @@ interface CacheInterface
      * Delete multiple values from cache
      */
     public function deleteMultiple(array $keys): bool;
+
+    /**
+     * Clean expired cache files
+     */
+    public function cleanExpired(): int;
 } 

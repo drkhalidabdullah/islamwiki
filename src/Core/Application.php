@@ -153,6 +153,78 @@ class Application
             $router->get('/', function () {
                 return new Response('Admin Dashboard', 200);
             });
+            
+            // Load admin database routes
+            if (file_exists(__DIR__ . '/../../config/admin_database_routes.php')) {
+                $adminDatabaseRoutes = require __DIR__ . '/../../config/admin_database_routes.php';
+                foreach ($adminDatabaseRoutes as $route => $config) {
+                    $parts = explode(' ', $route);
+                    $method = $parts[0];
+                    $path = $parts[1];
+                    
+                    // Remove /admin prefix since we're already in admin group
+                    $path = str_replace('/admin', '', $path);
+                    
+                    switch ($method) {
+                        case 'GET':
+                            $router->get($path, function () use ($config) {
+                                $controllerClass = "\\IslamWiki\\Admin\\" . $config['controller'];
+                                if (class_exists($controllerClass)) {
+                                    // Create controller with dependencies
+                                    if ($controllerClass === "\\IslamWiki\\Admin\\DatabaseController") {
+                                        $database = new \IslamWiki\Core\Database\DatabaseManager([
+                                            'host' => 'localhost',
+                                            'port' => 3306,
+                                            'database' => 'islamwiki',
+                                            'username' => 'root',
+                                            'password' => '',
+                                            'timezone' => 'UTC'
+                                        ]);
+                                        $migrationManager = new \IslamWiki\Core\Database\MigrationManager($database, 'database/migrations/');
+                                        $controller = new $controllerClass($database, $migrationManager);
+                                    } else {
+                                        $controller = new $controllerClass();
+                                    }
+                                    
+                                    $action = $config['action'];
+                                    if (method_exists($controller, $action)) {
+                                        return $controller->$action();
+                                    }
+                                }
+                                return new Response(['error' => 'Controller or action not found'], 404, ['Content-Type' => 'application/json']);
+                            });
+                            break;
+                        case 'POST':
+                            $router->post($path, function () use ($config) {
+                                $controllerClass = "\\IslamWiki\\Admin\\" . $config['controller'];
+                                if (class_exists($controllerClass)) {
+                                    // Create controller with dependencies
+                                    if ($controllerClass === "\\IslamWiki\\Admin\\DatabaseController") {
+                                        $database = new \IslamWiki\Core\Database\DatabaseManager([
+                                            'host' => 'localhost',
+                                            'port' => 3306,
+                                            'database' => 'islamwiki',
+                                            'username' => 'root',
+                                            'password' => '',
+                                            'timezone' => 'UTC'
+                                        ]);
+                                        $migrationManager = new \IslamWiki\Core\Database\MigrationManager($database, 'database/migrations/');
+                                        $controller = new $controllerClass($database, $migrationManager);
+                                    } else {
+                                        $controller = new $controllerClass();
+                                    }
+                                    
+                                    $action = $config['action'];
+                                    if (method_exists($controller, $action)) {
+                                        return $controller->$action();
+                                    }
+                                }
+                                return new Response(['error' => 'Controller or action not found'], 404, ['Content-Type' => 'application/json']);
+                            });
+                            break;
+                    }
+                }
+            }
         });
         
         // Wiki routes
