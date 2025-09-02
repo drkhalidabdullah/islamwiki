@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Footer from '../components/layout/Footer';
 import AdminDashboard from '../components/admin/AdminDashboard';
 import TestingDashboard from '../components/admin/TestingDashboard';
 import PerformanceMonitor from '../components/admin/PerformanceMonitor';
@@ -198,8 +197,6 @@ const AdminPage: React.FC = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

@@ -563,8 +563,6 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 
-
-
   return (
     <div className="space-y-8">
       {renderOverview()}
