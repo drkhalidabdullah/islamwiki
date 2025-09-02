@@ -2,6 +2,11 @@
 
 **A comprehensive Islamic knowledge platform built for shared hosting with enterprise-grade features**
 
+**Author:** Khalid Abdullah  
+**Version:** 0.0.5  
+**Date:** September 2, 2025  
+**License:** AGPL-3.0
+
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-green.svg)](https://opensource.org/licenses/AGPL-3.0)
 [![Version](https://img.shields.io/badge/version-0.0.5-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)](https://github.com/drkhalidabdullah/islamwiki)

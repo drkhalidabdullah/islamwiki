@@ -105,10 +105,12 @@ database/
 ### **8. Scripts (`scripts/`)**
 ```
 scripts/
-├── build-and-preserve-htaccess.sh
-├── preserve-htaccess.sh
-├── restore-htaccess.sh
-└── legacy/                 # Legacy script files
+├── build-and-preserve-htaccess.sh    # Safe build script
+├── preserve-htaccess.sh              # Backup essential files
+├── restore-htaccess.sh               # Restore essential files
+├── protect-essential-files.sh        # Protect files before build
+├── restore-essential-files.sh        # Restore files after build
+└── legacy/                           # Legacy script files
 ```
 
 ### **9. Storage (`storage/`)**

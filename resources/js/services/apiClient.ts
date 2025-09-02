@@ -1,7 +1,7 @@
 // Base API configuration
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://api.islamwiki.org' 
-  : 'http://localhost:8000';
+  : ''; // Use relative URLs in development
 
 // API client class
 class ApiClient {

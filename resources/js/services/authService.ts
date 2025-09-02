@@ -71,7 +71,11 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post('/auth/login', credentials) as { data: AuthResponse };
+      const response = await apiClient.post('/api/', {
+        action: 'login',
+        email: credentials.username, // The API expects 'email' field
+        password: credentials.password
+      }) as { data: AuthResponse };
       
       if (response.data.success) {
         this.setToken(response.data.data.token);

@@ -1,5 +1,9 @@
 # 🎉 **IslamWiki Framework v0.0.4 - RELEASE NOTES**
 
+**Author:** Khalid Abdullah  
+**Version:** 0.0.4  
+**Date:** September 2, 2025  
+**License:** AGPL-3.0  
 **Release Date:** August 31, 2025  
 **Status:** ✅ **COMPLETED - 100% SUCCESS**  
 **Focus:** Database & Core Services Implementation  

@@ -12,18 +12,21 @@ The IslamWiki Framework uses a comprehensive database schema designed to support
 ## 🎯 **Database Design Principles**
 
 ### **1. Normalization**
+
 - **Third Normal Form**: Eliminate data redundancy
 - **Referential Integrity**: Foreign key constraints
 - **Atomic Values**: Single values in each field
 - **Functional Dependencies**: Proper key relationships
 
 ### **2. Scalability Considerations**
+
 - **Partitioning Strategy**: Support for large datasets
 - **Sharding Support**: Horizontal scaling capability
 - **Read Replicas**: Separate read/write operations
 - **Connection Pooling**: Efficient connection management
 
 ### **3. Performance Optimization**
+
 - **Strategic Indexing**: Optimize query performance
 - **Query Optimization**: Efficient SQL queries
 - **Caching Strategy**: Multi-level caching support
@@ -32,6 +35,7 @@ The IslamWiki Framework uses a comprehensive database schema designed to support
 ## 🏗️ **Database Architecture**
 
 ### **Database Structure**
+
 ```
 islamwiki (Database)
 ├── Core Tables
@@ -104,6 +108,7 @@ CREATE TABLE `users` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique user identifier
 - **`username`**: Unique username for login
 - **`email`**: Unique email address
@@ -143,6 +148,7 @@ CREATE TABLE `roles` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique role identifier
 - **`name`**: Unique role name (e.g., 'admin', 'moderator')
 - **`display_name`**: Human-readable role name
@@ -153,6 +159,7 @@ CREATE TABLE `roles` (
 - **`updated_at`**: Last update timestamp
 
 **Default Roles**:
+
 ```sql
 INSERT INTO `roles` (`name`, `display_name`, `description`, `permissions`, `is_system`) VALUES
 ('admin', 'Administrator', 'Full system access', '["*"]', 1),
@@ -183,6 +190,7 @@ CREATE TABLE `user_roles` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique relationship identifier
 - **`user_id`**: Reference to users table
 - **`role_id`**: Reference to roles table
@@ -212,6 +220,7 @@ CREATE TABLE `user_profiles` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique profile identifier
 - **`user_id`**: Reference to users table
 - **`date_of_birth`**: User's birth date
@@ -251,6 +260,7 @@ CREATE TABLE `content_categories` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique category identifier
 - **`parent_id`**: Parent category (self-referencing)
 - **`name`**: Category name
@@ -263,6 +273,7 @@ CREATE TABLE `content_categories` (
 - **`updated_at`**: Last update timestamp
 
 **Default Categories**:
+
 ```sql
 INSERT INTO `content_categories` (`name`, `slug`, `description`, `sort_order`) VALUES
 ('Islamic Beliefs', 'islamic-beliefs', 'Core Islamic beliefs and theology', 1),
@@ -306,6 +317,7 @@ CREATE TABLE `articles` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique article identifier
 - **`title`**: Article title
 - **`slug`**: URL-friendly article title
@@ -348,6 +360,7 @@ CREATE TABLE `article_versions` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique version identifier
 - **`article_id`**: Reference to articles table
 - **`version_number`**: Version number
@@ -386,6 +399,7 @@ CREATE TABLE `comments` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique comment identifier
 - **`content`**: Comment content
 - **`author_id`**: Comment author reference
@@ -429,6 +443,7 @@ CREATE TABLE `posts` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique post identifier
 - **`content`**: Post content
 - **`author_id`**: Post author reference
@@ -466,6 +481,7 @@ CREATE TABLE `likes` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique like identifier
 - **`user_id`**: User who liked
 - **`likeable_type`**: Type of liked item (Post, Comment, Article)
@@ -493,6 +509,7 @@ CREATE TABLE `follows` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique follow relationship identifier
 - **`follower_id`**: User who is following
 - **`following_id`**: User being followed
@@ -530,6 +547,7 @@ CREATE TABLE `courses` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique course identifier
 - **`title`**: Course title
 - **`slug`**: URL-friendly course title
@@ -569,6 +587,7 @@ CREATE TABLE `lessons` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique lesson identifier
 - **`course_id`**: Reference to courses table
 - **`title`**: Lesson title
@@ -602,6 +621,7 @@ CREATE TABLE `sessions` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Session identifier
 - **`user_id`**: User reference (NULL for guest sessions)
 - **`ip_address`**: User's IP address
@@ -631,6 +651,7 @@ CREATE TABLE `activity_logs` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique log entry identifier
 - **`user_id`**: User who performed the action
 - **`action`**: Action performed
@@ -666,6 +687,7 @@ CREATE TABLE `scholars` (
 ```
 
 **Fields Description**:
+
 - **`id`**: Unique scholar identifier
 - **`name`**: Scholar's name
 - **`biography`**: Scholar's biography
@@ -683,18 +705,22 @@ CREATE TABLE `scholars` (
 ### **Performance Indexes**
 
 #### **1. Primary Indexes**
+
 - All tables have primary key indexes on `id` fields
 - Unique constraints on username, email, and slug fields
 
 #### **2. Foreign Key Indexes**
+
 - All foreign key fields are indexed for join performance
 - Composite indexes for complex queries
 
 #### **3. Search Indexes**
+
 - Full-text search indexes on content fields
 - Partial indexes for status and date fields
 
 #### **4. Composite Indexes**
+
 ```sql
 -- User activity index
 CREATE INDEX idx_user_activity ON users(is_active, last_seen_at);
@@ -711,11 +737,13 @@ CREATE INDEX idx_social_feed ON posts(author_id, is_public, created_at);
 ### **Migration System**
 
 #### **1. Migration Files**
+
 - Version-controlled database changes
 - Rollback capability
 - Environment-specific migrations
 
 #### **2. Migration Commands**
+
 ```bash
 # Create new migration
 php artisan make:migration create_table_name
@@ -738,18 +766,21 @@ php artisan migrate:refresh
 ### **Performance Strategies**
 
 #### **1. Query Optimization**
+
 - Use prepared statements
 - Optimize JOIN operations
 - Limit result sets
 - Use appropriate indexes
 
 #### **2. Caching Strategy**
+
 - Query result caching
 - Object caching
 - Page caching
 - CDN integration
 
 #### **3. Connection Management**
+
 - Connection pooling
 - Read/write splitting
 - Connection timeouts
@@ -771,4 +802,4 @@ php artisan migrate:refresh
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

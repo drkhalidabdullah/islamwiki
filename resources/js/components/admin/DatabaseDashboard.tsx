@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
 import Textarea from '../ui/Textarea';
@@ -232,37 +231,41 @@ const DatabaseDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header - Properly contained like other dashboard headers */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Database Management</h1>
-            <p className="text-lg text-gray-600 mt-1">Monitor and manage database operations in real-time</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Last updated: {lastUpdated.toLocaleTimeString()} | Auto-refresh every 30 seconds
-            </p>
-          </div>
-          <div className="space-x-2">
-            <Button onClick={loadDatabaseData} variant="outline" className="mr-2">
-              🔄 Refresh Now
-            </Button>
-            <Button onClick={runMigrations} variant="primary">
-              Run Migrations
-            </Button>
-            <Button onClick={rollbackMigrations} variant="secondary">
-              Rollback
-            </Button>
-            <Button onClick={() => setShowQueryModal(true)} variant="outline">
-              Execute Query
-            </Button>
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Database Management</h1>
+              <p className="text-lg text-gray-600 mt-1">Monitor and manage database operations in real-time</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Last updated: {lastUpdated.toLocaleTimeString()} | Auto-refresh every 30 seconds
+              </p>
+            </div>
+            <div className="space-x-2">
+              <Button onClick={loadDatabaseData} variant="outline" className="mr-2">
+                🔄 Refresh Now
+              </Button>
+              <Button onClick={runMigrations} variant="primary">
+                Run Migrations
+              </Button>
+              <Button onClick={rollbackMigrations} variant="secondary">
+                Rollback
+              </Button>
+              <Button onClick={() => setShowQueryModal(true)} variant="outline">
+                Execute Query
+              </Button>
+              </div>
           </div>
         </div>
       </div>
 
       {/* Health Status */}
       {health && (
-        <Card>
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Database Health</h2>
+          </div>
           <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Database Health</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center">
                 <div className={`text-2xl ${getHealthColor(health.overall_health)}`}>
@@ -305,15 +308,17 @@ const DatabaseDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Connection Information */}
       {overview && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Connection Information</h2>
+            </div>
             <div className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Connection Information</h2>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Status:</span>
@@ -325,7 +330,7 @@ const DatabaseDashboard: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Response Time:</span>
-                  <span className="font-medium">{overview.connection.response_time}ms</span>
+                  <span className="font-medium">{overview.connection.response_time}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Server Version:</span>
@@ -341,11 +346,13 @@ const DatabaseDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
 
-          <Card>
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Statistics</h2>
+            </div>
             <div className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Statistics</h2>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Total Queries:</span>
@@ -367,15 +374,17 @@ const DatabaseDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       )}
 
-      {/* Tables Information */}
+            {/* Tables Information */}
       {overview && (
-        <Card>
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Database Tables</h2>
+          </div>
           <div className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Database Tables</h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
@@ -396,30 +405,30 @@ const DatabaseDashboard: React.FC = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {overview.tables.map((table) => (
-                                      <tr key={table.name}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {table.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        table.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {table.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {table.size}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {table.rows.toLocaleString()}
-                    </td>
-                  </tr>
+                    <tr key={table.name}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {table.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          table.status === 'Active' ? 'bg-green-100 text-gray-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {table.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {table.size}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {table.rows.toLocaleString()}
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Query Modal */}

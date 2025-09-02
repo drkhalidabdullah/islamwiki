@@ -291,6 +291,339 @@ class ApiController
         // TODO: Implement user registration
         return ['error' => 'Registration not implemented yet', 'code' => 501];
     }
+    
+    /**
+     * Handle user logout
+     */
+    private function handleLogout(array $data): array
+    {
+        try {
+            // In a real implementation, you might want to blacklist the token
+            // For now, we'll just return success
+            return ['success' => true, 'message' => 'Logged out successfully'];
+        } catch (Exception $e) {
+            error_log("Logout error: " . $e->getMessage());
+            return ['error' => 'Logout failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle email verification
+     */
+    private function handleVerifyEmail(array $data): array
+    {
+        try {
+            $token = $data['token'] ?? '';
+            
+            if (empty($token)) {
+                return ['error' => 'Verification token is required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->verifyEmail($token);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Email verification error: " . $e->getMessage());
+            return ['error' => 'Email verification failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle resend verification
+     */
+    private function handleResendVerification(array $data): array
+    {
+        try {
+            $email = $data['email'] ?? '';
+            
+            if (empty($email)) {
+                return ['error' => 'Email is required', 'code' => 400];
+            }
+            
+            $user = (new \IslamWiki\Models\User($this->database))->findByEmail($email);
+            if (!$user) {
+                return ['error' => 'User not found', 'code' => 404];
+            }
+            
+            if ($user->isVerified()) {
+                return ['error' => 'Email is already verified', 'code' => 400];
+            }
+            
+            // Generate new verification token
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $verificationToken = $userService->generateVerificationToken($user->id);
+            
+            // Send verification email (placeholder)
+            $this->sendVerificationEmail($user->email, $verificationToken);
+            
+            return [
+                'success' => true,
+                'message' => 'Verification email sent',
+                'code' => 200
+            ];
+        } catch (Exception $e) {
+            error_log("Resend verification error: " . $e->getMessage());
+            return ['error' => 'Failed to resend verification', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle forgot password
+     */
+    private function handleForgotPassword(array $data): array
+    {
+        try {
+            $email = $data['email'] ?? '';
+            
+            if (empty($email)) {
+                return ['error' => 'Email is required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->forgotPassword($email);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Forgot password error: " . $e->getMessage());
+            return ['error' => 'Password reset failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle reset password
+     */
+    private function handleResetPassword(array $data): array
+    {
+        try {
+            $token = $data['token'] ?? '';
+            $password = $data['password'] ?? '';
+            
+            if (empty($token) || empty($password)) {
+                return ['error' => 'Token and password are required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->resetPassword($token, $password);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Reset password error: " . $e->getMessage());
+            return ['error' => 'Password reset failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle change password
+     */
+    private function handleChangePassword(array $data): array
+    {
+        try {
+            $userId = $data['user_id'] ?? 0;
+            $currentPassword = $data['current_password'] ?? '';
+            $newPassword = $data['new_password'] ?? '';
+            
+            if (empty($userId) || empty($currentPassword) || empty($newPassword)) {
+                return ['error' => 'All fields are required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->changePassword($userId, $currentPassword, $newPassword);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Change password error: " . $e->getMessage());
+            return ['error' => 'Password change failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle get profile
+     */
+    private function handleGetProfile(array $data): array
+    {
+        try {
+            $userId = $data['user_id'] ?? 0;
+            
+            if (empty($userId)) {
+                return ['error' => 'User ID is required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->getProfile($userId);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Get profile error: " . $e->getMessage());
+            return ['error' => 'Failed to get profile', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle update profile
+     */
+    private function handleUpdateProfile(array $data): array
+    {
+        try {
+            $userId = $data['user_id'] ?? 0;
+            $profileData = $data['profile'] ?? [];
+            
+            if (empty($userId)) {
+                return ['error' => 'User ID is required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->updateProfile($userId, $profileData);
+            
+            if ($result['success']) {
+                return [
+                    'success' => true,
+                    'data' => $result,
+                    'code' => 200
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => $result['message'],
+                    'code' => 400
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Update profile error: " . $e->getMessage());
+            return ['error' => 'Failed to update profile', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Handle refresh token
+     */
+    private function handleRefreshToken(array $data): array
+    {
+        try {
+            $token = $data['token'] ?? '';
+            
+            if (empty($token)) {
+                return ['error' => 'Token is required', 'code' => 400];
+            }
+            
+            $userService = new \IslamWiki\Services\User\UserService($this->database);
+            $result = $userService->verifyToken($token);
+            
+            if ($result['success']) {
+                // Generate new token
+                $user = (new \IslamWiki\Models\User($this->database))->findById($result['user']['id']);
+                $newToken = $userService->generateJWTToken($user);
+                
+                return [
+                    'success' => true,
+                    'data' => [
+                        'token' => $newToken,
+                        'user' => $result['user']
+                    ],
+                    'code' => 200
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'error' => $result['message'],
+                'code' => 401
+            ];
+        } catch (Exception $e) {
+            error_log("Refresh token error: " . $e->getMessage());
+            return ['error' => 'Token refresh failed', 'code' => 500];
+        }
+    }
+    
+    /**
+     * Log login activity
+     */
+    private function logLoginActivity(int $userId, string $type): void
+    {
+        try {
+            $sql = "INSERT INTO user_login_logs (user_id, login_type, ip_address, user_agent, created_at) 
+                    VALUES (?, ?, ?, ?, NOW())";
+            
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute([
+                $userId,
+                $type,
+                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            ]);
+        } catch (Exception $e) {
+            error_log("Failed to log login activity: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Send verification email (placeholder)
+     */
+    private function sendVerificationEmail(string $email, string $token): void
+    {
+        // TODO: Implement actual email sending
+        error_log("Verification email would be sent to $email with token: $token");
+    }
 
     /**
      * Get wiki overview data

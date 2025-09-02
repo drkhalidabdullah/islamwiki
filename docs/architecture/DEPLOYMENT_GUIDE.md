@@ -12,18 +12,21 @@ This document provides comprehensive deployment strategies for the IslamWiki Fra
 ## 🎯 **Deployment Strategies**
 
 ### **1. Shared Hosting Deployment**
+
 - **"Build Locally, Deploy Built Assets"** approach
 - Frontend assets built and optimized locally
 - Only built files and PHP source uploaded
 - Web-based installation wizard included
 
 ### **2. VPS/Cloud Deployment**
+
 - **Full Source Deployment** with advanced features
 - Redis caching and WebSocket support
 - Background job processing
 - Advanced monitoring and scaling
 
 ### **3. Container Deployment**
+
 - **Docker** containerization
 - **Kubernetes** orchestration
 - **Microservices** architecture
@@ -34,6 +37,7 @@ This document provides comprehensive deployment strategies for the IslamWiki Fra
 ### **1. Prerequisites (Local Development Machine)**
 
 #### **Required Software**
+
 ```bash
 # Node.js and NPM
 node --version  # Should be 18.0+
@@ -54,6 +58,7 @@ git --version
 ```
 
 #### **Local Environment Setup**
+
 ```bash
 # Clone repository
 git clone https://github.com/your-org/islamwiki.git
@@ -72,6 +77,7 @@ npm run build:shared-hosting
 ### **2. Build Process**
 
 #### **Production Build Script**
+
 ```json
 {
   "scripts": {
@@ -82,6 +88,7 @@ npm run build:shared-hosting
 ```
 
 #### **Build Output Structure**
+
 ```
 islamwiki/
 ├── dist/                   # Built frontend assets
@@ -103,6 +110,7 @@ islamwiki/
 ### **3. File Upload Process**
 
 #### **Using File Manager (cPanel)**
+
 1. **Log into cPanel**
 2. **Navigate to File Manager**
 3. **Upload all files** to your `public_html/` directory
@@ -112,6 +120,7 @@ islamwiki/
    - Storage directories have proper permissions
 
 #### **Using FTP/SFTP**
+
 ```bash
 # Using command line SCP
 scp -r islamwiki/* username@yourdomain.com:public_html/
@@ -126,6 +135,7 @@ scp -r islamwiki/* username@yourdomain.com:public_html/
 ### **4. Server Configuration**
 
 #### **File Permissions**
+
 ```bash
 # Set proper permissions on shared hosting
 chmod 755 public_html/
@@ -139,6 +149,7 @@ chmod 755 public_html/storage/cache/
 ```
 
 #### **Apache Configuration (.htaccess)**
+
 ```apache
 # IslamWiki Framework - Apache Configuration
 # Author: Khalid Abdullah
@@ -239,6 +250,7 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 ### **5. Environment Configuration**
 
 #### **Environment File Setup**
+
 ```bash
 # Copy environment template
 cp .env.example .env
@@ -248,6 +260,7 @@ nano .env
 ```
 
 #### **Environment Configuration**
+
 ```env
 # Application Settings
 APP_NAME=IslamWiki
@@ -303,6 +316,7 @@ UPLOAD_PATH=uploads
 ### **6. Database Setup**
 
 #### **Database Creation**
+
 ```sql
 -- Create database
 CREATE DATABASE `islamwiki` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -314,6 +328,7 @@ FLUSH PRIVILEGES;
 ```
 
 #### **Schema Import**
+
 ```bash
 # Import database schema
 mysql -u your_db_user -p your_database < database/schema.sql
@@ -324,6 +339,7 @@ mysql -u your_db_user -p your_database < database/schema.sql
 ### **7. Installation Process**
 
 #### **Web-Based Installer**
+
 1. **Navigate to your domain**: `https://yourdomain.com/install.php`
 2. **Follow the installation wizard**:
    - System requirements check
@@ -332,6 +348,7 @@ mysql -u your_db_user -p your_database < database/schema.sql
    - Initial setup completion
 
 #### **Installation Verification**
+
 ```bash
 # Check if installation was successful
 curl -I https://yourdomain.com
@@ -346,6 +363,7 @@ tail -f storage/logs/laravel.log
 ### **1. Server Requirements**
 
 #### **Minimum Specifications**
+
 - **CPU**: 2 cores
 - **RAM**: 4GB
 - **Storage**: 50GB SSD
@@ -355,6 +373,7 @@ tail -f storage/logs/laravel.log
 - **Nginx/Apache**: Latest stable version
 
 #### **Recommended Specifications**
+
 - **CPU**: 4+ cores
 - **RAM**: 8GB+
 - **Storage**: 100GB+ SSD
@@ -367,6 +386,7 @@ tail -f storage/logs/laravel.log
 ### **2. Server Setup**
 
 #### **Initial Server Configuration**
+
 ```bash
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -383,6 +403,7 @@ sudo usermod -aG sudo islamwiki
 ```
 
 #### **PHP Installation**
+
 ```bash
 # Add PHP repository
 sudo add-apt-repository ppa:ondrej/php -y
@@ -398,6 +419,7 @@ sudo nano /etc/php/8.2/fpm/php.ini
 ```
 
 #### **PHP Configuration (php.ini)**
+
 ```ini
 ; Performance settings
 memory_limit = 512M
@@ -427,6 +449,7 @@ session.gc_divisor = 100
 ```
 
 #### **MySQL Installation**
+
 ```bash
 # Install MySQL
 sudo apt install -y mysql-server
@@ -448,6 +471,7 @@ EXIT;
 ```
 
 #### **Redis Installation**
+
 ```bash
 # Install Redis
 sudo apt install -y redis-server
@@ -468,6 +492,7 @@ save 60 10000
 ```
 
 #### **Nginx Installation**
+
 ```bash
 # Install Nginx
 sudo apt install -y nginx
@@ -477,6 +502,7 @@ sudo nano /etc/nginx/sites-available/islamwiki
 ```
 
 #### **Nginx Configuration**
+
 ```nginx
 # IslamWiki Nginx Configuration
 server {
@@ -535,6 +561,7 @@ server {
 ### **3. Application Deployment**
 
 #### **Deployment Process**
+
 ```bash
 # Switch to application user
 sudo su - islamwiki
@@ -564,6 +591,7 @@ nano .env
 ```
 
 #### **Environment Configuration (Production)**
+
 ```env
 # Application Settings
 APP_NAME=IslamWiki
@@ -642,6 +670,7 @@ LOG_LEVEL=info
 ### **4. SSL/HTTPS Setup**
 
 #### **Let's Encrypt SSL**
+
 ```bash
 # Install Certbot
 sudo apt install -y certbot python3-certbot-nginx
@@ -654,6 +683,7 @@ sudo certbot renew --dry-run
 ```
 
 #### **SSL Configuration**
+
 ```nginx
 # HTTPS configuration
 server {
@@ -693,6 +723,7 @@ server {
 ### **1. Docker Configuration**
 
 #### **Dockerfile**
+
 ```dockerfile
 # IslamWiki Framework Dockerfile
 FROM php:8.2-fpm
@@ -739,6 +770,7 @@ CMD ["php-fpm"]
 ```
 
 #### **Docker Compose**
+
 ```yaml
 # docker-compose.yml
 version: '3.8'
@@ -808,6 +840,7 @@ networks:
 ```
 
 ### **2. Docker Deployment Commands**
+
 ```bash
 # Build and start services
 docker-compose up -d --build
@@ -834,6 +867,7 @@ docker exec -i islamwiki_db mysql -u root -p islamwiki < backup.sql
 ### **1. Kubernetes Manifests**
 
 #### **Namespace**
+
 ```yaml
 # namespace.yaml
 apiVersion: v1
@@ -843,6 +877,7 @@ metadata:
 ```
 
 #### **ConfigMap**
+
 ```yaml
 # configmap.yaml
 apiVersion: v1
@@ -858,6 +893,7 @@ data:
 ```
 
 #### **Secret**
+
 ```yaml
 # secret.yaml
 apiVersion: v1
@@ -873,6 +909,7 @@ data:
 ```
 
 #### **Deployment**
+
 ```yaml
 # deployment.yaml
 apiVersion: apps/v1
@@ -922,6 +959,7 @@ spec:
 ```
 
 #### **Service**
+
 ```yaml
 # service.yaml
 apiVersion: v1
@@ -940,6 +978,7 @@ spec:
 ```
 
 #### **Ingress**
+
 ```yaml
 # ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -969,6 +1008,7 @@ spec:
 ```
 
 ### **2. Kubernetes Deployment Commands**
+
 ```bash
 # Apply manifests
 kubectl apply -f namespace.yaml
@@ -998,6 +1038,7 @@ kubectl logs -f deployment/islamwiki-app -n islamwiki
 ### **1. Health Checks**
 
 #### **Health Check Endpoint**
+
 ```php
 class HealthController extends Controller
 {
@@ -1060,6 +1101,7 @@ class HealthController extends Controller
 ### **2. Performance Monitoring**
 
 #### **Prometheus Metrics**
+
 ```php
 class MetricsController extends Controller
 {
@@ -1105,4 +1147,4 @@ class MetricsController extends Controller
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

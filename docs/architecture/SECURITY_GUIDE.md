@@ -12,12 +12,14 @@ This document provides comprehensive security implementation details for the Isl
 ## 🎯 **Security Principles**
 
 ### **1. Defense in Depth**
+
 - **Multiple Security Layers**: Implement security at every level
 - **Fail-Safe Defaults**: Secure by default configuration
 - **Principle of Least Privilege**: Minimal access required
 - **Security Through Obscurity**: Not relied upon as primary defense
 
 ### **2. OWASP Top 10 Compliance**
+
 - **Injection Prevention**: SQL, NoSQL, LDAP injection protection
 - **Broken Authentication**: Secure authentication mechanisms
 - **Sensitive Data Exposure**: Encryption and secure storage
@@ -34,6 +36,7 @@ This document provides comprehensive security implementation details for the Isl
 ### **1. JWT Token Security**
 
 #### **Token Configuration**
+
 ```php
 // JWT Configuration
 JWT_SECRET=your_very_long_random_secret_key_here
@@ -45,6 +48,7 @@ JWT_AUDIENCE=islamwiki_users    // Token audience
 ```
 
 #### **Token Security Features**
+
 - **Strong Secret Keys**: Minimum 256-bit random keys
 - **Short Expiration**: Limited token lifetime
 - **Refresh Tokens**: Secure token renewal
@@ -52,6 +56,7 @@ JWT_AUDIENCE=islamwiki_users    // Token audience
 - **Issuer Validation**: Verify token source
 
 #### **Token Implementation**
+
 ```php
 class JWTManager
 {
@@ -92,6 +97,7 @@ class JWTManager
 ### **2. Password Security**
 
 #### **Password Requirements**
+
 ```php
 // Password validation rules
 'password' => [
@@ -105,6 +111,7 @@ class JWTManager
 ```
 
 #### **Password Hashing**
+
 ```php
 class PasswordService
 {
@@ -132,6 +139,7 @@ class PasswordService
 ### **3. Two-Factor Authentication (2FA)**
 
 #### **TOTP Implementation**
+
 ```php
 class TwoFactorService
 {
@@ -158,6 +166,7 @@ class TwoFactorService
 ```
 
 #### **2FA Configuration**
+
 ```php
 // 2FA Settings
 TWO_FACTOR_ENABLED=true
@@ -171,6 +180,7 @@ TWO_FACTOR_BACKUP_CODES=10      // Number of backup codes
 ### **1. Role-Based Access Control (RBAC)**
 
 #### **Permission System**
+
 ```php
 class PermissionService
 {
@@ -196,6 +206,7 @@ class PermissionService
 ```
 
 #### **Permission Definitions**
+
 ```php
 // Permission constants
 class Permissions
@@ -223,6 +234,7 @@ class Permissions
 ### **2. Middleware Security**
 
 #### **Authentication Middleware**
+
 ```php
 class AuthenticationMiddleware
 {
@@ -251,6 +263,7 @@ class AuthenticationMiddleware
 ```
 
 #### **Authorization Middleware**
+
 ```php
 class PermissionMiddleware
 {
@@ -272,6 +285,7 @@ class PermissionMiddleware
 ### **1. Request Validation**
 
 #### **Validation Rules**
+
 ```php
 class ArticleRequest extends FormRequest
 {
@@ -322,6 +336,7 @@ class ArticleRequest extends FormRequest
 ```
 
 #### **Markdown Sanitization**
+
 ```php
 class MarkdownSanitizer
 {
@@ -365,6 +380,7 @@ class MarkdownSanitizer
 ### **2. SQL Injection Prevention**
 
 #### **Prepared Statements**
+
 ```php
 class ArticleRepository
 {
@@ -403,6 +419,7 @@ class ArticleRepository
 ### **1. Rate Limiting Implementation**
 
 #### **Rate Limiter Service**
+
 ```php
 class RateLimiter
 {
@@ -440,6 +457,7 @@ class RateLimiter
 ```
 
 #### **Rate Limiting Rules**
+
 ```php
 // Rate limiting configuration
 RATE_LIMIT_AUTH = 5              // 5 attempts per minute
@@ -450,6 +468,7 @@ RATE_LIMIT_COMMENT = 20          // 20 comments per hour
 ```
 
 #### **Rate Limiting Middleware**
+
 ```php
 class RateLimitMiddleware
 {
@@ -478,6 +497,7 @@ class RateLimitMiddleware
 ### **1. CSRF Token Implementation**
 
 #### **CSRF Service**
+
 ```php
 class CSRFProtection
 {
@@ -508,6 +528,7 @@ class CSRFProtection
 ```
 
 #### **CSRF Middleware**
+
 ```php
 class CSRFMiddleware
 {
@@ -538,6 +559,7 @@ class CSRFMiddleware
 ### **1. Encryption Service**
 
 #### **Encryption Implementation**
+
 ```php
 class EncryptionService
 {
@@ -575,6 +597,7 @@ class EncryptionService
 ```
 
 #### **Sensitive Data Encryption**
+
 ```php
 // Encrypt sensitive user data
 class User extends Model
@@ -602,6 +625,7 @@ class User extends Model
 ### **1. Session Configuration**
 
 #### **Secure Session Settings**
+
 ```php
 // Session security configuration
 SESSION_DRIVER = file                    // File-based sessions
@@ -614,6 +638,7 @@ SESSION_ENCRYPT = true                  // Encrypt session data
 ```
 
 #### **Session Management**
+
 ```php
 class SessionService
 {
@@ -642,6 +667,7 @@ class SessionService
 ### **1. Security Headers Configuration**
 
 #### **Apache Configuration (.htaccess)**
+
 ```apache
 # Security Headers
 <IfModule mod_headers.c>
@@ -670,6 +696,7 @@ class SessionService
 ```
 
 #### **PHP Security Headers**
+
 ```php
 class SecurityHeaders
 {
@@ -701,6 +728,7 @@ class SecurityHeaders
 ### **1. Security Event Logging**
 
 #### **Security Logger**
+
 ```php
 class SecurityLogger
 {
@@ -742,6 +770,7 @@ class SecurityLogger
 ```
 
 #### **Security Monitoring**
+
 ```php
 class SecurityMonitor
 {
@@ -785,6 +814,7 @@ class SecurityMonitor
 ### **1. Security Test Suite**
 
 #### **Security Tests**
+
 ```php
 class SecurityTest extends TestCase
 {
@@ -833,6 +863,7 @@ class SecurityTest extends TestCase
 ## 📋 **Security Checklist**
 
 ### **1. Pre-Deployment Security Checklist**
+
 - [ ] **Authentication**: JWT tokens with strong secrets
 - [ ] **Authorization**: RBAC with proper permissions
 - [ ] **Input Validation**: All inputs validated and sanitized
@@ -850,6 +881,7 @@ class SecurityTest extends TestCase
 - [ ] **Environment**: Production environment secured
 
 ### **2. Ongoing Security Maintenance**
+
 - [ ] **Regular Updates**: Keep dependencies updated
 - [ ] **Security Audits**: Regular security reviews
 - [ ] **Penetration Testing**: Periodic security testing
@@ -874,4 +906,4 @@ class SecurityTest extends TestCase
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

@@ -1,5 +1,6 @@
 # Release Notes - v0.0.2 (Alpha Enhancement)
 
+**Author:** Khalid Abdullah  
 **Release Date:** August 30, 2025  
 **Version:** 0.0.2  
 **Status:** Alpha Enhancement - COMPLETED ✅

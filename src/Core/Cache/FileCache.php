@@ -15,13 +15,22 @@ class FileCache implements CacheInterface
     private string $cacheDir;
     private string $prefix;
 
-    public function __construct(string $cacheDir = 'storage/cache', string $prefix = 'islamwiki_')
+    public function __construct(string $cacheDir = null, string $prefix = 'islamwiki_')
     {
+        // Use absolute path for cache directory
+        if ($cacheDir === null) {
+            $cacheDir = __DIR__ . '/../../../storage/cache';
+        }
+        
         $this->cacheDir = rtrim($cacheDir, '/');
         $this->prefix = $prefix;
         
         if (!is_dir($this->cacheDir)) {
-            mkdir($this->cacheDir, 0755, true);
+            // Try to create directory with proper permissions
+            if (!@mkdir($this->cacheDir, 0755, true)) {
+                // Silently log to error log instead of outputting to response
+                error_log("Warning: Could not create cache directory: " . $this->cacheDir);
+            }
         }
     }
 

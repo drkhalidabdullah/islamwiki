@@ -3,928 +3,525 @@
 namespace IslamWiki\Services\User;
 
 use IslamWiki\Core\Database\DatabaseManager;
-use Exception;
-use PDO;
+use IslamWiki\Models\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 /**
- * Enhanced User Service - Real database integration for v0.0.4
+ * User Service for IslamWiki Framework
+ * Handles user authentication, management, and security
  * 
  * @author Khalid Abdullah
- * @version 0.0.4
- * @date 2025-01-27
+ * @version 0.0.5
  * @license AGPL-3.0
  */
 class UserService
 {
-    private DatabaseManager $database;
-
-    public function __construct(DatabaseManager $database)
+    private DatabaseManager $db;
+    private string $jwtSecret;
+    private int $jwtExpiry;
+    
+    public function __construct(DatabaseManager $db, string $jwtSecret = '', int $jwtExpiry = 3600)
     {
-        $this->database = $database;
+        $this->db = $db;
+        $this->jwtSecret = $jwtSecret ?: (getenv('JWT_SECRET') ?: 'default_secret_key_change_in_production');
+        $this->jwtExpiry = $jwtExpiry;
     }
-
+    
     /**
-     * Get user by ID
+     * Register a new user
      */
-    public function getUser(int $id): ?array
+    public function register(array $userData): array
     {
         try {
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-            FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE u.id = ?
-                GROUP BY u.id";
-            
-            $stmt = $this->database->execute($sql, [$id]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-                $user['profile'] = $this->getUserProfile($id);
-        }
-        
-        return $user;
-        } catch (Exception $e) {
-            error_log("Error getting user {$id}: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Get user by username
-     */
-    public function getUserByUsername(string $username): ?array
-    {
-        try {
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-            FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE u.username = ?
-                GROUP BY u.id";
-            
-            $stmt = $this->database->execute($sql, [$username]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-                $user['profile'] = $this->getUserProfile($user['id']);
+            // Validate required fields
+            if (empty($userData['username']) || empty($userData['email']) || empty($userData['password'])) {
+                return ['success' => false, 'message' => 'Username, email, and password are required'];
             }
-        
-        return $user;
-        } catch (Exception $e) {
-            error_log("Error getting user by username {$username}: " . $e->getMessage());
-            return null;
+            
+            // Check if username already exists
+            if ($this->userExists('username', $userData['username'])) {
+                return ['success' => false, 'message' => 'Username already exists'];
+            }
+            
+            // Check if email already exists
+            if ($this->userExists('email', $userData['email'])) {
+                return ['success' => false, 'message' => 'Email already exists'];
+            }
+            
+            // Validate password strength
+            if (!$this->validatePassword($userData['password'])) {
+                return ['success' => false, 'message' => 'Password does not meet security requirements'];
+            }
+            
+            // Create user
+            $user = new User($this->db);
+            $userData['status'] = 'pending_verification';
+            $userData['role'] = 'user';
+            
+            if ($user->create($userData)) {
+                // Generate verification token
+                $verificationToken = $this->generateVerificationToken($user->id);
+                
+                // Send verification email (placeholder for now)
+                $this->sendVerificationEmail($user->email, $verificationToken);
+                
+                return [
+                    'success' => true,
+                    'message' => 'User registered successfully. Please check your email for verification.',
+                    'user_id' => $user->id
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to create user'];
+            
+        } catch (\Exception $e) {
+            error_log("Error in user registration: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Registration failed. Please try again.'];
         }
     }
-
+    
     /**
-     * Get user by email
+     * Authenticate user login
      */
-    public function getUserByEmail(string $email): ?array
+    public function login(string $email, string $password): array
     {
         try {
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-            FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE u.email = ?
-                GROUP BY u.id";
-            
-            $stmt = $this->database->execute($sql, [$email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-                $user['profile'] = $this->getUserProfile($user['id']);
+            // Find user by email
+            $user = (new User($this->db))->findByEmail($email);
+            if (!$user) {
+                return ['success' => false, 'message' => 'Invalid credentials'];
             }
-        
-        return $user;
-        } catch (Exception $e) {
-            error_log("Error getting user by email {$email}: " . $e->getMessage());
-            return null;
+            
+            // Check if account is locked
+            if ($user->isLocked()) {
+                return ['success' => false, 'message' => 'Account is temporarily locked. Please try again later.'];
+            }
+            
+            // Check if account is verified
+            if (!$user->isVerified()) {
+                return ['success' => false, 'message' => 'Please verify your email before logging in'];
+            }
+            
+            // Check if account is active
+            if (!$user->isActive()) {
+                return ['success' => false, 'message' => 'Account is not active'];
+            }
+            
+            // Verify password
+            if (!password_verify($password, $user->password_hash)) {
+                // Increment login attempts
+                $newAttempts = $user->login_attempts + 1;
+                $lockedUntil = null;
+                
+                // Lock account after 5 failed attempts
+                if ($newAttempts >= 5) {
+                    $lockedUntil = date('Y-m-d H:i:s', time() + 900); // 15 minutes
+                }
+                
+                $user->updateLoginAttempts($newAttempts, $lockedUntil);
+                
+                return ['success' => false, 'message' => 'Invalid credentials'];
+            }
+            
+            // Reset login attempts and update last login
+            $user->updateLastLogin();
+            
+            // Generate JWT token
+            $token = $this->generateJWTToken($user);
+            
+            return [
+                'success' => true,
+                'message' => 'Login successful',
+                'token' => $token,
+                'user' => $user->toArray()
+            ];
+            
+        } catch (\Exception $e) {
+            error_log("Error in user login: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Login failed. Please try again.'];
         }
     }
-
+    
+    /**
+     * Verify JWT token
+     */
+    public function verifyToken(string $token): array
+    {
+        try {
+            $decoded = JWT::decode($token, new Key($this->jwtSecret, 'HS256'));
+            
+            // Find user
+            $user = (new User($this->db))->findById($decoded->user_id);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            // Check if user is still active
+            if (!$user->isActive()) {
+                return ['success' => false, 'message' => 'User account is not active'];
+            }
+            
+            return [
+                'success' => true,
+                'user' => $user->toArray()
+            ];
+            
+        } catch (\Exception $e) {
+            error_log("Error verifying token: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Invalid token'];
+        }
+    }
+    
+    /**
+     * Verify user email
+     */
+    public function verifyEmail(string $token): array
+    {
+        try {
+            // Decode verification token
+            $decoded = JWT::decode($token, new Key($this->jwtSecret, 'HS256'));
+            
+            // Find user
+            $user = (new User($this->db))->findById($decoded->user_id);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            // Check if already verified
+            if ($user->isVerified()) {
+                return ['success' => false, 'message' => 'Email already verified'];
+            }
+            
+            // Verify email
+            if ($user->verifyEmail()) {
+                return [
+                    'success' => true,
+                    'message' => 'Email verified successfully'
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to verify email'];
+            
+        } catch (\Exception $e) {
+            error_log("Error in email verification: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Invalid verification token'];
+        }
+    }
+    
+    /**
+     * Initiate password reset
+     */
+    public function forgotPassword(string $email): array
+    {
+        try {
+            // Find user by email
+            $user = (new User($this->db))->findByEmail($email);
+            if (!$user) {
+                return ['success' => false, 'message' => 'If an account exists with this email, you will receive a reset link'];
+            }
+            
+            // Generate reset token
+            $resetToken = $this->generatePasswordResetToken($user->id);
+            
+            // Set reset token in database
+            if ($user->setPasswordResetToken($resetToken)) {
+                // Send reset email (placeholder for now)
+                $this->sendPasswordResetEmail($user->email, $resetToken);
+                
+                return [
+                    'success' => true,
+                    'message' => 'Password reset link sent to your email'
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to initiate password reset'];
+            
+        } catch (\Exception $e) {
+            error_log("Error in forgot password: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Password reset failed. Please try again.'];
+        }
+    }
+    
+    /**
+     * Reset password with token
+     */
+    public function resetPassword(string $token, string $newPassword): array
+    {
+        try {
+            // Decode reset token
+            $decoded = JWT::decode($token, new Key($this->jwtSecret, 'HS256'));
+            
+            // Find user
+            $user = (new User($this->db))->findById($decoded->user_id);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            // Check if token is valid
+            if ($user->password_reset_token !== $token) {
+                return ['success' => false, 'message' => 'Invalid reset token'];
+            }
+            
+            // Check if token is expired
+            if (strtotime($user->password_reset_expires_at) < time()) {
+                return ['success' => false, 'message' => 'Reset token has expired'];
+            }
+            
+            // Validate new password
+            if (!$this->validatePassword($newPassword)) {
+                return ['success' => false, 'message' => 'Password does not meet security requirements'];
+            }
+            
+            // Update password
+            if ($user->updatePassword($newPassword)) {
+                return [
+                    'success' => true,
+                    'message' => 'Password reset successfully'
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to reset password'];
+            
+        } catch (\Exception $e) {
+            error_log("Error in password reset: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Password reset failed. Please try again.'];
+        }
+    }
+    
+    /**
+     * Change password for authenticated user
+     */
+    public function changePassword(int $userId, string $currentPassword, string $newPassword): array
+    {
+        try {
+            // Find user
+            $user = (new User($this->db))->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            // Verify current password
+            if (!password_verify($currentPassword, $user->password_hash)) {
+                return ['success' => false, 'message' => 'Current password is incorrect'];
+            }
+            
+            // Validate new password
+            if (!$this->validatePassword($newPassword)) {
+                return ['success' => false, 'message' => 'Password does not meet security requirements'];
+            }
+            
+            // Update password
+            if ($user->updatePassword($newPassword)) {
+                return [
+                    'success' => true,
+                    'message' => 'Password changed successfully'
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to change password'];
+            
+        } catch (\Exception $e) {
+            error_log("Error in password change: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Password change failed. Please try again.'];
+        }
+    }
+    
+    /**
+     * Get user profile
+     */
+    public function getProfile(int $userId): array
+    {
+        try {
+            $user = (new User($this->db))->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            return [
+                'success' => true,
+                'user' => $user->toArray()
+            ];
+            
+        } catch (\Exception $e) {
+            error_log("Error getting user profile: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to get user profile'];
+        }
+    }
+    
+    /**
+     * Update user profile
+     */
+    public function updateProfile(int $userId, array $profileData): array
+    {
+        try {
+            $user = (new User($this->db))->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+            
+            // Update profile
+            if ($user->update($profileData)) {
+                return [
+                    'success' => true,
+                    'message' => 'Profile updated successfully',
+                    'user' => $user->toArray()
+                ];
+            }
+            
+            return ['success' => false, 'message' => 'Failed to update profile'];
+            
+        } catch (\Exception $e) {
+            error_log("Error updating user profile: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Profile update failed. Please try again.'];
+        }
+    }
+    
     /**
      * Get all users with pagination and filters
      */
-    public function getUsers(array $filters = [], int $page = 1, int $perPage = 20): array
+    public function getAllUsers(int $page = 1, int $perPage = 20, array $filters = []): array
     {
         try {
-            $whereConditions = [];
-            $params = [];
-            
-            // Build filter conditions
-            if (!empty($filters['search'])) {
-                $whereConditions[] = "(u.username LIKE ? OR u.email LIKE ? OR u.display_name LIKE ?)";
-                $searchTerm = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
-            }
-            
-            if (isset($filters['is_active'])) {
-                $whereConditions[] = "u.is_active = ?";
-                $params[] = $filters['is_active'];
-            }
-            
-            if (!empty($filters['role'])) {
-                $whereConditions[] = "r.name = ?";
-                $params[] = $filters['role'];
-            }
-            
-            $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
-            
-            // Count total users
-            $countSql = "SELECT COUNT(DISTINCT u.id) as total FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id LEFT JOIN roles r ON ur.role_id = r.id {$whereClause}";
-            $countStmt = $this->database->execute($countSql, $params);
-            $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-            
-            // Get users with pagination
-            $offset = ($page - 1) * $perPage;
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-                FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                {$whereClause}
-                GROUP BY u.id
-                ORDER BY u.created_at DESC
-                LIMIT ? OFFSET ?";
-            
-            $params[] = $perPage;
-            $params[] = $offset;
-            
-            $stmt = $this->database->execute($sql, $params);
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Process roles for each user
-            foreach ($users as &$user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-            }
+            $user = new User($this->db);
+            $users = $user->getAll($page, $perPage, $filters);
+            $total = $user->getCount($filters);
             
             return [
-                'users' => $users,
+                'success' => true,
+                'users' => array_map(fn($u) => $u->toArray(), $users),
                 'pagination' => [
-                    'current_page' => $page,
+                    'page' => $page,
                     'per_page' => $perPage,
                     'total' => $total,
-                    'last_page' => ceil($total / $perPage)
+                    'pages' => ceil($total / $perPage)
                 ]
             ];
-        } catch (Exception $e) {
-            error_log("Error getting users: " . $e->getMessage());
-            return ['users' => [], 'pagination' => ['current_page' => 1, 'per_page' => 20, 'total' => 0, 'last_page' => 1]];
+            
+        } catch (\Exception $e) {
+            error_log("Error getting all users: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to get users'];
         }
     }
-
-    /**
-     * Create new user
-     */
-    public function createUser(array $userData): array
-    {
-        try {
-            $this->database->beginTransaction();
-            
-            // Validate required fields
-            $requiredFields = ['username', 'email', 'password', 'first_name', 'last_name'];
-            foreach ($requiredFields as $field) {
-                if (empty($userData[$field])) {
-                    throw new Exception("Field '{$field}' is required");
-                }
-            }
-            
-            // Check if username or email already exists
-            if ($this->userExists($userData['username'], $userData['email'])) {
-                throw new Exception("Username or email already exists");
-            }
-            
-            // Hash password
-            $userData['password_hash'] = password_hash($userData['password'], PASSWORD_DEFAULT);
-            
-            // Insert user
-            $sql = "INSERT INTO users (username, email, password_hash, first_name, last_name, display_name, bio, is_active, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-            
-            $stmt = $this->database->execute($sql, [
-            $userData['username'],
-            $userData['email'],
-                $userData['password_hash'],
-                $userData['first_name'],
-                $userData['last_name'],
-                $userData['display_name'] ?? $userData['first_name'] . ' ' . $userData['last_name'],
-                $userData['bio'] ?? null,
-                $userData['is_active'] ?? true
-            ]);
-            
-            $userId = $this->database->lastInsertId();
-            
-            // Create user profile
-            $this->createUserProfile($userId, $userData);
-            
-            // Assign default role (user)
-            $this->assignRole($userId, 'user');
-            
-            $this->database->commit();
-            
-            return [
-                'success' => true,
-                'user_id' => $userId,
-                'message' => 'User created successfully'
-            ];
-            
-        } catch (Exception $e) {
-            $this->database->rollback();
-            error_log("Error creating user: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Update user
-     */
-    public function updateUser(int $userId, array $userData): array
-    {
-        try {
-            $this->database->beginTransaction();
-            
-            // Check if user exists
-            $existingUser = $this->getUser($userId);
-            if (!$existingUser) {
-                throw new Exception("User not found");
-            }
-            
-            // Build update fields
-            $updateFields = [];
-            $params = [];
-            
-            $allowedFields = ['first_name', 'last_name', 'display_name', 'bio', 'is_active'];
-            foreach ($allowedFields as $field) {
-                if (isset($userData[$field])) {
-                    $updateFields[] = "{$field} = ?";
-                    $params[] = $userData[$field];
-                }
-            }
-            
-            if (empty($updateFields)) {
-                throw new Exception("No fields to update");
-            }
-            
-            $updateFields[] = "updated_at = NOW()";
-            $params[] = $userId;
-            
-            $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
-            $this->database->execute($sql, $params);
-            
-            // Update profile if provided
-            if (!empty($userData['profile'])) {
-                $this->updateUserProfile($userId, $userData['profile']);
-            }
-            
-            $this->database->commit();
-            
-            return [
-                'success' => true,
-                'message' => 'User updated successfully'
-            ];
-            
-        } catch (Exception $e) {
-            $this->database->rollback();
-            error_log("Error updating user {$userId}: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
+    
     /**
      * Delete user
      */
     public function deleteUser(int $userId): array
     {
         try {
-            $this->database->beginTransaction();
-            
-            // Check if user exists
-            $existingUser = $this->getUser($userId);
-            if (!$existingUser) {
-                throw new Exception("User not found");
+            $user = (new User($this->db))->findById($userId);
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
             }
             
-            // Delete user roles
-            $this->database->execute("DELETE FROM user_roles WHERE user_id = ?", [$userId]);
-            
-            // Delete user profile
-            $this->database->execute("DELETE FROM user_profiles WHERE user_id = ?", [$userId]);
-            
-            // Delete user
-            $this->database->execute("DELETE FROM users WHERE id = ?", [$userId]);
-            
-            $this->database->commit();
-            
-            return [
-                'success' => true,
-                'message' => 'User deleted successfully'
-            ];
-            
-        } catch (Exception $e) {
-            $this->database->rollback();
-            error_log("Error deleting user {$userId}: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Get user profile
-     */
-    public function getUserProfile(int $userId): ?array
-    {
-        try {
-            $sql = "SELECT * FROM user_profiles WHERE user_id = ?";
-            $stmt = $this->database->execute($sql, [$userId]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error getting user profile {$userId}: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Create user profile
-     */
-    private function createUserProfile(int $userId, array $profileData): bool
-    {
-        try {
-            $sql = "INSERT INTO user_profiles (user_id, date_of_birth, gender, location, website, social_links, preferences, created_at, updated_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-            
-            $this->database->execute($sql, [
-                $userId,
-                $profileData['date_of_birth'] ?? null,
-                $profileData['gender'] ?? null,
-                $profileData['location'] ?? null,
-                $profileData['website'] ?? null,
-                json_encode($profileData['social_links'] ?? []),
-                json_encode($profileData['preferences'] ?? [])
-            ]);
-            
-            return true;
-        } catch (Exception $e) {
-            error_log("Error creating user profile {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Update user profile
-     */
-    private function updateUserProfile(int $userId, array $profileData): bool
-    {
-        try {
-            $sql = "UPDATE user_profiles SET 
-                    date_of_birth = ?, gender = ?, location = ?, website = ?, 
-                    social_links = ?, preferences = ?, updated_at = NOW() 
-                    WHERE user_id = ?";
-            
-            $this->database->execute($sql, [
-                $profileData['date_of_birth'] ?? null,
-                $profileData['gender'] ?? null,
-                $profileData['location'] ?? null,
-                $profileData['website'] ?? null,
-                json_encode($profileData['social_links'] ?? []),
-                json_encode($profileData['preferences'] ?? []),
-                $userId
-            ]);
-            
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating user profile {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Assign role to user
-     */
-    public function assignRole(int $userId, string $roleName): array
-    {
-        try {
-            // Get role ID
-            $roleSql = "SELECT id FROM roles WHERE name = ?";
-            $roleStmt = $this->database->execute($roleSql, [$roleName]);
-            $role = $roleStmt->fetch(PDO::FETCH_ASSOC);
-            
-            if (!$role) {
-                throw new Exception("Role '{$roleName}' not found");
-            }
-            
-            // Check if role is already assigned
-            $existingSql = "SELECT id FROM user_roles WHERE user_id = ? AND role_id = ?";
-            $existingStmt = $this->database->execute($existingSql, [$userId, $role['id']]);
-            
-            if ($existingStmt->fetch()) {
+            if ($user->delete()) {
                 return [
                     'success' => true,
-                    'message' => 'Role already assigned'
+                    'message' => 'User deleted successfully'
                 ];
             }
             
-            // Assign role
-            $assignSql = "INSERT INTO user_roles (user_id, role_id, granted_at) VALUES (?, ?, NOW())";
-            $this->database->execute($assignSql, [$userId, $role['id']]);
+            return ['success' => false, 'message' => 'Failed to delete user'];
             
-            return [
-                'success' => true,
-                'message' => "Role '{$roleName}' assigned successfully"
-            ];
-            
-        } catch (Exception $e) {
-            error_log("Error assigning role {$roleName} to user {$userId}: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
+        } catch (\Exception $e) {
+            error_log("Error deleting user: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to delete user'];
         }
     }
-
-    /**
-     * Remove role from user
-     */
-    public function removeRole(int $userId, string $roleName): array
-    {
-        try {
-            // Get role ID
-            $roleSql = "SELECT id FROM roles WHERE name = ?";
-            $roleStmt = $this->database->execute($roleSql, [$roleName]);
-            $role = $roleStmt->fetch(PDO::FETCH_ASSOC);
-            
-            if (!$role) {
-                throw new Exception("Role '{$roleName}' not found");
-            }
-            
-            // Remove role
-            $removeSql = "DELETE FROM user_roles WHERE user_id = ? AND role_id = ?";
-            $this->database->execute($removeSql, [$userId, $role['id']]);
-            
-            return [
-                'success' => true,
-                'message' => "Role '{$roleName}' removed successfully"
-            ];
-            
-        } catch (Exception $e) {
-            error_log("Error removing role {$roleName} from user {$userId}: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Check if user has role
-     */
-    public function userHasRole(int $userId, string $roleName): bool
-    {
-        try {
-            $sql = "SELECT 1 FROM user_roles ur 
-                    JOIN roles r ON ur.role_id = r.id 
-                    WHERE ur.user_id = ? AND r.name = ?";
-            
-            $stmt = $this->database->execute($sql, [$userId, $roleName]);
-            return (bool) $stmt->fetch();
-        } catch (Exception $e) {
-            error_log("Error checking role {$roleName} for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get user roles
-     */
-    public function getUserRoles(int $userId): array
-    {
-        try {
-            $sql = "SELECT r.* FROM roles r 
-                    JOIN user_roles ur ON r.id = ur.role_id 
-                    WHERE ur.user_id = ?";
-            
-            $stmt = $this->database->execute($sql, [$userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error getting roles for user {$userId}: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Get all roles
-     */
-    public function getAllRoles(): array
-    {
-        try {
-            $sql = "SELECT * FROM roles ORDER BY name";
-            $stmt = $this->database->execute($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error getting all roles: " . $e->getMessage());
-            return [];
-        }
-    }
-
+    
     /**
      * Check if user exists
      */
-    private function userExists(string $username, string $email): bool
+    private function userExists(string $field, string $value): bool
     {
         try {
-            $sql = "SELECT 1 FROM users WHERE username = ? OR email = ?";
-            $stmt = $this->database->execute($sql, [$username, $email]);
-            return (bool) $stmt->fetch();
-        } catch (Exception $e) {
+            $sql = "SELECT COUNT(*) as count FROM users WHERE $field = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$value]);
+            
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return (int) $result['count'] > 0;
+            
+        } catch (\Exception $e) {
             error_log("Error checking if user exists: " . $e->getMessage());
             return false;
         }
     }
-
+    
     /**
-     * Get user statistics
+     * Validate password strength
      */
-    public function getUserStatistics(): array
+    private function validatePassword(string $password): bool
     {
-        try {
-            $stats = [];
-            
-            // Total users
-            $totalSql = "SELECT COUNT(*) as total FROM users";
-            $totalStmt = $this->database->execute($totalSql);
-            $stats['total_users'] = $totalStmt->fetch(PDO::FETCH_ASSOC)['total'];
-            
-            // Active users
-            $activeSql = "SELECT COUNT(*) as active FROM users WHERE is_active = 1";
-            $activeStmt = $this->database->execute($activeSql);
-            $stats['active_users'] = $activeStmt->fetch(PDO::FETCH_ASSOC)['active'];
-            
-            // Users by role
-            $roleSql = "SELECT r.name, COUNT(ur.user_id) as count 
-                        FROM roles r 
-                        LEFT JOIN user_roles ur ON r.id = ur.role_id 
-                        GROUP BY r.id, r.name";
-            $roleStmt = $this->database->execute($roleSql);
-            $stats['users_by_role'] = $roleStmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Recent registrations
-            $recentSql = "SELECT username, email, created_at FROM users ORDER BY created_at DESC LIMIT 10";
-            $recentStmt = $this->database->execute($recentSql);
-            $stats['recent_registrations'] = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            return $stats;
-        } catch (Exception $e) {
-            error_log("Error getting user statistics: " . $e->getMessage());
-            return [];
-        }
+        // Minimum 8 characters, at least one uppercase, one lowercase, one number
+        return strlen($password) >= 8 &&
+               preg_match('/[A-Z]/', $password) &&
+               preg_match('/[a-z]/', $password) &&
+               preg_match('/[0-9]/', $password);
     }
-
+    
     /**
-     * Update last login
+     * Generate verification token
      */
-    public function updateLastLogin(int $userId): bool
+    private function generateVerificationToken(int $userId): string
     {
-        try {
-            $sql = "UPDATE users SET last_login_at = NOW(), last_seen_at = NOW() WHERE id = ?";
-            $this->database->execute($sql, [$userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating last login for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Update last seen
-     */
-    public function updateLastSeen(int $userId): bool
-    {
-        try {
-            $sql = "UPDATE users SET last_seen_at = NOW() WHERE id = ?";
-            $this->database->execute($sql, [$userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating last seen for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get user count
-     */
-    public function getUserCount(): int
-    {
-        try {
-            $sql = "SELECT COUNT(*) as count FROM users";
-            $stmt = $this->database->execute($sql);
-            return (int) $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        } catch (Exception $e) {
-            error_log("Error getting user count: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Get active user count
-     */
-    public function getActiveUserCount(): int
-    {
-        try {
-            $sql = "SELECT COUNT(*) as count FROM users WHERE is_active = 1";
-            $stmt = $this->database->execute($sql);
-            return (int) $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        } catch (Exception $e) {
-            error_log("Error getting active user count: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Get role distribution
-     */
-    public function getRoleDistribution(): array
-    {
-        try {
-            $sql = "SELECT r.name, COUNT(ur.user_id) as count 
-                    FROM roles r 
-                    LEFT JOIN user_roles ur ON r.id = ur.role_id 
-                    GROUP BY r.id, r.name
-                    ORDER BY count DESC";
-            $stmt = $this->database->execute($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error getting role distribution: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Update email verification token
-     */
-    public function updateEmailVerificationToken(int $userId, string $token): bool
-    {
-        try {
-            $sql = "UPDATE users SET email_verification_token = ? WHERE id = ?";
-            $this->database->execute($sql, [$token, $userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating email verification token for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get user by verification token
-     */
-    public function getUserByVerificationToken(string $token): ?array
-    {
-        try {
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-            FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE u.email_verification_token = ?
-                GROUP BY u.id";
-            
-            $stmt = $this->database->execute($sql, [$token]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-                $user['profile'] = $this->getUserProfile($user['id']);
-            }
+        $payload = [
+            'user_id' => $userId,
+            'type' => 'email_verification',
+            'iat' => time(),
+            'exp' => time() + 86400 // 24 hours
+        ];
         
-            return $user;
-        } catch (Exception $e) {
-            error_log("Error getting user by verification token: " . $e->getMessage());
-            return null;
-        }
+        return JWT::encode($payload, $this->jwtSecret, 'HS256');
     }
-
+    
     /**
-     * Verify email and clear verification token
+     * Generate password reset token
      */
-    public function verifyEmail(int $userId): bool
+    private function generatePasswordResetToken(int $userId): string
     {
-        try {
-            $sql = "UPDATE users SET 
-                    email_verified_at = NOW(), 
-                    email_verification_token = NULL, 
-                    status = 'active',
-                    updated_at = NOW() 
-                    WHERE id = ?";
-            $this->database->execute($sql, [$userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error verifying email for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Update password reset token
-     */
-    public function updatePasswordResetToken(int $userId, string $token): bool
-    {
-        try {
-            $sql = "UPDATE users SET password_reset_token = ?, password_reset_expires_at = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?";
-            $this->database->execute($sql, [$token, $userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating password reset token for user {$userId}: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get user by reset token
-     */
-    public function getUserByResetToken(string $token): ?array
-    {
-        try {
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-            FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE u.password_reset_token = ? AND u.password_reset_expires_at > NOW()
-                GROUP BY u.id";
-            
-            $stmt = $this->database->execute($sql, [$token]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-                $user['profile'] = $this->getUserProfile($user['id']);
-            }
+        $payload = [
+            'user_id' => $userId,
+            'type' => 'password_reset',
+            'iat' => time(),
+            'exp' => time() + 3600 // 1 hour
+        ];
         
-            return $user;
-        } catch (Exception $e) {
-            error_log("Error getting user by reset token: " . $e->getMessage());
-            return null;
-        }
+        return JWT::encode($payload, $this->jwtSecret, 'HS256');
     }
-
+    
     /**
-     * Update user password
+     * Generate JWT token for user
      */
-    public function updatePassword(int $userId, string $passwordHash): bool
+    public function generateJWTToken(User $user): string
     {
-        try {
-            $sql = "UPDATE users SET 
-                    password_hash = ?, 
-                    password_reset_token = NULL, 
-                    password_reset_expires_at = NULL,
-                    updated_at = NOW() 
-                    WHERE id = ?";
-            $this->database->execute($sql, [$passwordHash, $userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error updating password for user {$userId}: " . $e->getMessage());
-            return false;
-        }
+        $payload = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+            'iat' => time(),
+            'exp' => time() + $this->jwtExpiry
+        ];
+        
+        return JWT::encode($payload, $this->jwtSecret, 'HS256');
     }
-
+    
     /**
-     * Clear password reset token
+     * Send verification email (placeholder)
      */
-    public function clearPasswordResetToken(int $userId): bool
+    private function sendVerificationEmail(string $email, string $token): void
     {
-        try {
-            $sql = "UPDATE users SET 
-                    password_reset_token = NULL, 
-                    password_reset_expires_at = NULL,
-                    updated_at = NOW() 
-                    WHERE id = ?";
-            $this->database->execute($sql, [$userId]);
-            return true;
-        } catch (Exception $e) {
-            error_log("Error clearing password reset token for user {$userId}: " . $e->getMessage());
-            return false;
-        }
+        // TODO: Implement actual email sending
+        error_log("Verification email would be sent to $email with token: $token");
     }
-
+    
     /**
-     * Get users by status
+     * Send password reset email (placeholder)
      */
-    public function getUsersByStatus(string $status, int $page = 1, int $perPage = 20): array
+    private function sendPasswordResetEmail(string $email, string $token): void
     {
-        try {
-            $whereConditions = ["u.status = ?"];
-            $params = [$status];
-            
-            // Count total users with status
-            $countSql = "SELECT COUNT(*) as total FROM users u WHERE " . implode(' AND ', $whereConditions);
-            $countStmt = $this->database->execute($countSql, $params);
-            $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-            
-            // Get users with pagination
-            $offset = ($page - 1) * $perPage;
-            $sql = "SELECT 
-                u.*,
-                GROUP_CONCAT(r.name) as roles,
-                GROUP_CONCAT(r.display_name) as role_display_names
-                FROM users u
-                LEFT JOIN user_roles ur ON u.id = ur.user_id
-                LEFT JOIN roles r ON ur.role_id = r.id
-                WHERE " . implode(' AND ', $whereConditions) . "
-                GROUP BY u.id
-                ORDER BY u.created_at DESC
-                LIMIT ? OFFSET ?";
-            
-            $params[] = $perPage;
-            $params[] = $offset;
-            
-            $stmt = $this->database->execute($sql, $params);
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Process roles for each user
-            foreach ($users as &$user) {
-                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
-                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
-            }
-            
-            return [
-                'users' => $users,
-                'pagination' => [
-                    'current_page' => $page,
-                    'per_page' => $perPage,
-                    'total' => $total,
-                    'last_page' => ceil($total / $perPage)
-                ]
-            ];
-        } catch (Exception $e) {
-            error_log("Error getting users by status {$status}: " . $e->getMessage());
-            return ['users' => [], 'pagination' => ['current_page' => 1, 'per_page' => 20, 'total' => 0, 'last_page' => 1]];
-        }
+        // TODO: Implement actual email sending
+        error_log("Password reset email would be sent to $email with token: $token");
     }
-
-    /**
-     * Get pending verification users count
-     */
-    public function getPendingVerificationCount(): int
-    {
-        try {
-            $sql = "SELECT COUNT(*) as count FROM users WHERE status = 'pending_verification'";
-            $stmt = $this->database->execute($sql);
-            return (int) $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        } catch (Exception $e) {
-            error_log("Error getting pending verification count: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * Get users requiring password reset
-     */
-    public function getUsersRequiringPasswordReset(): array
-    {
-        try {
-            $sql = "SELECT id, username, email, password_reset_expires_at 
-                    FROM users 
-                    WHERE password_reset_token IS NOT NULL 
-                    AND password_reset_expires_at > NOW()
-                    ORDER BY password_reset_expires_at ASC";
-            $stmt = $this->database->execute($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error getting users requiring password reset: " . $e->getMessage());
-            return [];
-        }
-    }
-
 } 

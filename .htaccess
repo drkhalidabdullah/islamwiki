@@ -7,7 +7,13 @@
 # Enable URL rewriting
 RewriteEngine On
 
-# Route all requests to the public directory (React SPA)
+# Route API requests directly to public directory
+RewriteRule ^api/(.*)$ public/api/index.php [QSA,L]
+
+# Route admin API requests directly to public directory
+RewriteRule ^admin/api/(.*)$ public/api/index.php [QSA,L]
+
+# Route all other requests to the public directory (React SPA)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [QSA,L]

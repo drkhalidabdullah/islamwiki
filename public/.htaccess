@@ -1,4 +1,4 @@
-# IslamWiki Framework - SPA Routing Configuration
+# IslamWiki Framework - Root Apache Configuration
 # Author: Khalid Abdullah
 # Version: 0.0.5
 # Date: 2025-01-27
@@ -7,14 +7,13 @@
 # Enable URL rewriting
 RewriteEngine On
 
-# Handle API requests first
-RewriteRule ^api/(.*)$ api/index.php [QSA,L]
-
-# Handle Admin API requests
+# Handle admin API requests
 RewriteRule ^admin/api/(.*)$ api/index.php [QSA,L]
 
-# Route all other requests to index.php for React SPA
-# This ensures that all routes (like /login, /dashboard, etc.) are handled by React Router
+# Handle regular API requests
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+
+# Route all other requests to the main router (for SPA routing)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php [QSA,L]

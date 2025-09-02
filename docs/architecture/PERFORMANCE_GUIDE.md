@@ -12,18 +12,21 @@ This document provides comprehensive performance optimization strategies for the
 ## 🎯 **Performance Goals**
 
 ### **1. Response Time Targets**
+
 - **Page Load Time**: < 2 seconds
 - **API Response Time**: < 200ms
 - **Database Query Time**: < 100ms
 - **Asset Load Time**: < 1 second
 
 ### **2. Throughput Targets**
+
 - **Concurrent Users**: 1000+ simultaneous users
 - **Requests per Second**: 500+ RPS
 - **Database Connections**: Efficient connection pooling
 - **Memory Usage**: < 512MB per request
 
 ### **3. Scalability Targets**
+
 - **Horizontal Scaling**: Support for multiple servers
 - **Vertical Scaling**: Efficient resource utilization
 - **Load Balancing**: Distributed request handling
@@ -34,6 +37,7 @@ This document provides comprehensive performance optimization strategies for the
 ### **1. Query Optimization**
 
 #### **Indexing Strategy**
+
 ```sql
 -- Primary indexes for all tables
 CREATE INDEX idx_users_username ON users(username);
@@ -55,6 +59,7 @@ CREATE INDEX idx_users_active ON users(id) WHERE is_active = 1;
 ```
 
 #### **Query Optimization Examples**
+
 ```php
 // Optimized article query with eager loading
 class ArticleRepository
@@ -84,6 +89,7 @@ class ArticleRepository
 ```
 
 #### **Database Connection Optimization**
+
 ```php
 // Database configuration optimization
 DB_CONNECTION=mysql
@@ -113,6 +119,7 @@ DB_INNODB_FLUSH_LOG_AT_TRX_COMMIT=2
 ### **2. Database Caching**
 
 #### **Query Result Caching**
+
 ```php
 class CachedArticleRepository
 {
@@ -149,6 +156,7 @@ class CachedArticleRepository
 ```
 
 #### **Database Query Caching**
+
 ```php
 // MySQL Query Cache Configuration
 query_cache_type=1
@@ -171,6 +179,7 @@ REDIS_QUEUE_DB=3
 ### **1. Multi-Level Caching Strategy**
 
 #### **Cache Layers**
+
 ```php
 class CacheManager
 {
@@ -220,6 +229,7 @@ class CacheManager
 ```
 
 #### **Cache Implementation Examples**
+
 ```php
 // Memory cache (APCu)
 class MemoryCache
@@ -276,6 +286,7 @@ class RedisCache
 ### **2. Cache Invalidation Strategies**
 
 #### **Tag-Based Cache Invalidation**
+
 ```php
 class TaggedCache
 {
@@ -326,6 +337,7 @@ $cache->flush(['articles']);
 ### **1. Asset Optimization**
 
 #### **Asset Build Configuration**
+
 ```javascript
 // vite.config.js
 import { defineConfig } from 'vite';
@@ -372,6 +384,7 @@ export default defineConfig({
 ```
 
 #### **Image Optimization**
+
 ```php
 class ImageOptimizer
 {
@@ -426,6 +439,7 @@ class ImageOptimizer
 ### **2. Code Splitting & Lazy Loading**
 
 #### **React Component Lazy Loading**
+
 ```tsx
 // Lazy load components
 const ArticleEditor = lazy(() => import('./components/ArticleEditor'));
@@ -475,6 +489,7 @@ function ArticleList() {
 ### **1. Application Performance Monitoring**
 
 #### **Performance Metrics Collection**
+
 ```php
 class PerformanceMonitor
 {
@@ -533,6 +548,7 @@ class PerformanceMonitor
 ```
 
 #### **Database Query Monitoring**
+
 ```php
 class QueryMonitor
 {
@@ -576,6 +592,7 @@ class QueryMonitor
 ### **2. Real-Time Performance Dashboard**
 
 #### **Performance Dashboard API**
+
 ```php
 class PerformanceController extends Controller
 {
@@ -623,6 +640,7 @@ class PerformanceController extends Controller
 ### **1. PHP Performance Settings**
 
 #### **PHP Configuration (php.ini)**
+
 ```ini
 ; Memory and execution
 memory_limit = 512M
@@ -652,6 +670,7 @@ max_file_uploads = 20
 ```
 
 #### **Apache Performance Settings**
+
 ```apache
 # Performance settings
 <IfModule mpm_prefork_module>
@@ -690,6 +709,7 @@ max_file_uploads = 20
 ### **2. Environment-Specific Optimization**
 
 #### **Development Environment**
+
 ```php
 // Development performance settings
 APP_DEBUG = true
@@ -705,6 +725,7 @@ PERFORMANCE_MONITORING = true
 ```
 
 #### **Production Environment**
+
 ```php
 // Production performance settings
 APP_DEBUG = false
@@ -729,6 +750,7 @@ CDN_ENABLED = true
 ### **1. Load Testing**
 
 #### **Load Test Script**
+
 ```php
 class LoadTester
 {
@@ -812,6 +834,7 @@ class LoadTester
 ### **2. Performance Benchmarking**
 
 #### **Benchmark Suite**
+
 ```php
 class PerformanceBenchmark
 {
@@ -907,4 +930,4 @@ class PerformanceBenchmark
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

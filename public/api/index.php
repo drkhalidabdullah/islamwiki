@@ -1,14 +1,17 @@
 <?php
 /**
- * IslamWiki Framework - API Entry Point
- * Author: Khalid Abdullah
- * Version: 0.0.5
- * Date: 2025-01-27
- * License: AGPL-3.0
+ * API Entry Point for IslamWiki
+ * Handles all API requests including admin API endpoints
  */
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Set content type to JSON
 header('Content-Type: application/json');
+
+// Enable CORS for development
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -19,10 +22,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Include the autoloader
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 try {
+    // Debug: Log the request
+    error_log("API Request - Method: " . $_SERVER['REQUEST_METHOD'] . ", URI: " . $_SERVER['REQUEST_URI']);
+    
+    // Load environment variables
+    if (file_exists(__DIR__ . '/../../.env')) {
+        $envFile = file_get_contents(__DIR__ . '/../../.env');
+        foreach (explode("\n", $envFile) as $line) {
+            if (strpos($line, '=') !== false && !str_starts_with(trim($line), '#')) {
+                list($key, $value) = explode('=', $line, 2);
+                $_ENV[trim($key)] = trim($value);
+            }
+        }
+    }
+
+    // Load Composer autoloader
+    if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
+        require_once __DIR__ . '/../../vendor/autoload.php';
+    } else {
+        throw new Exception('Composer autoloader not found');
+    }
+
     // Get the request method and path
     $method = $_SERVER['REQUEST_METHOD'];
     $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
@@ -46,53 +67,32 @@ try {
         $input = file_get_contents('php://input');
         $data = json_decode($input, true) ?: [];
     }
-    
-    // For now, return a simple response to test the API
-    if (empty($path)) {
-        error_log("Empty path detected, returning API info");
-        echo json_encode([
-            'message' => 'IslamWiki API is working!',
-            'endpoints' => [
-                'system/health' => 'GET - System health check',
-                'system/stats' => 'GET - System statistics',
-                'wiki/overview' => 'GET - Wiki overview'
-            ],
-            'code' => 200
-        ], JSON_PRETTY_PRINT);
-        exit();
-    }
-    
-    // Initialize database connection
-    $config = [
+
+    // Initialize database manager
+    $databaseManager = new \IslamWiki\Core\Database\DatabaseManager([
         'host' => $_ENV['DB_HOST'] ?? 'localhost',
         'port' => $_ENV['DB_PORT'] ?? 3306,
         'database' => $_ENV['DB_DATABASE'] ?? 'islamwiki',
         'username' => $_ENV['DB_USERNAME'] ?? 'root',
         'password' => $_ENV['DB_PASSWORD'] ?? '',
         'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4'
-    ];
-    
-    $database = new \IslamWiki\Core\Database\DatabaseManager($config);
-    
+    ]);
+
     // Initialize API controller
-    $apiController = new \IslamWiki\Controllers\ApiController($database);
-    
-    // Handle the request
+    $apiController = new \IslamWiki\Controllers\ApiController($databaseManager);
+
+    // Process the request
     $response = $apiController->handleRequest($method, $path, $data);
-    
-    // Set appropriate HTTP status code
-    $statusCode = $response['code'] ?? 200;
-    http_response_code($statusCode);
-    
+
     // Return JSON response
+    http_response_code($response['code'] ?? 200);
     echo json_encode($response, JSON_PRETTY_PRINT);
-    
+
 } catch (Exception $e) {
-    // Handle errors
+    error_log("API Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
-        'error' => 'Internal Server Error',
-        'message' => $e->getMessage(),
+        'error' => 'Internal server error: ' . $e->getMessage(),
         'code' => 500
-    ], JSON_PRETTY_PRINT);
+    ]);
 } 
