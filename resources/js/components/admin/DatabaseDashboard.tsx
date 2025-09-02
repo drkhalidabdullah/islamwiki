@@ -8,42 +8,36 @@ import { buildApiUrl, API_ENDPOINTS } from '../../config/api';
 interface DatabaseOverview {
   connection: {
     status: string;
-    response_time: number;
+    response_time: string;
     server_version: string;
     client_version: string;
+    connection_status: string;
     is_connected: boolean;
   };
   statistics: {
     query_count: number;
     config: {
       host: string;
-      port: number;
       database: string;
     };
+    query_log: Array<any>;
   };
   migrations: {
-    total_migrations: number;
-    executed_migrations: number;
-    pending_migrations: number;
-    migrations: Array<{
-      migration: string;
-      status: string;
-      executed_at: string | null;
-    }>;
+    total: number;
+    run: number;
+    pending: number;
+    status: string;
   };
   tables: Array<{
     name: string;
-    size_mb: number;
-    row_count: number;
+    status: string;
+    rows: number;
+    size: string;
   }>;
   performance: {
-    slow_queries: Array<any>;
-    connection_count: {
-      current_connections: number;
-    };
-    query_performance: {
-      total_queries: number;
-    };
+    response_time: string;
+    memory_usage: string;
+    cache_hits: number;
   };
 }
 
@@ -82,9 +76,17 @@ const DatabaseDashboard: React.FC = () => {
   const [querySql, setQuerySql] = useState('');
   const [queryResults, setQueryResults] = useState<any[]>([]);
   const [queryLoading, setQueryLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
     loadDatabaseData();
+    
+    // Set up real-time refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadDatabaseData();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadDatabaseData = async () => {
@@ -108,6 +110,8 @@ const DatabaseDashboard: React.FC = () => {
         if (healthData.success) {
           setHealth(healthData.data);
         }
+        
+        setLastUpdated(new Date());
       } else {
         throw new Error('Failed to load database data');
       }
@@ -227,19 +231,30 @@ const DatabaseDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Database Management</h1>
-        <div className="space-x-2">
-          <Button onClick={runMigrations} variant="primary">
-            Run Migrations
-          </Button>
-          <Button onClick={rollbackMigrations} variant="secondary">
-            Rollback
-          </Button>
-          <Button onClick={() => setShowQueryModal(true)} variant="outline">
-            Execute Query
-          </Button>
+      {/* Header - Properly contained like other dashboard headers */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Database Management</h1>
+            <p className="text-lg text-gray-600 mt-1">Monitor and manage database operations in real-time</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Last updated: {lastUpdated.toLocaleTimeString()} | Auto-refresh every 30 seconds
+            </p>
+          </div>
+          <div className="space-x-2">
+            <Button onClick={loadDatabaseData} variant="outline" className="mr-2">
+              🔄 Refresh Now
+            </Button>
+            <Button onClick={runMigrations} variant="primary">
+              Run Migrations
+            </Button>
+            <Button onClick={rollbackMigrations} variant="secondary">
+              Rollback
+            </Button>
+            <Button onClick={() => setShowQueryModal(true)} variant="outline">
+              Execute Query
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -318,7 +333,7 @@ const DatabaseDashboard: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Host:</span>
-                  <span className="font-medium">{overview.statistics.config.host}:{overview.statistics.config.port}</span>
+                  <span className="font-medium">{overview.statistics.config.host}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Database:</span>
@@ -343,12 +358,12 @@ const DatabaseDashboard: React.FC = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Migrations:</span>
                   <span className="font-medium">
-                    {overview.migrations.executed_migrations}/{overview.migrations.total_migrations}
+                    {overview.migrations.run}/{overview.migrations.total}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Pending:</span>
-                  <span className="font-medium">{overview.migrations.pending_migrations}</span>
+                  <span className="font-medium">{overview.migrations.pending}</span>
                 </div>
               </div>
             </div>
@@ -369,26 +384,36 @@ const DatabaseDashboard: React.FC = () => {
                       Table Name
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Size (MB)
+                      Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Row Count
+                      Size
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Rows
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {overview.tables.map((table) => (
-                    <tr key={table.name}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {table.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {typeof table.size_mb === 'number' ? table.size_mb.toFixed(2) : parseFloat(table.size_mb || 0).toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {typeof table.row_count === 'number' ? table.row_count.toLocaleString() : parseInt(table.row_count || 0).toLocaleString()}
-                      </td>
-                    </tr>
+                                      <tr key={table.name}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {table.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        table.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {table.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {table.size}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {table.rows.toLocaleString()}
+                    </td>
+                  </tr>
                   ))}
                 </tbody>
               </table>
