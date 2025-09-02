@@ -138,14 +138,14 @@ const LoginForm: React.FC<LoginFormProps> = ({
       </form>
       
       <div className="mt-6 text-center">
-        <p className="text-gray-600">
-          Don't have an account?{' '}
+        <p className="text-gray-600 dark:text-gray-400">
+          Don&apos;t have an account?{' '}
           <button
             type="button"
             onClick={onSwitchToRegister}
-            className="text-green-600 hover:text-green-700 font-medium"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
           >
-            Sign up here
+            Sign up
           </button>
         </p>
       </div>

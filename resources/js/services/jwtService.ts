@@ -1,84 +1,156 @@
 // JWT Service for handling authentication tokens
-import * as jose from 'jose';
+import { jwtDecode } from 'jwt-decode';
 
-// In production, this would come from environment variables
-const JWT_SECRET = new TextEncoder().encode('islamwiki-secret-key-change-in-production');
-const JWT_EXPIRES_IN = '24h';
-
-export interface JWTPayload {
-  userId: number;
-  email: string;
-  role: string;
+interface JWTPayload {
+  sub: string;
   username: string;
-  [key: string]: any; // Allow additional properties for jose compatibility
-}
-
-export interface DecodedToken extends JWTPayload {
-  iat: number;
+  role: string;
   exp: number;
+  iat: number;
 }
 
 class JWTService {
-  // Generate JWT token
-  async generateToken(payload: JWTPayload): Promise<string> {
-    try {
-      const token = await new jose.SignJWT(payload)
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime(JWT_EXPIRES_IN)
-        .sign(JWT_SECRET);
-      return token;
-    } catch (error) {
-      console.error('JWT generation failed:', error);
-      throw new Error('Failed to generate JWT token');
-    }
+  private readonly TOKEN_KEY = 'islamwiki_auth_token';
+  private readonly REFRESH_TOKEN_KEY = 'islamwiki_refresh_token';
+
+  // Store JWT token
+  setToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  // Verify and decode JWT token
-  async verifyToken(token: string): Promise<DecodedToken | null> {
+  // Get JWT token
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  // Remove JWT token
+  removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  // Store refresh token
+  setRefreshToken(token: string): void {
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+  }
+
+  // Get refresh token
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  // Remove refresh token
+  removeRefreshToken(): void {
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  // Decode JWT token
+  decodeToken(token: string): JWTPayload | null {
     try {
-      const { payload } = await jose.jwtVerify(token, JWT_SECRET);
-      return payload as DecodedToken;
+      return jwtDecode<JWTPayload>(token);
     } catch (error) {
-      console.error('JWT verification failed:', error);
+      console.error('Failed to decode JWT token:', error);
       return null;
     }
   }
 
   // Check if token is expired
-  async isTokenExpired(token: string): Promise<boolean> {
-    const decoded = await this.verifyToken(token);
+  isTokenExpired(token: string): boolean {
+    try {
+      const decoded = this.decodeToken(token);
     if (!decoded) return true;
     
     const currentTime = Math.floor(Date.now() / 1000);
     return decoded.exp < currentTime;
+    } catch (error) {
+      console.error('Failed to check token expiration:', error);
+      return true;
+    }
   }
 
   // Get token expiration time
-  async getTokenExpiration(token: string): Promise<Date | null> {
-    const decoded = await this.verifyToken(token);
+  getTokenExpiration(token: string): Date | null {
+    try {
+      const decoded = this.decodeToken(token);
     if (!decoded) return null;
     
     return new Date(decoded.exp * 1000);
-  }
-
-  // Refresh token (generate new token with same payload)
-  async refreshToken(token: string): Promise<string | null> {
-    const decoded = await this.verifyToken(token);
-    if (!decoded) return null;
-    
-    const { iat, exp, ...payload } = decoded as any;
-    return this.generateToken(payload as JWTPayload);
-  }
-
-  // Extract token from Authorization header
-  extractTokenFromHeader(authHeader: string): string | null {
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    } catch (error) {
+      console.error('Failed to get token expiration:', error);
       return null;
     }
-    return authHeader.substring(7);
+  }
+
+  // Verify token validity
+  async verifyToken(token: string): Promise<boolean> {
+    try {
+      if (!token) return false;
+      
+      const decoded = this.decodeToken(token);
+      if (!decoded) return false;
+      
+      if (this.isTokenExpired(token)) return false;
+      
+      return true;
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return false;
+    }
+  }
+
+  // Get user ID from token
+  getUserId(token: string): string | null {
+    try {
+      const decoded = this.decodeToken(token);
+      return decoded?.sub || null;
+    } catch (error) {
+      console.error('Failed to get user ID from token:', error);
+      return null;
+    }
+  }
+
+  // Get username from token
+  getUsername(token: string): string | null {
+    try {
+      const decoded = this.decodeToken(token);
+      return decoded?.username || null;
+    } catch (error) {
+      console.error('Failed to get username from token:', error);
+      return null;
+    }
+  }
+
+  // Get user role from token
+  getUserRole(token: string): string | null {
+    try {
+      const decoded = this.decodeToken(token);
+      return decoded?.role || null;
+    } catch (error) {
+      console.error('Failed to get user role from token:', error);
+      return null;
+    }
+  }
+
+  // Mock refresh token method for development
+  async refreshToken(token: string): Promise<string | null> {
+    try {
+      // For development, just return the same token if it's not expired
+      if (!this.isTokenExpired(token)) {
+        return token;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      return null;
+    }
+  }
+
+  // Clear all tokens
+  clearTokens(): void {
+    this.removeToken();
+    this.removeRefreshToken();
   }
 }
 
-export const jwtService = new JWTService();
+// Create and export a singleton instance
+const jwtService = new JWTService();
 export default jwtService; 

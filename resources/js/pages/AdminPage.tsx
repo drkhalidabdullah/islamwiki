@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AdminDashboard from '../components/admin/AdminDashboard';
 import TestingDashboard from '../components/admin/TestingDashboard';
@@ -56,8 +55,6 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      
       <main className="flex-grow">
         <div className="flex">
           {/* Sidebar Navigation */}

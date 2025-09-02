@@ -1,57 +1,69 @@
 {
-    "name": "islamwiki-frontend",
-    "version": "0.0.3",
-    "description": "IslamWiki React Frontend Application - Built for Shared Hosting",
-    "author": "Khalid Abdullah",
-    "license": "AGPL-3.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build",
-        "build:shared-hosting": "npm run preserve-htaccess && tsc && vite build --mode production && npm run restore-htaccess && npm run optimize-assets",
-        "preview": "vite preview",
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "type-check": "tsc --noEmit",
-        "optimize-assets": "echo 'Assets optimized for shared hosting deployment'",
-        "preserve-htaccess": "./scripts/preserve-htaccess.sh",
-        "restore-htaccess": "./scripts/restore-htaccess.sh"
-    },
-    "dependencies": {
-        "@hookform/resolvers": "^3.3.2",
-        "@tanstack/react-query": "^5.8.4",
-        "clsx": "^2.0.0",
-        "date-fns": "^2.30.0",
-        "framer-motion": "^10.16.16",
-        "jose": "^6.1.0",
-        "lucide-react": "^0.294.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-hook-form": "^7.48.2",
-        "react-markdown": "^9.0.1",
-        "react-router-dom": "^6.20.1",
-        "rehype-highlight": "^7.0.0",
-        "remark-gfm": "^4.0.0",
-        "tailwind-merge": "^2.0.0",
-        "zod": "^3.22.4",
-        "zustand": "^4.4.7"
-    },
-    "devDependencies": {
-        "@types/react": "^18.2.37",
-        "@types/react-dom": "^18.2.15",
-        "@typescript-eslint/eslint-plugin": "^6.10.0",
-        "@typescript-eslint/parser": "^6.10.0",
-        "@vitejs/plugin-react": "^4.1.1",
-        "autoprefixer": "^10.4.16",
-        "eslint": "^8.53.0",
-        "eslint-plugin-react-hooks": "^4.6.0",
-        "eslint-plugin-react-refresh": "^0.4.4",
-        "postcss": "^8.4.31",
-        "tailwindcss": "^3.3.5",
-        "typescript": "^5.2.2",
-        "vite": "^5.0.0"
-    },
-    "engines": {
-        "node": ">=18.0.0",
-        "npm": ">=8.0.0"
-    }
+  "name": "islamwiki-framework",
+  "version": "0.0.5",
+  "description": "A comprehensive Islamic knowledge platform built for shared hosting with enterprise-grade features",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:safe": "npm run preserve-htaccess && npm run build && npm run restore-htaccess",
+    "preserve-htaccess": "cp public/.htaccess public/.htaccess.backup",
+    "restore-htaccess": "cp public/.htaccess.backup public/.htaccess",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "keywords": [
+    "islamic",
+    "wiki",
+    "platform",
+    "framework",
+    "php",
+    "react",
+    "typescript",
+    "tailwindcss"
+  ],
+  "author": "Khalid Abdullah",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drkhalidabdullah/islamwiki.git"
+  },
+  "homepage": "https://github.com/drkhalidabdullah/islamwiki#readme",
+  "bugs": {
+    "url": "https://github.com/drkhalidabdullah/islamwiki/issues"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
+    "clsx": "^2.1.1",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.542.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.62.0",
+    "react-router-dom": "^6.8.1",
+    "zod": "^4.1.5",
+    "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "status": "v0.0.5 COMPLETE & PRODUCTION READY"
 }

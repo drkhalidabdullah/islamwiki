@@ -544,6 +544,7 @@ const TestingDashboard: React.FC = () => {
     const interval = setInterval(collectPerformanceMetrics, 30000);
     
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Real security scanning

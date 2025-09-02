@@ -11,11 +11,12 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {
+      input: 'resources/js/main.tsx',
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          ui: ['zustand', '@tanstack/react-query']
+          ui: ['zustand']
         }
       }
     }

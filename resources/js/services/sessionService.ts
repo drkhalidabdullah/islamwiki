@@ -1,132 +1,108 @@
 // Session Service for handling automatic logout and session management
-import { useAuthStore } from '../store/authStore';
 
 class SessionService {
-  private timeoutId: NodeJS.Timeout | null = null;
-  private readonly SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-  private readonly WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+  private readonly SESSION_KEY = 'islamwiki_session';
+  private readonly SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
-  // Start session monitoring
-  startSessionMonitoring(): void {
-    this.resetSessionTimer();
-    this.setupActivityListeners();
+  // Create a new session
+  createSession(userId: string, userData: any): void {
+    const session = {
+      userId,
+      userData,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + this.SESSION_TIMEOUT
+    };
+
+    localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
   }
 
-  // Reset session timer
-  resetSessionTimer(): void {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
+  // Get current session
+  getSession(): any | null {
+    try {
+      const sessionData = localStorage.getItem(this.SESSION_KEY);
+      if (!sessionData) return null;
 
-    this.timeoutId = setTimeout(() => {
-      this.handleSessionTimeout();
-    }, this.SESSION_TIMEOUT);
-
-    // Set warning timer
-    setTimeout(() => {
-      this.showSessionWarning();
-    }, this.SESSION_TIMEOUT - this.WARNING_TIME);
-  }
-
-  // Setup activity listeners
-  private setupActivityListeners(): void {
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+      const session = JSON.parse(sessionData);
     
-    events.forEach(event => {
-      document.addEventListener(event, () => {
-        this.resetSessionTimer();
-      }, { passive: true });
-    });
-  }
-
-  // Handle session timeout
-  private handleSessionTimeout(): void {
-    const { logout } = useAuthStore.getState();
-    
-    // Show timeout notification
-    this.showSessionExpiredNotification();
-    
-    // Logout user
-    logout();
-    
-    // Redirect to login
-    window.location.href = '/login?message=Session expired due to inactivity';
-  }
-
-  // Show session warning
-  private showSessionWarning(): void {
-    // Create warning notification
-    const warning = document.createElement('div');
-    warning.id = 'session-warning';
-    warning.className = 'fixed top-4 right-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-6 py-3 rounded-lg shadow-lg z-50';
-    warning.innerHTML = `
-      <div class="flex items-center justify-between">
-        <span class="text-sm font-medium">Session expires in 5 minutes</span>
-        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-yellow-600 hover:text-yellow-800">×</button>
-      </div>
-      <div class="mt-2 text-xs">Click anywhere to extend your session</div>
-    `;
-    
-    document.body.appendChild(warning);
-    
-    // Auto-remove after 10 seconds
-    setTimeout(() => {
-      if (warning.parentElement) {
-        warning.remove();
+      // Check if session is expired
+      if (Date.now() > session.expiresAt) {
+        this.clearSession();
+        return null;
       }
-    }, 10000);
-  }
 
-  // Show session expired notification
-  private showSessionExpiredNotification(): void {
-    const notification = document.createElement('div');
-    notification.id = 'session-expired';
-    notification.className = 'fixed top-4 right-4 bg-red-50 border border-red-200 text-red-800 px-6 py-3 rounded-lg shadow-lg z-50';
-    notification.innerHTML = `
-      <div class="flex items-center justify-between">
-        <span class="text-sm font-medium">Session expired</span>
-        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-red-600 hover:text-red-800">×</button>
-      </div>
-      <div class="mt-2 text-xs">You have been logged out due to inactivity</div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Auto-remove after 15 seconds
-    setTimeout(() => {
-      if (notification.parentElement) {
-        notification.remove();
-      }
-    }, 15000);
-  }
-
-  // Stop session monitoring
-  stopSessionMonitoring(): void {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
+      return session;
+    } catch (error) {
+      console.error('Failed to get session:', error);
+      this.clearSession();
+      return null;
     }
   }
 
-  // Extend session manually
+  // Check if session is valid
+  isSessionValid(): boolean {
+    const session = this.getSession();
+    return session !== null;
+  }
+
+  // Get user ID from session
+  getUserId(): string | null {
+    const session = this.getSession();
+    return session?.userId || null;
+  }
+
+  // Get user data from session
+  getUserData(): any | null {
+    const session = this.getSession();
+    return session?.userData || null;
+  }
+
+  // Update session data
+  updateSession(userData: any): void {
+    const session = this.getSession();
+    if (session) {
+      session.userData = { ...session.userData, ...userData };
+      session.expiresAt = Date.now() + this.SESSION_TIMEOUT;
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+    }
+  }
+
+  // Extend session timeout
   extendSession(): void {
-    this.resetSessionTimer();
-    
-    // Remove any existing warnings
-    const warning = document.getElementById('session-warning');
-    if (warning) {
-      warning.remove();
+    const session = this.getSession();
+    if (session) {
+      session.expiresAt = Date.now() + this.SESSION_TIMEOUT;
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
     }
   }
 
-  // Get remaining session time in minutes
-  getRemainingSessionTime(): number {
-    if (!this.timeoutId) return 0;
+  // Clear session
+  clearSession(): void {
+    localStorage.removeItem(this.SESSION_KEY);
+  }
+
+  // Get session age in milliseconds
+  getSessionAge(): number {
+    const session = this.getSession();
+    if (!session) return 0;
     
-    // This is a simplified calculation - in a real app you'd track the actual timeout
-    return Math.ceil(this.SESSION_TIMEOUT / 60000);
+    return Date.now() - session.createdAt;
+  }
+
+  // Get time until session expires in milliseconds
+  getTimeUntilExpiry(): number {
+    const session = this.getSession();
+    if (!session) return 0;
+    
+    return session.expiresAt - Date.now();
+  }
+
+  // Check if session is about to expire (within 1 hour)
+  isSessionExpiringSoon(): boolean {
+    const timeUntilExpiry = this.getTimeUntilExpiry();
+    return timeUntilExpiry > 0 && timeUntilExpiry < 60 * 60 * 1000; // 1 hour
   }
 }
 
-export const sessionService = new SessionService();
+// Create and export a singleton instance
+const sessionService = new SessionService();
 export default sessionService; 

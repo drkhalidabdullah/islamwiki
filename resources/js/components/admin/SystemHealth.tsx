@@ -66,7 +66,7 @@ const SystemHealth: React.FC = () => {
       responseTime: 0,
       details: 'Database connection pool health check',
       recommendations: ['Monitor connection pool growth', 'Consider connection pooling optimization'],
-      checkCommand: 'php -r "try { new PDO(\'mysql:host=localhost;dbname=test\', \'user\', \'pass\'); echo \'OK\'; } catch(Exception \$e) { echo \'FAIL\'; }"'
+      checkCommand: 'php -r "try { new PDO(\'mysql:host=localhost;dbname=test\', \'user\', \'pass\'); echo \'OK\'; } catch(Exception $e) { echo \'FAIL\'; }"'
     },
     {
       id: 'hc-api-response',
@@ -353,7 +353,7 @@ const SystemHealth: React.FC = () => {
     } finally {
       setIsCollectingResources(false);
     }
-  }, [isCollectingResources]);
+  }, [isCollectingResources, systemResources]);
 
   // Run comprehensive system diagnostics
   const runSystemDiagnostics = async () => {

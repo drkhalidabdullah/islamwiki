@@ -685,5 +685,246 @@ class UserService
         }
     }
 
+    /**
+     * Update email verification token
+     */
+    public function updateEmailVerificationToken(int $userId, string $token): bool
+    {
+        try {
+            $sql = "UPDATE users SET email_verification_token = ? WHERE id = ?";
+            $this->database->execute($sql, [$token, $userId]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating email verification token for user {$userId}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user by verification token
+     */
+    public function getUserByVerificationToken(string $token): ?array
+    {
+        try {
+            $sql = "SELECT 
+                u.*,
+                GROUP_CONCAT(r.name) as roles,
+                GROUP_CONCAT(r.display_name) as role_display_names
+            FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                LEFT JOIN roles r ON ur.role_id = r.id
+                WHERE u.email_verification_token = ?
+                GROUP BY u.id";
+            
+            $stmt = $this->database->execute($sql, [$token]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
+                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
+                $user['profile'] = $this->getUserProfile($user['id']);
+            }
+        
+            return $user;
+        } catch (Exception $e) {
+            error_log("Error getting user by verification token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Verify email and clear verification token
+     */
+    public function verifyEmail(int $userId): bool
+    {
+        try {
+            $sql = "UPDATE users SET 
+                    email_verified_at = NOW(), 
+                    email_verification_token = NULL, 
+                    status = 'active',
+                    updated_at = NOW() 
+                    WHERE id = ?";
+            $this->database->execute($sql, [$userId]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error verifying email for user {$userId}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update password reset token
+     */
+    public function updatePasswordResetToken(int $userId, string $token): bool
+    {
+        try {
+            $sql = "UPDATE users SET password_reset_token = ?, password_reset_expires_at = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?";
+            $this->database->execute($sql, [$token, $userId]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating password reset token for user {$userId}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user by reset token
+     */
+    public function getUserByResetToken(string $token): ?array
+    {
+        try {
+            $sql = "SELECT 
+                u.*,
+                GROUP_CONCAT(r.name) as roles,
+                GROUP_CONCAT(r.display_name) as role_display_names
+            FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                LEFT JOIN roles r ON ur.role_id = r.id
+                WHERE u.password_reset_token = ? AND u.password_reset_expires_at > NOW()
+                GROUP BY u.id";
+            
+            $stmt = $this->database->execute($sql, [$token]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
+                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
+                $user['profile'] = $this->getUserProfile($user['id']);
+            }
+        
+            return $user;
+        } catch (Exception $e) {
+            error_log("Error getting user by reset token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword(int $userId, string $passwordHash): bool
+    {
+        try {
+            $sql = "UPDATE users SET 
+                    password_hash = ?, 
+                    password_reset_token = NULL, 
+                    password_reset_expires_at = NULL,
+                    updated_at = NOW() 
+                    WHERE id = ?";
+            $this->database->execute($sql, [$passwordHash, $userId]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error updating password for user {$userId}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Clear password reset token
+     */
+    public function clearPasswordResetToken(int $userId): bool
+    {
+        try {
+            $sql = "UPDATE users SET 
+                    password_reset_token = NULL, 
+                    password_reset_expires_at = NULL,
+                    updated_at = NOW() 
+                    WHERE id = ?";
+            $this->database->execute($sql, [$userId]);
+            return true;
+        } catch (Exception $e) {
+            error_log("Error clearing password reset token for user {$userId}: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get users by status
+     */
+    public function getUsersByStatus(string $status, int $page = 1, int $perPage = 20): array
+    {
+        try {
+            $whereConditions = ["u.status = ?"];
+            $params = [$status];
+            
+            // Count total users with status
+            $countSql = "SELECT COUNT(*) as total FROM users u WHERE " . implode(' AND ', $whereConditions);
+            $countStmt = $this->database->execute($countSql, $params);
+            $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+            
+            // Get users with pagination
+            $offset = ($page - 1) * $perPage;
+            $sql = "SELECT 
+                u.*,
+                GROUP_CONCAT(r.name) as roles,
+                GROUP_CONCAT(r.display_name) as role_display_names
+                FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                LEFT JOIN roles r ON ur.role_id = r.id
+                WHERE " . implode(' AND ', $whereConditions) . "
+                GROUP BY u.id
+                ORDER BY u.created_at DESC
+                LIMIT ? OFFSET ?";
+            
+            $params[] = $perPage;
+            $params[] = $offset;
+            
+            $stmt = $this->database->execute($sql, $params);
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Process roles for each user
+            foreach ($users as &$user) {
+                $user['roles'] = $user['roles'] ? explode(',', $user['roles']) : [];
+                $user['role_display_names'] = $user['role_display_names'] ? explode(',', $user['role_display_names']) : [];
+            }
+            
+            return [
+                'users' => $users,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page' => $perPage,
+                    'total' => $total,
+                    'last_page' => ceil($total / $perPage)
+                ]
+            ];
+        } catch (Exception $e) {
+            error_log("Error getting users by status {$status}: " . $e->getMessage());
+            return ['users' => [], 'pagination' => ['current_page' => 1, 'per_page' => 20, 'total' => 0, 'last_page' => 1]];
+        }
+    }
+
+    /**
+     * Get pending verification users count
+     */
+    public function getPendingVerificationCount(): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM users WHERE status = 'pending_verification'";
+            $stmt = $this->database->execute($sql);
+            return (int) $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+        } catch (Exception $e) {
+            error_log("Error getting pending verification count: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get users requiring password reset
+     */
+    public function getUsersRequiringPasswordReset(): array
+    {
+        try {
+            $sql = "SELECT id, username, email, password_reset_expires_at 
+                    FROM users 
+                    WHERE password_reset_token IS NOT NULL 
+                    AND password_reset_expires_at > NOW()
+                    ORDER BY password_reset_expires_at ASC";
+            $stmt = $this->database->execute($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error getting users requiring password reset: " . $e->getMessage());
+            return [];
+        }
+    }
 
 } 

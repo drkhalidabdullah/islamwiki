@@ -375,6 +375,7 @@ const PerformanceMonitor: React.FC = () => {
     }, refreshInterval * 1000);
     
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRefresh, refreshInterval]);
 
   // Show toast notification

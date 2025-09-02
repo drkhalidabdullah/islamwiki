@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button, Input, Card } from '../components/index';
-import jwtService from '../services/jwtService';
 import rateLimitService from '../services/rateLimitService';
+
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   
   // Get redirect URL and message from URL parameters
-  const redirectTo = searchParams.get('redirect') || '/admin';
+  const redirectTo = searchParams.get('redirect') || '';
   const message = searchParams.get('message') || '';
   
   // Show message if redirected from protected route
@@ -30,96 +30,75 @@ const LoginPage: React.FC = () => {
     }
   }, [message]);
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters long';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!formData.email || !formData.password) {
+      setErrors({ general: 'Please fill in all required fields.' });
       return;
     }
-    
-    // Check rate limiting
-    const rateLimitStatus = rateLimitService.getStatus('login', formData.email);
-    
-    if (rateLimitStatus.blocked) {
-      const minutesLeft = Math.ceil(rateLimitStatus.timeUntilReset / 60000);
-      setErrors({ 
-        general: `Too many login attempts. Please try again in ${minutesLeft} minutes.` 
-      });
-      return;
-    }
-    
-    if (!rateLimitService.isAllowed('login', formData.email)) {
-      setErrors({ 
-        general: `Too many login attempts. Please wait before trying again.` 
-      });
-      return;
-    }
-    
+
     setIsLoading(true);
+    setErrors({});
     
     try {
       // Record login attempt
       rateLimitService.recordAttempt('login', formData.email);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock authentication - in real app, this would be an API call
-      const mockUser = {
-        id: 1,
-        username: formData.email.split('@')[0],
-        email: formData.email,
-        first_name: 'Admin',
-        last_name: 'User',
-        role_name: 'admin',
-        status: 'active',
-        created_at: new Date().toISOString()
-      };
-      
-      // Generate real JWT token
-      const token = await jwtService.generateToken({
-        userId: mockUser.id,
-        email: mockUser.email,
-        role: mockUser.role_name,
-        username: mockUser.username
+      // Call real API for authentication
+      const response = await fetch('/api/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'login',
+          email: formData.email,
+          password: formData.password
+        })
       });
-      
-      // Store authentication data
-      await login(mockUser, token);
-      
-      // Reset rate limit on successful login
-      rateLimitService.reset('login', formData.email);
-      
-      // Redirect based on role and original destination
-      if (mockUser.role_name === 'admin') {
-        navigate(redirectTo);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      if (data.success) {
+        // Convert API response to user object
+        const user = {
+          id: data.data.user.id,
+          username: data.data.user.username,
+          email: data.data.user.email,
+          first_name: data.data.user.first_name,
+          last_name: data.data.user.last_name,
+          role_name: data.data.user.role_name,
+          status: data.data.user.status,
+          created_at: new Date().toISOString()
+        };
+
+        // Store authentication data
+        await login(user, data.data.token);
+        
+        // Reset rate limit on successful login
+        rateLimitService.reset('login', formData.email);
+        
+        // Redirect based on role and original destination
+        if (user.role_name === 'admin') {
+          // Admin users go to /admin by default, unless redirected from a specific route
+          const adminRedirect = redirectTo || '/admin';
+          navigate(adminRedirect);
+        } else {
+          // Regular users go to /dashboard by default, unless redirected from a specific route
+          const userRedirect = redirectTo || '/dashboard';
+          navigate(userRedirect);
+        }
       } else {
-        navigate('/dashboard');
+        throw new Error(data.error || 'Login failed');
       }
       
     } catch (error) {
-      setErrors({ general: 'Login failed. Please check your credentials and try again.' });
+      setErrors({ general: error instanceof Error ? error.message : 'Login failed. Please check your credentials and try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -138,9 +117,11 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-green-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">I</span>
-          </div>
+          <Link to="/" className="inline-block">
+            <div className="mx-auto h-12 w-12 bg-green-600 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors duration-200 cursor-pointer">
+              <span className="text-white font-bold text-xl">I</span>
+            </div>
+          </Link>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Sign in to your account
           </h2>

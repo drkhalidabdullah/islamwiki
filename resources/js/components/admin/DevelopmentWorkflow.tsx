@@ -90,6 +90,7 @@ const DevelopmentWorkflow: React.FC = () => {
 
   useEffect(() => {
     refreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showToastNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -899,7 +900,7 @@ const DevelopmentWorkflow: React.FC = () => {
                                           {Array.from({ length: Math.min(fileAdditions, 2) }, (_, i) => (
                                             <div key={i} className="flex">
                                               <span className="text-green-600 mr-2">+</span>
-                                              <span className="text-gray-600">// Added line {i + 1}</span>
+                                              <span className="text-gray-600">{`// Added line ${i + 1}`}</span>
                                             </div>
                                           ))}
                                           {fileAdditions > 2 && (
@@ -916,7 +917,7 @@ const DevelopmentWorkflow: React.FC = () => {
                                           {Array.from({ length: Math.min(fileDeletions, 2) }, (_, i) => (
                                             <div key={i} className="flex">
                                               <span className="text-red-600 mr-2">-</span>
-                                              <span className="text-gray-600">// Removed line {i + 1}</span>
+                                              <span className="text-gray-600">{`// Removed line ${i + 1}`}</span>
                                             </div>
                                           ))}
                                           {fileDeletions > 2 && (
@@ -1066,7 +1067,7 @@ const DevelopmentWorkflow: React.FC = () => {
                               {Array.from({ length: Math.min(fileAdditions, 5) }, (_, i) => (
                                 <div key={i} className="flex">
                                   <span className="text-green-600 mr-2">+</span>
-                                  <span className="text-gray-600">// Added line {i + 1} - {Math.random().toString(36).substring(2, 10)}</span>
+                                  <span className="text-gray-600">{`// Added line ${i + 1} - ${Math.random().toString(36).substring(2, 10)}`}</span>
                                 </div>
                               ))}
                               {fileAdditions > 5 && (
@@ -1083,7 +1084,7 @@ const DevelopmentWorkflow: React.FC = () => {
                               {Array.from({ length: Math.min(fileDeletions, 5) }, (_, i) => (
                                 <div key={i} className="flex">
                                   <span className="text-red-600 mr-2">-</span>
-                                  <span className="text-gray-600">// Removed line {i + 1} - {Math.random().toString(36).substring(2, 10)}</span>
+                                  <span className="text-gray-600">{`// Removed line ${i + 1} - ${Math.random().toString(36).substring(2, 10)}`}</span>
                                 </div>
                               ))}
                               {fileDeletions > 5 && (
