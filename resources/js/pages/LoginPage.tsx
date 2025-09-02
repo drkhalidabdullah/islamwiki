@@ -66,14 +66,19 @@ const LoginPage: React.FC = () => {
 
       if (data.success) {
         // Convert API response to user object
+        const apiUser = data.data.user;
+        
+        // Determine primary role (first role in the array, or 'user' as default)
+        const primaryRole = apiUser.roles && apiUser.roles.length > 0 ? apiUser.roles[0] : 'user';
+        
         const user = {
-          id: data.data.user.id,
-          username: data.data.user.username,
-          email: data.data.user.email,
-          first_name: data.data.user.first_name,
-          last_name: data.data.user.last_name,
-          role_name: data.data.user.role_name,
-          status: data.data.user.status,
+          id: apiUser.id,
+          username: apiUser.username,
+          email: apiUser.email,
+          first_name: apiUser.first_name,
+          last_name: apiUser.last_name,
+          role_name: primaryRole, // Use the primary role for backward compatibility
+          status: apiUser.is_active ? 'active' : 'inactive',
           created_at: new Date().toISOString()
         };
 
@@ -84,7 +89,7 @@ const LoginPage: React.FC = () => {
         rateLimitService.reset('login', formData.email);
         
         // Redirect based on role and original destination
-        if (user.role_name === 'admin') {
+        if (primaryRole === 'admin') {
           // Admin users go to /admin by default, unless redirected from a specific route
           const adminRedirect = redirectTo || '/admin';
           navigate(adminRedirect);

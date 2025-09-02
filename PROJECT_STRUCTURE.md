@@ -2,7 +2,7 @@
 
 **Author:** Khalid Abdullah  
 **Version:** 0.0.5  
-**Date:** January 27, 2025  
+**Date:** 2025-09-02  
 **License:** AGPL-3.0  
 
 ## 🏗️ **Clean Project Structure**
@@ -18,7 +18,6 @@ islamwiki/
 ├── .env.example           # Environment template
 ├── .eslintrc.cjs          # ESLint configuration
 ├── .gitignore             # Git ignore rules
-├── .htaccess              # Root Apache configuration
 ├── composer.json           # PHP dependencies
 ├── composer.lock           # PHP dependency lock
 ├── package.json            # Node.js dependencies
@@ -28,7 +27,8 @@ islamwiki/
 ├── tailwind.config.js      # Tailwind CSS configuration
 ├── tsconfig.json           # TypeScript configuration
 ├── tsconfig.node.json      # Node.js TypeScript config
-└── vite.config.ts          # Vite build configuration
+├── vite.config.ts          # Vite build configuration
+└── README.md               # Main project documentation
 ```
 
 ## 📁 **Organized Directories**
@@ -50,8 +50,14 @@ src/
 resources/
 ├── js/                     # React application source
 │   ├── components/         # UI components
-│   ├── pages/             # Page components
+│   │   ├── admin/          # Admin dashboard components
+│   │   ├── auth/           # Authentication components
+│   │   ├── forms/          # Form components
+│   │   ├── layout/         # Layout components
+│   │   └── ui/             # Reusable UI components
+│   ├── pages/              # Page components
 │   ├── services/           # API services
+│   │   └── adminService.ts # Admin dashboard data service
 │   ├── store/              # State management
 │   └── styles/             # CSS styles
 ├── views/                  # HTML templates
@@ -62,7 +68,7 @@ resources/
 ```
 public/
 ├── api/                    # API endpoints
-│   └── index.php          # Main API entry point
+│   └── index.php          # Main API entry point with real-time data
 ├── assets/                 # Built frontend assets
 ├── index.html              # Main HTML entry point
 └── .htaccess               # SPA routing configuration
@@ -157,12 +163,17 @@ composer run stan
 - **Base URL**: `/api/`
 - **Main Entry**: `public/api/index.php`
 - **Authentication**: `POST /api/` with `action: "login"`
+- **Admin Dashboard**: `GET /api/admin` - Real-time data integration
 
 ### **Example API Call**
 ```bash
+# Login
 curl -X POST http://localhost/api/ \
   -H "Content-Type: application/json" \
   -d '{"action": "login", "email": "admin@islamwiki.org", "password": "password"}'
+
+# Admin Dashboard Data
+curl -s http://localhost/api/admin | jq '.data.user_statistics'
 ```
 
 ## 🚀 **Deployment Structure**
@@ -172,6 +183,7 @@ curl -X POST http://localhost/api/ \
 - **Backend**: PHP source in `src/`
 - **API**: Accessible at `/api/`
 - **SPA Routing**: Configured in `public/.htaccess`
+- **Real-Time Data**: Admin dashboard with live database integration
 
 ### **Shared Hosting Compatible**
 - **Minimal Requirements**: PHP 8.2+, MySQL, Apache
@@ -195,13 +207,24 @@ curl -X POST http://localhost/api/ \
 - ✅ Professional project structure
 - ✅ Clear separation of concerns
 
-## 🎯 **Next Steps**
+## 🎯 **Current Status**
 
-### **Immediate Actions**
+### **✅ Completed Features**
 1. ✅ **Project structure cleaned up**
 2. ✅ **Files organized into logical folders**
-3. ✅ **API properly structured**
-4. ✅ **Documentation organized**
+3. ✅ **API properly structured with real-time data**
+4. ✅ **Documentation organized and updated**
+5. ✅ **Admin dashboard with live database integration**
+6. ✅ **Real-time user statistics and system monitoring**
+7. ✅ **SPA routing permanently fixed and protected**
+
+### **🔧 Recent Improvements**
+- **Admin Overview Updated**: Real-time data integration with live database
+- **Real Data Display**: Admin dashboard shows live user statistics, system info, and activity
+- **Live User Statistics**: Total users, active users, inactive users, new users today
+- **Role Distribution**: Real-time role-based user counts and distribution
+- **System Monitoring**: Live PHP version, MySQL version, memory usage, server time
+- **User Activity Tracking**: Recent user login times, last seen, and role information
 
 ### **Future Improvements**
 - [ ] Add README files to each major directory
@@ -209,9 +232,23 @@ curl -X POST http://localhost/api/ \
 - [ ] Add code style guides
 - [ ] Implement automated testing pipeline
 
+## 📈 **Real-Time Data Integration**
+
+### **Admin Dashboard Features**
+- **Live User Statistics**: Real-time database queries for user counts
+- **Role Distribution**: Dynamic role-based user distribution analysis
+- **System Information**: Live server and database information
+- **Performance Metrics**: Real-time memory usage and system performance
+- **User Activity**: Live tracking of user login times and activity
+
+### **API Endpoints**
+- **`GET /api/admin`**: Comprehensive admin dashboard data
+- **`GET /api/health`**: System health and status information
+- **`POST /api/`**: Authentication and user management operations
+
 ---
 
-**Last Updated:** January 27, 2025  
-**Status:** ✅ **Project Structure Cleaned & Organized**  
+**Last Updated:** September 2, 2025  
+**Status:** ✅ **Project Structure Cleaned & Organized** - **Real-Time Data Integration Complete**  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0 

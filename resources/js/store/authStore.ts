@@ -11,6 +11,25 @@ interface User {
   role_name: string;
   status: string;
   created_at: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  date_of_birth?: string;
+  gender?: string;
+  phone?: string;
+  social_links?: {
+    twitter?: string;
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  preferences?: {
+    email_notifications?: boolean;
+    push_notifications?: boolean;
+    profile_public?: boolean;
+    show_email?: boolean;
+    show_last_seen?: boolean;
+  };
 }
 
 interface AuthState {

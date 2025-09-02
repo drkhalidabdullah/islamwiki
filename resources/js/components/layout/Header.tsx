@@ -25,8 +25,8 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      alert(`Search functionality coming soon! You searched for: "${searchQuery.trim()}"`);
-      setSearchQuery('');
+      // Navigate to search page with query using React Router
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 

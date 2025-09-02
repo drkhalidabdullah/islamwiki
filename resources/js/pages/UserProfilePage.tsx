@@ -16,9 +16,25 @@ const UserProfilePage: React.FC = () => {
   const [formData, setFormData] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
-    bio: '', // Will be implemented when User interface is extended
-    location: '', // Will be implemented when User interface is extended
-    website: '' // Will be implemented when User interface is extended
+    bio: user?.bio || '',
+    location: user?.location || '',
+    website: user?.website || '',
+    date_of_birth: user?.date_of_birth || '',
+    gender: user?.gender || '',
+    phone: user?.phone || '',
+    social_links: {
+      twitter: user?.social_links?.twitter || '',
+      facebook: user?.social_links?.facebook || '',
+      instagram: user?.social_links?.instagram || '',
+      linkedin: user?.social_links?.linkedin || ''
+    },
+    preferences: {
+      email_notifications: user?.preferences?.email_notifications !== false,
+      push_notifications: user?.preferences?.push_notifications || false,
+      profile_public: user?.preferences?.profile_public !== false,
+      show_email: user?.preferences?.show_email || false,
+      show_last_seen: user?.preferences?.show_last_seen !== false
+    }
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +50,25 @@ const UserProfilePage: React.FC = () => {
         setFormData({
           first_name: user?.first_name || '',
           last_name: user?.last_name || '',
-          bio: '', // Will be implemented when User interface is extended
-          location: '', // Will be implemented when User interface is extended
-          website: '' // Will be implemented when User interface is extended
+          bio: user?.bio || '',
+          location: user?.location || '',
+          website: user?.website || '',
+          date_of_birth: user?.date_of_birth || '',
+          gender: user?.gender || '',
+          phone: user?.phone || '',
+          social_links: {
+            twitter: user?.social_links?.twitter || '',
+            facebook: user?.social_links?.facebook || '',
+            instagram: user?.social_links?.instagram || '',
+            linkedin: user?.social_links?.linkedin || ''
+          },
+          preferences: {
+            email_notifications: user?.preferences?.email_notifications !== false,
+            push_notifications: user?.preferences?.push_notifications || false,
+            profile_public: user?.preferences?.profile_public !== false,
+            show_email: user?.preferences?.show_email || false,
+            show_last_seen: user?.preferences?.show_last_seen !== false
+          }
         });
       } else {
         // TODO: Fetch other user's profile data
@@ -53,14 +85,30 @@ const UserProfilePage: React.FC = () => {
       setFormData({
         first_name: user?.first_name || '',
         last_name: user?.last_name || '',
-        bio: '', // Will be implemented when User interface is extended
-        location: '', // Will be implemented when User interface is extended
-        website: '' // Will be implemented when User interface is extended
+          bio: user?.bio || '',
+          location: user?.location || '',
+          website: user?.website || '',
+          date_of_birth: user?.date_of_birth || '',
+          gender: user?.gender || '',
+          phone: user?.phone || '',
+          social_links: {
+            twitter: user?.social_links?.twitter || '',
+            facebook: user?.social_links?.facebook || '',
+            instagram: user?.social_links?.instagram || '',
+            linkedin: user?.social_links?.linkedin || ''
+          },
+          preferences: {
+            email_notifications: user?.preferences?.email_notifications !== false,
+            push_notifications: user?.preferences?.push_notifications || false,
+            profile_public: user?.preferences?.profile_public !== false,
+            show_email: user?.preferences?.show_email || false,
+            show_last_seen: user?.preferences?.show_last_seen !== false
+          }
       });
     }
   }, [username, user, navigate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -140,9 +188,25 @@ const UserProfilePage: React.FC = () => {
     setFormData({
       first_name: user?.first_name || '',
       last_name: user?.last_name || '',
-      bio: '', // Will be implemented when User interface is extended
-      location: '', // Will be implemented when User interface is extended
-      website: '' // Will be implemented when User interface is extended
+      bio: user?.bio || '',
+      location: user?.location || '',
+      website: user?.website || '',
+      date_of_birth: user?.date_of_birth || '',
+      gender: user?.gender || '',
+      phone: user?.phone || '',
+      social_links: {
+        twitter: user?.social_links?.twitter || '',
+        facebook: user?.social_links?.facebook || '',
+        instagram: user?.social_links?.instagram || '',
+        linkedin: user?.social_links?.linkedin || ''
+      },
+      preferences: {
+        email_notifications: user?.preferences?.email_notifications !== false,
+        push_notifications: user?.preferences?.push_notifications || false,
+        profile_public: user?.preferences?.profile_public !== false,
+        show_email: user?.preferences?.show_email || false,
+        show_last_seen: user?.preferences?.show_last_seen !== false
+      }
     });
     setErrors({});
     setIsEditing(false);
@@ -237,18 +301,17 @@ const UserProfilePage: React.FC = () => {
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
-                    placeholder="Tell us about yourself... (Coming soon)"
+                    placeholder="Tell us about yourself..."
                     rows={4}
-                    disabled
                   />
 
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     label="Location"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    placeholder="City, Country (Coming soon)"
-                    disabled
+                      placeholder="City, Country"
                   />
 
                   <Input
@@ -257,9 +320,189 @@ const UserProfilePage: React.FC = () => {
                     value={formData.website}
                     onChange={handleChange}
                     error={errors.website}
-                    placeholder="https://example.com (Coming soon)"
-                    disabled
+                      placeholder="https://example.com"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Date of Birth"
+                      name="date_of_birth"
+                      type="date"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                    />
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                      <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      >
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <Input
+                    label="Phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+1 (555) 123-4567"
                   />
+
+                  <div>
+                    <h4 className="text-md font-medium text-gray-900 mb-3">Social Links</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Input
+                        label="Twitter"
+                        name="social_links.twitter"
+                        value={formData.social_links.twitter}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          social_links: { ...prev.social_links, twitter: e.target.value }
+                        }))}
+                        placeholder="@username"
+                      />
+                      <Input
+                        label="Facebook"
+                        name="social_links.facebook"
+                        value={formData.social_links.facebook}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          social_links: { ...prev.social_links, facebook: e.target.value }
+                        }))}
+                        placeholder="facebook.com/username"
+                      />
+                      <Input
+                        label="Instagram"
+                        name="social_links.instagram"
+                        value={formData.social_links.instagram}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          social_links: { ...prev.social_links, instagram: e.target.value }
+                        }))}
+                        placeholder="@username"
+                      />
+                      <Input
+                        label="LinkedIn"
+                        name="social_links.linkedin"
+                        value={formData.social_links.linkedin}
+                        placeholder="linkedin.com/in/username"
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          social_links: { ...prev.social_links, linkedin: e.target.value }
+                        }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-md font-medium text-gray-900 mb-3">Privacy & Preferences</h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-sm font-medium text-gray-900">Email Notifications</h5>
+                          <p className="text-sm text-gray-500">Receive email notifications about your account</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.preferences.email_notifications}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              preferences: { ...prev.preferences, email_notifications: e.target.checked }
+                            }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-sm font-medium text-gray-900">Push Notifications</h5>
+                          <p className="text-sm text-gray-500">Receive push notifications in your browser</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.preferences.push_notifications}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              preferences: { ...prev.preferences, push_notifications: e.target.checked }
+                            }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-sm font-medium text-gray-900">Public Profile</h5>
+                          <p className="text-sm text-gray-500">Allow others to view your profile</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.preferences.profile_public}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              preferences: { ...prev.preferences, profile_public: e.target.checked }
+                            }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-sm font-medium text-gray-900">Show Email</h5>
+                          <p className="text-sm text-gray-500">Display your email address on your profile</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.preferences.show_email}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              preferences: { ...prev.preferences, show_email: e.target.checked }
+                            }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h5 className="text-sm font-medium text-gray-900">Show Last Seen</h5>
+                          <p className="text-sm text-gray-500">Display when you were last active</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.preferences.show_last_seen}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              preferences: { ...prev.preferences, show_last_seen: e.target.checked }
+                            }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="flex space-x-4 pt-4">
                     <Button

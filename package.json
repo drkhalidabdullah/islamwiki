@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "build:safe": "npm run preserve-htaccess && npm run build && npm run restore-htaccess",
-    "preserve-htaccess": "cp public/.htaccess public/.htaccess.backup",
-    "restore-htaccess": "cp public/.htaccess.backup public/.htaccess",
+    "build:spa": "npm run preserve-htaccess && npm run build && npm run restore-htaccess",
+    "preserve-htaccess": "if [ -f public/.htaccess ]; then cp public/.htaccess public/.htaccess.backup; fi",
+    "restore-htaccess": "if [ -f public/.htaccess.backup ]; then cp public/.htaccess.backup public/.htaccess; fi",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"

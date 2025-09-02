@@ -9,6 +9,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminPage from './pages/AdminPage';
 import UserProfilePage from './pages/UserProfilePage';
+import SearchPage from './pages/SearchPage';
 import ErrorPage from './pages/ErrorPage';
 
 // Protected Route Component
@@ -23,6 +24,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
   }
   
   if (adminOnly && user?.role_name !== 'admin') {
+    console.log('Access denied: User role is', user?.role_name, 'but admin role required');
     return <Navigate to="/dashboard" replace />;
   }
   
@@ -37,6 +39,7 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route 
