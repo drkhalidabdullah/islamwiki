@@ -8,6 +8,7 @@ export { default as ActivityTimeline } from './ui/ActivityTimeline';
 export { default as ProgressBar } from './ui/ProgressBar';
 export { default as TrendingTopics } from './ui/TrendingTopics';
 export { default as SuggestedActions } from './ui/SuggestedActions';
+export { default as Toggle } from './ui/Toggle';
 
 // Layout Components
 export { default as Header } from './layout/Header';

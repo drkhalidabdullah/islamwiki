@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPage from './pages/AdminPage';
 import UserProfilePage from './pages/UserProfilePage';
 import SearchPage from './pages/SearchPage';
+import SettingsPage from './pages/SettingsPage';
 import ErrorPage from './pages/ErrorPage';
 
 // Protected Route Component
@@ -63,6 +64,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <UserProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
                 </ProtectedRoute>
               } 
             />

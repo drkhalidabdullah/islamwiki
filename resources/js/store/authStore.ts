@@ -17,6 +17,8 @@ interface User {
   date_of_birth?: string;
   gender?: string;
   phone?: string;
+  display_name?: string;
+  avatar_url?: string;
   social_links?: {
     twitter?: string;
     facebook?: string;

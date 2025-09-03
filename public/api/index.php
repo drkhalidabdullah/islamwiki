@@ -173,6 +173,287 @@ try {
             ]
         ]);
         
+    } elseif ($endpoint === 'user/settings') {
+        // User settings endpoint
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Get user settings
+            $headers = getallheaders();
+            $token = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
+            
+            if (empty($token)) {
+                http_response_code(401);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Authentication required'
+                ]);
+                exit();
+            }
+            
+            try {
+                $dbConnection = new DatabaseConnection();
+                $pdo = $dbConnection->getConnection();
+                
+                // Decode token to get user ID (simplified for demo)
+                $tokenParts = explode('.', $token);
+                if (count($tokenParts) === 3) {
+                    $payload = json_decode(base64_decode($tokenParts[1]), true);
+                    $userId = $payload['sub'] ?? null;
+                    
+                    if ($userId) {
+                        // Get user data
+                        $stmt = $pdo->prepare("
+                            SELECT u.*, uss.*, u.preferences as user_preferences
+                            FROM users u
+                            LEFT JOIN user_security_settings uss ON u.id = uss.user_id
+                            WHERE u.id = ?
+                        ");
+                        $stmt->execute([$userId]);
+                        $user = $stmt->fetch();
+                        
+                        if ($user) {
+                            $preferences = json_decode($user['user_preferences'] ?? '{}', true);
+                            
+                            $settings = [
+                                'account' => [
+                                    'username' => $user['username'],
+                                    'email' => $user['email'],
+                                    'first_name' => $user['first_name'],
+                                    'last_name' => $user['last_name'],
+                                    'phone' => $user['phone'] ?? '',
+                                    'date_of_birth' => $user['date_of_birth'] ?? '',
+                                    'gender' => $user['gender'] ?? '',
+                                    'location' => $user['location'] ?? '',
+                                    'website' => $user['website'] ?? '',
+                                    'bio' => $user['bio'] ?? '',
+                                    'display_name' => $user['display_name'] ?? $user['username'],
+                                    'avatar_url' => $user['avatar_url'] ?? '',
+                                    'social_links' => json_decode($user['social_links'] ?? '{}', true)
+                                ],
+                                'preferences' => array_merge([
+                                    'email_notifications' => true,
+                                    'push_notifications' => true,
+                                    'profile_public' => true,
+                                    'show_email' => false,
+                                    'show_last_seen' => true,
+                                    'language' => 'en',
+                                    'timezone' => 'UTC',
+                                    'theme' => 'auto',
+                                    'content_language' => 'en',
+                                    'notification_sound' => true,
+                                    'email_digest' => 'weekly',
+                                    'content_preferences' => [
+                                        'show_nsfw_content' => false,
+                                        'content_rating' => 'G',
+                                        'auto_translate' => false,
+                                        'translation_language' => 'en'
+                                    ]
+                                ], $preferences),
+                                'security' => [
+                                    'two_factor_enabled' => (bool)($user['two_factor_enabled'] ?? false),
+                                    'two_factor_method' => $user['two_factor_method'] ?? 'totp',
+                                    'session_timeout' => (int)($user['session_timeout'] ?? 3600),
+                                    'login_notifications' => (bool)($user['login_notifications'] ?? true),
+                                    'password_change_required' => false,
+                                    'security_alerts' => (bool)($user['security_alerts'] ?? true),
+                                    'max_concurrent_sessions' => (int)($user['max_concurrent_sessions'] ?? 5),
+                                    'trusted_devices' => json_decode($user['trusted_devices'] ?? '[]', true),
+                                    'security_questions' => json_decode($user['security_questions'] ?? '[]', true)
+                                ],
+                                'privacy' => [
+                                    'profile_visibility' => 'public',
+                                    'activity_visibility' => 'friends',
+                                    'search_visibility' => true,
+                                    'analytics_consent' => true,
+                                    'data_export' => false,
+                                    'data_deletion' => false,
+                                    'third_party_sharing' => false,
+                                    'location_sharing' => false,
+                                    'contact_info_visibility' => 'friends'
+                                ],
+                                'notifications' => [
+                                    'content_updates' => true,
+                                    'comment_replies' => true,
+                                    'mentions' => true,
+                                    'new_followers' => true,
+                                    'security_alerts' => true,
+                                    'system_announcements' => true,
+                                    'marketing_emails' => false,
+                                    'digest_frequency' => 'weekly'
+                                ],
+                                'accessibility' => [
+                                    'high_contrast' => false,
+                                    'large_text' => false,
+                                    'screen_reader_support' => true,
+                                    'keyboard_navigation' => true,
+                                    'reduced_motion' => false,
+                                    'color_blind_support' => false,
+                                    'font_size' => 'medium'
+                                ]
+                            ];
+                            
+                            echo json_encode([
+                                'success' => true,
+                                'data' => $settings
+                            ]);
+                        } else {
+                            http_response_code(404);
+                            echo json_encode([
+                                'success' => false,
+                                'error' => 'User not found'
+                            ]);
+                        }
+                    } else {
+                        http_response_code(401);
+                        echo json_encode([
+                            'success' => false,
+                            'error' => 'Invalid token'
+                        ]);
+                    }
+                } else {
+                    http_response_code(401);
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'Invalid token format'
+                    ]);
+                }
+                
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Failed to get settings: ' . $e->getMessage()
+                ]);
+            }
+            
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            // Update user settings
+            $headers = getallheaders();
+            $token = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
+            
+            if (empty($token)) {
+                http_response_code(401);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Authentication required'
+                ]);
+                exit();
+            }
+            
+            try {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $section = $input['section'] ?? '';
+                $data = $input['data'] ?? [];
+                
+                if (empty($section) || empty($data)) {
+                    http_response_code(400);
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'Section and data are required'
+                    ]);
+                    exit();
+                }
+                
+                $dbConnection = new DatabaseConnection();
+                $pdo = $dbConnection->getConnection();
+                
+                // Decode token to get user ID
+                $tokenParts = explode('.', $token);
+                if (count($tokenParts) === 3) {
+                    $payload = json_decode(base64_decode($tokenParts[1]), true);
+                    $userId = $payload['sub'] ?? null;
+                    
+                    if ($userId) {
+                        if ($section === 'account') {
+                            // Update user account information
+                            $stmt = $pdo->prepare("
+                                UPDATE users SET 
+                                    username = ?, email = ?, first_name = ?, last_name = ?,
+                                    phone = ?, date_of_birth = ?, gender = ?, location = ?,
+                                    website = ?, bio = ?, display_name = ?, updated_at = NOW()
+                                WHERE id = ?
+                            ");
+                            $stmt->execute([
+                                $data['username'] ?? '',
+                                $data['email'] ?? '',
+                                $data['first_name'] ?? '',
+                                $data['last_name'] ?? '',
+                                $data['phone'] ?? '',
+                                $data['date_of_birth'] ?? '',
+                                $data['gender'] ?? '',
+                                $data['location'] ?? '',
+                                $data['website'] ?? '',
+                                $data['bio'] ?? '',
+                                $data['display_name'] ?? '',
+                                $userId
+                            ]);
+                        } elseif ($section === 'preferences') {
+                            // Update user preferences
+                            $stmt = $pdo->prepare("
+                                UPDATE users SET 
+                                    preferences = ?, updated_at = NOW()
+                                WHERE id = ?
+                            ");
+                            $stmt->execute([
+                                json_encode($data),
+                                $userId
+                            ]);
+                        } elseif ($section === 'security') {
+                            // Update security settings
+                            $stmt = $pdo->prepare("
+                                UPDATE user_security_settings SET 
+                                    two_factor_enabled = ?, two_factor_method = ?, session_timeout = ?,
+                                    login_notifications = ?, security_alerts = ?, max_concurrent_sessions = ?,
+                                    trusted_devices = ?, security_questions = ?, updated_at = NOW()
+                                WHERE user_id = ?
+                            ");
+                            $stmt->execute([
+                                $data['two_factor_enabled'] ?? false,
+                                $data['two_factor_method'] ?? 'totp',
+                                $data['session_timeout'] ?? 3600,
+                                $data['login_notifications'] ?? true,
+                                $data['security_alerts'] ?? true,
+                                $data['max_concurrent_sessions'] ?? 5,
+                                json_encode($data['trusted_devices'] ?? []),
+                                json_encode($data['security_questions'] ?? []),
+                                $userId
+                            ]);
+                        }
+                        
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Settings updated successfully'
+                        ]);
+                    } else {
+                        http_response_code(401);
+                        echo json_encode([
+                            'success' => false,
+                            'error' => 'Invalid token'
+                        ]);
+                    }
+                } else {
+                    http_response_code(401);
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'Invalid token format'
+                    ]);
+                }
+                
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Failed to update settings: ' . $e->getMessage()
+                ]);
+            }
+            
+        } else {
+            http_response_code(405);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Method not allowed. Use GET or PUT.'
+            ]);
+        }
+        
     } elseif ($endpoint === '') {
         // Root API endpoint - handle login/register
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
