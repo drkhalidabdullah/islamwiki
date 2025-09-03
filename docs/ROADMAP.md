@@ -1,15 +1,15 @@
 # IslamWiki Framework - Development Roadmap
 
 **Author:** Khalid Abdullah  
-**Version:** 0.0.3  
-**Date:** 2025-08-31  
+**Version:** 0.0.5.4  
+**Date:** 2025-09-04  
 **License:** AGPL-3.0  
 
 ## 🗺️ **Development Roadmap Overview**
 
 This roadmap outlines the development path for the IslamWiki Framework, from the current alpha release to a full-featured production platform. The roadmap is designed to deliver value incrementally while maintaining stability and performance.
 
-## 🎯 **Current Status: v0.0.5 (Alpha Enhancement) - COMPLETED ✅**
+## 🎯 **Current Status: v0.0.5.4 (Alpha Enhancement) - CRITICAL SETTINGS BUGS RESOLVED ✅**
 
 ### **✅ Completed Features**
 
@@ -79,7 +79,16 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
   - All tests passing successfully
   - Ready for alpha development continuation
 
-### **✅ v0.0.5 COMPLETED - ALL ISSUES RESOLVED**
+### **✅ v0.0.5.4 COMPLETED - CRITICAL SETTINGS PERSISTENCE ISSUES RESOLVED**
+
+- **Settings Persistence**: ✅ **CRITICAL BUG COMPLETELY FIXED** - All user settings now save and persist correctly
+- **Backend Variable Scope**: ✅ Fixed inconsistent parameter mapping between settings sections
+- **Frontend Infinite Loops**: ✅ Eliminated infinite re-renders and API calls
+- **Race Conditions**: ✅ Prevented data corruption from multiple simultaneous requests
+- **State Management**: ✅ Proper UI updates after settings save
+- **Cross-session Persistence**: ✅ Settings survive logout/login and cookie clears
+
+### **✅ v0.0.5.3 COMPLETED - ALL ISSUES RESOLVED**
 
 - **User Authentication System**: ✅ Complete JWT-based authentication
 - **User Management**: ✅ Comprehensive user management with roles

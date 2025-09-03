@@ -1,8 +1,8 @@
 # IslamWiki Framework - Project Structure
 
 **Author:** Khalid Abdullah  
-**Version:** 0.0.5  
-**Date:** 2025-09-02  
+**Version:** 0.0.5.4  
+**Date:** 2025-09-04  
 **License:** AGPL-3.0  
 
 ## 🏗️ **Clean Project Structure**

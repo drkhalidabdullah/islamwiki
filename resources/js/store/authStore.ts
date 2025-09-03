@@ -85,6 +85,10 @@ export const useAuthStore = create<AuthStore>()(
         const expiration = await jwtService.getTokenExpiration(token);
         console.log('✅ Login successful, setting state with expiration:', expiration);
         
+        // Store token in localStorage so API client can access it
+        localStorage.setItem('islamwiki_auth_token', token);
+        localStorage.setItem('islamwiki_user_data', JSON.stringify(user));
+        
         set({
           user,
           token,
@@ -104,6 +108,11 @@ export const useAuthStore = create<AuthStore>()(
 
       logout: () => {
         console.log('🚪 Logout called, clearing authentication state');
+        
+        // Clear localStorage
+        localStorage.removeItem('islamwiki_auth_token');
+        localStorage.removeItem('islamwiki_user_data');
+        
         set({
           user: null,
           token: null,

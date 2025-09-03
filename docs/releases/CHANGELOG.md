@@ -11,6 +11,75 @@ This document tracks all changes, improvements, and fixes made to the IslamWiki 
 
 ---
 
+## 🎉 **v0.0.5.4 - Critical Settings Persistence Fixes (September 4, 2025)**
+
+**Status**: ✅ **COMPLETE & PRODUCTION READY** - **CRITICAL SETTINGS BUGS RESOLVED**
+
+### **🚨 Critical Issues Resolved**
+
+#### **Settings Persistence Completely Fixed**
+- **Problem**: User settings (gender, date of birth, location, etc.) were not saving or persisting
+- **Root Cause**: Multiple critical bugs in both frontend and backend systems
+- **Impact**: Users could not update their profile information
+- **Status**: ✅ **FULLY RESOLVED**
+
+### **🔧 Technical Fixes Implemented**
+
+#### **Backend Variable Scope Issues (CRITICAL)**
+- **Fixed**: Inconsistent parameter mapping between settings sections
+- **Result**: Data now saves to correct user instead of wrong user
+- **Files**: `public/api/index.php` - Standardized all sections to use `$userId`
+
+#### **Frontend Infinite Loop (CRITICAL)**
+- **Fixed**: `useEffect` with `navigate` dependency causing infinite re-renders
+- **Result**: Settings page no longer crashes with infinite API calls
+- **Files**: `resources/js/pages/SettingsPage.tsx` - Removed problematic dependencies
+
+#### **Race Conditions (CRITICAL)**
+- **Fixed**: Multiple simultaneous `loadUserSettings()` calls overwriting data
+- **Result**: No more data corruption from race conditions
+- **Files**: Added duplicate call prevention logic
+
+#### **Complex Multi-Section Saves (MEDIUM)**
+- **Fixed**: Frontend sending 6 separate PUT requests causing chaos
+- **Result**: Cleaner, more reliable save operations
+- **Files**: Simplified to single account section save
+
+#### **State Management Issues (MEDIUM)**
+- **Fixed**: Frontend not properly updating UI after save
+- **Result**: UI immediately shows saved values
+- **Files**: Added proper state refresh after successful save
+
+### **✅ Verification Results**
+
+#### **Settings Now Working Perfectly:**
+- ✅ **Date of Birth**: Changes persist correctly
+- ✅ **Gender**: All options (Male/Female/Other/Prefer not to say) work
+- ✅ **Location**: Text field saves and persists
+- ✅ **Cross-session**: Data survives logout/login
+- ✅ **Cross-browser**: Data survives cookie clears
+- ✅ **Real-time**: UI updates immediately after save
+
+#### **Backend Confirmed Working:**
+- ✅ **Database persistence**: All data saves correctly
+- ✅ **API responses**: Proper success/error handling
+- ✅ **Data retrieval**: GET requests return correct saved values
+- ✅ **Authentication**: JWT tokens working properly
+
+### **📁 Files Modified**
+- `public/api/index.php` - Fixed variable scope and parameter mapping
+- `resources/js/pages/SettingsPage.tsx` - Fixed state management and API calls
+- `resources/js/services/settingsService.ts` - Simplified save logic
+- `resources/js/services/apiClient.ts` - API configuration fixes
+- `public/index.html` - Updated script references
+
+### **🚀 Deployment Notes**
+- **Build Versions**: v15 through v21 (incremental fixes)
+- **Final Status**: ✅ **SUCCESSFULLY DEPLOYED**
+- **User Impact**: 🎯 **CRITICAL ISSUE RESOLVED**
+
+---
+
 ## 🎉 **v0.0.5.3 - Comprehensive Settings Management (January 27, 2025)**
 
 **Status**: ✅ **COMPLETE & PRODUCTION READY** - **ENHANCED SETTINGS SYSTEM IMPLEMENTED**

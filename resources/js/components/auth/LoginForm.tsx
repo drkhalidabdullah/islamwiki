@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
+import { authService } from '../../services/authService';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
@@ -54,23 +55,33 @@ const LoginForm: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // TODO: Implement actual API call to get user and token
-      // For now, create a mock user object
-      const mockUser = {
-        id: 1,
+      // Call the real authentication service
+      const response = await authService.login({
         username: formData.username,
-        email: `${formData.username}@example.com`,
-        first_name: 'User',
-        last_name: 'Example',
-        role_name: 'user',
-        status: 'active',
-        created_at: new Date().toISOString()
-      };
+        password: formData.password
+      });
       
-      const mockToken = 'mock_jwt_token_' + Date.now();
-      
-      await login(mockUser, mockToken);
-      // Redirect will be handled by the auth store
+      if (response.success && response.data) {
+        // Convert the API user data to match the User interface expected by auth store
+        const userForStore = {
+          id: response.data.user.id,
+          username: response.data.user.username,
+          email: response.data.user.email,
+          first_name: response.data.user.first_name,
+          last_name: response.data.user.last_name,
+          role_name: response.data.user.roles[0] || 'user', // Convert roles array to role_name
+          status: response.data.user.is_active ? 'active' : 'inactive', // Convert is_active to status
+          created_at: new Date().toISOString(), // Use current time as fallback
+          display_name: response.data.user.display_name || response.data.user.username
+        };
+        
+        // The authService will handle storing the token in localStorage
+        // Now update the auth store with the converted user data
+        await login(userForStore, response.data.token);
+        // Redirect will be handled by the auth store
+      } else {
+        setErrors({ general: response.message || 'Login failed' });
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrors({ general: error.message });

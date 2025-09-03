@@ -1,7 +1,16 @@
 // Base API configuration
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://api.islamwiki.org' 
-  : ''; // Use relative URLs in development
+const API_BASE_URL = (() => {
+  // Check if we're running on localhost (development)
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:80';
+  }
+  // Check environment variable
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:80';
+  }
+  // Default to production
+  return 'https://api.islamwiki.org';
+})();
 
 // API client class
 class ApiClient {

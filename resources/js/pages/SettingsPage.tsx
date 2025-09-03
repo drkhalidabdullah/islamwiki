@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -8,29 +9,30 @@ import Modal from '../components/ui/Modal';
 import { settingsService, UserSettings } from '../services/settingsService';
 
 const SettingsPage: React.FC = () => {
-  const { user, setUser } = useAuthStore();
+  const { user, isAuthenticated, setUser } = useAuthStore();
+  const navigate = useNavigate();
   const [settings, setSettings] = useState<UserSettings>({
     account: {
-      username: user?.username || '',
-      email: user?.email || '',
-      first_name: user?.first_name || '',
-      last_name: user?.last_name || '',
-      phone: user?.phone || '',
-      date_of_birth: user?.date_of_birth || '',
-      gender: user?.gender || '',
-      location: user?.location || '',
-      website: user?.website || '',
-      bio: user?.bio || '',
-      display_name: user?.display_name || user?.username || '',
-      avatar_url: user?.avatar_url || '',
-      social_links: user?.social_links || {}
+      username: '',
+      email: '',
+      first_name: '',
+      last_name: '',
+      phone: '',
+      date_of_birth: '',
+      gender: '',
+      location: '',
+      website: '',
+      bio: '',
+      display_name: '',
+      avatar_url: '',
+      social_links: {}
     },
     preferences: {
-      email_notifications: user?.preferences?.email_notifications ?? true,
-      push_notifications: user?.preferences?.push_notifications ?? true,
-      profile_public: user?.preferences?.profile_public ?? true,
-      show_email: user?.preferences?.show_email ?? false,
-      show_last_seen: user?.preferences?.show_last_seen ?? true,
+      email_notifications: true,
+      push_notifications: true,
+      profile_public: true,
+      show_email: false,
+      show_last_seen: true,
       language: 'en',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       theme: 'auto',
@@ -94,17 +96,61 @@ const SettingsPage: React.FC = () => {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   useEffect(() => {
+    // Check authentication before loading settings
+    if (!isAuthenticated || !user) {
+      console.log('User not authenticated, redirecting to login');
+      navigate('/login');
+      return;
+    }
+    
+    // Always load settings on mount to get the latest saved data
+    // This ensures we show the current server state on page refresh
+    console.log('🔄 Loading user settings from server...');
     loadUserSettings();
-  }, []);
+  }, [isAuthenticated, user]); // Removed navigate from dependencies to prevent infinite loop
+
+  // Debug: Monitor settings state changes
+  useEffect(() => {
+    console.log('🔄 Settings state changed:', settings);
+    console.log('🔍 Current gender in state:', settings.account.gender);
+  }, [settings]);
 
   const loadUserSettings = async () => {
+    // Double-check authentication before making API call
+    if (!isAuthenticated || !user) {
+      console.log('Authentication check failed, redirecting to login');
+      navigate('/login');
+      return;
+    }
+
+    // Prevent multiple simultaneous calls
+    if (isLoading) {
+      console.log('🔄 Already loading settings, skipping duplicate call');
+      return;
+    }
+
     try {
+      console.log('🔄 Loading user settings from server...');
       const response = await settingsService.getUserSettings();
+      console.log('📡 Server response:', response);
       if (response.success && response.data) {
+        console.log('✅ Settings loaded successfully:', response.data);
+        console.log('🔍 Current gender value:', response.data.account.gender);
+        
+        // Update settings from server
+        console.log('🔍 Setting settings to:', response.data);
         setSettings(response.data);
+        
+        console.log('🔄 State update triggered');
+      } else {
+        console.log('❌ Failed to load settings:', response.error);
       }
     } catch (error) {
       console.error('Failed to load settings:', error);
+      // If we get a 401 error, redirect to login
+      if (error instanceof Error && error.message.includes('401')) {
+        navigate('/login');
+      }
     }
   };
 
@@ -121,14 +167,10 @@ const SettingsPage: React.FC = () => {
         return;
       }
 
-      // Save each section
-      const sections: (keyof UserSettings)[] = ['account', 'preferences', 'security', 'privacy', 'notifications', 'accessibility'];
-      
-      for (const section of sections) {
-        const response = await settingsService.updateSettingsSection(section, settings[section]);
-        if (!response.success) {
-          throw new Error(`Failed to save ${section} settings: ${response.error}`);
-        }
+      // Save only the account section for now (the one you're changing)
+      const response = await settingsService.updateSettingsSection('account', settings.account);
+      if (!response.success) {
+        throw new Error(`Failed to save account settings: ${response.error}`);
       }
 
       // Update local user data
@@ -139,6 +181,10 @@ const SettingsPage: React.FC = () => {
           preferences: settings.preferences,
         });
       }
+
+      // Reload settings from server to ensure UI shows the latest saved data
+      console.log('✅ Settings saved - reloading from server to update UI');
+      await loadUserSettings();
 
       setMessage({ type: 'success', text: 'Settings saved successfully!' });
       
@@ -258,7 +304,10 @@ const SettingsPage: React.FC = () => {
               {/* Account Tab */}
               {activeTab === 'account' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Account Information</h3>
+                  <h3 className="text-lg font-medium text-gray-900">Account Settings v10</h3>
+                  
+                  {/* TEST BUTTON - REMOVE AFTER TESTING */}
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -381,7 +430,7 @@ const SettingsPage: React.FC = () => {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
-                        <option value="prefer-not-to-say">Prefer not to say</option>
+                        <option value="prefer not to say">Prefer not to say</option>
                       </select>
                     </div>
 
