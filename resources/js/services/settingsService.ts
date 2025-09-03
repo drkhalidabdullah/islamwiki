@@ -90,6 +90,50 @@ export interface UserSettings {
     color_blind_support: boolean;
     font_size: 'small' | 'medium' | 'large' | 'x-large';
     display_mode: 'standard' | 'wide' | 'full';
+    
+    // Enhanced Visual Accessibility
+    line_spacing: 'normal' | 'relaxed' | 'very-relaxed';
+    word_spacing: 'normal' | 'wide' | 'very-wide';
+    cursor_size: 'normal' | 'large' | 'extra-large';
+    focus_indicator: 'default' | 'high-visibility' | 'custom';
+    focus_color: string; // Custom focus color hex code
+    
+    // Advanced Screen Reader Support
+    aria_labels: boolean;
+    live_regions: boolean;
+    landmark_roles: boolean;
+    skip_links: boolean;
+    tab_order: 'logical' | 'custom';
+    
+    // Alt Text & Content Accessibility
+    alt_text_required: boolean;
+    form_labels_required: boolean;
+    button_descriptions: boolean;
+    link_descriptions: boolean;
+    
+    // Audio Accessibility
+    audio_descriptions: boolean;
+    volume_control: boolean;
+    audio_cues: boolean;
+    notification_sounds: boolean;
+    
+    // Cognitive & Learning Support
+    reading_guides: boolean;
+    text_highlighting: boolean;
+    simplified_layout: boolean;
+    distraction_free: boolean;
+    
+    // Motor & Physical Accessibility
+    click_assist: boolean;
+    hover_delay: number; // milliseconds
+    sticky_keys: boolean;
+    bounce_keys: boolean;
+    
+    // Language & Communication
+    language_support: string[];
+    translation_tools: boolean;
+    pronunciation_guides: boolean;
+    glossary_terms: boolean;
   };
 }
 

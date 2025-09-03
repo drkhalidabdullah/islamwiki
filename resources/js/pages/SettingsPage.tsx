@@ -85,7 +85,51 @@ const SettingsPage: React.FC = () => {
       reduced_motion: false,
       color_blind_support: false,
       font_size: 'medium',
-      display_mode: 'standard'
+      display_mode: 'standard',
+      
+      // Enhanced Visual Accessibility
+      line_spacing: 'normal',
+      word_spacing: 'normal',
+      cursor_size: 'normal',
+      focus_indicator: 'default',
+      focus_color: '#0066cc',
+      
+      // Advanced Screen Reader Support
+      aria_labels: true,
+      live_regions: true,
+      landmark_roles: true,
+      skip_links: true,
+      tab_order: 'logical',
+      
+      // Alt Text & Content Accessibility
+      alt_text_required: true,
+      form_labels_required: true,
+      button_descriptions: true,
+      link_descriptions: true,
+      
+      // Audio Accessibility
+      audio_descriptions: false,
+      volume_control: true,
+      audio_cues: false,
+      notification_sounds: true,
+      
+      // Cognitive & Learning Support
+      reading_guides: false,
+      text_highlighting: false,
+      simplified_layout: false,
+      distraction_free: false,
+      
+      // Motor & Physical Accessibility
+      click_assist: false,
+      hover_delay: 500,
+      sticky_keys: false,
+      bounce_keys: false,
+      
+      // Language & Communication
+      language_support: ['en'],
+      translation_tools: false,
+      pronunciation_guides: false,
+      glossary_terms: false
     }
   });
 
@@ -1195,6 +1239,377 @@ const SettingsPage: React.FC = () => {
                         <option value="wide">Wide (1600px max)</option>
                         <option value="full">Full (100% width)</option>
                       </select>
+                    </div>
+
+                    {/* Enhanced Visual Accessibility */}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-medium text-gray-800 border-b pb-2">Enhanced Visual Accessibility</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Line Spacing
+                          </label>
+                          <select
+                            value={settings.accessibility.line_spacing}
+                            onChange={(e) => setSettings(prev => ({
+                              ...prev,
+                              accessibility: { ...prev.accessibility, line_spacing: e.target.value as any }
+                            }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          >
+                            <option value="normal">Normal (1.5)</option>
+                            <option value="relaxed">Relaxed (1.8)</option>
+                            <option value="very-relaxed">Very Relaxed (2.2)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Word Spacing
+                          </label>
+                          <select
+                            value={settings.accessibility.word_spacing}
+                            onChange={(e) => setSettings(prev => ({
+                              ...prev,
+                              accessibility: { ...prev.accessibility, word_spacing: e.target.value as any }
+                            }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          >
+                            <option value="normal">Normal (0.25em)</option>
+                            <option value="wide">Wide (0.5em)</option>
+                            <option value="very-wide">Very Wide (1em)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Cursor Size
+                          </label>
+                          <select
+                            value={settings.accessibility.cursor_size}
+                            onChange={(e) => setSettings(prev => ({
+                              ...prev,
+                              accessibility: { ...prev.accessibility, cursor_size: e.target.value as any }
+                            }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          >
+                            <option value="normal">Normal</option>
+                            <option value="large">Large (2x)</option>
+                            <option value="extra-large">Extra Large (3x)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Focus Indicator
+                          </label>
+                          <select
+                            value={settings.accessibility.focus_indicator}
+                            onChange={(e) => setSettings(prev => ({
+                              ...prev,
+                              accessibility: { ...prev.accessibility, focus_indicator: e.target.value as any }
+                            }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          >
+                            <option value="default">Default</option>
+                            <option value="high-visibility">High Visibility</option>
+                            <option value="custom">Custom Color</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {settings.accessibility.focus_indicator === 'custom' && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Custom Focus Color
+                          </label>
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="color"
+                              value={settings.accessibility.focus_color}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, focus_color: e.target.value }
+                              }))}
+                              className="w-16 h-10 border border-gray-300 rounded-md cursor-pointer"
+                            />
+                            <span className="text-sm text-gray-500">{settings.accessibility.focus_color}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Advanced Screen Reader Support */}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-medium text-gray-800 border-b pb-2">Advanced Screen Reader Support</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">ARIA Labels</p>
+                            <p className="text-sm text-gray-500">Enhanced screen reader support</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.aria_labels}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, aria_labels: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Live Regions</p>
+                            <p className="text-sm text-gray-500">Dynamic content announcements</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.live_regions}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, live_regions: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Landmark Roles</p>
+                            <p className="text-sm text-gray-500">Page structure identification</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.landmark_roles}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, landmark_roles: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Skip Links</p>
+                            <p className="text-sm text-gray-500">Jump to main content</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.skip_links}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, skip_links: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Alt Text & Content Accessibility */}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-medium text-gray-800 border-b pb-2">Content Accessibility</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Alt Text Required</p>
+                            <p className="text-sm text-gray-500">Ensure images have descriptions</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.alt_text_required}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, alt_text_required: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Form Labels Required</p>
+                            <p className="text-sm text-gray-500">Ensure form inputs are labeled</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.form_labels_required}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, form_labels_required: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Button Descriptions</p>
+                            <p className="text-sm text-gray-500">Enhanced button context</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.button_descriptions}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, button_descriptions: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Link Descriptions</p>
+                            <p className="text-sm text-gray-500">Enhanced link context</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.link_descriptions}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, link_descriptions: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Accessibility Options */}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-medium text-gray-800 border-b pb-2">Additional Options</h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Reduced Motion</p>
+                            <p className="text-sm text-gray-500">Minimize animations</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.reduced_motion}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, reduced_motion: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Color Blind Support</p>
+                            <p className="text-sm text-gray-500">Enhanced color differentiation</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.color_blind_support}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, color_blind_support: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Keyboard Navigation</p>
+                            <p className="text-sm text-gray-500">Full keyboard support</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.keyboard_navigation}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, keyboard_navigation: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">Click Assist</p>
+                            <p className="text-sm text-gray-500">Enhanced click targeting</p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={settings.accessibility.click_assist}
+                              onChange={(e) => setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, click_assist: e.target.checked }
+                              }))}
+                              className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Hover Delay (milliseconds)
+                        </label>
+                        <input
+                          type="range"
+                          min="100"
+                          max="2000"
+                          step="100"
+                          value={settings.accessibility.hover_delay}
+                          onChange={(e) => setSettings(prev => ({
+                            ...prev,
+                            accessibility: { ...prev.accessibility, hover_delay: parseInt(e.target.value) }
+                          }))}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                          <span>100ms</span>
+                          <span>{settings.accessibility.hover_delay}ms</span>
+                          <span>2000ms</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
