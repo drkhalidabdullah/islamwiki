@@ -141,6 +141,251 @@ const SettingsPage: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
+  // Helper function to apply accessibility changes immediately and dispatch events
+  const applyAccessibilityChange = (setting: keyof typeof settings.accessibility, value: any, settingName: string) => {
+    console.log(`🎨 ${settingName} change:`, value);
+    
+    // Check if this is for the current user
+    const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+    if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
+      console.log(`🎨 Different user accessibility detected, clearing first:`, currentAccessibilityUser);
+      // Clear all accessibility classes
+      document.documentElement.classList.remove('high-contrast');
+      document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/line-spacing-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/word-spacing-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/cursor-size-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/focus-indicator-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/hover-delay-\d+/, '');
+    }
+    
+    // Set current user
+    document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
+    
+    // Apply the specific accessibility setting
+    if (setting === 'high_contrast') {
+      if (value) {
+        document.documentElement.classList.add('high-contrast');
+        showToastNotification('High contrast mode enabled');
+      } else {
+        document.documentElement.classList.remove('high-contrast');
+        showToastNotification('High contrast mode disabled');
+      }
+    } else if (setting === 'font_size') {
+      document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      document.documentElement.classList.add(`font-size-${value}`);
+      showToastNotification(`Text size changed to ${value}`);
+    } else if (setting === 'display_mode') {
+      document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+      document.documentElement.classList.add(`display-mode-${value}`);
+      showToastNotification(`Display mode changed to ${value}`);
+    } else if (setting === 'line_spacing') {
+      document.documentElement.className = document.documentElement.className.replace(/line-spacing-\w+/, '');
+      document.documentElement.classList.add(`line-spacing-${value}`);
+      showToastNotification(`Line spacing changed to ${value}`);
+    } else if (setting === 'word_spacing') {
+      document.documentElement.className = document.documentElement.className.replace(/word-spacing-\w+/, '');
+      document.documentElement.classList.add(`word-spacing-${value}`);
+      showToastNotification(`Word spacing changed to ${value}`);
+    } else if (setting === 'cursor_size') {
+      document.documentElement.className = document.documentElement.className.replace(/cursor-size-\w+/, '');
+      document.documentElement.classList.add(`cursor-size-${value}`);
+      showToastNotification(`Cursor size changed to ${value}`);
+    } else if (setting === 'focus_indicator') {
+      document.documentElement.className = document.documentElement.className.replace(/focus-indicator-\w+/, '');
+      document.documentElement.classList.add(`focus-indicator-${value}`);
+      showToastNotification(`Focus indicator changed to ${value}`);
+    } else if (setting === 'focus_color') {
+      document.documentElement.style.setProperty('--custom-focus-color', value);
+      showToastNotification(`Custom focus color changed to ${value}`);
+    } else if (setting === 'hover_delay') {
+      document.documentElement.className = document.documentElement.className.replace(/hover-delay-\d+/, '');
+      document.documentElement.classList.add(`hover-delay-${value}`);
+      showToastNotification(`Hover delay changed to ${value}ms`);
+    } else if (setting === 'reduced_motion') {
+      if (value) {
+        document.documentElement.classList.add('reduced-motion');
+        showToastNotification('Reduced motion enabled');
+      } else {
+        document.documentElement.classList.remove('reduced-motion');
+        showToastNotification('Reduced motion disabled');
+      }
+    } else if (setting === 'color_blind_support') {
+      if (value) {
+        document.documentElement.classList.add('color-blind-support');
+        showToastNotification('Color blind support enabled');
+      } else {
+        document.documentElement.classList.remove('color-blind-support');
+        showToastNotification('Color blind support disabled');
+      }
+    } else if (setting === 'click_assist') {
+      if (value) {
+        document.documentElement.classList.add('click-assist');
+        showToastNotification('Click assist enabled');
+      } else {
+        document.documentElement.classList.remove('click-assist');
+        showToastNotification('Click assist disabled');
+      }
+    } else if (setting === 'alt_text_required') {
+      if (value) {
+        document.documentElement.classList.add('alt-text-required');
+        showToastNotification('Alt text required enabled');
+      } else {
+        document.documentElement.classList.remove('alt-text-required');
+        showToastNotification('Alt text required disabled');
+      }
+    } else if (setting === 'form_labels_required') {
+      if (value) {
+        document.documentElement.classList.add('form-labels-required');
+        showToastNotification('Form labels required enabled');
+      } else {
+        document.documentElement.classList.remove('form-labels-required');
+        showToastNotification('Form labels required disabled');
+      }
+    } else if (setting === 'button_descriptions') {
+      if (value) {
+        document.documentElement.classList.add('button-descriptions');
+        showToastNotification('Button descriptions enabled');
+      } else {
+        document.documentElement.classList.remove('button-descriptions');
+        showToastNotification('Button descriptions disabled');
+      }
+    } else if (setting === 'link_descriptions') {
+      if (value) {
+        document.documentElement.classList.add('link-descriptions');
+        showToastNotification('Link descriptions enabled');
+      } else {
+        document.documentElement.classList.remove('link-descriptions');
+        showToastNotification('Link descriptions disabled');
+      }
+    } else if (setting === 'audio_descriptions') {
+      if (value) {
+        document.documentElement.classList.add('audio-descriptions-active');
+        showToastNotification('Audio descriptions enabled');
+      } else {
+        document.documentElement.classList.remove('audio-descriptions-active');
+        showToastNotification('Audio descriptions disabled');
+      }
+    } else if (setting === 'volume_control') {
+      if (value) {
+        document.documentElement.classList.add('volume-control-active');
+        showToastNotification('Volume control enabled');
+      } else {
+        document.documentElement.classList.remove('volume-control-active');
+        showToastNotification('Volume control disabled');
+      }
+    } else if (setting === 'audio_cues') {
+      if (value) {
+        document.documentElement.classList.add('audio-cues-active');
+        showToastNotification('Audio cues enabled');
+      } else {
+        document.documentElement.classList.remove('audio-cues-active');
+        showToastNotification('Audio cues disabled');
+      }
+    } else if (setting === 'notification_sounds') {
+      if (value) {
+        document.documentElement.classList.add('notification-sounds-active');
+        showToastNotification('Notification sounds enabled');
+      } else {
+        document.documentElement.classList.remove('notification-sounds-active');
+        showToastNotification('Notification sounds disabled');
+      }
+    } else if (setting === 'reading_guides') {
+      if (value) {
+        document.documentElement.classList.add('reading-guides-active');
+        showToastNotification('Reading guides enabled');
+      } else {
+        document.documentElement.classList.remove('reading-guides-active');
+        showToastNotification('Reading guides disabled');
+      }
+    } else if (setting === 'text_highlighting') {
+      if (value) {
+        document.documentElement.classList.add('text-highlighting-active');
+        showToastNotification('Text highlighting enabled');
+      } else {
+        document.documentElement.classList.remove('text-highlighting-active');
+        showToastNotification('Text highlighting disabled');
+      }
+    } else if (setting === 'simplified_layout') {
+      if (value) {
+        document.documentElement.classList.add('simplified-layout-active');
+        showToastNotification('Simplified layout enabled');
+      } else {
+        document.documentElement.classList.remove('simplified-layout-active');
+        showToastNotification('Simplified layout disabled');
+      }
+    } else if (setting === 'distraction_free') {
+      if (value) {
+        document.documentElement.classList.add('distraction-free-active');
+        showToastNotification('Distraction free mode enabled');
+      } else {
+        document.documentElement.classList.remove('distraction-free-active');
+        showToastNotification('Distraction free mode disabled');
+      }
+    } else if (setting === 'sticky_keys') {
+      if (value) {
+        document.documentElement.classList.add('sticky-keys-active');
+        showToastNotification('Sticky keys enabled');
+      } else {
+        document.documentElement.classList.remove('sticky-keys-active');
+        showToastNotification('Sticky keys disabled');
+      }
+    } else if (setting === 'bounce_keys') {
+      if (value) {
+        document.documentElement.classList.add('bounce-keys-active');
+        showToastNotification('Bounce keys enabled');
+      } else {
+        document.documentElement.classList.remove('bounce-keys-active');
+        showToastNotification('Bounce keys disabled');
+      }
+    } else if (setting === 'translation_tools') {
+      if (value) {
+        document.documentElement.classList.add('translation-tools-active');
+        showToastNotification('Translation tools enabled');
+      } else {
+        document.documentElement.classList.remove('translation-tools-active');
+        showToastNotification('Translation tools disabled');
+      }
+    } else if (setting === 'pronunciation_guides') {
+      if (value) {
+        document.documentElement.classList.add('pronunciation-guides-active');
+        showToastNotification('Pronunciation guides enabled');
+      } else {
+        document.documentElement.classList.remove('pronunciation-guides-active');
+        showToastNotification('Pronunciation guides disabled');
+      }
+    } else if (setting === 'screen_reader_support') {
+      if (value) {
+        document.documentElement.classList.add('screen-reader-support-active');
+        showToastNotification('Screen reader support enabled');
+      } else {
+        document.documentElement.classList.remove('screen-reader-support-active');
+        showToastNotification('Screen reader support disabled');
+      }
+    } else if (setting === 'glossary_terms') {
+      if (value) {
+        document.documentElement.classList.add('glossary-terms-active');
+        showToastNotification('Glossary terms enabled');
+      } else {
+        document.documentElement.classList.remove('glossary-terms-active');
+        showToastNotification('Glossary terms disabled');
+      }
+    }
+    
+    // Trigger accessibility update event for immediate application
+    if (user) {
+      const updatedAccessibility = { ...settings.accessibility, [setting]: value };
+      const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
+        detail: {
+          username: user.username,
+          accessibility: updatedAccessibility
+        }
+      });
+      window.dispatchEvent(accessibilityUpdateEvent);
+    }
+  };
+
   // Handle authentication state changes and load settings
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -1070,41 +1315,7 @@ const SettingsPage: React.FC = () => {
                                 ...prev,
                                 accessibility: { ...prev.accessibility, high_contrast: newValue }
                               }));
-                              // Apply high contrast immediately
-                              console.log('🔴 High contrast toggle:', newValue);
-                              
-                              // Check if this is for the current user
-                              const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
-                              if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
-                                console.log('🔴 Different user accessibility detected, clearing first:', currentAccessibilityUser);
-                                document.documentElement.classList.remove('high-contrast', 'large-text');
-                                document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
-                              }
-                              
-                              // Set current user
-                              document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
-                              
-                              if (newValue) {
-                                console.log('🔴 Adding high-contrast class immediately to document for user:', user?.username);
-                                document.documentElement.classList.add('high-contrast');
-                                showToastNotification('High contrast mode enabled');
-                              } else {
-                                console.log('⚪ Removing high-contrast class immediately from document for user:', user?.username);
-                                document.documentElement.classList.remove('high-contrast');
-                                showToastNotification('High contrast mode disabled');
-                              }
-                              
-                              // Trigger accessibility update event for immediate application
-                              if (user) {
-                                const updatedAccessibility = { ...settings.accessibility, high_contrast: newValue };
-                                const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
-                                  detail: {
-                                    username: user.username,
-                                    accessibility: updatedAccessibility
-                                  }
-                                });
-                                window.dispatchEvent(accessibilityUpdateEvent);
-                              }
+                              applyAccessibilityChange('high_contrast', newValue, 'High contrast');
                             }}
                             className="sr-only peer"
                           />
@@ -1123,10 +1334,14 @@ const SettingsPage: React.FC = () => {
                           <input
                             type="checkbox"
                             checked={settings.accessibility.screen_reader_support}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, screen_reader_support: e.target.checked }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.checked;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, screen_reader_support: newValue }
+                              }));
+                              applyAccessibilityChange('screen_reader_support', newValue, 'Screen reader support');
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1146,38 +1361,7 @@ const SettingsPage: React.FC = () => {
                             ...prev,
                             accessibility: { ...prev.accessibility, font_size: newValue }
                           }));
-                          // Apply font size immediately
-                          console.log('🔤 Font size change:', newValue);
-                          
-                          // Check if this is for the current user
-                          const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
-                          if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
-                            console.log('🔤 Different user accessibility detected, clearing first:', currentAccessibilityUser);
-                            document.documentElement.classList.remove('high-contrast');
-                            document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
-                          }
-                          
-                          // Set current user
-                          document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
-                          
-                          const oldClasses = document.documentElement.className;
-                          console.log('🔤 Old classes:', oldClasses);
-                          document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
-                          document.documentElement.classList.add(`font-size-${newValue}`);
-                          console.log('🔤 New classes:', document.documentElement.className);
-                          showToastNotification(`Text size changed to ${newValue}`);
-                          
-                          // Trigger accessibility update event for immediate application
-                          if (user) {
-                            const updatedAccessibility = { ...settings.accessibility, font_size: newValue };
-                            const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
-                              detail: {
-                                username: user.username,
-                                accessibility: updatedAccessibility
-                              }
-                            });
-                            window.dispatchEvent(accessibilityUpdateEvent);
-                          }
+                          applyAccessibilityChange('font_size', newValue, 'Font size');
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
@@ -1200,38 +1384,7 @@ const SettingsPage: React.FC = () => {
                             ...prev,
                             accessibility: { ...prev.accessibility, display_mode: newValue }
                           }));
-                          // Apply display mode immediately
-                          console.log('🖥️ Display mode change:', newValue);
-                          
-                          // Check if this is for the current user
-                          const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
-                          if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
-                            console.log('🖥️ Different user accessibility detected, clearing first:', currentAccessibilityUser);
-                            document.documentElement.classList.remove('high-contrast');
-                            document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
-                            document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
-                          }
-                          
-                          // Set current user
-                          document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
-                          
-                          // Remove old display mode classes
-                          document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
-                          document.documentElement.classList.add(`display-mode-${newValue}`);
-                          console.log('🖥️ Applied display-mode-${newValue} class');
-                          showToastNotification(`Display mode changed to ${newValue}`);
-                          
-                          // Trigger accessibility update event for immediate application
-                          if (user) {
-                            const updatedAccessibility = { ...settings.accessibility, display_mode: newValue };
-                            const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
-                              detail: {
-                                username: user.username,
-                                accessibility: updatedAccessibility
-                              }
-                            });
-                            window.dispatchEvent(accessibilityUpdateEvent);
-                          }
+                          applyAccessibilityChange('display_mode', newValue, 'Display mode');
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
@@ -1252,10 +1405,14 @@ const SettingsPage: React.FC = () => {
                           </label>
                           <select
                             value={settings.accessibility.line_spacing}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, line_spacing: e.target.value as any }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.value as any;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, line_spacing: newValue }
+                              }));
+                              applyAccessibilityChange('line_spacing', newValue, 'Line spacing');
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           >
                             <option value="normal">Normal (1.5)</option>
@@ -1270,10 +1427,14 @@ const SettingsPage: React.FC = () => {
                           </label>
                           <select
                             value={settings.accessibility.word_spacing}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, word_spacing: e.target.value as any }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.value as any;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, word_spacing: newValue }
+                              }));
+                              applyAccessibilityChange('word_spacing', newValue, 'Word spacing');
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           >
                             <option value="normal">Normal (0.25em)</option>
@@ -1288,10 +1449,14 @@ const SettingsPage: React.FC = () => {
                           </label>
                           <select
                             value={settings.accessibility.cursor_size}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, cursor_size: e.target.value as any }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.value as any;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, cursor_size: newValue }
+                              }));
+                              applyAccessibilityChange('cursor_size', newValue, 'Cursor size');
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           >
                             <option value="normal">Normal</option>
@@ -1306,10 +1471,14 @@ const SettingsPage: React.FC = () => {
                           </label>
                           <select
                             value={settings.accessibility.focus_indicator}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, focus_indicator: e.target.value as any }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.value as any;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, focus_indicator: newValue }
+                              }));
+                              applyAccessibilityChange('focus_indicator', newValue, 'Focus indicator');
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           >
                             <option value="default">Default</option>
@@ -1328,10 +1497,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="color"
                               value={settings.accessibility.focus_color}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, focus_color: e.target.value }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.value;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, focus_color: newValue }
+                                }));
+                                applyAccessibilityChange('focus_color', newValue, 'Custom focus color');
+                              }}
                               className="w-16 h-10 border border-gray-300 rounded-md cursor-pointer"
                             />
                             <span className="text-sm text-gray-500">{settings.accessibility.focus_color}</span>
@@ -1354,10 +1527,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.aria_labels}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, aria_labels: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, aria_labels: newValue }
+                                }));
+                                applyAccessibilityChange('aria_labels', newValue, 'ARIA labels');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1373,10 +1550,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.live_regions}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, live_regions: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, live_regions: newValue }
+                                }));
+                                applyAccessibilityChange('live_regions', newValue, 'Live regions');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1392,10 +1573,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.landmark_roles}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, landmark_roles: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, landmark_roles: newValue }
+                                }));
+                                applyAccessibilityChange('landmark_roles', newValue, 'Landmark roles');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1411,10 +1596,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.skip_links}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, skip_links: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, skip_links: newValue }
+                                }));
+                                applyAccessibilityChange('skip_links', newValue, 'Skip links');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1437,10 +1626,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.alt_text_required}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, alt_text_required: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, alt_text_required: newValue }
+                                }));
+                                applyAccessibilityChange('alt_text_required', newValue, 'Alt text required');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1456,10 +1649,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.form_labels_required}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, form_labels_required: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, form_labels_required: newValue }
+                                }));
+                                applyAccessibilityChange('form_labels_required', newValue, 'Form labels required');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1475,10 +1672,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.button_descriptions}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, button_descriptions: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, button_descriptions: newValue }
+                                }));
+                                applyAccessibilityChange('button_descriptions', newValue, 'Button descriptions');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1494,10 +1695,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.link_descriptions}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, link_descriptions: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, link_descriptions: newValue }
+                                }));
+                                applyAccessibilityChange('link_descriptions', newValue, 'Link descriptions');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1520,10 +1725,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.reduced_motion}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, reduced_motion: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, reduced_motion: newValue }
+                                }));
+                                applyAccessibilityChange('reduced_motion', newValue, 'Reduced motion');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1539,10 +1748,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.color_blind_support}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, color_blind_support: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, color_blind_support: newValue }
+                                }));
+                                applyAccessibilityChange('color_blind_support', newValue, 'Color blind support');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1558,10 +1771,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.keyboard_navigation}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, keyboard_navigation: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, keyboard_navigation: newValue }
+                                }));
+                                applyAccessibilityChange('keyboard_navigation', newValue, 'Keyboard navigation');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1577,10 +1794,14 @@ const SettingsPage: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={settings.accessibility.click_assist}
-                              onChange={(e) => setSettings(prev => ({
-                                ...prev,
-                                accessibility: { ...prev.accessibility, click_assist: e.target.checked }
-                              }))}
+                              onChange={(e) => {
+                                const newValue = e.target.checked;
+                                setSettings(prev => ({
+                                  ...prev,
+                                  accessibility: { ...prev.accessibility, click_assist: newValue }
+                                }));
+                                applyAccessibilityChange('click_assist', newValue, 'Click assist');
+                              }}
                               className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -1598,10 +1819,14 @@ const SettingsPage: React.FC = () => {
                           max="2000"
                           step="100"
                           value={settings.accessibility.hover_delay}
-                          onChange={(e) => setSettings(prev => ({
-                            ...prev,
-                            accessibility: { ...prev.accessibility, hover_delay: parseInt(e.target.value) }
-                          }))}
+                          onChange={(e) => {
+                            const newValue = parseInt(e.target.value);
+                            setSettings(prev => ({
+                              ...prev,
+                              accessibility: { ...prev.accessibility, hover_delay: newValue }
+                            }));
+                            applyAccessibilityChange('hover_delay', newValue, 'Hover delay');
+                          }}
                           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
