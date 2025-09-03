@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useAuthStore } from './store/authStore';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import AccessibilityManager from './components/AccessibilityManager';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -36,6 +37,7 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
+        <AccessibilityManager />
         <Header />
         <main className="flex-1">
           <Routes>

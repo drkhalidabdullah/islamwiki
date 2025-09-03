@@ -84,12 +84,12 @@ export interface UserSettings {
   };
   accessibility: {
     high_contrast: boolean;
-    large_text: boolean;
     screen_reader_support: boolean;
     keyboard_navigation: boolean;
     reduced_motion: boolean;
     color_blind_support: boolean;
     font_size: 'small' | 'medium' | 'large' | 'x-large';
+    display_mode: 'standard' | 'wide' | 'full';
   };
 }
 

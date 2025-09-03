@@ -80,39 +80,151 @@ const SettingsPage: React.FC = () => {
     },
     accessibility: {
       high_contrast: false,
-      large_text: false,
       screen_reader_support: true,
       keyboard_navigation: true,
       reduced_motion: false,
       color_blind_support: false,
-      font_size: 'medium'
+      font_size: 'medium',
+      display_mode: 'standard'
     }
   });
 
   const [activeTab, setActiveTab] = useState<'account' | 'preferences' | 'security' | 'privacy' | 'notifications' | 'accessibility'>('account');
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
+  // Handle authentication state changes and load settings
   useEffect(() => {
-    // Check authentication before loading settings
-    if (!isAuthenticated || !user) {
-      console.log('User not authenticated, redirecting to login');
+    if (isAuthenticated && user) {
+      // User is authenticated, load their settings
+      console.log('🔐 User is authenticated, loading settings...');
+      loadUserSettings();
+    } else if (!isAuthenticated) {
+      // User is not authenticated, clear accessibility classes and redirect
+      console.log('🔐 User is not authenticated, clearing accessibility classes and redirecting');
+      document.documentElement.classList.remove('high-contrast', 'large-text');
+      document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      console.log('🎨 Cleared accessibility classes, final classes:', document.documentElement.className);
       navigate('/login');
-      return;
+    }
+  }, [isAuthenticated, user]); // Removed navigate from dependencies to prevent infinite loop
+
+  // Apply accessibility settings immediately when component mounts and user is authenticated
+  useEffect(() => {
+    if (isAuthenticated && user && settings.accessibility) {
+      console.log('🎨 Component mounted with authenticated user, applying current accessibility settings');
+      
+      // Check if this is for the current user
+      const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+      if (currentAccessibilityUser && currentAccessibilityUser !== user.username) {
+        console.log('🎨 Different user accessibility detected, clearing first:', currentAccessibilityUser);
+        document.documentElement.classList.remove('high-contrast', 'large-text');
+        document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      }
+      
+      // Set current user
+      document.documentElement.setAttribute('data-accessibility-user', user.username);
+      
+      // Apply current accessibility settings immediately to document
+      if (settings.accessibility.high_contrast) {
+        document.documentElement.classList.add('high-contrast');
+        console.log('🔴 Applied high-contrast class on mount to document for user:', user.username);
+      } else {
+        document.documentElement.classList.remove('high-contrast');
+      }
+      
+
+      
+      // Apply font size
+      document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      document.documentElement.classList.add(`font-size-${settings.accessibility.font_size}`);
+      console.log('🔤 Applied font-size-${settings.accessibility.font_size} class on mount to document for user:', user.username);
+      
+      // Apply display mode
+      document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+      document.documentElement.classList.add(`display-mode-${settings.accessibility.display_mode}`);
+      console.log('🖥️ Applied display-mode-${settings.accessibility.display_mode} class on mount to document for user:', user.username);
+    }
+  }, [isAuthenticated, user, settings.accessibility]);
+
+  // Apply accessibility settings when they change - SCOPE TO CURRENT USER
+  useEffect(() => {
+    console.log('🎨 Accessibility useEffect triggered for user:', user?.username, 'settings:', settings.accessibility);
+    
+    // Create user-specific accessibility container if it doesn't exist
+    let userAccessibilityContainer = document.getElementById(`accessibility-${user?.username}`);
+    if (!userAccessibilityContainer && user) {
+      userAccessibilityContainer = document.createElement('div');
+      userAccessibilityContainer.id = `accessibility-${user.username}`;
+      userAccessibilityContainer.className = 'user-accessibility-container';
+      document.body.appendChild(userAccessibilityContainer);
+      console.log('🎨 Created accessibility container for user:', user.username);
     }
     
-    // Always load settings on mount to get the latest saved data
-    // This ensures we show the current server state on page refresh
-    console.log('🔄 Loading user settings from server...');
-    loadUserSettings();
-  }, [isAuthenticated, user]); // Removed navigate from dependencies to prevent infinite loop
+    if (userAccessibilityContainer) {
+      // Apply high contrast
+      if (settings.accessibility.high_contrast) {
+        console.log('🔴 Adding high-contrast class to user container');
+        userAccessibilityContainer.classList.add('high-contrast');
+      } else {
+        console.log('⚪ Removing high-contrast class from user container');
+        userAccessibilityContainer.classList.remove('high-contrast');
+      }
+
+
+
+      // Apply font size
+      const oldFontSize = userAccessibilityContainer.className.match(/font-size-\w+/);
+      console.log('🔤 Old font size class:', oldFontSize);
+      userAccessibilityContainer.className = userAccessibilityContainer.className.replace(/font-size-\w+/, '');
+      userAccessibilityContainer.classList.add(`font-size-${settings.accessibility.font_size}`);
+      console.log('🔤 New font size class: font-size-${settings.accessibility.font_size}');
+      
+      console.log('🎨 Final user container classes:', userAccessibilityContainer.className);
+    }
+  }, [settings.accessibility, user]);
+
+  // Apply accessibility settings when user authentication state changes
+  useEffect(() => {
+    console.log('🔐 Auth state changed - isAuthenticated:', isAuthenticated, 'user:', user);
+    
+    if (isAuthenticated && user) {
+      console.log('🔐 User logged in, applying saved accessibility settings');
+      // Settings will be loaded and accessibility useEffect will handle applying them
+    } else {
+      console.log('🔐 User logged out, removing all accessibility classes');
+      // Remove all accessibility classes when user logs out
+      // Remove from document element (global fallback)
+      document.documentElement.classList.remove('high-contrast');
+      document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+      document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+      
+      console.log('🎨 Removed accessibility classes, final document classes:', document.documentElement.className);
+    }
+  }, [isAuthenticated, user]);
+
+  // Show toast notification
+  const showToastNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    console.log('🍞 Toast notification:', { message, type });
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
 
   // Debug: Monitor settings state changes
   useEffect(() => {
     console.log('🔄 Settings state changed:', settings);
     console.log('🔍 Current gender in state:', settings.account.gender);
+    console.log('🎨 Accessibility state changed:', settings.accessibility);
   }, [settings]);
 
   const loadUserSettings = async () => {
@@ -136,10 +248,45 @@ const SettingsPage: React.FC = () => {
       if (response.success && response.data) {
         console.log('✅ Settings loaded successfully:', response.data);
         console.log('🔍 Current gender value:', response.data.account.gender);
+        console.log('🎨 Accessibility settings from server:', response.data.accessibility);
         
         // Update settings from server
         console.log('🔍 Setting settings to:', response.data);
         setSettings(response.data);
+        
+        // Apply accessibility settings immediately after loading
+        console.log('🎨 Applying accessibility settings from loaded data:', response.data.accessibility);
+        
+        // Check if this is for the current user
+        const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+        if (currentAccessibilityUser && currentAccessibilityUser !== user.username) {
+          console.log('🎨 Different user accessibility detected, clearing first:', currentAccessibilityUser);
+          document.documentElement.classList.remove('high-contrast', 'large-text');
+          document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+        }
+        
+        // Set current user
+        document.documentElement.setAttribute('data-accessibility-user', user.username);
+        
+        // Apply accessibility directly to document
+        if (response.data.accessibility.high_contrast) {
+          document.documentElement.classList.add('high-contrast');
+          console.log('🔴 Applied high-contrast class from loaded settings to document for user:', user.username);
+        } else {
+          document.documentElement.classList.remove('high-contrast');
+        }
+        
+
+        
+        // Apply font size
+        document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+        document.documentElement.classList.add(`font-size-${response.data.accessibility.font_size}`);
+        console.log('🔤 Applied font-size-${response.data.accessibility.font_size} class from loaded settings to document for user:', user.username);
+        
+        // Apply display mode
+        document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+        document.documentElement.classList.add(`display-mode-${response.data.accessibility.display_mode}`);
+        console.log('🖥️ Applied display-mode-${response.data.accessibility.display_mode} class from loaded settings to document for user:', user.username);
         
         console.log('🔄 State update triggered');
       } else {
@@ -155,22 +302,45 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleSaveSettings = async () => {
+    console.log('💾 handleSaveSettings called with settings:', settings);
+    console.log('🎨 Current accessibility settings:', settings.accessibility);
     setIsLoading(true);
-    setMessage(null);
 
     try {
       // Validate settings before saving
       const validation = settingsService.validateSettings(settings);
       if (!validation.isValid) {
-        setMessage({ type: 'error', text: `Validation errors: ${validation.errors.join(', ')}` });
+        showToastNotification(`Validation errors: ${validation.errors.join(', ')}`, 'error');
         setIsLoading(false);
         return;
       }
 
-      // Save only the account section for now (the one you're changing)
-      const response = await settingsService.updateSettingsSection('account', settings.account);
-      if (!response.success) {
-        throw new Error(`Failed to save account settings: ${response.error}`);
+      // Save all sections that have been modified
+      const sectionsToSave: (keyof UserSettings)[] = ['account', 'preferences', 'security', 'privacy', 'notifications', 'accessibility'];
+      console.log('💾 Saving sections:', sectionsToSave);
+      let saveSuccess = true;
+      let errorMessage = '';
+
+      for (const section of sectionsToSave) {
+        console.log(`💾 Saving ${section} section:`, settings[section]);
+        try {
+          const response = await settingsService.updateSettingsSection(section, settings[section]);
+          console.log(`💾 ${section} save response:`, response);
+          if (!response.success) {
+            saveSuccess = false;
+            errorMessage = `Failed to save ${section} settings: ${response.error}`;
+            break;
+          }
+        } catch (error) {
+          console.error(`💾 Error saving ${section}:`, error);
+          saveSuccess = false;
+          errorMessage = `Failed to save ${section} settings: ${error}`;
+          break;
+        }
+      }
+
+      if (!saveSuccess) {
+        throw new Error(errorMessage);
       }
 
       // Update local user data
@@ -182,16 +352,25 @@ const SettingsPage: React.FC = () => {
         });
       }
 
-      // Reload settings from server to ensure UI shows the latest saved data
-      console.log('✅ Settings saved - reloading from server to update UI');
-      await loadUserSettings();
+      // Don't reload settings - keep the current state since we just saved it
+      console.log('✅ All settings saved successfully - keeping current state');
+      console.log('🎨 Final accessibility state:', settings.accessibility);
 
-      setMessage({ type: 'success', text: 'Settings saved successfully!' });
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => setMessage(null), 3000);
+      // Trigger accessibility update after saving
+      console.log('🎨 Triggering accessibility update after save');
+      if (user) {
+        const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
+          detail: {
+            username: user.username,
+            accessibility: settings.accessibility
+          }
+        });
+        window.dispatchEvent(accessibilityUpdateEvent);
+      }
+
+      showToastNotification('All settings saved successfully! 🎉');
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
+      showToastNotification('Failed to save settings. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -201,15 +380,15 @@ const SettingsPage: React.FC = () => {
     if (window.confirm('Are you sure you want to reset all settings to defaults? This action cannot be undone.')) {
       try {
         const response = await settingsService.resetSettingsToDefaults();
-        if (response.success) {
-          await loadUserSettings();
-          setMessage({ type: 'success', text: 'Settings reset to defaults successfully!' });
-        } else {
-          setMessage({ type: 'error', text: 'Failed to reset settings.' });
-        }
-      } catch (error) {
-        setMessage({ type: 'error', text: 'Failed to reset settings.' });
+              if (response.success) {
+        await loadUserSettings();
+        showToastNotification('Settings reset to defaults successfully! 🔄');
+      } else {
+        showToastNotification('Failed to reset settings.', 'error');
       }
+    } catch (error) {
+      showToastNotification('Failed to reset settings.', 'error');
+    }
     }
   };
 
@@ -225,7 +404,7 @@ const SettingsPage: React.FC = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to export user data.' });
+      showToastNotification('Failed to export user data.', 'error');
     }
   };
 
@@ -237,13 +416,13 @@ const SettingsPage: React.FC = () => {
           // Redirect to logout or home page
           window.location.href = '/';
         } else {
-          setMessage({ type: 'error', text: 'Failed to delete account.' });
+          showToastNotification('Failed to delete account.', 'error');
         }
       } catch (error) {
-        setMessage({ type: 'error', text: 'Failed to delete account.' });
+        showToastNotification('Failed to delete account.', 'error');
       }
     } else {
-      setMessage({ type: 'error', text: 'Please type DELETE to confirm account deletion.' });
+      showToastNotification('Please type DELETE to confirm account deletion.', 'error');
     }
   };
 
@@ -258,6 +437,52 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className={`toast-notification fixed top-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 ${
+          toastType === 'success' ? 'border-green-500' : 'border-red-500'
+        } transform transition-all duration-300 ease-in-out ${
+          showToast ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+        }`}>
+          <div className="p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {toastType === 'success' ? (
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM15 12a3 3 0 11-6 0 3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className={`text-sm font-medium ${
+                  toastType === 'success' ? 'text-green-800' : 'text-red-800'
+                }`}>
+                  {toastMessage}
+                </p>
+              </div>
+              <div className="ml-4 flex-shrink-0">
+                <button
+                  onClick={() => setShowToast(false)}
+                  className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -265,16 +490,7 @@ const SettingsPage: React.FC = () => {
           <p className="text-gray-600 mt-2">Manage your account settings and preferences</p>
         </div>
 
-        {/* Message */}
-        {message && (
-          <div className={`mb-6 p-4 rounded-md ${
-            message.type === 'success' 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}>
-            {message.text}
-          </div>
-        )}
+
 
         {/* Settings Container */}
         <Card>
@@ -804,34 +1020,55 @@ const SettingsPage: React.FC = () => {
                           <input
                             type="checkbox"
                             checked={settings.accessibility.high_contrast}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, high_contrast: e.target.checked }
-                            }))}
+                            onChange={(e) => {
+                              const newValue = e.target.checked;
+                              setSettings(prev => ({
+                                ...prev,
+                                accessibility: { ...prev.accessibility, high_contrast: newValue }
+                              }));
+                              // Apply high contrast immediately
+                              console.log('🔴 High contrast toggle:', newValue);
+                              
+                              // Check if this is for the current user
+                              const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+                              if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
+                                console.log('🔴 Different user accessibility detected, clearing first:', currentAccessibilityUser);
+                                document.documentElement.classList.remove('high-contrast', 'large-text');
+                                document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+                              }
+                              
+                              // Set current user
+                              document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
+                              
+                              if (newValue) {
+                                console.log('🔴 Adding high-contrast class immediately to document for user:', user?.username);
+                                document.documentElement.classList.add('high-contrast');
+                                showToastNotification('High contrast mode enabled');
+                              } else {
+                                console.log('⚪ Removing high-contrast class immediately from document for user:', user?.username);
+                                document.documentElement.classList.remove('high-contrast');
+                                showToastNotification('High contrast mode disabled');
+                              }
+                              
+                              // Trigger accessibility update event for immediate application
+                              if (user) {
+                                const updatedAccessibility = { ...settings.accessibility, high_contrast: newValue };
+                                const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
+                                  detail: {
+                                    username: user.username,
+                                    accessibility: updatedAccessibility
+                                  }
+                                });
+                                window.dispatchEvent(accessibilityUpdateEvent);
+                              }
+                            }}
                             className="sr-only peer"
                           />
                           <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                         </label>
                       </div>
 
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">Large Text</p>
-                          <p className="text-sm text-gray-500">Increase text size for better readability</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={settings.accessibility.large_text}
-                            onChange={(e) => setSettings(prev => ({
-                              ...prev,
-                              accessibility: { ...prev.accessibility, large_text: e.target.checked }
-                            }))}
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                        </label>
-                      </div>
+
 
                       <div className="flex items-center justify-between">
                         <div>
@@ -855,20 +1092,108 @@ const SettingsPage: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Font Size
+                        Text Size
                       </label>
                       <select
                         value={settings.accessibility.font_size}
-                        onChange={(e) => setSettings(prev => ({
-                          ...prev,
-                          accessibility: { ...prev.accessibility, font_size: e.target.value as any }
-                        }))}
+                        onChange={(e) => {
+                          const newValue = e.target.value as any;
+                          setSettings(prev => ({
+                            ...prev,
+                            accessibility: { ...prev.accessibility, font_size: newValue }
+                          }));
+                          // Apply font size immediately
+                          console.log('🔤 Font size change:', newValue);
+                          
+                          // Check if this is for the current user
+                          const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+                          if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
+                            console.log('🔤 Different user accessibility detected, clearing first:', currentAccessibilityUser);
+                            document.documentElement.classList.remove('high-contrast');
+                            document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+                          }
+                          
+                          // Set current user
+                          document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
+                          
+                          const oldClasses = document.documentElement.className;
+                          console.log('🔤 Old classes:', oldClasses);
+                          document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+                          document.documentElement.classList.add(`font-size-${newValue}`);
+                          console.log('🔤 New classes:', document.documentElement.className);
+                          showToastNotification(`Text size changed to ${newValue}`);
+                          
+                          // Trigger accessibility update event for immediate application
+                          if (user) {
+                            const updatedAccessibility = { ...settings.accessibility, font_size: newValue };
+                            const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
+                              detail: {
+                                username: user.username,
+                                accessibility: updatedAccessibility
+                              }
+                            });
+                            window.dispatchEvent(accessibilityUpdateEvent);
+                          }
+                        }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large">Large</option>
-                        <option value="x-large">Extra Large</option>
+                        <option value="small">Small (0.875rem)</option>
+                        <option value="medium">Medium (1rem)</option>
+                        <option value="large">Large (1.125rem)</option>
+                        <option value="x-large">Extra Large (1.25rem)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Display Mode
+                      </label>
+                      <select
+                        value={settings.accessibility.display_mode}
+                        onChange={(e) => {
+                          const newValue = e.target.value as 'standard' | 'wide' | 'full';
+                          setSettings(prev => ({
+                            ...prev,
+                            accessibility: { ...prev.accessibility, display_mode: newValue }
+                          }));
+                          // Apply display mode immediately
+                          console.log('🖥️ Display mode change:', newValue);
+                          
+                          // Check if this is for the current user
+                          const currentAccessibilityUser = document.documentElement.getAttribute('data-accessibility-user');
+                          if (currentAccessibilityUser && currentAccessibilityUser !== user?.username) {
+                            console.log('🖥️ Different user accessibility detected, clearing first:', currentAccessibilityUser);
+                            document.documentElement.classList.remove('high-contrast');
+                            document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/, '');
+                            document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+                          }
+                          
+                          // Set current user
+                          document.documentElement.setAttribute('data-accessibility-user', user?.username || '');
+                          
+                          // Remove old display mode classes
+                          document.documentElement.className = document.documentElement.className.replace(/display-mode-\w+/, '');
+                          document.documentElement.classList.add(`display-mode-${newValue}`);
+                          console.log('🖥️ Applied display-mode-${newValue} class');
+                          showToastNotification(`Display mode changed to ${newValue}`);
+                          
+                          // Trigger accessibility update event for immediate application
+                          if (user) {
+                            const updatedAccessibility = { ...settings.accessibility, display_mode: newValue };
+                            const accessibilityUpdateEvent = new CustomEvent('accessibilitySettingsChanged', {
+                              detail: {
+                                username: user.username,
+                                accessibility: updatedAccessibility
+                              }
+                            });
+                            window.dispatchEvent(accessibilityUpdateEvent);
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      >
+                        <option value="standard">Standard (1200px max)</option>
+                        <option value="wide">Wide (1600px max)</option>
+                        <option value="full">Full (100% width)</option>
                       </select>
                     </div>
                   </div>
@@ -920,7 +1245,7 @@ const SettingsPage: React.FC = () => {
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Type "DELETE" to confirm
+              Type &quot;DELETE&quot; to confirm
             </label>
             <Input
               type="text"

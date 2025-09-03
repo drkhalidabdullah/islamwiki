@@ -12,18 +12,21 @@ The IslamWiki Framework provides a comprehensive RESTful API for building Islami
 ## 🎯 **API Design Principles**
 
 ### **1. RESTful Design**
+
 - **Resource-Based URLs**: Clear, hierarchical resource structure
 - **HTTP Methods**: Proper use of GET, POST, PUT, DELETE
 - **Status Codes**: Standard HTTP status codes
 - **JSON Responses**: Consistent JSON response format
 
 ### **2. Authentication & Security**
+
 - **JWT Tokens**: Secure token-based authentication
 - **OAuth 2.0**: Third-party authentication support
 - **Rate Limiting**: Request throttling and abuse prevention
 - **CORS Support**: Cross-origin resource sharing
 
 ### **3. Versioning Strategy**
+
 - **URL Versioning**: `/api/v1/`, `/api/v2/`
 - **Backward Compatibility**: Maintain compatibility between versions
 - **Deprecation Policy**: Clear deprecation timelines
@@ -34,6 +37,7 @@ The IslamWiki Framework provides a comprehensive RESTful API for building Islami
 ### **JWT Authentication**
 
 #### **Login Endpoint**
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -45,6 +49,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -66,6 +71,7 @@ Content-Type: application/json
 ```
 
 #### **Register Endpoint**
+
 ```http
 POST /api/v1/auth/register
 Content-Type: application/json
@@ -81,6 +87,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -99,12 +106,14 @@ Content-Type: application/json
 ```
 
 #### **Refresh Token Endpoint**
+
 ```http
 POST /api/v1/auth/refresh
 Authorization: Bearer {refresh_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -116,12 +125,14 @@ Authorization: Bearer {refresh_token}
 ```
 
 #### **Logout Endpoint**
+
 ```http
 POST /api/v1/auth/logout
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -132,12 +143,14 @@ Authorization: Bearer {jwt_token}
 ### **OAuth 2.0 Authentication**
 
 #### **OAuth Providers**
+
 - **Google**: Google OAuth 2.0
 - **Facebook**: Facebook OAuth 2.0
 - **Twitter**: Twitter OAuth 2.0
 - **GitHub**: GitHub OAuth 2.0
 
 #### **OAuth Flow**
+
 ```http
 GET /api/v1/auth/{provider}/redirect
 ```
@@ -149,6 +162,7 @@ GET /api/v1/auth/{provider}/callback?code={authorization_code}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -169,12 +183,14 @@ GET /api/v1/auth/{provider}/callback?code={authorization_code}
 ### **User Profile Endpoints**
 
 #### **Get User Profile**
+
 ```http
 GET /api/v1/users/profile
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -195,6 +211,7 @@ Authorization: Bearer {jwt_token}
 ```
 
 #### **Update User Profile**
+
 ```http
 PUT /api/v1/users/profile
 Authorization: Bearer {jwt_token}
@@ -209,6 +226,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -225,6 +243,7 @@ Content-Type: application/json
 ```
 
 #### **Upload Avatar**
+
 ```http
 POST /api/v1/users/avatar
 Authorization: Bearer {jwt_token}
@@ -234,6 +253,7 @@ avatar: [file]
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -247,12 +267,14 @@ avatar: [file]
 ### **User Management (Admin)**
 
 #### **Get All Users**
+
 ```http
 GET /api/v1/admin/users?page=1&per_page=20&search=john&role=editor
 Authorization: Bearer {admin_jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -279,6 +301,7 @@ Authorization: Bearer {admin_jwt_token}
 ```
 
 #### **Update User Status**
+
 ```http
 PUT /api/v1/admin/users/{id}/status
 Authorization: Bearer {admin_jwt_token}
@@ -291,6 +314,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -308,11 +332,13 @@ Content-Type: application/json
 ### **Articles Endpoints**
 
 #### **Get All Articles**
+
 ```http
 GET /api/v1/content/articles?page=1&per_page=20&category=islamic-law&search=halal&status=published
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -349,11 +375,13 @@ GET /api/v1/content/articles?page=1&per_page=20&category=islamic-law&search=hala
 ```
 
 #### **Get Single Article**
+
 ```http
 GET /api/v1/content/articles/{slug}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -383,6 +411,7 @@ GET /api/v1/content/articles/{slug}
 ```
 
 #### **Create Article**
+
 ```http
 POST /api/v1/content/articles
 Authorization: Bearer {jwt_token}
@@ -399,6 +428,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -414,6 +444,7 @@ Content-Type: application/json
 ```
 
 #### **Update Article**
+
 ```http
 PUT /api/v1/content/articles/{id}
 Authorization: Bearer {jwt_token}
@@ -427,6 +458,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -440,12 +472,14 @@ Content-Type: application/json
 ```
 
 #### **Delete Article**
+
 ```http
 DELETE /api/v1/content/articles/{id}
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -456,11 +490,13 @@ Authorization: Bearer {jwt_token}
 ### **Categories Endpoints**
 
 #### **Get All Categories**
+
 ```http
 GET /api/v1/content/categories
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -487,11 +523,13 @@ GET /api/v1/content/categories
 ### **Comments Endpoints**
 
 #### **Get Article Comments**
+
 ```http
 GET /api/v1/content/articles/{slug}/comments?page=1&per_page=20
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -529,6 +567,7 @@ GET /api/v1/content/articles/{slug}/comments?page=1&per_page=20
 ```
 
 #### **Create Comment**
+
 ```http
 POST /api/v1/content/articles/{slug}/comments
 Authorization: Bearer {jwt_token}
@@ -541,6 +580,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -558,12 +598,14 @@ Content-Type: application/json
 ### **Posts Endpoints**
 
 #### **Get Social Feed**
+
 ```http
 GET /api/v1/social/posts?page=1&per_page=20&type=text
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -596,6 +638,7 @@ Authorization: Bearer {jwt_token}
 ```
 
 #### **Create Post**
+
 ```http
 POST /api/v1/social/posts
 Authorization: Bearer {jwt_token}
@@ -609,6 +652,7 @@ Content-Type: application/json
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -624,12 +668,14 @@ Content-Type: application/json
 ```
 
 #### **Like/Unlike Post**
+
 ```http
 POST /api/v1/social/posts/{id}/like
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -644,12 +690,14 @@ Authorization: Bearer {jwt_token}
 ### **User Relationships**
 
 #### **Follow User**
+
 ```http
 POST /api/v1/social/users/{id}/follow
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -662,11 +710,13 @@ Authorization: Bearer {jwt_token}
 ```
 
 #### **Get User Followers**
+
 ```http
 GET /api/v1/social/users/{id}/followers?page=1&per_page=20
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -694,11 +744,13 @@ GET /api/v1/social/users/{id}/followers?page=1&per_page=20
 ### **Courses Endpoints**
 
 #### **Get All Courses**
+
 ```http
 GET /api/v1/learning/courses?page=1&per_page=20&difficulty=beginner&instructor=1
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -733,11 +785,13 @@ GET /api/v1/learning/courses?page=1&per_page=20&difficulty=beginner&instructor=1
 ```
 
 #### **Get Course Details**
+
 ```http
 GET /api/v1/learning/courses/{slug}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -771,12 +825,14 @@ GET /api/v1/learning/courses/{slug}
 ```
 
 #### **Enroll in Course**
+
 ```http
 POST /api/v1/learning/courses/{id}/enroll
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -791,12 +847,14 @@ Authorization: Bearer {jwt_token}
 ### **Lessons Endpoints**
 
 #### **Get Lesson Content**
+
 ```http
 GET /api/v1/learning/lessons/{id}
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -825,11 +883,13 @@ Authorization: Bearer {jwt_token}
 ## 🔍 **Search API**
 
 ### **Global Search**
+
 ```http
 GET /api/v1/search?q=islamic+law&type=articles&category=islamic-law&page=1&per_page=20
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -868,12 +928,14 @@ GET /api/v1/search?q=islamic+law&type=articles&category=islamic-law&page=1&per_p
 ## 📊 **Analytics API**
 
 ### **User Analytics**
+
 ```http
 GET /api/v1/analytics/user?period=30d
 Authorization: Bearer {jwt_token}
 ```
 
 **Response**:
+
 ```json
 {
     "success": true,
@@ -899,6 +961,7 @@ Authorization: Bearer {jwt_token}
 ## 🚀 **Real-time API (WebSocket)**
 
 ### **WebSocket Connection**
+
 ```javascript
 const ws = new WebSocket('wss://api.islamwiki.org/ws');
 
@@ -930,6 +993,7 @@ ws.onmessage = function(event) {
 ### **WebSocket Events**
 
 #### **Notifications**
+
 ```json
 {
     "type": "notification",
@@ -948,6 +1012,7 @@ ws.onmessage = function(event) {
 ```
 
 #### **Chat Messages**
+
 ```json
 {
     "type": "chat_message",
@@ -967,6 +1032,7 @@ ws.onmessage = function(event) {
 ## 📋 **Error Handling**
 
 ### **Error Response Format**
+
 ```json
 {
     "success": false,
@@ -982,6 +1048,7 @@ ws.onmessage = function(event) {
 ```
 
 ### **Common Error Codes**
+
 - **`AUTHENTICATION_ERROR`**: Invalid or expired token
 - **`AUTHORIZATION_ERROR`**: Insufficient permissions
 - **`VALIDATION_ERROR`**: Invalid input data
@@ -992,6 +1059,7 @@ ws.onmessage = function(event) {
 ## 📚 **Rate Limiting**
 
 ### **Rate Limit Headers**
+
 ```http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -999,6 +1067,7 @@ X-RateLimit-Reset: 1640995200
 ```
 
 ### **Rate Limit Rules**
+
 - **Authentication Endpoints**: 5 requests per minute
 - **Content Endpoints**: 100 requests per hour
 - **Social Endpoints**: 200 requests per hour
@@ -1007,6 +1076,7 @@ X-RateLimit-Reset: 1640995200
 ## 🔧 **SDK & Libraries**
 
 ### **JavaScript SDK**
+
 ```javascript
 import { IslamWikiAPI } from '@islamwiki/sdk';
 
@@ -1031,6 +1101,7 @@ const article = await api.content.articles.create({
 ```
 
 ### **PHP SDK**
+
 ```php
 use IslamWiki\SDK\IslamWikiAPI;
 
@@ -1070,4 +1141,4 @@ $article = $api->content->articles->create([
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

@@ -428,36 +428,6 @@ try {
                                     'max_concurrent_sessions' => 5, // Default value since column doesn't exist
                                     'trusted_devices' => json_decode($user['trusted_devices'] ?? '[]', true),
                                     'security_questions' => [] // Default empty array since column doesn't exist
-                                ],
-                                'privacy' => [
-                                    'profile_visibility' => 'public',
-                                    'activity_visibility' => 'friends',
-                                    'search_visibility' => true,
-                                    'analytics_consent' => true,
-                                    'data_export' => false,
-                                    'data_deletion' => false,
-                                    'third_party_sharing' => false,
-                                    'location_sharing' => false,
-                                    'contact_info_visibility' => 'friends'
-                                ],
-                                'notifications' => [
-                                    'content_updates' => true,
-                                    'comment_replies' => true,
-                                    'mentions' => true,
-                                    'new_followers' => true,
-                                    'security_alerts' => true,
-                                    'system_announcements' => true,
-                                    'marketing_emails' => false,
-                                    'digest_frequency' => 'weekly'
-                                ],
-                                'accessibility' => [
-                                    'high_contrast' => false,
-                                    'large_text' => false,
-                                    'screen_reader_support' => true,
-                                    'keyboard_navigation' => true,
-                                    'reduced_motion' => false,
-                                    'color_blind_support' => false,
-                                    'font_size' => 'medium'
                                 ]
                             ];
                             
@@ -756,13 +726,18 @@ try {
                 $dbConnection = new DatabaseConnection();
                 $pdo = $dbConnection->getConnection();
                 
-                // Decode token to get user ID
+                // Decode token to get username
                 $tokenParts = explode('.', $token);
                 if (count($tokenParts) === 3) {
                     $payload = json_decode(base64_decode($tokenParts[1]), true);
-                    $userId = $payload['sub'] ?? null;
+                    $username = $payload['sub'] ?? null;
                     
-                    if ($userId) {
+                    if ($username) {
+                        // Get user ID for the username
+                        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+                        $stmt->execute([$username]);
+                        $existingUser = $stmt->fetch();
+                        $userId = $existingUser['id'];
                         // Reset preferences to defaults
                         $defaultPreferences = [
                             'email_notifications' => true,

@@ -4,6 +4,8 @@ import App from './App';
 
 // Import Tailwind CSS
 import './styles/tailwind.css';
+// Import App CSS for accessibility features
+import './styles/App.css';
 
 console.log('🚀 React app is starting...');
 

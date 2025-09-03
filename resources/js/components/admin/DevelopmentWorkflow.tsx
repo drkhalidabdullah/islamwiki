@@ -354,7 +354,7 @@ const DevelopmentWorkflow: React.FC = () => {
     <div className="space-y-6">
       {/* Toast Notification */}
       {showToast && (
-        <div className={`fixed top-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 ${
+        <div className={`toast-notification fixed top-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 ${
           toastType === 'success' ? 'border-green-500' : 'border-red-500'
         } transform transition-all duration-300 ease-in-out ${
           showToast ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'

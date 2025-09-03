@@ -12,16 +12,19 @@ The IslamWiki Framework is built on a modern, scalable architecture that combine
 ## 🎯 **Core Architecture Principles**
 
 ### **1. Unified Islamic Ecosystem**
+
 - **Single Application**: One codebase, one database, unified experience
 - **Modular Design**: Independent components that work together seamlessly
 - **Scalable Foundation**: Built to grow from shared hosting to enterprise deployment
 
 ### **2. Shared Hosting First**
+
 - **Minimal Requirements**: PHP 8.2+, MySQL, Apache with mod_rewrite
 - **Efficient Resource Usage**: Optimized for limited server resources
 - **No External Dependencies**: Self-contained framework with optional enhancements
 
 ### **3. Modern Web Standards**
+
 - **React 18 Frontend**: Modern, responsive user interface
 - **PHP 8.2+ Backend**: Latest PHP features and performance
 - **Real-time Capabilities**: WebSocket support with fallbacks for shared hosting
@@ -29,6 +32,7 @@ The IslamWiki Framework is built on a modern, scalable architecture that combine
 ## 🏛️ **System Architecture**
 
 ### **High-Level Architecture**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Client Layer                              │
@@ -80,6 +84,7 @@ The IslamWiki Framework is built on a modern, scalable architecture that combine
 ### **Core Framework Components**
 
 #### **1. Application Core (`src/Core/`)**
+
 ```
 src/Core/
 ├── Application.php          # Main application class
@@ -99,6 +104,7 @@ src/Core/
 ```
 
 #### **2. Service Providers (`src/Providers/`)**
+
 ```
 src/Providers/
 ├── DatabaseServiceProvider.php    # Database service registration
@@ -111,6 +117,7 @@ src/Providers/
 ```
 
 #### **3. Business Logic (`src/Services/`)**
+
 ```
 src/Services/
 ├── WikiService.php              # Wiki functionality
@@ -126,18 +133,21 @@ src/Services/
 ### **Framework Design Patterns**
 
 #### **1. Dependency Injection Container**
+
 - **Service Registration**: Bind services to the container
 - **Automatic Resolution**: Resolve dependencies automatically
 - **Singleton Management**: Manage service lifecycles
 - **Interface Binding**: Bind implementations to interfaces
 
 #### **2. Service Provider Pattern**
+
 - **Modular Registration**: Register services by feature
 - **Boot Process**: Initialize services after registration
 - **Configuration Loading**: Load service-specific configuration
 - **Extension Support**: Allow third-party extensions
 
 #### **3. Middleware Pipeline**
+
 - **Request Processing**: Process requests through middleware stack
 - **Response Processing**: Process responses through middleware stack
 - **Global Middleware**: Apply to all requests
@@ -148,6 +158,7 @@ src/Services/
 ### **React Application Structure**
 
 #### **1. Component Architecture**
+
 ```
 src/
 ├── components/                 # Reusable UI components
@@ -191,12 +202,14 @@ src/
 ```
 
 #### **2. State Management with Zustand**
+
 - **Lightweight Store**: Simple state management
 - **TypeScript Support**: Full type safety
 - **Middleware Support**: Extensible with middleware
 - **Performance**: Optimized re-renders
 
 #### **3. Routing with React Router**
+
 - **Declarative Routing**: Route definitions in components
 - **Nested Routes**: Support for complex routing
 - **Route Guards**: Protected route functionality
@@ -207,6 +220,7 @@ src/
 ### **Database Schema Design**
 
 #### **1. Core Tables**
+
 ```
 users                    # User accounts and profiles
 ├── id (Primary Key)
@@ -240,6 +254,7 @@ user_roles              # User-role relationships
 ```
 
 #### **2. Content Management Tables**
+
 ```
 content_categories       # Content categorization
 ├── id (Primary Key)
@@ -276,6 +291,7 @@ article_versions         # Content versioning
 ```
 
 #### **3. Social and Learning Tables**
+
 ```
 user_profiles            # Extended user information
 ├── id (Primary Key)
@@ -311,16 +327,19 @@ courses                  # Learning management
 ### **Database Design Principles**
 
 #### **1. Normalization**
+
 - **Third Normal Form**: Eliminate data redundancy
 - **Referential Integrity**: Foreign key constraints
 - **Indexing Strategy**: Optimize query performance
 
 #### **2. Scalability Considerations**
+
 - **Partitioning**: Support for large datasets
 - **Sharding**: Horizontal scaling support
 - **Read Replicas**: Separate read/write operations
 
 #### **3. Performance Optimization**
+
 - **Query Optimization**: Efficient SQL queries
 - **Indexing**: Strategic database indexes
 - **Caching**: Multi-level caching strategy
@@ -330,18 +349,21 @@ courses                  # Learning management
 ### **Security Layers**
 
 #### **1. Application Security**
+
 - **Input Validation**: Strict input validation and sanitization
 - **Output Encoding**: Prevent XSS attacks
 - **SQL Injection Protection**: Prepared statements and parameter binding
 - **CSRF Protection**: Cross-site request forgery prevention
 
 #### **2. Authentication & Authorization**
+
 - **JWT Tokens**: Secure token-based authentication
 - **OAuth 2.0**: Third-party authentication support
 - **Two-Factor Authentication**: Additional security layer
 - **Role-Based Access Control**: Granular permission system
 
 #### **3. Infrastructure Security**
+
 - **HTTPS Enforcement**: Secure communication
 - **Security Headers**: Comprehensive HTTP security headers
 - **Rate Limiting**: Prevent abuse and attacks
@@ -350,6 +372,7 @@ courses                  # Learning management
 ### **Security Features**
 
 #### **1. OWASP Top 10 Compliance**
+
 - **Injection Prevention**: SQL, NoSQL, LDAP injection protection
 - **Broken Authentication**: Secure authentication mechanisms
 - **Sensitive Data Exposure**: Encryption and secure storage
@@ -366,6 +389,7 @@ courses                  # Learning management
 ### **Performance Optimization Strategies**
 
 #### **1. Caching Strategy**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Caching Layers                           │
@@ -383,12 +407,14 @@ courses                  # Learning management
 ```
 
 #### **2. Asset Optimization**
+
 - **Minification**: CSS and JavaScript minification
 - **Compression**: Gzip/Brotli compression
 - **Bundling**: Efficient asset bundling
 - **Lazy Loading**: On-demand resource loading
 
 #### **3. Database Optimization**
+
 - **Query Optimization**: Efficient SQL queries
 - **Indexing Strategy**: Strategic database indexes
 - **Connection Pooling**: Database connection management
@@ -399,6 +425,7 @@ courses                  # Learning management
 ### **Deployment Strategies**
 
 #### **1. Shared Hosting Deployment**
+
 ```
 Development Machine          Shared Hosting
 ┌─────────────────┐        ┌─────────────────┐
@@ -412,6 +439,7 @@ Development Machine          Shared Hosting
 ```
 
 #### **2. VPS/Cloud Deployment**
+
 ```
 Development Machine          VPS/Cloud Server
 ┌─────────────────┐        ┌─────────────────┐
@@ -427,12 +455,14 @@ Development Machine          VPS/Cloud Server
 ### **Environment Configuration**
 
 #### **1. Environment Variables**
+
 - **Database Configuration**: Connection settings
 - **Application Settings**: App name, debug mode, timezone
 - **Security Settings**: JWT secrets, encryption keys
 - **External Services**: Mail, cache, search services
 
 #### **2. Configuration Management**
+
 - **Environment-Specific**: Development, staging, production
 - **Secure Storage**: Sensitive data in environment variables
 - **Validation**: Configuration validation on startup
@@ -443,12 +473,14 @@ Development Machine          VPS/Cloud Server
 ### **Progressive Web App Features**
 
 #### **1. PWA Capabilities**
+
 - **Offline Support**: Service worker for offline functionality
 - **Push Notifications**: Real-time notifications
 - **App-like Experience**: Native app feel in browser
 - **Installable**: Add to home screen functionality
 
 #### **2. Mobile Optimization**
+
 - **Responsive Design**: Mobile-first design approach
 - **Touch Optimization**: Touch-friendly interface
 - **Performance**: Optimized for mobile devices
@@ -459,6 +491,7 @@ Development Machine          VPS/Cloud Server
 ### **RESTful API Design**
 
 #### **1. API Structure**
+
 ```
 /api/v1/
 ├── auth/                    # Authentication endpoints
@@ -480,6 +513,7 @@ Development Machine          VPS/Cloud Server
 ```
 
 #### **2. API Features**
+
 - **Versioning**: API version management
 - **Rate Limiting**: Request throttling
 - **Authentication**: JWT token validation
@@ -490,12 +524,14 @@ Development Machine          VPS/Cloud Server
 ### **Monitoring Architecture**
 
 #### **1. Application Monitoring**
+
 - **Performance Metrics**: Response times, throughput
 - **Error Tracking**: Error rates and types
 - **User Experience**: Page load times, user interactions
 - **Business Metrics**: User engagement, content creation
 
 #### **2. Infrastructure Monitoring**
+
 - **Server Metrics**: CPU, memory, disk usage
 - **Database Performance**: Query performance, connection counts
 - **Network Metrics**: Bandwidth, latency
@@ -517,4 +553,4 @@ Development Machine          VPS/Cloud Server
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development

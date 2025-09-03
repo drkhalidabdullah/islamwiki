@@ -14,8 +14,10 @@ This document provides a detailed overview of all components within the IslamWik
 ### **1. Application Core (`src/Core/`)**
 
 #### **Application.php**
+
 **Purpose**: Main application class that orchestrates the entire framework
 **Responsibilities**:
+
 - Bootstrap the application
 - Register service providers
 - Initialize core services
@@ -23,6 +25,7 @@ This document provides a detailed overview of all components within the IslamWik
 - Manage application state
 
 **Key Methods**:
+
 ```php
 class Application
 {
@@ -42,14 +45,17 @@ class Application
 ```
 
 #### **Container/Container.php**
+
 **Purpose**: Dependency Injection Container for service management
 **Responsibilities**:
+
 - Register service bindings
 - Resolve service dependencies
 - Manage service lifecycles
 - Support singleton and transient services
 
 **Key Methods**:
+
 ```php
 class Container
 {
@@ -62,14 +68,17 @@ class Container
 ```
 
 #### **Http/Request.php**
+
 **Purpose**: HTTP request abstraction and handling
 **Responsibilities**:
+
 - Parse HTTP request data
 - Access GET, POST, SERVER, FILES, COOKIES
 - Handle request headers
 - Provide request validation methods
 
 **Key Methods**:
+
 ```php
 class Request
 {
@@ -87,14 +96,17 @@ class Request
 ```
 
 #### **Http/Response.php**
+
 **Purpose**: HTTP response handling and generation
 **Responsibilities**:
+
 - Set response content
 - Manage HTTP status codes
 - Handle response headers
 - Support different response types
 
 **Key Methods**:
+
 ```php
 class Response
 {
@@ -110,14 +122,17 @@ class Response
 ```
 
 #### **Routing/Router.php**
+
 **Purpose**: Route management and URL routing
 **Responsibilities**:
+
 - Register application routes
 - Handle route groups and prefixes
 - Match incoming requests to routes
 - Support middleware assignment
 
 **Key Methods**:
+
 ```php
 class Router
 {
@@ -133,14 +148,17 @@ class Router
 ```
 
 #### **Routing/Route.php**
+
 **Purpose**: Individual route definition and handling
 **Responsibilities**:
+
 - Store route information
 - Match URI patterns
 - Handle route parameters
 - Manage route middleware
 
 **Key Methods**:
+
 ```php
 class Route
 {
@@ -155,14 +173,17 @@ class Route
 ```
 
 #### **Middleware/MiddlewareStack.php**
+
 **Purpose**: Middleware pipeline management
 **Responsibilities**:
+
 - Manage middleware stack
 - Process requests through middleware
 - Handle middleware execution order
 - Support global and route-specific middleware
 
 **Key Methods**:
+
 ```php
 class MiddlewareStack
 {
@@ -177,14 +198,17 @@ class MiddlewareStack
 ### **2. Service Providers (`src/Providers/`)**
 
 #### **DatabaseServiceProvider.php**
+
 **Purpose**: Database service registration and configuration
 **Responsibilities**:
+
 - Register database connection
 - Configure database settings
 - Initialize database services
 - Handle database migrations
 
 **Registration**:
+
 ```php
 class DatabaseServiceProvider
 {
@@ -198,14 +222,17 @@ class DatabaseServiceProvider
 ```
 
 #### **AuthServiceProvider.php**
+
 **Purpose**: Authentication service registration
 **Responsibilities**:
+
 - Register authentication services
 - Configure JWT handling
 - Set up OAuth providers
 - Initialize session management
 
 **Registration**:
+
 ```php
 class AuthServiceProvider
 {
@@ -223,14 +250,17 @@ class AuthServiceProvider
 ```
 
 #### **CacheServiceProvider.php**
+
 **Purpose**: Caching service registration
 **Responsibilities**:
+
 - Register cache drivers
 - Configure cache settings
 - Initialize cache services
 - Handle cache strategies
 
 **Registration**:
+
 ```php
 class CacheServiceProvider
 {
@@ -244,14 +274,17 @@ class CacheServiceProvider
 ```
 
 #### **SecurityServiceProvider.php**
+
 **Purpose**: Security service registration
 **Responsibilities**:
+
 - Register security services
 - Configure CSRF protection
 - Set up encryption services
 - Initialize rate limiting
 
 **Registration**:
+
 ```php
 class SecurityServiceProvider
 {
@@ -273,6 +306,7 @@ class SecurityServiceProvider
 ### **1. React Application Structure**
 
 #### **Component Hierarchy**
+
 ```
 App.tsx
 ├── Router
@@ -298,8 +332,10 @@ App.tsx
 #### **Common Components (`src/components/common/`)**
 
 ##### **Button.tsx**
+
 **Purpose**: Reusable button component
 **Features**:
+
 - Multiple variants (primary, secondary, danger)
 - Different sizes (sm, md, lg)
 - Loading states
@@ -307,6 +343,7 @@ App.tsx
 - Accessibility features
 
 **Usage**:
+
 ```tsx
 <Button 
   variant="primary" 
@@ -319,8 +356,10 @@ App.tsx
 ```
 
 ##### **Input.tsx**
+
 **Purpose**: Form input component
 **Features**:
+
 - Text, email, password, textarea support
 - Validation states
 - Error messages
@@ -328,6 +367,7 @@ App.tsx
 - Accessibility features
 
 **Usage**:
+
 ```tsx
 <Input
   type="email"
@@ -340,8 +380,10 @@ App.tsx
 ```
 
 ##### **Modal.tsx**
+
 **Purpose**: Modal dialog component
 **Features**:
+
 - Backdrop click to close
 - ESC key to close
 - Focus management
@@ -349,6 +391,7 @@ App.tsx
 - Customizable content
 
 **Usage**:
+
 ```tsx
 <Modal
   isOpen={isModalOpen}
@@ -362,8 +405,10 @@ App.tsx
 #### **Layout Components (`src/components/layout/`)**
 
 ##### **Header.tsx**
+
 **Purpose**: Application header component
 **Features**:
+
 - Navigation menu
 - User authentication status
 - Search functionality
@@ -371,8 +416,10 @@ App.tsx
 - Mobile menu toggle
 
 ##### **Sidebar.tsx**
+
 **Purpose**: Navigation sidebar component
 **Features**:
+
 - Main navigation menu
 - User profile section
 - Quick actions
@@ -380,8 +427,10 @@ App.tsx
 - Mobile responsive
 
 ##### **Footer.tsx**
+
 **Purpose**: Application footer component
 **Features**:
+
 - Copyright information
 - Links to legal pages
 - Social media links
@@ -391,6 +440,7 @@ App.tsx
 #### **Feature Components (`src/components/features/`)**
 
 ##### **Wiki Components (`src/components/features/wiki/`)**
+
 - **ArticleEditor.tsx**: Markdown editor for articles
 - **ArticleViewer.tsx**: Article display component
 - **CategoryTree.tsx**: Category navigation tree
@@ -398,6 +448,7 @@ App.tsx
 - **ArticleHistory.tsx**: Article version history
 
 ##### **Social Components (`src/components/features/social/`)**
+
 - **PostCard.tsx**: Social post display
 - **CommentThread.tsx**: Comment discussion thread
 - **UserProfile.tsx**: User profile display
@@ -405,6 +456,7 @@ App.tsx
 - **GroupCard.tsx**: Group information display
 
 ##### **Learning Components (`src/components/features/learning/`)**
+
 - **CourseCard.tsx**: Course information display
 - **LessonPlayer.tsx**: Lesson content player
 - **ProgressBar.tsx**: Learning progress indicator
@@ -414,8 +466,10 @@ App.tsx
 #### **Admin Components (`src/components/admin/`)**
 
 ##### **Dashboard.tsx**
+
 **Purpose**: Admin dashboard overview
 **Features**:
+
 - System statistics
 - Recent activity
 - Quick actions
@@ -423,8 +477,10 @@ App.tsx
 - User activity charts
 
 ##### **UserManager.tsx**
+
 **Purpose**: User management interface
 **Features**:
+
 - User list with search and filters
 - User creation and editing
 - Role assignment
@@ -432,8 +488,10 @@ App.tsx
 - Bulk operations
 
 ##### **ContentManager.tsx**
+
 **Purpose**: Content management interface
 **Features**:
+
 - Content overview
 - Content approval workflow
 - Content statistics
@@ -443,6 +501,7 @@ App.tsx
 ### **2. State Management (Zustand)**
 
 #### **Store Structure**
+
 ```typescript
 // Auth Store
 interface AuthStore {
@@ -478,8 +537,10 @@ interface UIStore {
 ### **3. API Services (`src/services/`)**
 
 #### **api.ts**
+
 **Purpose**: Base API client configuration
 **Features**:
+
 - Axios instance configuration
 - Request/response interceptors
 - Error handling
@@ -487,8 +548,10 @@ interface UIStore {
 - Base URL configuration
 
 #### **auth.ts**
+
 **Purpose**: Authentication service
 **Features**:
+
 - User login/logout
 - User registration
 - Password reset
@@ -496,8 +559,10 @@ interface UIStore {
 - Token refresh
 
 #### **content.ts**
+
 **Purpose**: Content management service
 **Features**:
+
 - Article CRUD operations
 - Category management
 - Content search
@@ -509,24 +574,28 @@ interface UIStore {
 ### **1. Database Schema Components**
 
 #### **Core Tables**
+
 - **users**: User accounts and authentication
 - **roles**: User roles and permissions
 - **user_roles**: User-role relationships
 - **user_profiles**: Extended user information
 
 #### **Content Tables**
+
 - **content_categories**: Content categorization
 - **articles**: Wiki articles and content
 - **article_versions**: Content versioning
 - **comments**: User comments and discussions
 
 #### **Social Tables**
+
 - **posts**: Social media posts
 - **likes**: Post and comment likes
 - **follows**: User following relationships
 - **messages**: Private messages
 
 #### **Learning Tables**
+
 - **courses**: Learning courses
 - **lessons**: Course lessons
 - **enrollments**: User course enrollments
@@ -535,8 +604,10 @@ interface UIStore {
 ### **2. Database Abstraction Layer**
 
 #### **Connection.php**
+
 **Purpose**: Database connection management
 **Features**:
+
 - PDO connection handling
 - Connection pooling
 - Transaction management
@@ -544,8 +615,10 @@ interface UIStore {
 - Error handling
 
 #### **QueryBuilder.php**
+
 **Purpose**: Database query building
 **Features**:
+
 - Fluent query interface
 - Parameter binding
 - Query optimization
@@ -557,8 +630,10 @@ interface UIStore {
 ### **1. Authentication Components**
 
 #### **JWTManager.php**
+
 **Purpose**: JWT token management
 **Features**:
+
 - Token generation
 - Token validation
 - Token refresh
@@ -566,8 +641,10 @@ interface UIStore {
 - Expiration handling
 
 #### **OAuthManager.php**
+
 **Purpose**: OAuth 2.0 provider management
 **Features**:
+
 - Provider configuration
 - Authorization flow
 - Token exchange
@@ -577,8 +654,10 @@ interface UIStore {
 ### **2. Security Components**
 
 #### **CSRFProtection.php**
+
 **Purpose**: CSRF attack prevention
 **Features**:
+
 - Token generation
 - Token validation
 - Token expiration
@@ -586,8 +665,10 @@ interface UIStore {
 - Form protection
 
 #### **EncryptionService.php**
+
 **Purpose**: Data encryption and decryption
 **Features**:
+
 - AES encryption
 - Key management
 - Secure random generation
@@ -595,8 +676,10 @@ interface UIStore {
 - Salt generation
 
 #### **RateLimiter.php**
+
 **Purpose**: Request rate limiting
 **Features**:
+
 - Request counting
 - Time window management
 - IP-based limiting
@@ -608,8 +691,10 @@ interface UIStore {
 ### **1. Caching Components**
 
 #### **CacheManager.php**
+
 **Purpose**: Multi-level caching management
 **Features**:
+
 - File-based caching
 - Memory caching
 - Database caching
@@ -617,8 +702,10 @@ interface UIStore {
 - Cache statistics
 
 #### **FileCache.php**
+
 **Purpose**: File-based caching implementation
 **Features**:
+
 - File storage management
 - Cache expiration
 - Cache compression
@@ -628,8 +715,10 @@ interface UIStore {
 ### **2. Asset Management**
 
 #### **AssetManager.php**
+
 **Purpose**: Frontend asset management
 **Features**:
+
 - Asset compilation
 - Asset optimization
 - Asset versioning
@@ -641,8 +730,10 @@ interface UIStore {
 ### **1. Progressive Web App**
 
 #### **Service Worker**
+
 **Purpose**: Offline functionality and caching
 **Features**:
+
 - Offline content caching
 - Background sync
 - Push notifications
@@ -650,8 +741,10 @@ interface UIStore {
 - Update handling
 
 #### **PWA Manifest**
+
 **Purpose**: App-like experience configuration
 **Features**:
+
 - App name and description
 - Icons and splash screens
 - Theme colors
@@ -661,8 +754,10 @@ interface UIStore {
 ### **2. Mobile Optimization**
 
 #### **Responsive Components**
+
 **Purpose**: Mobile-friendly interface components
 **Features**:
+
 - Touch-friendly controls
 - Mobile navigation
 - Responsive layouts
@@ -674,8 +769,10 @@ interface UIStore {
 ### **1. Application Monitoring**
 
 #### **PerformanceMonitor.php**
+
 **Purpose**: Application performance tracking
 **Features**:
+
 - Response time monitoring
 - Memory usage tracking
 - Database query monitoring
@@ -683,8 +780,10 @@ interface UIStore {
 - Performance alerts
 
 #### **LogManager.php**
+
 **Purpose**: Application logging management
 **Features**:
+
 - Log level management
 - Log rotation
 - Log formatting
@@ -694,8 +793,10 @@ interface UIStore {
 ### **2. User Analytics**
 
 #### **AnalyticsService.php**
+
 **Purpose**: User behavior tracking
 **Features**:
+
 - Page view tracking
 - User interaction tracking
 - Conversion tracking
@@ -707,6 +808,7 @@ interface UIStore {
 ## 📚 **Component Integration**
 
 ### **Component Communication**
+
 - **Props**: Parent to child communication
 - **Events**: Child to parent communication
 - **Context**: Global state sharing
@@ -714,6 +816,7 @@ interface UIStore {
 - **Store**: Centralized state management
 
 ### **Component Lifecycle**
+
 - **Mounting**: Component initialization
 - **Updating**: Component re-rendering
 - **Unmounting**: Component cleanup
@@ -736,4 +839,4 @@ interface UIStore {
 **Next Update:** With v0.1.0 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development 
+**Status:** Active Development
