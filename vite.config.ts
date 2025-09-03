@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/', // Use absolute paths for production
   build: {
-    outDir: 'public',
+    outDir: 'dist', // Build to dist directory to preserve public files
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {

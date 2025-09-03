@@ -93,7 +93,6 @@ const Header: React.FC = () => {
                       <div className="font-medium text-gray-900">
                         {user?.first_name ? `${user.first_name} ${user.last_name}` : user?.username}
                       </div>
-                      <div className="text-xs text-gray-500">{user?.role_name === 'admin' ? 'Administrator' : 'User'}</div>
                     </div>
                     <svg className={`w-4 h-4 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

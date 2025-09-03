@@ -3,6 +3,11 @@ export { default as Button } from './ui/Button';
 export { default as Input } from './ui/Input';
 export { default as Card } from './ui/Card';
 export { default as Modal } from './ui/Modal';
+export { default as StatCard } from './ui/StatCard';
+export { default as ActivityTimeline } from './ui/ActivityTimeline';
+export { default as ProgressBar } from './ui/ProgressBar';
+export { default as TrendingTopics } from './ui/TrendingTopics';
+export { default as SuggestedActions } from './ui/SuggestedActions';
 
 // Layout Components
 export { default as Header } from './layout/Header';
