@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Switcher Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .language-switcher { margin: 10px 0; }
+        .flag { font-size: 24px; margin-right: 10px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .rtl { direction: rtl; text-align: right; }
+        .ltr { direction: ltr; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Language Switcher Test</h1>
+    
+    <div class="test-section">
+        <h2>API Test</h2>
+        <button onclick="testAPI()">Test Language API</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Switcher Test</h2>
+        <div class="language-switcher">
+            <button onclick="switchLanguage('en')">🇺🇸 English</button>
+            <button onclick="switchLanguage('ar')">🇸🇦 العربية</button>
+            <button onclick="switchLanguage('fr')">🇫🇷 Français</button>
+        </div>
+        <div id="current-lang">Current: English</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>RTL Test</h2>
+        <div id="rtl-test" class="ltr">
+            <p>This text should change direction when switching to Arabic.</p>
+            <p>هذا النص يجب أن يغير الاتجاه عند التبديل إلى العربية.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+        
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/language/current');
+                const data = await response.json();
+                document.getElementById('api-result').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = 
+                    '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function switchLanguage(langCode) {
+            try {
+                const response = await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ lang: langCode }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentLanguage = data.code;
+                    
+                    // Update display
+                    document.getElementById('current-lang').textContent = 
+                        'Current: ' + data.native_name;
+                    
+                    // Update RTL test
+                    const rtlTest = document.getElementById('rtl-test');
+                    if (data.direction === 'rtl') {
+                        rtlTest.className = 'rtl';
+                    } else {
+                        rtlTest.className = 'ltr';
+                    }
+                    
+                    // Update document direction
+                    document.documentElement.dir = data.direction;
+                    document.documentElement.lang = data.code;
+                    
+                    console.log('Language switched to:', data);
+                } else {
+                    console.error('Failed to switch language');
+                }
+            } catch (error) {
+                console.error('Error switching language:', error);
+            }
+        }
+        
+        // Test API on load
+        window.onload = function() {
+            testAPI();
+        };
+    </script>
+</body>
+</html>

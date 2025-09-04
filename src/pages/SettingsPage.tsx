@@ -130,7 +130,7 @@ const SettingsPage: React.FC = () => {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   // Language switching state
-  const [availableLanguages] = useState([
+  const [availableLanguages, setAvailableLanguages] = useState([
     { code: 'en', name: 'English', native_name: 'English', flag: '🇺🇸', direction: 'ltr' as const, is_active: true, is_default: true },
     { code: 'ar', name: 'Arabic', native_name: 'العربية', flag: '🇸🇦', direction: 'rtl' as const, is_active: true, is_default: false },
     { code: 'fr', name: 'French', native_name: 'Français', flag: '🇫🇷', direction: 'ltr' as const, is_active: true, is_default: false },
@@ -148,11 +148,25 @@ const SettingsPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const loadSettings = async () => {
+    // Also load available languages with correct current state
+    const langResponse = await fetch('/api/language/supported');
+    if (langResponse.ok) {
+      const languages = await langResponse.json();
+      const currentLang = await fetch('/api/language/current');
+      if (currentLang.ok) {
+        const currentLangData = await currentLang.json();
+        const updatedLanguages = languages.map((lang: any) => ({
+          ...lang,
+          is_current: lang.code === currentLangData.code
+        }));
+        setAvailableLanguages(updatedLanguages);
+      }
+    }
     try {
       setIsLoading(true);
-      const userSettings = await settingsService.getUserSettings();
-      if (userSettings && typeof userSettings === 'object') {
-        setSettings(userSettings as unknown as UserSettings);
+      const userSettingsResponse = await settingsService.getUserSettings();
+      if (userSettingsResponse && userSettingsResponse.success && userSettingsResponse.data) {
+        setSettings(userSettingsResponse.data as UserSettings);
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -403,10 +417,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="text"
-                        value={settings.account.username}
+                        value={settings.account?.username || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, username: e.target.value }
+                          account: { ...(prev.account || {}), username: e.target.value }
                         }))}
                         placeholder="Enter username"
                       />
@@ -418,10 +432,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="email"
-                        value={settings.account.email}
+                        value={settings.account?.email || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, email: e.target.value }
+                          account: { ...(prev.account || {}), email: e.target.value }
                         }))}
                         placeholder="Enter email"
                       />
@@ -433,10 +447,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="text"
-                        value={settings.account.first_name}
+                        value={settings.account?.first_name || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, first_name: e.target.value }
+                          account: { ...(prev.account || {}), first_name: e.target.value }
                         }))}
                         placeholder="Enter first name"
                       />
@@ -448,10 +462,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="text"
-                        value={settings.account.last_name}
+                        value={settings.account?.last_name || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, last_name: e.target.value }
+                          account: { ...(prev.account || {}), last_name: e.target.value }
                         }))}
                         placeholder="Enter last name"
                       />
@@ -463,10 +477,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="text"
-                        value={settings.account.display_name}
+                        value={settings.account?.display_name || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, display_name: e.target.value }
+                          account: { ...(prev.account || {}), display_name: e.target.value }
                         }))}
                         placeholder="Enter display name"
                       />
@@ -478,10 +492,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="tel"
-                        value={settings.account.phone}
+                        value={settings.account?.phone || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, phone: e.target.value }
+                          account: { ...(prev.account || {}), phone: e.target.value }
                         }))}
                         placeholder="Enter phone number"
                       />
@@ -493,10 +507,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="date"
-                        value={settings.account.date_of_birth}
+                        value={settings.account?.date_of_birth || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, date_of_birth: e.target.value }
+                          account: { ...(prev.account || {}), date_of_birth: e.target.value }
                         }))}
                       />
                     </div>
@@ -506,10 +520,10 @@ const SettingsPage: React.FC = () => {
                         Gender
                       </label>
                       <select
-                        value={settings.account.gender}
+                        value={settings.account?.gender || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, gender: e.target.value }
+                          account: { ...(prev.account || {}), gender: e.target.value }
                         }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
@@ -527,10 +541,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="text"
-                        value={settings.account.location}
+                        value={settings.account?.location || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, location: e.target.value }
+                          account: { ...(prev.account || {}), location: e.target.value }
                         }))}
                         placeholder="Enter location"
                       />
@@ -542,10 +556,10 @@ const SettingsPage: React.FC = () => {
                       </label>
                       <Input
                         type="url"
-                        value={settings.account.website}
+                        value={settings.account?.website || ''}
                         onChange={(e) => setSettings(prev => ({
                           ...prev,
-                          account: { ...prev.account, website: e.target.value }
+                          account: { ...(prev.account || {}), website: e.target.value }
                         }))}
                         placeholder="https://example.com"
                       />
@@ -557,10 +571,10 @@ const SettingsPage: React.FC = () => {
                       Bio
                     </label>
                     <Textarea
-                      value={settings.account.bio}
+                      value={settings.account?.bio || ''}
                       onChange={(e) => setSettings(prev => ({
                         ...prev,
-                        account: { ...prev.account, bio: e.target.value }
+                        account: { ...(prev.account || {}), bio: e.target.value }
                       }))}
                       placeholder="Tell us about yourself..."
                       rows={4}

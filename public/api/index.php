@@ -173,6 +173,11 @@ try {
             ]
         ]);
         
+    } elseif (strpos($endpoint, 'language') === 0) {
+        // Include language endpoints
+        include_once __DIR__ . '/language_endpoints.php';
+        handleLanguageEndpoints($endpoint);
+
     } elseif (strpos($endpoint, 'user/settings') === 0) {
         // User settings endpoint - handle both /user/settings and /user/settings/*
         

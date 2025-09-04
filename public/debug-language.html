@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Switcher Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Language Switcher Debug</h1>
+    
+    <div class="test-section">
+        <h2>1. API Test</h2>
+        <button onclick="testAPI()">Test Language API</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Console Errors</h2>
+        <div id="console-errors"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. React Components Test</h2>
+        <div id="react-test"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Language Switcher Test</h2>
+        <div id="language-test"></div>
+    </div>
+
+    <script>
+        // Capture console errors
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const errors = [];
+        
+        console.error = function(...args) {
+            errors.push({ type: 'error', message: args.join(' '), timestamp: new Date() });
+            originalError.apply(console, args);
+            updateConsoleErrors();
+        };
+        
+        console.warn = function(...args) {
+            errors.push({ type: 'warn', message: args.join(' '), timestamp: new Date() });
+            originalWarn.apply(console, args);
+            updateConsoleErrors();
+        };
+        
+        function updateConsoleErrors() {
+            const container = document.getElementById('console-errors');
+            if (errors.length === 0) {
+                container.innerHTML = '<p class="success">No console errors detected</p>';
+            } else {
+                container.innerHTML = '<h3>Console Errors/Warnings:</h3>' + 
+                    errors.map(err => `<p class="error">[${err.type.toUpperCase()}] ${err.message}</p>`).join('');
+            }
+        }
+        
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<p class="info">Testing API...</p>';
+            
+            try {
+                // Test current language endpoint
+                const response = await fetch('/api/language/current');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ API is working!</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ API Error: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ API Connection Failed</p>
+                    <p>Error: ${error.message}</p>
+                    <p>This might be a CORS issue or the API server is not running.</p>
+                `;
+            }
+        }
+        
+        function testReactComponents() {
+            const container = document.getElementById('react-test');
+            
+            // Check if React is loaded
+            if (typeof React !== 'undefined') {
+                container.innerHTML = '<p class="success">✅ React is loaded</p>';
+            } else {
+                container.innerHTML = '<p class="error">❌ React is not loaded</p>';
+            }
+            
+            // Check if our components exist
+            if (typeof window.LanguageSwitcher !== 'undefined') {
+                container.innerHTML += '<p class="success">✅ LanguageSwitcher component found</p>';
+            } else {
+                container.innerHTML += '<p class="error">❌ LanguageSwitcher component not found</p>';
+            }
+        }
+        
+        function testLanguageSwitcher() {
+            const container = document.getElementById('language-test');
+            
+            // Look for language switcher elements
+            const switchers = document.querySelectorAll('[class*="language"], [class*="Language"]');
+            if (switchers.length > 0) {
+                container.innerHTML = `
+                    <p class="success">✅ Found ${switchers.length} language switcher elements</p>
+                    <ul>
+                        ${Array.from(switchers).map(el => `<li>${el.className} - ${el.tagName}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                container.innerHTML = '<p class="error">❌ No language switcher elements found in DOM</p>';
+            }
+        }
+        
+        // Run tests on load
+        window.addEventListener('load', function() {
+            testAPI();
+            testReactComponents();
+            testLanguageSwitcher();
+            updateConsoleErrors();
+        });
+        
+        // Update console errors every second
+        setInterval(updateConsoleErrors, 1000);
+    </script>
+</body>
+</html>

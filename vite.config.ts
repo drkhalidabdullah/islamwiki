@@ -10,7 +10,7 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: false,
     rollupOptions: {
-      input: 'resources/index.html',
+      input: 'index.html',
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -24,4 +24,4 @@ export default defineConfig({
     port: 80, // Use port 80 as preferred
     host: true
   }
-}) 
+})

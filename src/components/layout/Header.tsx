@@ -1,9 +1,11 @@
+import { useTranslation } from '../../hooks/useTranslation';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import LanguageSwitcher from '../language/LanguageSwitcher';
 
 const Header: React.FC = () => {
+  const { t, setLanguage } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,7 +15,7 @@ const Header: React.FC = () => {
 
   // Language switching state
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [availableLanguages] = useState([
+  const [availableLanguages, setAvailableLanguages] = useState([
     { 
       code: 'en', 
       name: 'English', 
@@ -83,6 +85,12 @@ const Header: React.FC = () => {
         const langData = await response.json();
         setCurrentLanguage(langData.code);
         document.documentElement.dir = langData.direction;
+        
+        // Update available languages with correct is_current
+        setAvailableLanguages(prev => prev.map(lang => ({
+          ...lang,
+          is_current: lang.code === langData.code
+        })));
       }
     } catch (error) {
       console.error('Error loading current language:', error);
@@ -127,7 +135,16 @@ const Header: React.FC = () => {
       if (response.ok) {
         const newLangData = await response.json();
         setCurrentLanguage(newLangData.code);
+        // Update translation service
+        
+        setLanguage(newLangData.code);
         document.documentElement.dir = newLangData.direction;
+        
+        // Update available languages with correct is_current
+        setAvailableLanguages(prev => prev.map(lang => ({
+          ...lang,
+          is_current: lang.code === newLangData.code
+        })));
         
         // Show success message (you can implement a toast notification here)
         console.log(`Language switched to ${newLangData.native_name}`);
@@ -158,7 +175,7 @@ const Header: React.FC = () => {
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
-                placeholder="Search articles..."
+                placeholder={t('placeholder.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -177,7 +194,7 @@ const Header: React.FC = () => {
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">
-              Home
+              {t('nav.home')}
             </Link>
             
             {/* Language Switcher */}
@@ -301,13 +318,13 @@ const Header: React.FC = () => {
                   to="/login"
                   className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
                   className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                 >
-                  Register
+                  {t('nav.register')}
                 </Link>
               </div>
             )}
@@ -337,7 +354,7 @@ const Header: React.FC = () => {
               <form onSubmit={handleSearch} className="mb-4">
                 <input
                   type="text"
-                  placeholder="Search articles..."
+                  placeholder={t('placeholder.search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -403,14 +420,14 @@ const Header: React.FC = () => {
                     className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Login
+                    {t('nav.login')}
                   </Link>
                   <Link
                     to="/register"
                     className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Register
+                    {t('nav.register')}
                   </Link>
                 </>
               )}

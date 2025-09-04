@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Translation Test</h1>
+    
+    <div class="test-section">
+        <h2>Translation Service Test</h2>
+        <button onclick="testTranslations()">Test Translations</button>
+        <div id="translation-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Switch Test</h2>
+        <button onclick="switchToArabic()">Switch to Arabic</button>
+        <button onclick="switchToEnglish()">Switch to English</button>
+        <div id="language-result"></div>
+    </div>
+
+    <script>
+        // Mock translation service for testing
+        const translations = {
+            en: {
+                'nav.home': 'Home',
+                'nav.login': 'Login',
+                'nav.register': 'Register',
+                'placeholder.search': 'Search articles...'
+            },
+            ar: {
+                'nav.home': 'الرئيسية',
+                'nav.login': 'تسجيل الدخول',
+                'nav.register': 'إنشاء حساب',
+                'placeholder.search': 'البحث في المقالات...'
+            }
+        };
+        
+        let currentLanguage = 'en';
+        
+        function t(key, fallback) {
+            const translation = translations[currentLanguage];
+            if (translation && translation[key]) {
+                return translation[key];
+            }
+            return fallback || key;
+        }
+        
+        function testTranslations() {
+            const resultDiv = document.getElementById('translation-result');
+            const tests = [
+                { key: 'nav.home', expected: 'Home' },
+                { key: 'nav.login', expected: 'Login' },
+                { key: 'nav.register', expected: 'Register' },
+                { key: 'placeholder.search', expected: 'Search articles...' }
+            ];
+            
+            let html = '<h3>English Translations:</h3>';
+            tests.forEach(test => {
+                const result = t(test.key);
+                const status = result === test.expected ? '✅' : '❌';
+                html += `<p>${status} ${test.key}: "${result}" (expected: "${test.expected}")</p>`;
+            });
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        function switchToArabic() {
+            currentLanguage = 'ar';
+            const resultDiv = document.getElementById('language-result');
+            resultDiv.innerHTML = `
+                <h3>Arabic Translations:</h3>
+                <p>Home: "${t('nav.home')}"</p>
+                <p>Login: "${t('nav.login')}"</p>
+                <p>Register: "${t('nav.register')}"</p>
+                <p>Search: "${t('placeholder.search')}"</p>
+            `;
+        }
+        
+        function switchToEnglish() {
+            currentLanguage = 'en';
+            const resultDiv = document.getElementById('language-result');
+            resultDiv.innerHTML = `
+                <h3>English Translations:</h3>
+                <p>Home: "${t('nav.home')}"</p>
+                <p>Login: "${t('nav.login')}"</p>
+                <p>Register: "${t('nav.register')}"</p>
+                <p>Search: "${t('placeholder.search')}"</p>
+            `;
+        }
+        
+        // Test on load
+        window.onload = function() {
+            testTranslations();
+        };
+    </script>
+</body>
+</html>
