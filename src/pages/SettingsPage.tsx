@@ -8,8 +8,10 @@ import Textarea from '../components/ui/Textarea';
 import Modal from '../components/ui/Modal';
 import { settingsService, UserSettings } from '../services/settingsService';
 import { LanguagePreference } from '../components/settings/LanguagePreference';
+import { useTranslation } from '../hooks/useTranslation';
 
 const SettingsPage: React.FC = () => {
+  const { currentLanguage, setLanguage, availableLanguages } = useTranslation();
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<UserSettings>({
@@ -119,6 +121,7 @@ const SettingsPage: React.FC = () => {
       glossary_terms: true
     }
   });
+      // Removed orphaned console.log
 
   const [activeTab, setActiveTab] = useState<'account' | 'preferences' | 'security' | 'privacy' | 'notifications' | 'accessibility'>('account');
   const [isLoading, setIsLoading] = useState(true);
@@ -129,14 +132,6 @@ const SettingsPage: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
-  // Language switching state
-  const [availableLanguages, setAvailableLanguages] = useState([
-    { code: 'en', name: 'English', native_name: 'English', flag: '🇺🇸', direction: 'ltr' as const, is_active: true, is_default: true },
-    { code: 'ar', name: 'Arabic', native_name: 'العربية', flag: '🇸🇦', direction: 'rtl' as const, is_active: true, is_default: false },
-    { code: 'fr', name: 'French', native_name: 'Français', flag: '🇫🇷', direction: 'ltr' as const, is_active: true, is_default: false },
-    { code: 'es', name: 'Spanish', native_name: 'Español', flag: '🇪🇸', direction: 'ltr' as const, is_active: true, is_default: false },
-    { code: 'de', name: 'German', native_name: 'Deutsch', flag: '🇩🇪', direction: 'ltr' as const, is_active: true, is_default: false }
-  ]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -148,20 +143,6 @@ const SettingsPage: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const loadSettings = async () => {
-    // Also load available languages with correct current state
-    const langResponse = await fetch('/api/language/supported');
-    if (langResponse.ok) {
-      const languages = await langResponse.json();
-      const currentLang = await fetch('/api/language/current');
-      if (currentLang.ok) {
-        const currentLangData = await currentLang.json();
-        const updatedLanguages = languages.map((lang: any) => ({
-          ...lang,
-          is_current: lang.code === currentLangData.code
-        }));
-        setAvailableLanguages(updatedLanguages);
-      }
-    }
     try {
       setIsLoading(true);
       const userSettingsResponse = await settingsService.getUserSettings();
@@ -186,15 +167,52 @@ const SettingsPage: React.FC = () => {
   const handleSaveSettings = async () => {
     try {
       setIsSaving(true);
-      // Save each section separately to match the API
-      const response = await settingsService.updateUserSettings({
+      
+      // Save account settings (includes location and gender)
+      const accountResponse = await settingsService.updateUserSettings({
+        section: 'account',
+        data: settings.account
+      });
+      
+      // Save preferences settings
+      const preferencesResponse = await settingsService.updateUserSettings({
         section: 'preferences',
         data: settings.preferences
       });
-      if (response.success) {
-        showToastNotification('Settings saved successfully!', 'success');
+      
+      // Save security settings
+      const securityResponse = await settingsService.updateUserSettings({
+        section: 'security',
+        data: settings.security
+      });
+      
+      // Save privacy settings
+      const privacyResponse = await settingsService.updateUserSettings({
+        section: 'privacy',
+        data: settings.privacy
+      });
+      
+      // Save notifications settings
+      const notificationsResponse = await settingsService.updateUserSettings({
+        section: 'notifications',
+        data: settings.notifications
+      });
+      
+      // Save accessibility settings
+      const accessibilityResponse = await settingsService.updateUserSettings({
+        section: 'accessibility',
+        data: settings.accessibility
+      });
+      
+      // Check if all saves were successful
+      const allSuccessful = accountResponse.success && preferencesResponse.success && 
+                           securityResponse.success && privacyResponse.success && 
+                           notificationsResponse.success && accessibilityResponse.success;
+      
+      if (allSuccessful) {
+        showToastNotification('All settings saved successfully!', 'success');
       } else {
-        showToastNotification('Failed to save settings.', 'error');
+        showToastNotification('Some settings failed to save. Please try again.', 'error');
       }
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -205,6 +223,8 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleLanguageChange = async (languageCode: string) => {
+    // Update the shared translation service
+    setLanguage(languageCode);
     try {
       // Update local state immediately for UI responsiveness
       setSettings(prev => ({
@@ -220,6 +240,7 @@ const SettingsPage: React.FC = () => {
         },
         body: JSON.stringify({ lang: languageCode }),
       });
+      // Removed orphaned console.log
 
       if (response.ok) {
         const newLangData = await response.json();
@@ -590,7 +611,7 @@ const SettingsPage: React.FC = () => {
                   
                   {/* Language Preference Component */}
                   <LanguagePreference
-                    currentLanguage={settings.preferences.language}
+                    currentLanguage={currentLanguage}
                     availableLanguages={availableLanguages}
                     onLanguageChange={handleLanguageChange}
                     onSavePreferences={handleSaveLanguagePreferences}

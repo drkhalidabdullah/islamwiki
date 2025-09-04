@@ -1,9 +1,13 @@
 <?php
 
 /**
- * Language API Endpoints
+ * User-Specific Language API Endpoints
  * 
- * Handles language switching and detection
+ * Handles language switching and detection with user-specific preferences
+ * 
+ * @author Khalid Abdullah
+ * @version 0.0.6
+ * @license AGPL-3.0
  */
 
 // Mock language data
@@ -13,7 +17,7 @@ $languages = [
         'name' => 'English',
         'native_name' => 'English',
         'direction' => 'ltr',
-        'flag' => '🇺🇸',
+        'flag' => '��🇸',
         'is_active' => true,
         'is_default' => true
     ],
@@ -31,7 +35,7 @@ $languages = [
         'name' => 'French',
         'native_name' => 'Français',
         'direction' => 'ltr',
-        'flag' => '🇫🇷',
+        'flag' => '🇫��',
         'is_active' => true,
         'is_default' => false
     ],
@@ -55,52 +59,121 @@ $languages = [
     ]
 ];
 
-// Get current language from session, cookie, or default
+// Get current user from token
+function getCurrentUser() {
+    // Check if running under web server
+    if (!function_exists('getallheaders')) {
+        return null; // Not running under web server
+    }
+    
+    $headers = getallheaders();
+    $token = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
+    
+    if (empty($token)) {
+        return null; // Not logged in
+    }
+    
+    try {
+        // Decode token to get username
+        $tokenParts = explode('.', $token);
+        if (count($tokenParts) === 3) {
+            $payload = json_decode(base64_decode($tokenParts[1]), true);
+            return $payload['sub'] ?? null; // username
+        }
+    } catch (Exception $e) {
+        // Invalid token
+    }
+    
+    return null;
+}
+
+// Get current language - user-specific
 function getCurrentLanguage() {
     global $languages;
     
-    // Check URL parameter first
+    // Check URL parameter first (for testing)
     if (isset($_GET['lang']) && isset($languages[$_GET['lang']])) {
         return $_GET['lang'];
     }
     
-    // Check session
-    if (isset($_SESSION['language']) && isset($languages[$_SESSION['language']])) {
-        return $_SESSION['language'];
-    }
+    // Get current user
+    $username = getCurrentUser();
     
-    // Check cookie
-    if (isset($_COOKIE['language']) && isset($languages[$_COOKIE['language']])) {
-        return $_COOKIE['language'];
-    }
-    
-    // Check browser language
-    if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-        $browserLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        if (isset($languages[$browserLang])) {
-            return $browserLang;
+    if ($username) {
+        // User is logged in - get their language preference from database
+        try {
+            $dbConnection = new DatabaseConnection();
+            $pdo = $dbConnection->getConnection();
+            
+            $stmt = $pdo->prepare("
+                SELECT u.preferences 
+                FROM users u 
+                WHERE u.username = ?
+            ");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+            
+            if ($user && $user['preferences']) {
+                $preferences = json_decode($user['preferences'], true);
+                $userLang = $preferences['language'] ?? 'en';
+                if (isset($languages[$userLang])) {
+                    return $userLang;
+                }
+            }
+        } catch (Exception $e) {
+            // Database error, default to English
         }
     }
     
-    // Default to English
+    // Not logged in or no preference - default to English
     return 'en';
 }
 
-// Set language preference
-function setLanguagePreference($langCode) {
+// Set language preference for user
+function setUserLanguagePreference($username, $langCode) {
     global $languages;
     
     if (!isset($languages[$langCode])) {
         return false;
     }
     
-    // Set session
-    $_SESSION['language'] = $langCode;
+    if (!$username) {
+        return false; // Can't set preference if not logged in
+    }
     
-    // Set cookie (1 year)
-    setcookie('language', $langCode, time() + (365 * 24 * 60 * 60), '/', '', false, true);
-    
-    return true;
+    try {
+        $dbConnection = new DatabaseConnection();
+        $pdo = $dbConnection->getConnection();
+        
+        // Get current user preferences
+        $stmt = $pdo->prepare("
+            SELECT u.preferences 
+            FROM users u 
+            WHERE u.username = ?
+        ");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+        
+        $preferences = [];
+        if ($user && $user['preferences']) {
+            $preferences = json_decode($user['preferences'], true) ?: [];
+        }
+        
+        // Update language preference
+        $preferences['language'] = $langCode;
+        
+        // Save back to database
+        $updateStmt = $pdo->prepare("
+            UPDATE users 
+            SET preferences = ? 
+            WHERE username = ?
+        ");
+        $updateStmt->execute([json_encode($preferences), $username]);
+        
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 
 // Handle language endpoints
@@ -148,19 +221,48 @@ function handleLanguageEndpoints($endpoint) {
             switch ($languageEndpoint) {
                 case 'switch':
                     $input = json_decode(file_get_contents('php://input'), true);
-                    $langCode = $input['lang'] ?? null;
+                    $langCode = $input['lang'] ?? '';
                     
-                    if (!$langCode || !isset($languages[$langCode])) {
+                    if (empty($langCode) || !isset($languages[$langCode])) {
                         http_response_code(400);
-                        echo json_encode(['error' => 'Invalid language code']);
+                        echo json_encode([
+                            'success' => false,
+                            'error' => 'Invalid language code'
+                        ]);
                         break;
                     }
                     
-                    if (setLanguagePreference($langCode)) {
-                        echo json_encode($languages[$langCode]);
+                    // Get current user
+                    $username = getCurrentUser();
+                    
+                    if ($username) {
+                        // User is logged in - save their preference
+                        if (setUserLanguagePreference($username, $langCode)) {
+                            echo json_encode([
+                                'success' => true,
+                                'code' => $langCode,
+                                'name' => $languages[$langCode]['name'],
+                                'native_name' => $languages[$langCode]['native_name'],
+                                'direction' => $languages[$langCode]['direction'],
+                                'message' => 'Language preference saved for user'
+                            ]);
+                        } else {
+                            http_response_code(500);
+                            echo json_encode([
+                                'success' => false,
+                                'error' => 'Failed to save language preference'
+                            ]);
+                        }
                     } else {
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Failed to set language preference']);
+                        // Not logged in - just return the language info (no saving)
+                        echo json_encode([
+                            'success' => true,
+                            'code' => $langCode,
+                            'name' => $languages[$langCode]['name'],
+                            'native_name' => $languages[$langCode]['native_name'],
+                            'direction' => $languages[$langCode]['direction'],
+                            'message' => 'Language switched (not saved - user not logged in)'
+                        ]);
                     }
                     break;
                     
@@ -177,3 +279,6 @@ function handleLanguageEndpoints($endpoint) {
             break;
     }
 }
+
+// Export the function for use in index.php
+return 'handleLanguageEndpoints';

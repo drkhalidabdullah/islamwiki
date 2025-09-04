@@ -18,6 +18,7 @@ $path = parse_url($requestUri, PHP_URL_PATH);
 $endpoint = str_replace('/api', '', $path);
 $endpoint = trim($endpoint, '/');
 
+
 // Database connection class
 class DatabaseConnection {
     private $pdo;
@@ -343,7 +344,7 @@ try {
                     if ($username) {
                         // Get user data by username
                         $stmt = $pdo->prepare("
-                            SELECT u.*, uss.*, u.preferences as user_preferences
+                            SELECT u.*, uss.*, u.preferences
                             FROM users u
                             LEFT JOIN user_security_settings uss ON u.id = uss.user_id
                             WHERE u.username = ?
@@ -352,7 +353,7 @@ try {
                         $user = $stmt->fetch();
                         
                         if ($user) {
-                            $preferences = json_decode($user['user_preferences'] ?? '{}', true);
+                            $preferences = json_decode($user['preferences'] ?? '{}', true);
                             
                             // Debug: Log the preferences structure
                             error_log("User preferences: " . json_encode($preferences));

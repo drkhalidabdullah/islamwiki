@@ -1,6 +1,6 @@
 {
   "name": "islamwiki-framework",
-  "version": "0.0.5.4",
+  "version": "0.0.6.0",
   "description": "A comprehensive Islamic knowledge platform built for shared hosting with enterprise-grade features",
   "type": "module",
   "scripts": {

@@ -323,13 +323,13 @@ class TranslationService {
   /**
    * Get all available languages
    */
-  getAvailableLanguages(): Array<{code: string, name: string, native_name: string}> {
+  getAvailableLanguages(): Array<{code: string, name: string, native_name: string, flag: string, direction: 'ltr' | 'rtl', is_active: boolean, is_default: boolean}> {
     return [
-      { code: 'en', name: 'English', native_name: this.t('language.english') },
-      { code: 'ar', name: 'Arabic', native_name: this.t('language.arabic') },
-      { code: 'fr', name: 'French', native_name: this.t('language.french') },
-      { code: 'es', name: 'Spanish', native_name: this.t('language.spanish') },
-      { code: 'de', name: 'German', native_name: this.t('language.german') },
+      { code: 'en', name: 'English', native_name: this.t('language.english'), flag: '🇺🇸', direction: 'ltr' as const, is_active: true, is_default: true },
+      { code: 'ar', name: 'Arabic', native_name: this.t('language.arabic'), flag: '🇸🇦', direction: 'rtl' as const, is_active: true, is_default: false },
+      { code: 'fr', name: 'French', native_name: this.t('language.french'), flag: '🇫🇷', direction: 'ltr' as const, is_active: true, is_default: false },
+      { code: 'es', name: 'Spanish', native_name: this.t('language.spanish'), flag: '🇪🇸', direction: 'ltr' as const, is_active: true, is_default: false },
+      { code: 'de', name: 'German', native_name: this.t('language.german'), flag: '🇩🇪', direction: 'ltr' as const, is_active: true, is_default: false }
     ];
   }
 }

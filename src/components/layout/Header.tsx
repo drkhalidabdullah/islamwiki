@@ -5,7 +5,7 @@ import { useAuthStore } from '../../store/authStore';
 import LanguageSwitcher from '../language/LanguageSwitcher';
 
 const Header: React.FC = () => {
-  const { t, setLanguage } = useTranslation();
+  const { t, setLanguage, availableLanguages, currentLanguage } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,88 +14,11 @@ const Header: React.FC = () => {
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   // Language switching state
-  const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [availableLanguages, setAvailableLanguages] = useState([
-    { 
-      code: 'en', 
-      name: 'English', 
-      native_name: 'English', 
-      flag: '🇺🇸', 
-      direction: 'ltr' as const, 
-      is_active: true, 
-      is_default: true,
-      url: '?lang=en',
-      is_current: true
-    },
-    { 
-      code: 'ar', 
-      name: 'Arabic', 
-      native_name: 'العربية', 
-      flag: '🇸🇦', 
-      direction: 'rtl' as const, 
-      is_active: true, 
-      is_default: false,
-      url: '?lang=ar',
-      is_current: false
-    },
-    { 
-      code: 'fr', 
-      name: 'French', 
-      native_name: 'Français', 
-      flag: '🇫🇷', 
-      direction: 'ltr' as const, 
-      is_active: true, 
-      is_default: false,
-      url: '?lang=fr',
-      is_current: false
-    },
-    { 
-      code: 'es', 
-      name: 'Spanish', 
-      native_name: 'Español', 
-      flag: '🇪🇸', 
-      direction: 'ltr' as const, 
-      is_active: true, 
-      is_default: false,
-      url: '?lang=es',
-      is_current: false
-    },
-    { 
-      code: 'de', 
-      name: 'German', 
-      native_name: 'Deutsch', 
-      flag: '🇩🇪', 
-      direction: 'ltr' as const, 
-      is_active: true, 
-      is_default: false,
-      url: '?lang=de',
-      is_current: false
-    }
-  ]);
 
   // Load current language on component mount
   useEffect(() => {
-    loadCurrentLanguage();
   }, []);
 
-  const loadCurrentLanguage = async () => {
-    try {
-      const response = await fetch('/api/language/current');
-      if (response.ok) {
-        const langData = await response.json();
-        setCurrentLanguage(langData.code);
-        document.documentElement.dir = langData.direction;
-        
-        // Update available languages with correct is_current
-        setAvailableLanguages(prev => prev.map(lang => ({
-          ...lang,
-          is_current: lang.code === langData.code
-        })));
-      }
-    } catch (error) {
-      console.error('Error loading current language:', error);
-    }
-  };
 
   // Close profile dropdown when clicking outside
   useEffect(() => {
@@ -123,37 +46,13 @@ const Header: React.FC = () => {
   };
 
   const handleLanguageChange = async (languageCode: string) => {
-    try {
-      const response = await fetch('/api/language/switch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ lang: languageCode }),
-      });
+    // Use the shared translation service
+    setLanguage(languageCode);
+  };
 
-      if (response.ok) {
-        const newLangData = await response.json();
-        setCurrentLanguage(newLangData.code);
-        // Update translation service
-        
-        setLanguage(newLangData.code);
-        document.documentElement.dir = newLangData.direction;
-        
-        // Update available languages with correct is_current
-        setAvailableLanguages(prev => prev.map(lang => ({
-          ...lang,
-          is_current: lang.code === newLangData.code
-        })));
-        
-        // Show success message (you can implement a toast notification here)
-        console.log(`Language switched to ${newLangData.native_name}`);
-      } else {
-        throw new Error('Failed to switch language');
-      }
-    } catch (error) {
-      console.error('Error switching language:', error);
-    }
+  const handleLanguageChangeOld = async (languageCode: string) => {
+    // Use the shared translation service
+    setLanguage(languageCode);
   };
 
   return (
