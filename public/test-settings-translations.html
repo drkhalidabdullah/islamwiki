@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Settings Translations</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .arabic-text { color: #0066cc; font-weight: bold; direction: rtl; }
+        .english-text { color: #666; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .translation-test { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .settings-tabs { display: flex; gap: 10px; margin: 20px 0; }
+        .tab { padding: 10px 20px; background: #e9ecef; border: none; border-radius: 4px; cursor: pointer; }
+        .tab.active { background: #007bff; color: white; }
+        .accessibility-option { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Settings Page Translation Test</h1>
+    
+    <div class="test-section">
+        <h2>Language Switching</h2>
+        <button onclick="switchLanguage('en')">English</button>
+        <button onclick="switchLanguage('ar')">العربية</button>
+        <button onclick="switchLanguage('fr')">Français</button>
+        <p>Current Language: <span id="currentLang">en</span></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings Page Header</h2>
+        <h1 id="settingsTitle">Settings</h1>
+        <p id="settingsDescription">Manage your account settings and preferences</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings Tabs</h2>
+        <div class="settings-tabs">
+            <button class="tab active" id="accountTab">Account</button>
+            <button class="tab" id="preferencesTab">Preferences</button>
+            <button class="tab" id="securityTab">Security</button>
+            <button class="tab" id="privacyTab">Privacy</button>
+            <button class="tab" id="notificationsTab">Notifications</button>
+            <button class="tab" id="accessibilityTab">Accessibility</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Accessibility Settings</h2>
+        <div class="accessibility-option">
+            <label>
+                <input type="checkbox" id="highContrast">
+                <span id="highContrastLabel">High Contrast</span>
+            </label>
+            <p id="highContrastDesc">Increase contrast for better visibility</p>
+        </div>
+        
+        <div class="accessibility-option">
+            <label>
+                <input type="checkbox" id="screenReader">
+                <span id="screenReaderLabel">Screen Reader Support</span>
+            </label>
+            <p id="screenReaderDesc">Optimize for screen readers</p>
+        </div>
+        
+        <div class="accessibility-option">
+            <label>
+                <input type="checkbox" id="keyboardNav">
+                <span id="keyboardNavLabel">Keyboard Navigation</span>
+            </label>
+            <p id="keyboardNavDesc">Enable keyboard-only navigation</p>
+        </div>
+        
+        <div class="accessibility-option">
+            <label>
+                <input type="checkbox" id="reducedMotion">
+                <span id="reducedMotionLabel">Reduced Motion</span>
+            </label>
+            <p id="reducedMotionDesc">Reduce animations and transitions</p>
+        </div>
+        
+        <div class="accessibility-option">
+            <label>
+                <input type="checkbox" id="colorBlind">
+                <span id="colorBlindLabel">Color Blind Support</span>
+            </label>
+            <p id="colorBlindDesc">Optimize colors for color vision deficiency</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Action Buttons</h2>
+        <button id="saveButton">Save Settings</button>
+        <button id="savingButton" style="display: none;">Saving...</button>
+    </div>
+    
+    <script>
+        // Translation data
+        const translations = {
+            en: {
+                'settings.title': 'Settings',
+                'settings.account': 'Account',
+                'settings.preferences': 'Preferences',
+                'settings.security': 'Security',
+                'settings.privacy': 'Privacy',
+                'settings.notifications': 'Notifications',
+                'settings.accessibility': 'Accessibility',
+                'settings.accessibility.highContrast': 'High Contrast',
+                'settings.accessibility.screenReaderSupport': 'Screen Reader Support',
+                'settings.accessibility.keyboardNavigation': 'Keyboard Navigation',
+                'settings.accessibility.reducedMotion': 'Reduced Motion',
+                'settings.accessibility.colorBlindSupport': 'Color Blind Support',
+                'settings.accessibility.highContrastDesc': 'Increase contrast for better visibility',
+                'settings.accessibility.screenReaderSupportDesc': 'Optimize for screen readers',
+                'settings.accessibility.keyboardNavigationDesc': 'Enable keyboard-only navigation',
+                'settings.accessibility.reducedMotionDesc': 'Reduce animations and transitions',
+                'settings.accessibility.colorBlindSupportDesc': 'Optimize colors for color vision deficiency',
+                'settings.save': 'Save Settings',
+                'settings.saving': 'Saving...'
+            },
+            ar: {
+                'settings.title': 'الإعدادات',
+                'settings.account': 'الحساب',
+                'settings.preferences': 'التفضيلات',
+                'settings.security': 'الأمان',
+                'settings.privacy': 'الخصوصية',
+                'settings.notifications': 'الإشعارات',
+                'settings.accessibility': 'إمكانية الوصول',
+                'settings.accessibility.highContrast': 'تباين عالي',
+                'settings.accessibility.screenReaderSupport': 'دعم قارئ الشاشة',
+                'settings.accessibility.keyboardNavigation': 'التنقل بلوحة المفاتيح',
+                'settings.accessibility.reducedMotion': 'حركة مخفضة',
+                'settings.accessibility.colorBlindSupport': 'دعم عمى الألوان',
+                'settings.accessibility.highContrastDesc': 'زيادة التباين لرؤية أفضل',
+                'settings.accessibility.screenReaderSupportDesc': 'تحسين لقارئات الشاشة',
+                'settings.accessibility.keyboardNavigationDesc': 'تمكين التنقل بلوحة المفاتيح فقط',
+                'settings.accessibility.reducedMotionDesc': 'تقليل الرسوم المتحركة والانتقالات',
+                'settings.accessibility.colorBlindSupportDesc': 'تحسين الألوان لضعف رؤية الألوان',
+                'settings.save': 'حفظ الإعدادات',
+                'settings.saving': 'جاري الحفظ...'
+            },
+            fr: {
+                'settings.title': 'Paramètres',
+                'settings.account': 'Compte',
+                'settings.preferences': 'Préférences',
+                'settings.security': 'Sécurité',
+                'settings.privacy': 'Confidentialité',
+                'settings.notifications': 'Notifications',
+                'settings.accessibility': 'Accessibilité',
+                'settings.accessibility.highContrast': 'Contraste élevé',
+                'settings.accessibility.screenReaderSupport': 'Support lecteur d\'écran',
+                'settings.accessibility.keyboardNavigation': 'Navigation clavier',
+                'settings.accessibility.reducedMotion': 'Mouvement réduit',
+                'settings.accessibility.colorBlindSupport': 'Support daltonisme',
+                'settings.accessibility.highContrastDesc': 'Augmenter le contraste pour une meilleure visibilité',
+                'settings.accessibility.screenReaderSupportDesc': 'Optimiser pour les lecteurs d\'écran',
+                'settings.accessibility.keyboardNavigationDesc': 'Activer la navigation au clavier uniquement',
+                'settings.accessibility.reducedMotionDesc': 'Réduire les animations et transitions',
+                'settings.accessibility.colorBlindSupportDesc': 'Optimiser les couleurs pour les déficiences visuelles',
+                'settings.save': 'Enregistrer les paramètres',
+                'settings.saving': 'Enregistrement...'
+            }
+        };
+        
+        let currentLang = 'en';
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('currentLang').textContent = lang;
+            
+            // Update all text elements
+            document.getElementById('settingsTitle').textContent = translations[lang]['settings.title'];
+            document.getElementById('accountTab').textContent = translations[lang]['settings.account'];
+            document.getElementById('preferencesTab').textContent = translations[lang]['settings.preferences'];
+            document.getElementById('securityTab').textContent = translations[lang]['settings.security'];
+            document.getElementById('privacyTab').textContent = translations[lang]['settings.privacy'];
+            document.getElementById('notificationsTab').textContent = translations[lang]['settings.notifications'];
+            document.getElementById('accessibilityTab').textContent = translations[lang]['settings.accessibility'];
+            
+            document.getElementById('highContrastLabel').textContent = translations[lang]['settings.accessibility.highContrast'];
+            document.getElementById('screenReaderLabel').textContent = translations[lang]['settings.accessibility.screenReaderSupport'];
+            document.getElementById('keyboardNavLabel').textContent = translations[lang]['settings.accessibility.keyboardNavigation'];
+            document.getElementById('reducedMotionLabel').textContent = translations[lang]['settings.accessibility.reducedMotion'];
+            document.getElementById('colorBlindLabel').textContent = translations[lang]['settings.accessibility.colorBlindSupport'];
+            
+            document.getElementById('highContrastDesc').textContent = translations[lang]['settings.accessibility.highContrastDesc'];
+            document.getElementById('screenReaderDesc').textContent = translations[lang]['settings.accessibility.screenReaderSupportDesc'];
+            document.getElementById('keyboardNavDesc').textContent = translations[lang]['settings.accessibility.keyboardNavigationDesc'];
+            document.getElementById('reducedMotionDesc').textContent = translations[lang]['settings.accessibility.reducedMotionDesc'];
+            document.getElementById('colorBlindDesc').textContent = translations[lang]['settings.accessibility.colorBlindSupportDesc'];
+            
+            document.getElementById('saveButton').textContent = translations[lang]['settings.save'];
+            document.getElementById('savingButton').textContent = translations[lang]['settings.saving'];
+            
+            // Update document direction for Arabic
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+            }
+        }
+        
+        // Initialize with English
+        switchLanguage('en');
+    </script>
+</body>
+</html>

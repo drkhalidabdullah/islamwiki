@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Settings Page Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Backend API Test</h2>
+        <button onclick="testBackend()">Test Backend API</button>
+        <div id="backendResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Frontend Test</h2>
+        <button onclick="testFrontend()">Test Frontend</button>
+        <div id="frontendResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings Page Test</h2>
+        <div class="info">
+            <strong>Manual Test:</strong><br>
+            1. Click "Test Backend API" and "Test Frontend" above<br>
+            2. Go to <a href="/settings" target="_blank">Settings Page</a><br>
+            3. Check if you see Arabic text when language is set to Arabic<br>
+            4. Check browser console for any JavaScript errors
+        </div>
+    </div>
+    
+    <script>
+        async function testBackend() {
+            const results = document.getElementById('backendResults');
+            results.innerHTML = '<div class="info">Testing backend API...</div>';
+            
+            try {
+                // Test language switching
+                const switchResponse = await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: 'ar' })
+                });
+                const switchData = await switchResponse.json();
+                
+                // Test current language
+                const currentResponse = await fetch('/api/language/current');
+                const currentData = await currentResponse.json();
+                
+                if (switchData.success && currentData.code === 'ar') {
+                    results.innerHTML = `
+                        <div class="success">
+                            ✅ Backend API Working!<br>
+                            Switch: ${switchData.native_name}<br>
+                            Current: ${currentData.native_name}<br>
+                            Message: ${switchData.message}
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML = `<div class="error">❌ Backend API Failed</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testFrontend() {
+            const results = document.getElementById('frontendResults');
+            results.innerHTML = '<div class="info">Testing frontend...</div>';
+            
+            try {
+                // Test if the built JavaScript file exists
+                const response = await fetch('/assets/index-5f44cbc6.js');
+                if (response.ok) {
+                    const jsContent = await response.text();
+                    const hasTranslationKeys = jsContent.includes('settings.title');
+                    const hasUseTranslation = jsContent.includes('useTranslation');
+                    
+                    if (hasTranslationKeys && hasUseTranslation) {
+                        results.innerHTML = `
+                            <div class="success">
+                                ✅ Frontend Build Working!<br>
+                                Translation keys: ${hasTranslationKeys ? 'Found' : 'Missing'}<br>
+                                useTranslation hook: ${hasUseTranslation ? 'Found' : 'Missing'}<br>
+                                File size: ${(jsContent.length / 1024).toFixed(1)} KB
+                            </div>
+                        `;
+                    } else {
+                        results.innerHTML = `<div class="error">❌ Frontend Build Issues</div>`;
+                    }
+                } else {
+                    results.innerHTML = `<div class="error">❌ Built JavaScript file not found</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Auto-run tests
+        window.onload = function() {
+            testBackend();
+            setTimeout(() => testFrontend(), 1000);
+        };
+    </script>
+</body>
+</html>

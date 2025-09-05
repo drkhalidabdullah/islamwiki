@@ -256,5 +256,4 @@ export const useAuthStore = create<AuthStore>()(
         tokenExpiration: state.tokenExpiration,
       }),
     }
-  )
-); 
+  ));

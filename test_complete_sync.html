@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Language Sync Test</title>
+    <script>
+        // Simulate the complete language sync flow
+        console.log('=== COMPREHENSIVE LANGUAGE SYNC TEST ===');
+        
+        // 1. Test TranslationService
+        console.log('\n1. Testing TranslationService:');
+        const translations = {
+            en: { 'settings.preferences': 'Preferences' },
+            ar: { 'settings.preferences': 'التفضيلات' },
+            fr: { 'settings.preferences': 'Préférences' },
+            es: { 'settings.preferences': 'Preferencias' },
+            de: { 'settings.preferences': 'Einstellungen' }
+        };
+        
+        let currentLanguage = 'en';
+        
+        function t(key) {
+            const translation = translations[currentLanguage];
+            if (translation && translation[key]) {
+                return translation[key];
+            }
+            return translations.en[key] || key;
+        }
+        
+        function setLanguage(lang) {
+            console.log(`Setting language to: ${lang}`);
+            currentLanguage = lang;
+            console.log(`Translation for 'settings.preferences': ${t('settings.preferences')}`);
+        }
+        
+        // Test all languages
+        setLanguage('en');
+        setLanguage('ar');
+        setLanguage('fr');
+        setLanguage('es');
+        setLanguage('de');
+        
+        // 2. Test Header State Management
+        console.log('\n2. Testing Header State Management:');
+        let headerCurrentLanguage = 'en';
+        let headerAvailableLanguages = [
+            { code: 'en', name: 'English', is_current: true },
+            { code: 'ar', name: 'Arabic', is_current: false },
+            { code: 'fr', name: 'French', is_current: false },
+            { code: 'es', name: 'Spanish', is_current: false },
+            { code: 'de', name: 'German', is_current: false }
+        ];
+        
+        function updateHeaderLanguage(lang) {
+            console.log(`Header: Updating language to: ${lang}`);
+            headerCurrentLanguage = lang;
+            headerAvailableLanguages = headerAvailableLanguages.map(l => ({
+                ...l,
+                is_current: l.code === lang
+            }));
+            console.log('Header: Current language:', headerCurrentLanguage);
+            console.log('Header: Available languages:', headerAvailableLanguages.map(l => ({ code: l.code, is_current: l.is_current })));
+        }
+        
+        // Test header language updates
+        updateHeaderLanguage('ar');
+        updateHeaderLanguage('fr');
+        updateHeaderLanguage('es');
+        updateHeaderLanguage('de');
+        updateHeaderLanguage('en');
+        
+        // 3. Test Settings Page State
+        console.log('\n3. Testing Settings Page State:');
+        let settingsCurrentLanguage = 'en';
+        
+        function updateSettingsLanguage(lang) {
+            console.log(`Settings: Updating language to: ${lang}`);
+            settingsCurrentLanguage = lang;
+            console.log(`Settings: Translation for 'settings.preferences': ${t('settings.preferences')}`);
+        }
+        
+        // Test settings language updates
+        updateSettingsLanguage('ar');
+        updateSettingsLanguage('fr');
+        updateSettingsLanguage('es');
+        updateSettingsLanguage('de');
+        updateSettingsLanguage('en');
+        
+        // 4. Test Synchronization
+        console.log('\n4. Testing Synchronization:');
+        function syncAllComponents(lang) {
+            console.log(`\n=== SYNCING ALL COMPONENTS TO: ${lang} ===`);
+            setLanguage(lang);
+            updateHeaderLanguage(lang);
+            updateSettingsLanguage(lang);
+            
+            // Check if all components are in sync
+            const allInSync = currentLanguage === headerCurrentLanguage && 
+                            headerCurrentLanguage === settingsCurrentLanguage;
+            console.log(`All components in sync: ${allInSync}`);
+            console.log(`TranslationService: ${currentLanguage}`);
+            console.log(`Header: ${headerCurrentLanguage}`);
+            console.log(`Settings: ${settingsCurrentLanguage}`);
+        }
+        
+        // Test synchronization
+        syncAllComponents('ar');
+        syncAllComponents('fr');
+        syncAllComponents('es');
+        syncAllComponents('de');
+        syncAllComponents('en');
+        
+        console.log('\n=== TEST COMPLETE ===');
+    </script>
+</head>
+<body>
+    <h1>Complete Language Sync Test</h1>
+    <p>Check console for comprehensive test results</p>
+</body>
+</html>

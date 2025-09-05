@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import LanguageSwitcher from '../language/LanguageSwitcher';
+import { translationService } from '../../services/translation/TranslationService';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +14,7 @@ const Header: React.FC = () => {
 
   // Language switching state
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [availableLanguages] = useState([
+  const [availableLanguages, setAvailableLanguages] = useState([
     { 
       code: 'en', 
       name: 'English', 
@@ -76,6 +77,22 @@ const Header: React.FC = () => {
     loadCurrentLanguage();
   }, []);
 
+  // Listen to TranslationService changes (from preferences section)
+  useEffect(() => {
+    const unsubscribe = translationService.onLanguageChange((lang) => {
+      console.log('Header: TranslationService language change received:', lang);
+      setCurrentLanguage(lang);
+      
+      // Update is_current property for all languages
+      setAvailableLanguages(prev => prev.map(language => ({
+        ...language,
+        is_current: language.code === lang
+      })));
+    });
+    
+    return unsubscribe;
+  }, []);
+
   const loadCurrentLanguage = async () => {
     try {
       const response = await fetch('/api/language/current');
@@ -83,6 +100,19 @@ const Header: React.FC = () => {
         const langData = await response.json();
         setCurrentLanguage(langData.code);
         document.documentElement.dir = langData.direction;
+        
+        // Sync with TranslationService
+        translationService.setLanguage(langData.code);
+        
+        // Update is_current property for all languages
+        setAvailableLanguages(prev => {
+          const updated = prev.map(lang => ({
+            ...lang,
+            is_current: lang.code === langData.code
+          }));
+          console.log('Header: loadCurrentLanguage - Updated languages:', updated.map(l => ({ code: l.code, is_current: l.is_current })));
+          return updated;
+        });
       }
     } catch (error) {
       console.error('Error loading current language:', error);
@@ -121,6 +151,7 @@ const Header: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ lang: languageCode }),
       });
 
@@ -128,6 +159,18 @@ const Header: React.FC = () => {
         const newLangData = await response.json();
         setCurrentLanguage(newLangData.code);
         document.documentElement.dir = newLangData.direction;
+        
+        // Update TranslationService to notify all components
+        translationService.setLanguage(newLangData.code);
+        
+        // Update is_current property for all languages
+        setAvailableLanguages(prev => prev.map(lang => ({
+          ...lang,
+          is_current: lang.code === newLangData.code
+        })));
+        
+        // Force a re-render to ensure the language switcher updates
+        console.log('Header: Updated availableLanguages with is_current:', newLangData.code);
         
         // Show success message (you can implement a toast notification here)
         console.log(`Language switched to ${newLangData.native_name}`);
@@ -182,6 +225,7 @@ const Header: React.FC = () => {
             
             {/* Language Switcher */}
             <LanguageSwitcher
+              key={currentLanguage}
               currentLanguage={currentLanguage}
               availableLanguages={availableLanguages}
               onLanguageChange={handleLanguageChange}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Translation Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .arabic-text { color: #0066cc; font-weight: bold; direction: rtl; }
+        .english-text { color: #666; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Test Translation Service</h1>
+    
+    <div class="test-section">
+        <h2>Language Switching Test</h2>
+        <button onclick="switchLanguage('en')">Switch to English</button>
+        <button onclick="switchLanguage('ar')">Switch to Arabic</button>
+        <button onclick="switchLanguage('fr')">Switch to French</button>
+        <p>Current Language: <span id="currentLang">en</span></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Translation Test</h2>
+        <p>Settings: <span id="settingsText">Settings</span></p>
+        <p>Account: <span id="accountText">Account</span></p>
+        <p>Preferences: <span id="preferencesText">Preferences</span></p>
+        <p>Security: <span id="securityText">Security</span></p>
+        <p>Privacy: <span id="privacyText">Privacy</span></p>
+        <p>Notifications: <span id="notificationsText">Notifications</span></p>
+        <p>Accessibility: <span id="accessibilityText">Accessibility</span></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Accessibility Options Test</h2>
+        <p>High Contrast: <span id="highContrastText">High Contrast</span></p>
+        <p>Screen Reader Support: <span id="screenReaderText">Screen Reader Support</span></p>
+        <p>Keyboard Navigation: <span id="keyboardNavText">Keyboard Navigation</span></p>
+        <p>Reduced Motion: <span id="reducedMotionText">Reduced Motion</span></p>
+        <p>Color Blind Support: <span id="colorBlindText">Color Blind Support</span></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Action Buttons Test</h2>
+        <p>Save Settings: <span id="saveText">Save Settings</span></p>
+        <p>Saving...: <span id="savingText">Saving...</span></p>
+    </div>
+    
+    <script>
+        // Mock translation service for testing
+        const translations = {
+            en: {
+                'settings.title': 'Settings',
+                'settings.account': 'Account',
+                'settings.preferences': 'Preferences',
+                'settings.security': 'Security',
+                'settings.privacy': 'Privacy',
+                'settings.notifications': 'Notifications',
+                'settings.accessibility': 'Accessibility',
+                'settings.accessibility.highContrast': 'High Contrast',
+                'settings.accessibility.screenReaderSupport': 'Screen Reader Support',
+                'settings.accessibility.keyboardNavigation': 'Keyboard Navigation',
+                'settings.accessibility.reducedMotion': 'Reduced Motion',
+                'settings.accessibility.colorBlindSupport': 'Color Blind Support',
+                'settings.save': 'Save Settings',
+                'settings.saving': 'Saving...'
+            },
+            ar: {
+                'settings.title': 'الإعدادات',
+                'settings.account': 'الحساب',
+                'settings.preferences': 'التفضيلات',
+                'settings.security': 'الأمان',
+                'settings.privacy': 'الخصوصية',
+                'settings.notifications': 'الإشعارات',
+                'settings.accessibility': 'إمكانية الوصول',
+                'settings.accessibility.highContrast': 'تباين عالي',
+                'settings.accessibility.screenReaderSupport': 'دعم قارئ الشاشة',
+                'settings.accessibility.keyboardNavigation': 'التنقل بلوحة المفاتيح',
+                'settings.accessibility.reducedMotion': 'حركة مخفضة',
+                'settings.accessibility.colorBlindSupport': 'دعم عمى الألوان',
+                'settings.save': 'حفظ الإعدادات',
+                'settings.saving': 'جاري الحفظ...'
+            },
+            fr: {
+                'settings.title': 'Paramètres',
+                'settings.account': 'Compte',
+                'settings.preferences': 'Préférences',
+                'settings.security': 'Sécurité',
+                'settings.privacy': 'Confidentialité',
+                'settings.notifications': 'Notifications',
+                'settings.accessibility': 'Accessibilité',
+                'settings.accessibility.highContrast': 'Contraste élevé',
+                'settings.accessibility.screenReaderSupport': 'Support lecteur d\'écran',
+                'settings.accessibility.keyboardNavigation': 'Navigation clavier',
+                'settings.accessibility.reducedMotion': 'Mouvement réduit',
+                'settings.accessibility.colorBlindSupport': 'Support daltonisme',
+                'settings.save': 'Enregistrer les paramètres',
+                'settings.saving': 'Enregistrement...'
+            }
+        };
+        
+        let currentLang = 'en';
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('currentLang').textContent = lang;
+            
+            // Update all text elements
+            document.getElementById('settingsText').textContent = translations[lang]['settings.title'];
+            document.getElementById('accountText').textContent = translations[lang]['settings.account'];
+            document.getElementById('preferencesText').textContent = translations[lang]['settings.preferences'];
+            document.getElementById('securityText').textContent = translations[lang]['settings.security'];
+            document.getElementById('privacyText').textContent = translations[lang]['settings.privacy'];
+            document.getElementById('notificationsText').textContent = translations[lang]['settings.notifications'];
+            document.getElementById('accessibilityText').textContent = translations[lang]['settings.accessibility'];
+            
+            document.getElementById('highContrastText').textContent = translations[lang]['settings.accessibility.highContrast'];
+            document.getElementById('screenReaderText').textContent = translations[lang]['settings.accessibility.screenReaderSupport'];
+            document.getElementById('keyboardNavText').textContent = translations[lang]['settings.accessibility.keyboardNavigation'];
+            document.getElementById('reducedMotionText').textContent = translations[lang]['settings.accessibility.reducedMotion'];
+            document.getElementById('colorBlindText').textContent = translations[lang]['settings.accessibility.colorBlindSupport'];
+            
+            document.getElementById('saveText').textContent = translations[lang]['settings.save'];
+            document.getElementById('savingText').textContent = translations[lang]['settings.saving'];
+            
+            // Update document direction for Arabic
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+            }
+        }
+        
+        // Initialize with English
+        switchLanguage('en');
+    </script>
+</body>
+</html>

@@ -1,4 +1,23 @@
 <?php
+session_start();
+
+// Set language preference
+function setLanguagePreference($langCode) {
+    global $languages;
+    
+    if (!isset($languages[$langCode])) {
+        return false;
+    }
+    
+    // Set session
+    $_SESSION['language'] = $langCode;
+    
+    // Set cookie (1 year)
+    setcookie('language', $langCode, time() + (365 * 24 * 60 * 60), '/');
+    
+    return true;
+}
+
 
 /**
  * User-Specific Language API Endpoints
@@ -123,6 +142,15 @@ function getCurrentLanguage() {
         } catch (Exception $e) {
             // Database error, default to English
         }
+    }
+    // Check session for non-authenticated users
+    if (isset($_SESSION['language']) && isset($languages[$_SESSION['language']])) {
+        return $_SESSION['language'];
+    }
+    
+    // Check cookie for non-authenticated users
+    if (isset($_COOKIE['language']) && isset($languages[$_COOKIE['language']])) {
+        return $_COOKIE['language'];
     }
     
     // Not logged in or no preference - default to English
@@ -253,15 +281,19 @@ function handleLanguageEndpoints($endpoint) {
                                 'error' => 'Failed to save language preference'
                             ]);
                         }
+                        // Save language preference in session/cookie
+                        setLanguagePreference($langCode);
                     } else {
                         // Not logged in - just return the language info (no saving)
+                        // Save language preference in session/cookie
+                        setLanguagePreference($langCode);
                         echo json_encode([
                             'success' => true,
                             'code' => $langCode,
                             'name' => $languages[$langCode]['name'],
                             'native_name' => $languages[$langCode]['native_name'],
                             'direction' => $languages[$langCode]['direction'],
-                            'message' => 'Language switched (not saved - user not logged in)'
+                            'message' => 'Language switched and saved'
                         ]);
                     }
                     break;

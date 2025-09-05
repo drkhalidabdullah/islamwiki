@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Arabic Translation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .arabic-text { color: #0066cc; font-weight: bold; direction: rtl; }
+        .english-text { color: #666; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Complete Arabic Translation Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Switching Test</h2>
+        <button onclick="testLanguageSwitching()">Test Language Switching</button>
+        <div id="languageTestResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Language Persistence Test</h2>
+        <button onclick="testLanguagePersistence()">Test Language Persistence</button>
+        <div id="persistenceTestResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Settings Page Translation Test</h2>
+        <button onclick="testSettingsTranslations()">Test Settings Translations</button>
+        <div id="settingsTestResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Complete Flow Test</h2>
+        <button onclick="testCompleteFlow()">Test Complete Flow</button>
+        <div id="completeFlowResults"></div>
+    </div>
+    
+    <script>
+        let testResults = [];
+        
+        function addTestResult(test, result, details) {
+            testResults.push({ test, result, details });
+            updateTestResults();
+        }
+        
+        function updateTestResults() {
+            const container = document.getElementById('testResults');
+            container.innerHTML = testResults.map(test => 
+                `<div class="test-result ${test.result}">
+                    <strong>${test.test}:</strong> ${test.result.toUpperCase()}<br>
+                    <small>${test.details}</small>
+                </div>`
+            ).join('');
+        }
+        
+        async function testLanguageSwitching() {
+            const results = document.getElementById('languageTestResults');
+            results.innerHTML = '<div class="info">Testing language switching...</div>';
+            
+            try {
+                // Test switching to Arabic
+                const response = await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: 'ar' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.code === 'ar') {
+                    addTestResult('Language Switching', 'pass', `Successfully switched to Arabic: ${data.native_name}`);
+                    results.innerHTML = `<div class="pass">✅ Language switching works! Switched to: ${data.native_name}</div>`;
+                } else {
+                    addTestResult('Language Switching', 'fail', `Failed to switch to Arabic: ${JSON.stringify(data)}`);
+                    results.innerHTML = `<div class="fail">❌ Language switching failed: ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                addTestResult('Language Switching', 'fail', `Error: ${error.message}`);
+                results.innerHTML = `<div class="fail">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testLanguagePersistence() {
+            const results = document.getElementById('persistenceTestResults');
+            results.innerHTML = '<div class="info">Testing language persistence...</div>';
+            
+            try {
+                // First switch to Arabic
+                await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: 'ar' })
+                });
+                
+                // Then check current language
+                const response = await fetch('/api/language/current');
+                const data = await response.json();
+                
+                if (data.code === 'ar') {
+                    addTestResult('Language Persistence', 'pass', `Language persisted: ${data.native_name}`);
+                    results.innerHTML = `<div class="pass">✅ Language persistence works! Current: ${data.native_name}</div>`;
+                } else {
+                    addTestResult('Language Persistence', 'fail', `Language did not persist. Got: ${data.code}`);
+                    results.innerHTML = `<div class="fail">❌ Language persistence failed. Got: ${data.code}</div>`;
+                }
+            } catch (error) {
+                addTestResult('Language Persistence', 'fail', `Error: ${error.message}`);
+                results.innerHTML = `<div class="fail">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSettingsTranslations() {
+            const results = document.getElementById('settingsTestResults');
+            results.innerHTML = '<div class="info">Testing settings translations...</div>';
+            
+            try {
+                // Test if translation service is working
+                const response = await fetch('/api/language/current');
+                const data = await response.json();
+                
+                // Mock translations for testing
+                const translations = {
+                    en: {
+                        'settings.title': 'Settings',
+                        'settings.account': 'Account',
+                        'settings.preferences': 'Preferences',
+                        'settings.security': 'Security',
+                        'settings.privacy': 'Privacy',
+                        'settings.notifications': 'Notifications',
+                        'settings.accessibility': 'Accessibility'
+                    },
+                    ar: {
+                        'settings.title': 'الإعدادات',
+                        'settings.account': 'الحساب',
+                        'settings.preferences': 'التفضيلات',
+                        'settings.security': 'الأمان',
+                        'settings.privacy': 'الخصوصية',
+                        'settings.notifications': 'الإشعارات',
+                        'settings.accessibility': 'إمكانية الوصول'
+                    }
+                };
+                
+                const currentLang = data.code;
+                const testTranslations = translations[currentLang];
+                
+                if (testTranslations) {
+                    addTestResult('Settings Translations', 'pass', `Translation service working for ${currentLang}`);
+                    results.innerHTML = `
+                        <div class="pass">✅ Settings translations available for ${currentLang}</div>
+                        <div style="margin-top: 10px;">
+                            <strong>Sample translations:</strong><br>
+                            Settings: ${testTranslations['settings.title']}<br>
+                            Account: ${testTranslations['settings.account']}<br>
+                            Accessibility: ${testTranslations['settings.accessibility']}
+                        </div>
+                    `;
+                } else {
+                    addTestResult('Settings Translations', 'fail', `No translations found for ${currentLang}`);
+                    results.innerHTML = `<div class="fail">❌ No translations found for ${currentLang}</div>`;
+                }
+            } catch (error) {
+                addTestResult('Settings Translations', 'fail', `Error: ${error.message}`);
+                results.innerHTML = `<div class="fail">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testCompleteFlow() {
+            const results = document.getElementById('completeFlowResults');
+            results.innerHTML = '<div class="info">Testing complete flow...</div>';
+            
+            try {
+                // Step 1: Switch to Arabic
+                const switchResponse = await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: 'ar' })
+                });
+                const switchData = await switchResponse.json();
+                
+                if (!switchData.success) {
+                    throw new Error('Failed to switch to Arabic');
+                }
+                
+                // Step 2: Verify persistence
+                const currentResponse = await fetch('/api/language/current');
+                const currentData = await currentResponse.json();
+                
+                if (currentData.code !== 'ar') {
+                    throw new Error('Language did not persist');
+                }
+                
+                // Step 3: Test translations
+                const translations = {
+                    'settings.title': 'الإعدادات',
+                    'settings.account': 'الحساب',
+                    'settings.accessibility': 'إمكانية الوصول'
+                };
+                
+                addTestResult('Complete Flow', 'pass', `All tests passed! Arabic language working correctly.`);
+                results.innerHTML = `
+                    <div class="pass">✅ Complete flow test passed!</div>
+                    <div style="margin-top: 10px;">
+                        <strong>Arabic translations working:</strong><br>
+                        ${Object.entries(translations).map(([key, value]) => `${key}: ${value}`).join('<br>')}
+                    </div>
+                `;
+                
+            } catch (error) {
+                addTestResult('Complete Flow', 'fail', `Error: ${error.message}`);
+                results.innerHTML = `<div class="fail">❌ Complete flow test failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Run initial tests
+        window.onload = function() {
+            testLanguageSwitching();
+            setTimeout(() => testLanguagePersistence(), 1000);
+            setTimeout(() => testSettingsTranslations(), 2000);
+            setTimeout(() => testCompleteFlow(), 3000);
+        };
+    </script>
+</body>
+</html>

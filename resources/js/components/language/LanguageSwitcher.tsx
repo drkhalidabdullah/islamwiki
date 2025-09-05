@@ -56,6 +56,11 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     return null;
   }
 
+  // Debug logging
+  console.log('LanguageSwitcher: currentLanguage:', currentLanguage);
+  console.log('LanguageSwitcher: availableLanguages:', availableLanguages.map(l => ({ code: l.code, is_current: l.is_current })));
+  console.log('LanguageSwitcher: currentLang:', currentLang);
+
   return (
     <div className={`relative ${currentLang.direction === 'rtl' ? 'rtl' : 'ltr'}`} ref={dropdownRef}>
       <Button 

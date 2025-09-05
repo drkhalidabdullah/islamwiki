@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Verification Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .arabic-text { color: #0066cc; font-weight: bold; direction: rtl; }
+        .english-text { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Final Verification Test</h1>
+    
+    <div class="test-section">
+        <h2>✅ Backend API Test</h2>
+        <div id="backendTest"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>✅ Language Switching Test</h2>
+        <button onclick="testLanguageSwitching()">Test Language Switching</button>
+        <div id="languageTest"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>✅ Settings Page Test</h2>
+        <div class="info">
+            <strong>Manual Test Instructions:</strong><br>
+            1. Click "Test Language Switching" above<br>
+            2. Wait for success message<br>
+            3. Go to <a href="/settings" target="_blank">Settings Page</a><br>
+            4. You should see Arabic text in the settings page<br>
+            5. Refresh the settings page - Arabic should persist<br>
+            6. Check browser console - NO React errors should appear
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>✅ Expected Results</h2>
+        <div class="info">
+            <strong>When Arabic is selected, you should see:</strong><br>
+            • Title: <span class="arabic-text">الإعدادات</span> (Settings)<br>
+            • Tabs: <span class="arabic-text">الحساب</span> (Account), <span class="arabic-text">التفضيلات</span> (Preferences), etc.<br>
+            • Accessibility: <span class="arabic-text">تباين عالي</span> (High Contrast), <span class="arabic-text">دعم قارئ الشاشة</span> (Screen Reader Support)<br>
+            • Save Button: <span class="arabic-text">حفظ الإعدادات</span> (Save Settings)
+        </div>
+    </div>
+    
+    <script>
+        async function testLanguageSwitching() {
+            const results = document.getElementById('languageTest');
+            results.innerHTML = '<div class="info">Testing language switching...</div>';
+            
+            try {
+                // Test switching to Arabic
+                const switchResponse = await fetch('/api/language/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: 'ar' })
+                });
+                const switchData = await switchResponse.json();
+                
+                // Test current language
+                const currentResponse = await fetch('/api/language/current');
+                const currentData = await currentResponse.json();
+                
+                if (switchData.success && currentData.code === 'ar') {
+                    results.innerHTML = `
+                        <div class="success">
+                            ✅ Language switching and persistence working!<br>
+                            Switched to: ${switchData.native_name}<br>
+                            Current language: ${currentData.native_name}<br>
+                            Direction: ${currentData.direction}<br>
+                            <strong>Ready to test settings page!</strong>
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML = `<div class="error">❌ Language switching failed</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testBackend() {
+            const results = document.getElementById('backendTest');
+            try {
+                const response = await fetch('/api/language/current');
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="success">
+                        ✅ Backend API working!<br>
+                        Current language: ${data.native_name} (${data.code})<br>
+                        Direction: ${data.direction}<br>
+                        Flag: ${data.flag}
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Backend API error: ${error.message}</div>`;
+            }
+        }
+        
+        // Auto-run backend test
+        testBackend();
+    </script>
+</body>
+</html>

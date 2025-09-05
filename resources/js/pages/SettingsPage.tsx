@@ -8,9 +8,12 @@ import Textarea from '../components/ui/Textarea';
 import Modal from '../components/ui/Modal';
 import { settingsService, UserSettings } from '../services/settingsService';
 import { LanguagePreference } from '../components/settings/LanguagePreference';
+import { useTranslation } from '../hooks/useTranslation';
+import { translationService } from '../services/translation/TranslationService';
 
 const SettingsPage: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
+  const { t, currentLanguage } = useTranslation();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<UserSettings>({
     account: {
@@ -147,12 +150,55 @@ const SettingsPage: React.FC = () => {
     loadSettings();
   }, [isAuthenticated, navigate]);
 
+  // Force re-render when language changes
+  useEffect(() => {
+    // This will trigger a re-render when currentLanguage changes
+    console.log('SettingsPage: Language changed to:', currentLanguage);
+    console.log('SettingsPage: Translation for preferences:', t('settings.preferences'));
+    // Force a state update to trigger re-render
+    setSettings(prev => ({ ...prev }));
+  }, [currentLanguage]);
+
+  // Direct subscription to TranslationService for immediate updates
+  useEffect(() => {
+    console.log('SettingsPage: Setting up direct TranslationService subscription');
+    
+    const unsubscribe = translationService.onLanguageChange((lang) => {
+      console.log('SettingsPage: Direct TranslationService update received:', lang);
+      console.log('SettingsPage: Current language before update:', currentLanguage);
+      
+      // Force re-render by updating settings state
+      setSettings(prev => {
+        console.log('SettingsPage: Forcing re-render with language:', lang);
+        return { ...prev };
+      });
+    });
+    
+    // Also listen for changes via a different mechanism
+    const interval = setInterval(() => {
+      const currentLang = translationService.getCurrentLanguage();
+      if (currentLang !== currentLanguage) {
+        console.log('SettingsPage: Language mismatch detected:', currentLang, 'vs', currentLanguage);
+        setSettings(prev => ({ ...prev }));
+      }
+    }, 100);
+    
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+  }, [currentLanguage]);
+
   const loadSettings = async () => {
     try {
       setIsLoading(true);
       const userSettings = await settingsService.getUserSettings();
-      if (userSettings && typeof userSettings === 'object') {
-        setSettings(userSettings as unknown as UserSettings);
+      console.log('API Response:', userSettings);
+      if (userSettings && userSettings.success && userSettings.data) {
+        console.log('Setting data:', userSettings.data);
+        setSettings(userSettings.data as UserSettings);
+      } else {
+        console.error('Invalid API response structure:', userSettings);
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -216,6 +262,10 @@ const SettingsPage: React.FC = () => {
         if (selectedLang) {
           document.documentElement.dir = selectedLang.direction;
         }
+        
+        // Notify TranslationService to update all components (including header)
+        translationService.setLanguage(languageCode);
+        console.log('SettingsPage: Notified TranslationService of language change:', languageCode);
       } else {
         throw new Error('Failed to switch language');
       }
@@ -292,12 +342,12 @@ const SettingsPage: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'account', label: 'Account', icon: '👤' },
-    { id: 'preferences', label: 'Preferences', icon: '⚙️' },
-    { id: 'security', label: 'Security', icon: '🔒' },
-    { id: 'privacy', label: 'Privacy', icon: '🛡️' },
-    { id: 'notifications', label: 'Notifications', icon: '🔔' },
-    { id: 'accessibility', label: 'Accessibility', icon: '♿' },
+    { id: 'account', label: t('settings.account'), icon: '👤' },
+    { id: 'preferences', label: t('settings.preferences'), icon: '⚙️' },
+    { id: 'security', label: t('settings.security'), icon: '🔒' },
+    { id: 'privacy', label: t('settings.privacy'), icon: '🛡️' },
+    { id: 'notifications', label: t('settings.notifications'), icon: '🔔' },
+    { id: 'accessibility', label: t('settings.accessibility'), icon: '♿' },
   ];
 
   if (isLoading) {
@@ -362,7 +412,7 @@ const SettingsPage: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
           <p className="text-gray-600 mt-2">Manage your account settings and preferences</p>
         </div>
 
@@ -394,7 +444,7 @@ const SettingsPage: React.FC = () => {
               {/* Account Tab */}
               {activeTab === 'account' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Account Settings</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('settings.account')}</h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -572,7 +622,7 @@ const SettingsPage: React.FC = () => {
               {/* Preferences Tab */}
               {activeTab === 'preferences' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Preferences</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t("settings.preferences")}</h3>
                   
                   {/* Language Preference Component */}
                   <LanguagePreference
@@ -700,7 +750,7 @@ const SettingsPage: React.FC = () => {
               {/* Security Tab */}
               {activeTab === 'security' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Security Settings</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('settings.security')}</h3>
                   
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
@@ -754,7 +804,7 @@ const SettingsPage: React.FC = () => {
               {/* Privacy Tab */}
               {activeTab === 'privacy' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Privacy Settings</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('settings.privacy')}</h3>
                   
                   <div className="space-y-6">
                     <div>
@@ -800,7 +850,7 @@ const SettingsPage: React.FC = () => {
               {/* Notifications Tab */}
               {activeTab === 'notifications' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Notification Settings</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('settings.notifications')}</h3>
                   
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
@@ -847,12 +897,12 @@ const SettingsPage: React.FC = () => {
               {/* Accessibility Tab */}
               {activeTab === 'accessibility' && (
                 <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Accessibility Settings</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('settings.accessibility')}</h3>
                   
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-700">High Contrast</p>
+                        <p className="text-sm font-medium text-gray-700">{t('settings.accessibility.highContrast')}</p>
                         <p className="text-sm text-gray-500">Increase contrast for better visibility</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -871,7 +921,7 @@ const SettingsPage: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-700">Screen Reader Support</p>
+                        <p className="text-sm font-medium text-gray-700">{t('settings.accessibility.screenReaderSupport')}</p>
                         <p className="text-sm text-gray-500">Optimize for screen readers</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -899,7 +949,7 @@ const SettingsPage: React.FC = () => {
                 disabled={isSaving}
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
               >
-                {isSaving ? 'Saving...' : 'Save Settings'}
+                {isSaving ? t('settings.saving') : t('settings.save')}
               </Button>
             </div>
           </div>
