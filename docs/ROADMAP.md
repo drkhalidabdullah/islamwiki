@@ -179,7 +179,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ## 🚀 **Phase 3: User Management & Authentication (v0.0.5)**
 
-**Target Date:** Q1 2026  
+**Target Date:** Q1 2025  
 **Focus:** User authentication and basic user management  
 **Status:** ✅ **COMPLETED**
 
@@ -203,7 +203,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ## 🚀 **Phase 4: Content Management (v0.0.6)**
 
-**Target Date:** Q1 2026  
+**Target Date:** Q1 2025  
 **Focus:** Basic content management system  
 **Status:** Planned
 
@@ -301,7 +301,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ## 🌐 **Phase 2: Content & Media (v0.2.0)**
 
-**Target Date:** Q1 2026  
+**Target Date:** Q1 2025  
 **Focus:** Advanced content management and media handling
 
 ### **Advanced Content Features**
@@ -585,8 +585,8 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 | v0.0.5 | Alpha Enhancement | Q1 2026 | User management, authentication | ✅ **COMPLETED** |
 | v0.0.6.0 | Translation Service | Q1 2025 | Multi-language support | ✅ **COMPLETED** |
 | v0.0.7 | Alpha Enhancement | Q1 2025 | Content management system | 📋 **Planned** |
-| v0.0.7 | Alpha Enhancement | Q2 2026 | Advanced features, optimization | 📋 **Planned** |
-| v0.0.8 | Alpha Enhancement | Q2 2026 | Beta preparation | 📋 **Planned** |
+| v0.0.8 | Alpha Enhancement | Q2 2025 | Advanced features, optimization | 📋 **Planned** |
+| v0.0.9 | Alpha Enhancement | Q2 2025 | Beta preparation | 📋 **Planned** |
 | v0.1.0 | Beta Release | Q2 2026 | Complete working system | 📋 **Planned** |
 | v1.0.0 | Production | Q1 2027 | Production ready, enterprise features | 📋 **Planned** |
 
@@ -668,8 +668,8 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 - **v0.0.5**: User management and authentication
 - **v0.0.6.0**: Translation Service - ✅ **COMPLETED**
 - **v0.0.7**: Content management system
-- **v0.0.7**: Advanced features and optimization
-- **v0.0.8**: Beta preparation and testing
+- **v0.0.8**: Advanced features and optimization
+- **v0.0.9**: Beta preparation and testing
 
 ---
 
