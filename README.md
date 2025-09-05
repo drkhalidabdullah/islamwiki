@@ -47,6 +47,16 @@ IslamWiki Framework is a modern, secure, and scalable platform designed specific
 - **SPA Routing**: Client-side routing with Apache configuration
 
 ### **✅ Comprehensive Settings Management**
+
+### **🌍 Translation Service (v0.0.6.0)**
+- **Multi-language Support**: English, Arabic, French, Spanish, German
+- **Cloud-based Translation APIs**: MyMemory, LibreTranslate, Google Translate
+- **User-specific Language Preferences**: Persistent language settings per user
+- **RTL Support**: Full right-to-left text support for Arabic
+- **Language Switcher**: Header dropdown with flag icons
+- **Translation Memory**: Intelligent caching for consistent translations
+- **Shared Hosting Compatible**: No Docker required
+- **Provider Fallback System**: Automatic failover between translation services
 - **Multi-tab Interface**: Organized settings into logical categories
 - **Account Settings**: Complete profile management and customization
 - **Security Controls**: 2FA, session management, and trusted devices

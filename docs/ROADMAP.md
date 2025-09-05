@@ -102,7 +102,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 - **Duplicate Headers**: ✅ Single header display
 - **Build Process**: ✅ Safe builds that preserve .htaccess
 
-### **🎯 Ready for v0.0.6 Development**
+### **✅ v0.0.6.0 Translation Service - COMPLETED**
 
 - **Core Framework**: ✅ Complete and tested
 - **Services**: ✅ Implemented and functional
@@ -583,7 +583,8 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 | v0.0.3 | Alpha Enhancement | Q4 2025 | Enhanced admin, testing tools | ✅ **COMPLETED** |
 | v0.0.4 | Alpha Enhancement | Q4 2025 | Database, core services | ✅ **COMPLETED** |
 | v0.0.5 | Alpha Enhancement | Q1 2026 | User management, authentication | ✅ **COMPLETED** |
-| v0.0.6 | Alpha Enhancement | Q1 2026 | Content management system | 📋 **Planned** |
+| v0.0.6.0 | Translation Service | Q1 2025 | Multi-language support | ✅ **COMPLETED** |
+| v0.0.7 | Alpha Enhancement | Q1 2025 | Content management system | 📋 **Planned** |
 | v0.0.7 | Alpha Enhancement | Q2 2026 | Advanced features, optimization | 📋 **Planned** |
 | v0.0.8 | Alpha Enhancement | Q2 2026 | Beta preparation | 📋 **Planned** |
 | v0.1.0 | Beta Release | Q2 2026 | Complete working system | 📋 **Planned** |
@@ -665,7 +666,8 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 ### **🎯 Alpha Development Path (v0.0.4 - v0.0.8)**
 - **v0.0.4**: Database implementation and core services
 - **v0.0.5**: User management and authentication
-- **v0.0.6**: Content management system
+- **v0.0.6.0**: Translation Service - ✅ **COMPLETED**
+- **v0.0.7**: Content management system
 - **v0.0.7**: Advanced features and optimization
 - **v0.0.8**: Beta preparation and testing
 
@@ -675,4 +677,4 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 **Next Update:** With v0.0.5 release  
 **Maintainer:** Khalid Abdullah  
 **License:** AGPL-3.0  
-**Status:** Active Development - v0.0.5 Complete ✅ - Ready for v0.0.6
+**Status:** Active Development - v0.0.6.0 Translation Service Complete ✅ - Ready for v0.0.7
