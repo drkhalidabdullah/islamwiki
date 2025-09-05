@@ -201,7 +201,42 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ---
 
-## 🚀 **Phase 4: Content Management (v0.0.6)**
+## 🌍 **Phase 3.5: Translation Service (v0.0.6.0) - COMPLETED**
+
+**Target Date:** Q1 2025  
+**Focus:** Multi-language support and translation system  
+**Status:** ✅ **COMPLETED**
+
+### **Translation Service Features**
+
+- [x] Multi-language support (English, Arabic, French, Spanish, German)
+- [x] Cloud-based translation APIs (MyMemory, LibreTranslate, Google Translate)
+- [x] User-specific language preferences
+- [x] RTL support for Arabic
+- [x] Language switcher with flag icons
+- [x] Translation memory system
+- [x] Provider fallback system
+- [x] Shared hosting compatibility
+
+### **Language Management**
+
+- [x] Session-based language switching
+- [x] Language detection capabilities
+- [x] Default language fallback
+- [x] Persistent user preferences
+- [x] Synchronized language state across components
+
+### **API & Backend**
+
+- [x] Translation service architecture
+- [x] RESTful API endpoints
+- [x] Database schema for translations
+- [x] User language preference storage
+- [x] Error handling and fallbacks
+
+---
+
+## 🚀 **Phase 4: Content Management (v0.0.7)**
 
 **Target Date:** Q1 2025  
 **Focus:** Basic content management system  
@@ -224,9 +259,9 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ---
 
-## 🚀 **Phase 5: Enhanced Features (v0.0.7)**
+## 🚀 **Phase 5: Enhanced Features (v0.0.8)**
 
-**Target Date:** Q2 2026  
+**Target Date:** Q2 2025  
 **Focus:** Advanced features and optimization  
 **Status:** Planned
 
@@ -248,7 +283,7 @@ This roadmap outlines the development path for the IslamWiki Framework, from the
 
 ---
 
-## 🚀 **Phase 6: Beta Preparation (v0.0.8)**
+## 🚀 **Phase 6: Beta Preparation (v0.0.9)**
 
 **Target Date:** Q2 2026  
 **Focus:** Beta release preparation  
