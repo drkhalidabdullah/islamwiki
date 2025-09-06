@@ -1,0 +1,17 @@
+RewriteEngine On
+RewriteBase /
+
+# Handle pretty URLs for wiki articles
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wiki/([A-Za-z0-9_-]+)/?$ public/wiki/article.php?slug=$1 [QSA,L]
+
+# Handle wiki directory requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wiki/(.*)$ public/wiki/$1 [QSA,L]
+
+# Handle other requests - redirect to public directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [QSA,L]

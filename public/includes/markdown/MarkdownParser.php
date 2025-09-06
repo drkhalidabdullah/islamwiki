@@ -39,9 +39,9 @@ class MarkdownParser {
             $class = $exists ? 'wiki-link' : 'wiki-link missing';
             
             return sprintf(
-                '<a href="%sarticle.php?slug=%s" class="%s" title="%s">%s</a>',
+                '<a href="%s%s" class="%s" title="%s">%s</a>',
                 $this->wiki_base_url,
-                urlencode($slug),
+                ucfirst($slug),
                 $class,
                 htmlspecialchars($page_name),
                 htmlspecialchars($display_text)
@@ -53,6 +53,9 @@ class MarkdownParser {
      * Create URL-friendly slug from page name
      */
     private function createSlug($text) {
+        // Capitalize first letter for consistency
+        $text = strtolower($text);
+        $text = ucfirst(trim($text));
         // Convert to lowercase
         $text = strtolower($text);
         

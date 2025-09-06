@@ -4,16 +4,16 @@ require_once 'includes/functions.php';
 
 $page_title = 'Home';
 
-// Get recent articles with proper permissions
-$recent_query = build_article_query("
+// Get recent articles
+$stmt = $pdo->prepare("
     SELECT wa.*, u.username, u.display_name 
     FROM wiki_articles wa 
-    JOIN users u ON wa.author_id = u.id
-", [], []);
-$recent_query['query'] .= " ORDER BY wa.published_at DESC LIMIT 6";
-
-$stmt = $pdo->prepare($recent_query['query']);
-$stmt->execute($recent_query['params']);
+    JOIN users u ON wa.author_id = u.id 
+    WHERE wa.status = 'published' 
+    ORDER BY wa.published_at DESC 
+    LIMIT 6
+");
+$stmt->execute();
 $recent_articles = $stmt->fetchAll();
 
 include 'includes/header.php';
@@ -42,9 +42,6 @@ include 'includes/header.php';
             <p class="article-meta">
                 By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?> 
                 on <?php echo format_date($article['published_at']); ?>
-                <?php if ($article['status'] === 'draft'): ?>
-                    <span class="draft-indicator">📝 Draft</span>
-                <?php endif; ?>
             </p>
             <p><?php echo truncate_text($article['excerpt'] ?: strip_tags($article['content']), 150); ?></p>
             <a href="wiki/<?php echo ucfirst($article['slug']); ?>" class="btn">Read More</a>
@@ -77,8 +74,8 @@ include 'includes/header.php';
     color: #666;
 }
 
-.recent-articles {
-    margin-top: 3rem;
+.hero-section .btn {
+    margin: 0 0.5rem;
 }
 
 .recent-articles h2 {
@@ -91,65 +88,12 @@ include 'includes/header.php';
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin: 2rem 0;
 }
 
 .article-meta {
+    color: #666;
     font-size: 0.9rem;
-    color: #666;
-    margin: 0.5rem 0;
-}
-
-.draft-indicator {
-    color: #f39c12;
-    font-weight: 500;
-    margin-left: 0.5rem;
-}
-
-.card {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-
-.card h3 {
-    margin-top: 0;
-    color: #2c3e50;
-}
-
-.card p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-    background: #2980b9;
-}
-
-@media (max-width: 768px) {
-    .articles-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .hero-section h1 {
-        font-size: 2rem;
-    }
+    margin-bottom: 1rem;
 }
 </style>
 

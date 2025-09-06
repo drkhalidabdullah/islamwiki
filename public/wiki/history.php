@@ -39,7 +39,7 @@ include 'header.php';
     <div class="history-header">
         <h1>History: <?php echo htmlspecialchars($article['title']); ?></h1>
         <div class="history-actions">
-            <a href="article.php?slug=<?php echo $article['slug']; ?>" class="btn">View Article</a>
+            <a href="<?php echo ucfirst(article['slug']); ?>" class="btn">View Article</a>
             <?php if (is_logged_in() && (is_admin() || $article['author_id'] == $_SESSION['user_id'])): ?>
                 <a href="../edit_article.php?id=<?php echo $article['id']; ?>" class="btn">Edit Article</a>
             <?php endif; ?>

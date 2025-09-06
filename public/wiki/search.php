@@ -159,7 +159,7 @@ include 'header.php';
                             <span class="views"><?php echo number_format($article['view_count']); ?> views</span>
                         </div>
                         
-                        <h3><a href="article.php?slug=<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
+                        <h3><a href="<?php echo ucfirst(article['slug']); ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
                         
                         <p class="result-excerpt">
                             <?php 
@@ -177,7 +177,7 @@ include 'header.php';
                         
                         <div class="result-footer">
                             <span class="author">By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></span>
-                            <a href="article.php?slug=<?php echo $article['slug']; ?>" class="read-more">Read more →</a>
+                            <a href="<?php echo ucfirst(article['slug']); ?>" class="read-more">Read more →</a>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -187,7 +187,7 @@ include 'header.php';
                     <h3>No articles found. Try these popular articles:</h3>
                     <ul class="suggestions">
                         <?php foreach ($suggestions as $suggestion): ?>
-                        <li><a href="article.php?slug=<?php echo $suggestion['slug']; ?>"><?php echo htmlspecialchars($suggestion['title']); ?></a></li>
+                        <li><a href="<?php echo ucfirst(suggestion['slug']); ?>"><?php echo htmlspecialchars($suggestion['title']); ?></a></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

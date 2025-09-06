@@ -32,7 +32,7 @@ if (!$version) {
 $page_title = $version['title'] . ' (Version ' . $version['version_number'] . ')';
 
 // Parse markdown content
-$parser = new MarkdownParser();
+$parser = new MarkdownParser('');
 $parsed_content = $parser->parse($version['content']);
 
 include 'header.php';
@@ -43,7 +43,7 @@ include 'header.php';
         <h1><?php echo htmlspecialchars($version['title']); ?></h1>
         <div class="version-info">
             <span class="version-badge">Version <?php echo $version['version_number']; ?></span>
-            <a href="article.php?slug=<?php echo $version['slug']; ?>" class="btn">View Current Version</a>
+            <a href="<?php echo ucfirst(version['slug']); ?>" class="btn">View Current Version</a>
         </div>
     </div>
     

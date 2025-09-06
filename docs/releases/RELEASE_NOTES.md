@@ -2,31 +2,57 @@
 
 This document provides an overview of all IslamWiki releases, from the initial version to the latest release.
 
-## Current Release: v0.0.0.2
+## Current Release: v0.0.0.3
 
 **Release Date**: September 6, 2025  
 **Status**: Latest Release  
-**Codename**: "Wiki Revolution"
+**Codename**: "Enhanced Administration"
 
 ### Overview
-Major release featuring a complete wiki system overhaul with markdown editing, version control, and advanced search capabilities.
+Major release featuring enhanced admin panel functionality, pretty URLs, draft collaboration system, and comprehensive user management tools.
 
 ### Key Features
-- Complete markdown-based wiki system
-- Rich text editor with visual toolbar
-- Wiki-style linking with `[[Page Name]]` syntax
-- Article version control and history
-- Advanced search with filters and suggestions
-- Test content (Islam, Allah, Muslim articles)
+- Pretty URL system for SEO-friendly article links
+- Enhanced admin panel with complete user management
+- Draft collaboration and scholar verification system
+- Article not found handling with creation suggestions
+- Enhanced user interface with "Powered by IslamWiki" branding
+- Fixed critical bugs and improved system stability
 
-[Read Full Release Notes](changelogs/v0.0.0.2.md)
+[Read Full Release Notes](changelogs/v0.0.0.3.md)
 
 ---
 
 ## Release History
 
-### v0.0.0.2 - "Wiki Revolution" (September 6, 2025)
+### v0.0.0.3 - "Enhanced Administration" (September 6, 2025)
 **Status**: Latest Release
+
+**Major Features:**
+- Pretty URL system (`/wiki/Islam` instead of `/wiki/article.php?slug=islam`)
+- Complete admin panel with user editing and password reset
+- Draft collaboration system with multi-user support
+- Scholar verification system for content accuracy
+- Enhanced article editing with full feature parity
+- Article not found page with creation suggestions
+
+**Technical Improvements:**
+- Apache .htaccess configuration for URL rewriting
+- Enhanced database schema with collaboration features
+- Fixed critical internal server errors
+- Improved file structure and includes
+- Better error handling and validation
+
+**Bug Fixes:**
+- Fixed edit user functionality in admin dashboard
+- Resolved article editing with missing features
+- Corrected database connection issues
+- Fixed path resolution problems
+
+[Full Changelog](changelogs/v0.0.0.3.md)
+
+### v0.0.0.2 - "Wiki Revolution" (September 6, 2025)
+**Status**: Previous Release
 
 **Major Features:**
 - Complete wiki system with markdown editing
@@ -83,7 +109,7 @@ IslamWiki uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
 
 ## Upcoming Releases
 
-### v0.0.0.3 - "Global Reach" (Planned)
+### v0.0.0.4 - "Global Reach" (Planned)
 **Target Date**: TBD
 
 **Planned Features:**
@@ -114,12 +140,13 @@ IslamWiki uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
 
 ## Installation & Upgrade
 
-### Latest Release (v0.0.0.2)
+### Latest Release (v0.0.0.3)
 ```bash
 git clone https://github.com/drkhalidabdullah/islamwiki.git
 cd islamwiki
-git checkout v0.0.0.2
+git checkout v0.0.0.3
 mysql -u root -p < setup_database_fixed.sql
+mysql -u root -p islamwiki < database_migration_v0.0.0.3.sql
 cd public
 php -S 0.0.0.0:80
 ```
@@ -127,7 +154,7 @@ php -S 0.0.0.0:80
 ### Upgrade from Previous Version
 1. Backup your current installation
 2. Pull the latest changes: `git pull origin master`
-3. Run database migrations if needed
+3. Run database migrations: `mysql -u root -p islamwiki < database_migration_v0.0.0.3.sql`
 4. Clear caches and restart your server
 
 ---

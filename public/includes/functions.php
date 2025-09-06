@@ -1,5 +1,6 @@
 <?php
 // Utility functions
+require_once __DIR__ . '/../config/database.php';
 
 function sanitize_input($data) {
     $data = trim($data);
@@ -186,4 +187,89 @@ function truncate_text($text, $length = 150) {
         return $text;
     }
     return substr($text, 0, $length) . '...';
+}
+
+function createSlug($text) {
+    // Capitalize first letter to ensure consistent naming
+    $text = ucfirst(trim($text));
+    // Use existing generate_slug function for the actual slug creation
+    return generate_slug($text);
+}
+
+// Updated createSlug function to handle capitalization properly
+
+/**
+ * Check if user can view draft article
+ */
+function can_view_draft($article, $user_id = null) {
+    if ($user_id === null) {
+        $user_id = $_SESSION['user_id'] ?? null;
+    }
+    
+    if (!$user_id) return false;
+    
+    // Admin can view all drafts
+    if (is_admin($user_id)) return true;
+    
+    // Author can view their own drafts
+    if ($article['author_id'] == $user_id) return true;
+    
+    // Editors can view shared/public drafts
+    if (is_editor($user_id) && $article['collaboration_mode'] !== 'private') return true;
+    
+    // Check collaboration permissions
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM article_collaborations WHERE article_id = ? AND user_id = ? AND is_active = 1");
+    $stmt->execute([$article['id'], $user_id]);
+    if ($stmt->fetchColumn() > 0) return true;
+    
+    return false;
+}
+
+/**
+ * Build article query with proper permissions
+ */
+function build_article_query($base_query, $where_conditions = [], $params = []) {
+    $user_id = $_SESSION["user_id"] ?? null;
+    $is_logged_in = is_logged_in();
+    $is_editor = is_editor();
+    
+    if (!$is_logged_in) {
+        // Guest users can only see published articles
+        $where_conditions[] = "wa.status = 'published'";
+    } elseif (!$is_editor) {
+        // Regular users can see published articles and their own drafts
+        $where_conditions[] = "(wa.status = 'published' OR (wa.status = 'draft' AND wa.author_id = ?))";
+        $params[] = $user_id;
+    } else {
+        // Editors can see published articles and drafts they have access to
+        $where_conditions[] = "(wa.status = 'published' OR wa.status = 'draft')";
+    }
+    
+    $where_clause = !empty($where_conditions) ? " WHERE " . implode(" AND ", $where_conditions) : "";
+    
+    return [
+        "query" => $base_query . $where_clause,
+        "params" => $params
+    ];
+}
+
+/**
+ * Check if user has scholar role
+ */
+function is_scholar($user_id = null) {
+    if ($user_id === null) {
+        $user_id = $_SESSION['user_id'] ?? null;
+    }
+    return $user_id && has_role($user_id, 'scholar');
+}
+
+/**
+ * Check if user has reviewer role
+ */
+function is_reviewer($user_id = null) {
+    if ($user_id === null) {
+        $user_id = $_SESSION['user_id'] ?? null;
+    }
+    return $user_id && has_role($user_id, 'reviewer');
 }

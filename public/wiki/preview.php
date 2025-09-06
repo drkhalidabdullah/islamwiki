@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'] ?? '';
     
     if (!empty($content)) {
-        $parser = new MarkdownParser();
+        $parser = new MarkdownParser('');
         $html = $parser->parse($content);
         echo $html;
     } else {

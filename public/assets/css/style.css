@@ -311,3 +311,209 @@ body {
         display: block;
     }
 }
+
+/* Powered by IslamWiki Badge */
+.powered-by {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.powered-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.powered-badge::before {
+    content: ;
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.powered-badge:hover::before {
+    left: 100%;
+}
+
+.powered-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Responsive badge */
+@media (max-width: 768px) {
+    .powered-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+.powered-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.powered-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.powered-badge:hover::before {
+    left: 100%;
+}
+
+.powered-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+/* Responsive badge */
+@media (max-width: 768px) {
+    .powered-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Footer Layout for Right-Aligned Badge */
+.footer-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 60px;
+}
+
+.footer-left {
+    flex: 1;
+}
+
+.powered-by {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Mobile responsive footer */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        min-height: auto;
+        padding: 1rem 0;
+    }
+    
+    .footer-left {
+        margin-bottom: 1rem;
+    }
+    
+    .powered-by {
+        position: static;
+        transform: none;
+        align-self: flex-end;
+    }
+}
+
+/* Draft and Collaboration Styles */
+.draft-banner {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.draft-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.verified-badge {
+    background: rgba(46, 204, 113, 0.8);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.draft-actions {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.draft-actions h3 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.collaboration-suggestions {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+}
+
+.collaboration-suggestions h3 {
+    margin-top: 0;
+    color: #1976d2;
+}
+
+.collaboration-suggestions ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.collaboration-suggestions li {
+    margin: 0.5rem 0;
+    color: #424242;
+}
+
+.draft-indicator {
+    color: #f39c12;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}

@@ -5,6 +5,107 @@ All notable changes to IslamWiki will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.0.3] - 2025-09-06
+
+### Added
+- **Pretty URL System**
+  - Clean URLs for wiki articles (`/wiki/Islam` instead of `/wiki/article.php?slug=islam`)
+  - Automatic slug capitalization for consistent page access
+  - URL rewriting with Apache .htaccess configuration
+  - SEO-friendly article URLs
+
+- **Enhanced Admin Panel**
+  - Complete user management system with edit and reset password functionality
+  - Enhanced article editing with full feature parity to create article
+  - Modal-based user editing with form validation
+  - Password reset functionality with confirmation
+  - User status management (Active/Inactive)
+  - Role management with new scholar and reviewer roles
+
+- **Draft Management & Collaboration System**
+  - Advanced draft visibility controls (author-only, editors, all logged-in users)
+  - Multi-user collaboration on draft articles
+  - Scholar verification system for content accuracy
+  - Draft notifications and activity tracking
+  - Enhanced permission-based content access
+
+- **Article Not Found Handling**
+  - User-friendly "Article Not Found" page
+  - Automatic article creation suggestions for editors
+  - Helpful navigation and search options
+  - Context-aware error messages
+
+- **Enhanced User Interface**
+  - "Powered by IslamWiki" badge in footer
+  - Improved admin dashboard with better user management
+  - Enhanced form validation and error handling
+  - Better responsive design for mobile devices
+
+### Enhanced
+- **Wiki Link System**
+  - Fixed double wiki path issues (`/wiki/wiki/article` → `/wiki/article`)
+  - Improved wiki link detection and rendering
+  - Better handling of missing article links
+  - Enhanced cross-referencing between articles
+
+- **Article Management**
+  - Full-featured edit article page with category selection
+  - Featured article management
+  - Enhanced article status controls
+  - Better article metadata handling
+
+- **User Management**
+  - Comprehensive user editing capabilities
+  - Password reset functionality
+  - User role management with new roles
+  - Activity logging for all user actions
+
+- **Database Schema**
+  - New roles: scholar and reviewer
+  - Enhanced article collaboration features
+  - Draft visibility and collaboration controls
+  - Scholar verification system
+
+### Technical Improvements
+- **URL Rewriting**
+  - Apache .htaccess configuration for pretty URLs
+  - Proper handling of wiki article routing
+  - SEO optimization with clean URLs
+
+- **Database Integration**
+  - Fixed missing database includes across all files
+  - Enhanced query building with permission-based filtering
+  - Improved error handling and validation
+
+- **Code Organization**
+  - Better file structure and includes
+  - Enhanced error handling
+  - Improved security measures
+
+### Fixed
+- **Critical Bug Fixes**
+  - Fixed internal server errors in admin dashboard
+  - Resolved edit user functionality issues
+  - Fixed article editing with missing features
+  - Corrected database connection issues
+
+- **Path Resolution**
+  - Fixed Apache DocumentRoot configuration issues
+  - Corrected file path problems in admin pages
+  - Improved include/require path handling
+
+- **User Interface**
+  - Fixed edit button functionality in admin dashboard
+  - Resolved modal dialog issues
+  - Improved form validation and error display
+
+### Security
+- **Enhanced Security**
+  - Improved input validation and sanitization
+  - Better password handling and reset functionality
+  - Enhanced user permission checks
+  - Improved session management
+
 ## [0.0.0.2] - 2025-09-06
 
 ### Added
@@ -187,7 +288,7 @@ This project uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
 
 ### Upcoming Features (Planned)
 
-- **v0.0.3**: Multi-language support and translation system
-- **v0.0.4**: Advanced user permissions and content moderation
-- **v0.0.5**: API endpoints and third-party integrations
+- **v0.0.4**: Multi-language support and translation system
+- **v0.0.5**: Advanced user permissions and content moderation
+- **v0.0.6**: API endpoints and third-party integrations
 - **v0.1.0**: Mobile app and advanced features

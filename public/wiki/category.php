@@ -55,7 +55,7 @@ include 'header.php';
             <div class="articles-grid">
                 <?php foreach ($articles as $article): ?>
                 <div class="card">
-                    <h3><a href="article.php?slug=<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
+                    <h3><a href="<?php echo ucfirst(article['slug']); ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
                     <div class="article-meta">
                         <span class="author">By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></span>
                         <span class="date"><?php echo format_date($article['published_at']); ?></span>

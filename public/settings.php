@@ -2,7 +2,7 @@
 require_once 'config/config.php';
 require_once 'includes/functions.php';
 
-$page_title = 'Settings';
+$page_title = 'Account Settings';
 require_login();
 
 $current_user = get_user($_SESSION['user_id']);
@@ -104,8 +104,8 @@ include 'includes/header.php';
 ?>
 
 <div class="settings-container">
-    <h1>Settings</h1>
-    <p>Manage your account settings and preferences.</p>
+    <h1>Account Settings</h1>
+    <p>Manage your personal account settings, security, and preferences.</p>
     
     <?php if ($error): ?>
         <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
