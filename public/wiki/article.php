@@ -1,10 +1,7 @@
 <?php
-// Fix path issues for web server access
-$config_path = file_exists('../config/config.php') ? '../config/config.php' : 'config/config.php';
-$functions_path = file_exists('../includes/functions.php') ? '../includes/functions.php' : 'includes/functions.php';
-
-require_once $config_path;
-require_once $functions_path;
+require_once '../config/config.php';
+require_once '../includes/functions.php';
+require_once '../includes/markdown/MarkdownParser.php';
 
 $page_title = 'Article';
 
@@ -36,6 +33,10 @@ $stmt->execute([$article['id']]);
 
 $page_title = $article['title'];
 
+// Parse markdown content
+$parser = new MarkdownParser();
+$parsed_content = $parser->parse($article['content']);
+
 include 'header.php';
 ?>
 
@@ -60,11 +61,12 @@ include 'header.php';
         </header>
         
         <div class="article-content">
-            <?php echo nl2br(htmlspecialchars($article['content'])); ?>
+            <?php echo $parsed_content; ?>
         </div>
         
         <?php if (is_logged_in() && (is_admin() || $article['author_id'] == $_SESSION['user_id'])): ?>
         <div class="article-actions">
+            <a href="wiki/history.php?id=<?php echo $article["id"]; ?>" class="btn">View History</a>
             <a href="../edit_article.php?id=<?php echo $article['id']; ?>" class="btn">Edit Article</a>
             <a href="../delete_article.php?id=<?php echo $article['id']; ?>" 
                class="btn btn-danger" 
@@ -72,6 +74,38 @@ include 'header.php';
         </div>
         <?php endif; ?>
     </article>
+    
+    <!-- Related Articles -->
+    <?php
+    // Get related articles (same category, excluding current)
+    $stmt = $pdo->prepare("
+        SELECT wa.*, u.display_name, u.username 
+        FROM wiki_articles wa 
+        JOIN users u ON wa.author_id = u.id 
+        WHERE wa.category_id = ? AND wa.id != ? AND wa.status = 'published' 
+        ORDER BY wa.published_at DESC 
+        LIMIT 3
+    ");
+    $stmt->execute([$article['category_id'], $article['id']]);
+    $related_articles = $stmt->fetchAll();
+    
+    if (!empty($related_articles)):
+    ?>
+    <div class="related-articles">
+        <h3>Related Articles</h3>
+        <div class="related-grid">
+            <?php foreach ($related_articles as $related): ?>
+            <div class="related-item">
+                <h4><a href="article.php?slug=<?php echo $related['slug']; ?>"><?php echo htmlspecialchars($related['title']); ?></a></h4>
+                <p class="related-meta">
+                    By <?php echo htmlspecialchars($related['display_name'] ?: $related['username']); ?>
+                    | <?php echo format_date($related['published_at']); ?>
+                </p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <style>
@@ -123,6 +157,107 @@ include 'header.php';
     margin-bottom: 2rem;
 }
 
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    color: #2c3e50;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.article-content h1 {
+    font-size: 2rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.article-content h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.25rem;
+}
+
+.article-content h3 {
+    font-size: 1.25rem;
+}
+
+.article-content p {
+    margin-bottom: 1rem;
+}
+
+.article-content ul,
+.article-content ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.25rem;
+}
+
+.article-content code {
+    background: #f8f9fa;
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+.article-content pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.article-content pre code {
+    background: none;
+    padding: 0;
+}
+
+.article-content blockquote {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.article-content a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.article-content a:hover {
+    text-decoration: underline;
+}
+
+/* Wiki Link Styles */
+.article-content .wiki-link {
+    color: #007bff;
+    text-decoration: none;
+    border-bottom: 1px dotted #007bff;
+    padding: 0 2px;
+}
+
+.article-content .wiki-link:hover {
+    background: #e3f2fd;
+    text-decoration: none;
+}
+
+.article-content .wiki-link.missing {
+    color: #dc3545;
+    border-bottom-color: #dc3545;
+}
+
+.article-content .wiki-link.missing:hover {
+    background: #f8d7da;
+}
+
 .article-actions {
     margin-top: 2rem;
     padding-top: 1rem;
@@ -132,6 +267,49 @@ include 'header.php';
 
 .article-actions .btn {
     margin: 0 0.5rem;
+}
+
+.related-articles {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.related-articles h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.related-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.related-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.related-item h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.related-item h4 a {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.related-item h4 a:hover {
+    color: #007bff;
+}
+
+.related-meta {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
 }
 </style>
 

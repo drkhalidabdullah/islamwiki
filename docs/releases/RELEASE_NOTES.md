@@ -1,141 +1,150 @@
-# Release Notes
+# IslamWiki Release Notes
 
-This document provides a quick overview of all IslamWiki releases.
+This document provides an overview of all IslamWiki releases, from the initial version to the latest release.
 
-## Current Release
+## Current Release: v0.0.0.2
 
-### v0.0.0.1 - Fresh Start: Complete PHP Platform (2025-09-06)
-- **Type**: Initial Release
-- **Focus**: Complete PHP-only platform with all core features
-- **Key Features**: 
-  - User authentication and management system
-  - Admin panel with comprehensive tools
-  - Wiki system with articles and categories
-  - User dashboard and profile management
-  - Settings and preferences system
-  - Clean, organized file structure
-  - Modern, responsive design
-- **Status**: ✅ Released
+**Release Date**: September 6, 2025  
+**Status**: Latest Release  
+**Codename**: "Wiki Revolution"
+
+### Overview
+Major release featuring a complete wiki system overhaul with markdown editing, version control, and advanced search capabilities.
+
+### Key Features
+- Complete markdown-based wiki system
+- Rich text editor with visual toolbar
+- Wiki-style linking with `[[Page Name]]` syntax
+- Article version control and history
+- Advanced search with filters and suggestions
+- Test content (Islam, Allah, Muslim articles)
+
+[Read Full Release Notes](changelogs/v0.0.0.2.md)
+
+---
 
 ## Release History
 
-### v0.0.0.1 - Fresh Start (2025-09-06)
-- **Type**: Initial Release
-- **Focus**: Complete platform rebuild
-- **Key Changes**:
-  - Complete PHP-only architecture (no React)
-  - User authentication and role system
-  - Admin panel with statistics and management
-  - Wiki system with full functionality
-  - Clean file structure and organization
-  - Modern responsive design
-- **Status**: ✅ Released
+### v0.0.0.2 - "Wiki Revolution" (September 6, 2025)
+**Status**: Latest Release
 
-## Release Schedule
+**Major Features:**
+- Complete wiki system with markdown editing
+- Rich text editor with visual toolbar
+- Wiki linking system with smart detection
+- Article version control and restoration
+- Advanced search with full-text capabilities
+- Professional wiki interface and navigation
 
-### Upcoming Releases
+**Technical Improvements:**
+- Modular markdown parser system
+- Enhanced database schema with version control
+- Optimized search performance
+- Improved code architecture and organization
 
-#### v0.0.0.2 - Bug Fixes & Improvements (Planned)
-- **Target Date**: TBD
-- **Focus**: Bug fixes and minor improvements
-- **Planned Features**:
-  - Bug fixes and stability improvements
-  - Enhanced user interface
-  - Performance optimizations
-  - Additional admin tools
-  - User experience improvements
+[Full Changelog](changelogs/v0.0.0.2.md)
 
-#### v0.0.1.0 - Enhanced Features (Future)
-- **Target Date**: TBD
-- **Focus**: Major feature additions
-- **Planned Features**:
-  - Multi-language support
-  - Advanced wiki features
-  - API development
-  - Enhanced security features
-  - Advanced content management
+### v0.0.0.1 - "Fresh Start" (September 6, 2025)
+**Status**: Previous Release
 
-#### v0.1.0.0 - Feature Complete (Future)
-- **Target Date**: TBD
-- **Focus**: Complete feature set
-- **Planned Features**:
-  - Mobile app integration
-  - Advanced user roles
-  - Plugin system
-  - Advanced analytics
-  - Enterprise features
+**Major Features:**
+- Complete PHP platform rebuild (removed React)
+- User authentication and role management
+- Basic wiki system with article management
+- Admin panel with comprehensive tools
+- Database schema with user and content system
+
+**Technical Features:**
+- Secure password hashing and session management
+- CSRF protection and input sanitization
+- Responsive design and accessibility features
+- Clean file structure with public/ directory
+
+[Full Changelog](changelogs/v0.0.0.1.md)
+
+---
 
 ## Version Numbering
 
-IslamWiki follows [Semantic Versioning](https://semver.org/):
+IslamWiki uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
 
-- **Major (1.0.0)**: Breaking changes, major new features
-- **Minor (0.1.0)**: New features, backward compatible
-- **Patch (0.0.1)**: Bug fixes, minor improvements
+- **MAJOR**: Breaking changes or major feature additions
+- **MINOR**: New features that are backward compatible  
+- **PATCH**: Bug fixes and minor improvements
 
-### Current Versioning Strategy
-- **0.0.0.x**: Alpha releases (current)
-- **0.0.1.x**: Beta releases (planned)
-- **0.1.x**: Release candidate (future)
-- **1.0.0**: Stable release (future)
+### Development Phases
 
-## Release Process
+- **0.0.x**: Alpha releases - Core functionality and major features
+- **0.1.x**: Beta releases - Feature completion and refinement
+- **0.2.x**: Release candidate - Bug fixes and polish
+- **1.0.0**: Stable release - Production ready
 
-1. **Development**: Features developed in development branch
-2. **Testing**: Comprehensive testing of new features
-3. **Documentation**: Update changelog and documentation
-4. **Release**: Tag and release new version
-5. **Deployment**: Deploy to production environment
+---
 
-## Support Policy
+## Upcoming Releases
 
-- **Current Version (0.0.0.1)**: Full support
-- **Future Versions**: Full support when released
-- **Legacy Versions**: Security updates only
+### v0.0.0.3 - "Global Reach" (Planned)
+**Target Date**: TBD
 
-## Download Links
+**Planned Features:**
+- Multi-language support and translation system
+- Advanced user permissions and content moderation
+- API endpoints for third-party integrations
+- Enhanced mobile experience
 
-- **Latest Release**: [v0.0.0.1](changelogs/v0.0.0.1.md)
-- **All Releases**: [Changelog](changelogs/CHANGELOG.md)
-- **Source Code**: Available in project repository
+### v0.1.0 - "Community Edition" (Planned)
+**Target Date**: TBD
 
-## Installation
+**Planned Features:**
+- Community features and collaboration tools
+- Advanced content moderation
+- User-generated content system
+- Social features and user interactions
 
-### Quick Start
-1. **Requirements**: PHP 8.3+, MySQL 5.7+
-2. **Download**: Get the latest release
-3. **Database**: Import `setup_database.sql`
-4. **Configuration**: Update database settings
-5. **Web Server**: Point to `public/` directory
-6. **Access**: Visit your domain
+### v1.0.0 - "Production Ready" (Planned)
+**Target Date**: TBD
 
-### Default Credentials
-- **Admin User**: admin / admin123
-- **Database**: islamwiki (create as needed)
+**Planned Features:**
+- Production-ready stability
+- Performance optimizations
+- Security hardening
+- Complete documentation and guides
 
-## Migration Guides
+---
 
-### Fresh Installation
-- This is the initial release - no migration needed
-- Follow installation guide for setup
-- Import database schema from `setup_database.sql`
+## Installation & Upgrade
 
-### Future Migrations
-- Migration guides will be provided with each release
-- Database migrations will be included when needed
-- Backward compatibility maintained where possible
+### Latest Release (v0.0.0.2)
+```bash
+git clone https://github.com/drkhalidabdullah/islamwiki.git
+cd islamwiki
+git checkout v0.0.0.2
+mysql -u root -p < setup_database_fixed.sql
+cd public
+php -S 0.0.0.0:80
+```
 
-## Contact
+### Upgrade from Previous Version
+1. Backup your current installation
+2. Pull the latest changes: `git pull origin master`
+3. Run database migrations if needed
+4. Clear caches and restart your server
 
-For questions about releases:
-- Check release notes for specific version
-- Review changelog for detailed changes
-- Contact development team for support
-- Join community for discussions
+---
 
-## Community
+## Support & Documentation
 
-- **Documentation**: Complete guides and references
-- **Support**: Community and development team support
-- **Contributing**: Guidelines for contributing to the project
-- **Feedback**: Share feedback and suggestions
+- **Installation Guide**: [docs/guides/INSTALLATION.md](guides/INSTALLATION.md)
+- **User Guide**: [docs/guides/USER_GUIDE.md](guides/USER_GUIDE.md)
+- **API Documentation**: [docs/api/API_REFERENCE.md](api/API_REFERENCE.md)
+- **Changelog**: [docs/changelogs/CHANGELOG.md](changelogs/CHANGELOG.md)
+
+---
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to contribute to IslamWiki.
+
+---
+
+**IslamWiki** - Empowering Islamic knowledge through technology

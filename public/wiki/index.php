@@ -1,10 +1,6 @@
 <?php
-// Fix path issues for web server access
-$config_path = file_exists('../config/config.php') ? '../config/config.php' : 'config/config.php';
-$functions_path = file_exists('../includes/functions.php') ? '../includes/functions.php' : 'includes/functions.php';
-
-require_once $config_path;
-require_once $functions_path;
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $page_title = 'Wiki';
 
@@ -36,7 +32,18 @@ $stmt = $pdo->query("
 ");
 $recent_articles = $stmt->fetchAll();
 
-// Use custom wiki header
+// Get popular articles (most viewed)
+$stmt = $pdo->query("
+    SELECT wa.*, u.display_name, u.username, cc.name as category_name 
+    FROM wiki_articles wa 
+    JOIN users u ON wa.author_id = u.id 
+    LEFT JOIN content_categories cc ON wa.category_id = cc.id 
+    WHERE wa.status = 'published' 
+    ORDER BY wa.view_count DESC 
+    LIMIT 5
+");
+$popular_articles = $stmt->fetchAll();
+
 include 'header.php';
 ?>
 
@@ -44,13 +51,32 @@ include 'header.php';
     <div class="hero-section">
         <div class="card">
             <h1>IslamWiki Knowledge Base</h1>
-            <p>Explore comprehensive Islamic knowledge, articles, and resources.</p>
+            <p>Explore comprehensive Islamic knowledge, articles, and resources with our enhanced wiki system.</p>
             
             <div class="search-box">
                 <form action="search.php" method="GET">
                     <input type="text" name="q" placeholder="Search articles..." required>
                     <button type="submit" class="btn">Search</button>
                 </form>
+            </div>
+            
+            <div class="wiki-features">
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <span>Markdown Editor</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔗</span>
+                    <span>Wiki Links</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">👁️</span>
+                    <span>Live Preview</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔍</span>
+                    <span>Advanced Search</span>
+                </div>
             </div>
         </div>
     </div>
@@ -60,7 +86,7 @@ include 'header.php';
         <h2>Featured Articles</h2>
         <div class="articles-grid">
             <?php foreach ($featured_articles as $article): ?>
-            <div class="card">
+            <div class="card article-card">
                 <div class="article-meta">
                     <span class="category"><?php echo htmlspecialchars($article['category_name']); ?></span>
                     <span class="date"><?php echo format_date($article['published_at']); ?></span>
@@ -91,13 +117,29 @@ include 'header.php';
                     <?php endforeach; ?>
                 </ul>
             </div>
+            
+            <?php if (!empty($popular_articles)): ?>
+            <div class="card">
+                <h3>Popular Articles</h3>
+                <ul class="popular-list">
+                    <?php foreach ($popular_articles as $article): ?>
+                    <li>
+                        <a href="article.php?slug=<?php echo $article['slug']; ?>">
+                            <?php echo htmlspecialchars($article['title']); ?>
+                        </a>
+                        <span class="views"><?php echo number_format($article['view_count']); ?> views</span>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
         </div>
         
         <div class="recent-articles">
             <h2>Recent Articles</h2>
             <div class="articles-list">
                 <?php foreach ($recent_articles as $article): ?>
-                <div class="card">
+                <div class="card article-item">
                     <h4><a href="article.php?slug=<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h4>
                     <div class="article-meta">
                         <span class="category"><?php echo htmlspecialchars($article['category_name']); ?></span>
@@ -132,7 +174,7 @@ include 'header.php';
 }
 
 .hero-section .card {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -149,13 +191,13 @@ include 'header.php';
 }
 
 .search-box {
-    margin-top: 2rem;
+    margin: 2rem 0;
 }
 
 .search-box form {
     display: flex;
     gap: 0.5rem;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
 }
 
@@ -169,6 +211,26 @@ include 'header.php';
 
 .search-box button {
     padding: 0.75rem 1.5rem;
+}
+
+.wiki-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.feature-icon {
+    font-size: 1.2rem;
 }
 
 .featured-articles {
@@ -185,6 +247,15 @@ include 'header.php';
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+}
+
+.article-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.article-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .article-meta {
@@ -213,12 +284,13 @@ include 'header.php';
 
 .wiki-content {
     display: grid;
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 2rem;
 }
 
 .categories-sidebar .card {
     height: fit-content;
+    margin-bottom: 1.5rem;
 }
 
 .categories-sidebar h3 {
@@ -226,17 +298,20 @@ include 'header.php';
     color: #2c3e50;
 }
 
-.category-list {
+.category-list,
+.popular-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.category-list li {
+.category-list li,
+.popular-list li {
     margin-bottom: 0.5rem;
 }
 
-.category-list a {
+.category-list a,
+.popular-list a {
     color: #666;
     text-decoration: none;
     padding: 0.5rem;
@@ -245,9 +320,21 @@ include 'header.php';
     transition: background-color 0.3s;
 }
 
-.category-list a:hover {
+.category-list a:hover,
+.popular-list a:hover {
     background: #f8f9fa;
     color: #3498db;
+}
+
+.popular-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popular-list .views {
+    font-size: 0.8rem;
+    color: #999;
 }
 
 .recent-articles h2 {
@@ -302,6 +389,14 @@ include 'header.php';
     
     .search-box form {
         flex-direction: column;
+    }
+    
+    .wiki-features {
+        gap: 1rem;
+    }
+    
+    .feature-item {
+        font-size: 0.8rem;
     }
 }
 </style>

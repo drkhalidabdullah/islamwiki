@@ -1,0 +1,169 @@
+<?php
+
+class MarkdownParser {
+    private $wiki_base_url;
+    
+    public function __construct($wiki_base_url = 'wiki/') {
+        $this->wiki_base_url = $wiki_base_url;
+    }
+    
+    /**
+     * Parse markdown content with wiki-specific features
+     */
+    public function parse($content) {
+        // First, handle wiki links [[Page Name]] or [[Page Name|Display Text]]
+        $content = $this->parseWikiLinks($content);
+        
+        // Then parse standard markdown
+        $content = $this->parseMarkdown($content);
+        
+        return $content;
+    }
+    
+    /**
+     * Parse wiki links in the format [[Page Name]] or [[Page Name|Display Text]]
+     */
+    private function parseWikiLinks($content) {
+        // Pattern to match [[Page Name]] or [[Page Name|Display Text]]
+        $pattern = '/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/';
+        
+        return preg_replace_callback($pattern, function($matches) {
+            $page_name = trim($matches[1]);
+            $display_text = isset($matches[2]) ? trim($matches[2]) : $page_name;
+            
+            // Create slug from page name
+            $slug = $this->createSlug($page_name);
+            
+            // Check if page exists (you can enhance this with database lookup)
+            $exists = $this->pageExists($slug);
+            $class = $exists ? 'wiki-link' : 'wiki-link missing';
+            
+            return sprintf(
+                '<a href="%sarticle.php?slug=%s" class="%s" title="%s">%s</a>',
+                $this->wiki_base_url,
+                urlencode($slug),
+                $class,
+                htmlspecialchars($page_name),
+                htmlspecialchars($display_text)
+            );
+        }, $content);
+    }
+    
+    /**
+     * Create URL-friendly slug from page name
+     */
+    private function createSlug($text) {
+        // Convert to lowercase
+        $text = strtolower($text);
+        
+        // Replace spaces and special characters with hyphens
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+        
+        // Remove leading/trailing hyphens
+        $text = trim($text, '-');
+        
+        return $text;
+    }
+    
+    /**
+     * Check if a wiki page exists (simplified version)
+     */
+    private function pageExists($slug) {
+        global $pdo;
+        
+        if (!$pdo) return false;
+        
+        try {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_articles WHERE slug = ? AND status = 'published'");
+            $stmt->execute([$slug]);
+            return $stmt->fetchColumn() > 0;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Parse standard markdown syntax
+     */
+    private function parseMarkdown($content) {
+        // Headers
+        $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
+        $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
+        $content = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $content);
+        
+        // Bold and italic
+        $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
+        $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
+        
+        // Code blocks
+        $content = preg_replace('/```(.*?)```/s', '<pre><code>$1</code></pre>', $content);
+        $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+        
+        // Links
+        $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $content);
+        
+        // Lists
+        $content = preg_replace('/^\* (.*$)/m', '<li>$1</li>', $content);
+        $content = preg_replace('/^(\d+)\. (.*$)/m', '<li>$2</li>', $content);
+        
+        // Wrap consecutive list items in ul/ol
+        $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
+        
+        // Line breaks
+        $content = preg_replace('/\n\n/', '</p><p>', $content);
+        $content = '<p>' . $content . '</p>';
+        
+        // Clean up empty paragraphs
+        $content = preg_replace('/<p><\/p>/', '', $content);
+        $content = preg_replace('/<p>\s*<\/p>/', '', $content);
+        
+        return $content;
+    }
+    
+    /**
+     * Convert HTML back to markdown (for editing)
+     */
+    public function htmlToMarkdown($html) {
+        // Convert wiki links back to [[Page Name]] format
+        $html = preg_replace_callback(
+            '/<a[^>]*href="[^"]*article\.php\?slug=([^"]*)"[^>]*class="[^"]*wiki-link[^"]*"[^>]*>([^<]*)<\/a>/',
+            function($matches) {
+                $slug = urldecode($matches[1]);
+                $display_text = $matches[2];
+                $page_name = $this->slugToPageName($slug);
+                
+                if ($display_text === $page_name) {
+                    return "[[" . $page_name . "]]";
+                } else {
+                    return "[[" . $page_name . "|" . $display_text . "]]";
+                }
+            },
+            $html
+        );
+        
+        // Convert other HTML back to markdown
+        $html = preg_replace('/<h1>(.*?)<\/h1>/', '# $1', $html);
+        $html = preg_replace('/<h2>(.*?)<\/h2>/', '## $1', $html);
+        $html = preg_replace('/<h3>(.*?)<\/h3>/', '### $1', $html);
+        $html = preg_replace('/<strong>(.*?)<\/strong>/', '**$1**', $html);
+        $html = preg_replace('/<em>(.*?)<\/em>/', '*$1*', $html);
+        $html = preg_replace('/<code>(.*?)<\/code>/', '`$1`', $html);
+        $html = preg_replace('/<pre><code>(.*?)<\/code><\/pre>/s', '```$1```', $html);
+        $html = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/', '[$2]($1)', $html);
+        
+        // Remove paragraph tags
+        $html = preg_replace('/<p>(.*?)<\/p>/s', '$1', $html);
+        
+        return $html;
+    }
+    
+    /**
+     * Convert slug back to page name
+     */
+    private function slugToPageName($slug) {
+        // Convert hyphens back to spaces and capitalize
+        $name = str_replace('-', ' ', $slug);
+        $name = ucwords($name);
+        return $name;
+    }
+}

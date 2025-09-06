@@ -187,3 +187,30 @@ function truncate_text($text, $length = 150) {
     }
     return substr($text, 0, $length) . '...';
 }
+?>
+
+/**
+ * Create URL-friendly slug from text
+ */
+function createSlug($text) {
+    // Convert to lowercase
+    $text = strtolower($text);
+    
+    // Replace spaces and special characters with hyphens
+    $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+    
+    // Remove leading/trailing hyphens
+    $text = trim($text, '-');
+    
+    return $text;
+}
+
+/**
+ * Check if user can edit articles
+ */
+function is_editor($user_id = null) {
+    if ($user_id === null) {
+        $user_id = $_SESSION['user_id'] ?? null;
+    }
+    return $user_id && (has_role($user_id, "admin") || has_role($user_id, "moderator") || has_role($user_id, "editor"));
+}

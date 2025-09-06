@@ -5,14 +5,15 @@ require_once 'includes/functions.php';
 $page_title = 'Edit Article';
 require_login();
 
-$article_id = $_GET['id'] ?? 0;
+$article_id = (int)($_GET['id'] ?? 0);
 
 if (!$article_id) {
+    show_message('Article ID is required.', 'error');
     redirect('dashboard.php');
 }
 
 // Get article
-$stmt = $pdo->prepare("SELECT * FROM articles WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
 $stmt->execute([$article_id]);
 $article = $stmt->fetch();
 
@@ -22,134 +23,388 @@ if (!$article) {
 }
 
 // Check permissions
-if ($_SESSION['role'] !== 'admin' && $article['author_id'] != $_SESSION['user_id']) {
+if (!is_admin() && $article['author_id'] != $_SESSION['user_id']) {
     show_message('You do not have permission to edit this article.', 'error');
     redirect('dashboard.php');
 }
 
-$error = '';
+$errors = [];
+$success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_input($_POST['title'] ?? '');
     $content = $_POST['content'] ?? '';
+    $excerpt = sanitize_input($_POST['excerpt'] ?? '');
+    $category_id = (int)($_POST['category_id'] ?? 0);
     $status = sanitize_input($_POST['status'] ?? 'draft');
-    $category_ids = $_POST['categories'] ?? [];
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     
-    if (empty($title) || empty($content)) {
-        $error = 'Please fill in title and content.';
-    } else {
-        // Update article
-        $stmt = $pdo->prepare("UPDATE articles SET title = ?, content = ?, status = ? WHERE id = ?");
-        if ($stmt->execute([$title, $content, $status, $article_id])) {
-            // Remove existing categories
-            $stmt = $pdo->prepare("DELETE FROM article_categories WHERE article_id = ?");
-            $stmt->execute([$article_id]);
+    // Validation
+    if (empty($title)) {
+        $errors[] = 'Title is required.';
+    }
+    
+    if (empty($content)) {
+        $errors[] = 'Content is required.';
+    }
+    
+    if (strlen($title) > 255) {
+        $errors[] = 'Title must be less than 255 characters.';
+    }
+    
+    // Create slug from title
+    $slug = createSlug($title);
+    
+    // Check if slug already exists (excluding current article)
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_articles WHERE slug = ? AND id != ?");
+    $stmt->execute([$slug, $article_id]);
+    if ($stmt->fetchColumn() > 0) {
+        $errors[] = 'An article with this title already exists.';
+    }
+    
+    if (empty($errors)) {
+        try {
+            $stmt = $pdo->prepare("
+                UPDATE wiki_articles 
+    // Save version before updating
+    $stmt = $pdo->prepare("SELECT MAX(version_number) FROM article_versions WHERE article_id = ?");
+    $stmt->execute([$article_id]);
+    $current_version = $stmt->fetchColumn() ?: 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
+    $stmt->execute([$article_id]);
+    $old_article = $stmt->fetch();
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO article_versions 
+        (article_id, title, content, excerpt, version_number, author_id, change_summary) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $article_id,
+        $old_article["title"],
+        $old_article["content"],
+        $old_article["excerpt"],
+        $current_version + 1,
+        $_SESSION["user_id"],
+        $_POST["change_summary"] ?? "Article updated"
+    ]);
+                SET title = ?, slug = ?, content = ?, excerpt = ?, category_id = ?, 
+                    status = ?, is_featured = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
             
-            // Add new categories
-            if (!empty($category_ids)) {
-                $stmt = $pdo->prepare("INSERT INTO article_categories (article_id, category_id) VALUES (?, ?)");
-                foreach ($category_ids as $category_id) {
-                    $stmt->execute([$article_id, $category_id]);
-                }
+            $stmt->execute([
+                $title,
+                $slug,
+                $content,
+                $excerpt,
+                $category_id ?: null,
+                $status,
+                $is_featured,
+                $article_id
+            ]);
+            
+            // If status changed to published and wasn't published before
+            if ($status === 'published' && $article['status'] !== 'published') {
+                $stmt = $pdo->prepare("UPDATE wiki_articles SET published_at = NOW() WHERE id = ?");
+    // Save version before updating
+    $stmt = $pdo->prepare("SELECT MAX(version_number) FROM article_versions WHERE article_id = ?");
+    $stmt->execute([$article_id]);
+    $current_version = $stmt->fetchColumn() ?: 0;
+    
+    $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
+    $stmt->execute([$article_id]);
+    $old_article = $stmt->fetch();
+    
+    $stmt = $pdo->prepare("
+        INSERT INTO article_versions 
+        (article_id, title, content, excerpt, version_number, author_id, change_summary) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $article_id,
+        $old_article["title"],
+        $old_article["content"],
+        $old_article["excerpt"],
+        $current_version + 1,
+        $_SESSION["user_id"],
+        $_POST["change_summary"] ?? "Article updated"
+    ]);
+                $stmt->execute([$article_id]);
             }
             
             show_message('Article updated successfully!', 'success');
-            redirect('dashboard.php');
-        } else {
-            $error = 'Failed to update article.';
+            redirect("wiki/article.php?slug=" . urlencode($slug));
+            
+        } catch (Exception $e) {
+            $errors[] = 'Error updating article: ' . $e->getMessage();
         }
     }
 } else {
-    // Load existing data
-    $title = $article['title'];
-    $content = $article['content'];
-    $status = $article['status'];
-    
-    // Get current categories
-    $stmt = $pdo->prepare("SELECT category_id FROM article_categories WHERE article_id = ?");
-    $stmt->execute([$article_id]);
-    $current_categories = array_column($stmt->fetchAll(), 'category_id');
+    // Pre-fill form with existing data
+    $_POST['title'] = $article['title'];
+    $_POST['content'] = $article['content'];
+    $_POST['excerpt'] = $article['excerpt'];
+    $_POST['category_id'] = $article['category_id'];
+    $_POST['status'] = $article['status'];
+    $_POST['is_featured'] = $article['is_featured'];
 }
 
-// Get all categories
-$stmt = $pdo->query("SELECT * FROM categories ORDER BY name");
+// Get categories
+$stmt = $pdo->query("SELECT * FROM content_categories WHERE is_active = 1 ORDER BY name");
 $categories = $stmt->fetchAll();
 
 include 'includes/header.php';
 ?>
 
-<div class="form-container" style="max-width: 800px;">
-    <h2>Edit Article</h2>
+<div class="article-editor">
+    <div class="editor-header">
+        <h1>Edit Article</h1>
+        <div class="editor-actions">
+            <a href="wiki/article.php?slug=<?php echo urlencode($article['slug']); ?>" class="btn btn-secondary">View Article</a>
+            <a href="wiki/" class="btn btn-secondary">Back to Wiki</a>
+        </div>
+    </div>
     
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-error">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                    <li><?php echo htmlspecialchars($error); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
     
-    <form method="POST">
+    <form method="POST" class="article-form">
+        <div class="form-row">
+            <div class="form-group">
         <div class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required 
-                   value="<?php echo htmlspecialchars($title); ?>">
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+                <label for="title">Title *</label>
+                <input type="text" id="title" name="title" required 
+                       value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>"
+                       placeholder="Enter article title">
+            </div>
+            
+            <div class="form-group">
+        <div class="form-group">
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+                <label for="category_id">Category</label>
+                <select id="category_id" name="category_id">
+                    <option value="">Select a category</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?php echo $category['id']; ?>" 
+                                <?php echo (($_POST['category_id'] ?? '') == $category['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         
         <div class="form-group">
-            <label for="content">Content:</label>
-            <textarea id="content" name="content" rows="15" required><?php echo htmlspecialchars($content); ?></textarea>
+        <div class="form-group">
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+            <label for="excerpt">Excerpt</label>
+            <textarea id="excerpt" name="excerpt" rows="3" 
+                      placeholder="Brief description of the article"><?php echo htmlspecialchars($_POST['excerpt'] ?? ''); ?></textarea>
         </div>
         
         <div class="form-group">
-            <label for="status">Status:</label>
-            <select id="status" name="status">
-                <option value="draft" <?php echo $status === 'draft' ? 'selected' : ''; ?>>Draft</option>
-                <option value="published" <?php echo $status === 'published' ? 'selected' : ''; ?>>Published</option>
-            </select>
+        <div class="form-group">
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+            <label for="content">Content *</label>
+            <div class="wiki-editor-container">
+                <div class="wiki-editor-main">
+                    <textarea id="content" name="content" required 
+                              placeholder="Write your article content using Markdown..."><?php echo htmlspecialchars($_POST['content'] ?? ''); ?></textarea>
+                </div>
+                <div id="preview-container" style="display: none;">
+                    <div id="preview-content"></div>
+                </div>
+            </div>
         </div>
         
+        <div class="form-row">
+            <div class="form-group">
         <div class="form-group">
-            <label>Categories:</label>
-            <div class="categories-list">
-                <?php foreach ($categories as $category): ?>
-                <label class="category-checkbox">
-                    <input type="checkbox" name="categories[]" value="<?php echo $category['id']; ?>"
-                           <?php echo in_array($category['id'], $current_categories) ? 'checked' : ''; ?>>
-                    <?php echo htmlspecialchars($category['name']); ?>
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="draft" <?php echo (($_POST['status'] ?? 'draft') === 'draft') ? 'selected' : ''; ?>>Draft</option>
+                    <option value="published" <?php echo (($_POST['status'] ?? '') === 'published') ? 'selected' : ''; ?>>Published</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+        <div class="form-group">
+            <label for="change_summary">Change Summary</label>
+            <input type="text" id="change_summary" name="change_summary" 
+                   value="<?php echo htmlspecialchars($_POST["change_summary"] ?? ""); ?>" 
+                   placeholder="Brief description of changes made">
+        </div>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_featured" value="1" 
+                           <?php echo isset($_POST['is_featured']) ? 'checked' : ''; ?>>
+                    Featured Article
                 </label>
-                <?php endforeach; ?>
             </div>
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn btn-success">Update Article</button>
-            <a href="article.php?id=<?php echo $article_id; ?>" class="btn">View Article</a>
-            <a href="dashboard.php" class="btn">Back to Dashboard</a>
+            <button type="submit" class="btn btn-primary">Update Article</button>
+            <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
         </div>
     </form>
 </div>
 
 <style>
-.categories-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+.article-editor {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.category-checkbox {
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.editor-header h1 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.article-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.checkbox-label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: normal;
     cursor: pointer;
 }
 
-.form-actions {
-    margin-top: 2rem;
-    text-align: center;
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
 }
 
-.form-actions .btn {
-    margin: 0 0.5rem;
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .editor-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
 }
 </style>
+
+<link rel="stylesheet" href="assets/css/wiki-editor.css">
+<script src="assets/js/wiki-editor.js"></script>
 
 <?php include 'includes/footer.php'; ?>
