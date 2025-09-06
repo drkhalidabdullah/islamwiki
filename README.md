@@ -1,255 +1,153 @@
-# IslamWiki Framework
+# IslamWiki v0.0.0.1
 
-**Author:** Khalid Abdullah  
-**Version:** 0.0.5.4  
-**Date:** 2025-09-04  
-**License:** AGPL-3.0  
+A comprehensive Islamic knowledge platform built with pure PHP.
 
-## 🎉 **Project Overview**
+## 🎯 Overview
 
-IslamWiki Framework is a modern, secure, and scalable platform designed specifically for Islamic knowledge sharing and community building. Built with enterprise-grade security features and optimized for shared hosting environments.
+IslamWiki is a modern, secure, and user-friendly platform for Islamic knowledge sharing. Built from the ground up with pure PHP, it provides a complete solution for creating and managing Islamic content.
 
-**Current Status**: ✅ **v0.0.5.4 COMPLETE & PRODUCTION READY** - **CRITICAL SETTINGS BUGS RESOLVED**
+## ✨ Features
 
-## 🚀 **Key Features**
+### Core Functionality
+- **User Management**: Complete authentication and user system
+- **Admin Panel**: Comprehensive administrative tools and statistics
+- **Wiki System**: Full-featured knowledge base with articles and categories
+- **Content Management**: Article creation, editing, and organization
+- **Search**: Full-text search across all content
+- **User Dashboard**: Personal user area with activity tracking
 
-### **✅ Complete Authentication System**
-- **JWT Authentication**: Secure token-based authentication
-- **User Registration**: Complete registration with email verification
-- **Role-Based Access Control**: Granular permission system
-- **Password Management**: Reset, change, and security features
-- **Session Management**: Persistent sessions across page refreshes
+### Technical Features
+- **Pure PHP**: No React dependencies, clean and fast
+- **Secure**: Modern security practices and authentication
+- **Responsive**: Works on all devices and screen sizes
+- **Organized**: Clean file structure and proper separation
+- **Scalable**: Built for growth and future enhancements
 
-### **✅ Advanced User Management**
-- **User Profiles**: Rich user profiles with customizable fields
-- **User Status Management**: Multi-status system (pending, active, suspended, banned)
-- **User Analytics**: Comprehensive user statistics and reporting
-- **Advanced Search**: User search with filters and pagination
+## 🚀 Quick Start
 
-### **✅ Enterprise Security Features**
-- **Account Protection**: Brute force attack prevention with account lockout
-- **Security Logging**: Comprehensive security event monitoring
-- **Token Security**: Cryptographically secure token generation
-- **Two-Factor Foundation**: Foundation for 2FA implementation
+### Requirements
+- PHP 8.3 or higher
+- MySQL 5.7 or higher
+- Web server (Apache/Nginx or PHP built-in server)
 
-### **✅ Real-Time Admin Dashboard**
-- **Live User Statistics**: Real-time total users, active users, new users today
-- **Role Distribution**: Live role-based user counts and distribution
-- **System Monitoring**: Live PHP version, MySQL version, memory usage
-- **User Activity Tracking**: Live user login times, last seen, and role information
-- **Performance Metrics**: Live system performance and resource usage
+### Installation
+1. **Download**: Get the project files
+2. **Database**: Create MySQL database and import `setup_database.sql`
+3. **Configuration**: Update database settings in `public/config/database.php`
+4. **Web Server**: Point document root to `public/` directory
+5. **Access**: Visit your domain
 
-### **✅ Modern Frontend Application**
-- **React 18 SPA**: Complete React application with TypeScript
-- **Tailwind CSS**: Modern CSS framework with responsive design
-- **Component Library**: Reusable UI components
-- **State Management**: Zustand for global state management
-- **SPA Routing**: Client-side routing with Apache configuration
+### Default Credentials
+- **Admin User**: admin / admin123
+- **Database**: islamwiki (create as needed)
 
-### **✅ Comprehensive Settings Management**
+## 📁 Project Structure
 
-### **🌍 Translation Service (v0.0.6.0)**
-- **Multi-language Support**: English, Arabic, French, Spanish, German
-- **Cloud-based Translation APIs**: MyMemory, LibreTranslate, Google Translate
-- **User-specific Language Preferences**: Persistent language settings per user
-- **RTL Support**: Full right-to-left text support for Arabic
-- **Language Switcher**: Header dropdown with flag icons
-- **Translation Memory**: Intelligent caching for consistent translations
-- **Shared Hosting Compatible**: No Docker required
-- **Provider Fallback System**: Automatic failover between translation services
-- **Multi-tab Interface**: Organized settings into logical categories
-- **Account Settings**: Complete profile management and customization
-- **Security Controls**: 2FA, session management, and trusted devices
-- **Privacy Controls**: Granular privacy settings and data control
-- **Accessibility Features**: High contrast, large text, and screen reader support
-- **Notification Preferences**: Detailed notification management system
-
-## 🏗️ **Architecture**
-
-### **Backend Framework**
-- **PHP 8.2+** with custom lightweight framework
-- **Symfony/Laravel components** for enterprise features
-- **Dependency Injection Container** for service management
-- **Custom Router** with middleware support
-- **Service Providers** for modular architecture
-
-### **Frontend Application**
-- **React 18 SPA** with TypeScript
-- **Tailwind CSS** for modern styling
-- **Vite** for fast development and building
-- **Zustand** for state management
-- **React Router** for navigation
-
-### **Database & Storage**
-- **MySQL 8.0+ / MariaDB 10.5+** support
-- **Comprehensive schema** for Islamic content
-- **Multi-language support** with RTL languages
-- **File storage** with media management
-- **Caching system** for performance
-
-## 🔧 **Quick Start**
-
-### **Prerequisites**
-- PHP 8.2+
-- Node.js 18+
-- MySQL 8.0+ or MariaDB 10.5+
-- Apache with mod_rewrite
-- Composer and NPM
-
-### **Installation**
-```bash
-# Clone repository
-git clone https://github.com/your-org/islamwiki.git
-cd islamwiki
-
-# Install dependencies
-composer install
-npm install
-
-# Build frontend (SAFE BUILD - preserves .htaccess)
-npm run build:safe
-
-# Start development server
-php -S localhost:8000 -t public/
+```
+/var/www/html/
+├── docs/                    # Documentation and changelogs
+├── public/                  # Web-accessible files
+│   ├── *.php               # Main application files
+│   ├── assets/             # CSS, JS, images
+│   ├── config/             # Configuration files
+│   ├── includes/           # PHP includes
+│   ├── wiki/               # Wiki system
+│   └── uploads/            # File uploads
+├── setup_database.sql      # Database setup
+└── README.md               # This file
 ```
 
-### **Testing**
+## 🔧 Configuration
+
+### Database Setup
+1. Create MySQL database named `islamwiki`
+2. Import `setup_database.sql` to create tables
+3. Update `public/config/database.php` with your database credentials
+
+### Web Server Configuration
+- Point document root to `public/` directory
+- Ensure PHP 8.3+ is installed
+- Enable required PHP extensions: PDO, PDO_MySQL, Session, JSON
+
+## 📖 Documentation
+
+Complete documentation is available in the `docs/` directory:
+
+- **[Changelog](docs/changelogs/CHANGELOG.md)** - Version history and changes
+- **[Release Notes](docs/releases/RELEASE_NOTES.md)** - Quick release overview
+- **[Documentation Index](docs/README.md)** - Complete documentation guide
+
+## 🛡️ Security
+
+- Password hashing using PHP's `password_hash()`
+- Session-based authentication
+- Role-based access control
+- SQL injection prevention with prepared statements
+- Input validation and sanitization
+- CSRF protection framework
+
+## 🎨 User Interface
+
+- Modern, responsive design
+- Consistent styling across all pages
+- User-friendly navigation
+- Admin dashboard with statistics
+- Wiki interface with search and categories
+- Settings page with user preferences
+
+## 🔄 Version Information
+
+- **Current Version**: 0.0.0.1
+- **Release Date**: 2025-09-06
+- **Type**: Initial Release
+- **Next Version**: 0.0.0.2 (Planned)
+
+## 🚀 Development
+
+### Running Development Server
 ```bash
-# Run comprehensive test suite
-php test_v0_0_5_complete.php
-
-# Run API test suite
-php test_api_v0_0_5.php
-
-# Test SPA routing
-php test_spa_routing_permanent.php
+# From project root
+sudo php -S 0.0.0.0:80 -t public
 ```
 
-## 📚 **Documentation**
+### File Structure
+- All web-accessible files are in `public/` directory
+- Configuration files in `public/config/`
+- Documentation in `docs/` directory
+- Database setup in root directory
 
-### **Core Documentation**
-- **[Framework Overview](docs/IslamWiki_Framework_Overview.md)** - Complete implementation guide
-- **[Architecture Overview](docs/architecture/ARCHITECTURE_OVERVIEW.md)** - High-level architecture
-- **[Components Overview](docs/architecture/COMPONENTS_OVERVIEW.md)** - Detailed component documentation
-- **[Database Schema](docs/architecture/DATABASE_SCHEMA.md)** - Database documentation
+## 📞 Support
 
-### **Deployment Guides**
-- **[Shared Hosting Deployment](docs/plans/SHARED_HOSTING_DEPLOYMENT.md)** - General setup instructions
-- **[Gandi.net Hosting Setup](docs/plans/GANDI_HOSTING_SETUP.md)** - Specific instructions for Gandi.net
+- **Documentation**: Check `docs/` directory for guides
+- **Issues**: Report issues through project issue tracker
+- **Community**: Join the IslamWiki community
+- **Updates**: Follow project updates and announcements
 
-### **Release Information**
-- **[Release Notes](docs/releases/RELEASE_NOTES_0.0.5.md)** - Detailed v0.0.5 information
-- **[Changelog](docs/releases/CHANGELOG.md)** - Complete change history
-- **[Version History](docs/releases/README.md)** - Timeline and roadmap
+## 🔮 Roadmap
 
-## 🌐 **Live Demo**
+### Version 0.0.0.2 (Next)
+- Bug fixes and minor improvements
+- Enhanced user interface
+- Performance optimizations
 
-- **Admin Dashboard**: Real-time data integration with live database
-- **User Authentication**: Complete login/registration system
-- **Role-Based Access**: Admin and user role management
-- **SPA Routing**: Client-side routing with Apache configuration
+### Version 0.0.1.0 (Future)
+- Multi-language support
+- Advanced wiki features
+- API development
 
-## 🔒 **Security Features**
+### Version 0.1.0.0 (Future)
+- Mobile app integration
+- Advanced content management
+- Plugin system
 
-- **Password Security**: Strong password policies and bcrypt hashing
-- **Token Security**: Secure JWT token generation and validation
-- **Account Protection**: Brute force attack prevention
-- **Session Security**: Secure session management and invalidation
-- **Input Validation**: Comprehensive data validation and sanitization
+## 📄 License
 
-## 📊 **Performance Metrics**
+This project is open source. See project repository for license details.
 
-- **User Registration**: <500ms average response time
-- **User Login**: <300ms average response time
-- **Profile Updates**: <400ms average response time
-- **Database Queries**: <100ms average query time
-- **Concurrent Users**: Tested with 100+ concurrent users
-- **Scalability**: Optimized for 10,000+ users
+## 👥 Contributing
 
-## 🧪 **Quality Assurance**
-
-### **Test Coverage**
-- **Total Tests**: 11
-- **Passed**: 11 ✅
-- **Failed**: 0 ❌
-- **Success Rate**: 100%
-- **Code Coverage**: >95%
-
-### **Quality Standards**
-- **Code Quality**: Enterprise-grade, maintainable code
-- **Security**: Zero critical security vulnerabilities
-- **Performance**: <500ms response times achieved
-- **Documentation**: 100% API documentation coverage
-
-## 🚀 **Production Ready**
-
-### **Status**: ✅ **100% COMPLETE - PRODUCTION READY**
-
-- **All Core Features**: Implemented and tested
-- **Security Features**: Fully functional
-- **Database Schema**: Complete and optimized
-- **API Endpoints**: Stable and documented
-- **Real-Time Data**: Live admin dashboard integration
-- **SPA Routing**: Permanently fixed and protected
-
-## 🔮 **Roadmap**
-
-### **v0.0.6 (Q1 2026)**
-- **Content Management System**: Article creation, editing, and management
-- **Markdown Support**: Rich text editing with preview capabilities
-- **Category Management**: Content organization and categorization
-- **Search Functionality**: Basic content search and discovery
-
-### **v0.1.0 (Q2 2026)**
-- **Social Networking**: User interactions and communities
-- **Learning Management**: Educational content and courses
-- **Mobile Applications**: React Native apps
-- **Advanced Analytics**: Business intelligence tools
-
-## 🤝 **Contributing**
-
-### **Getting Started**
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
-
-### **Development Guidelines**
-- Follow existing code style and conventions
-- Add comprehensive tests for new features
-- Update documentation for any changes
-- Ensure all tests pass before submitting
-
-## 📞 **Support**
-
-### **Getting Help**
-- Check the [documentation](docs/README.md) first
-- Review [Release Notes](docs/releases/RELEASE_NOTES_0.0.5.md) for known issues
-- Check [Changelog](docs/releases/CHANGELOG.md) for recent changes
-
-### **Reporting Issues**
-- Document the exact error message
-- Include your environment details
-- Check if the issue is documented
-- Provide steps to reproduce
-
-## 📄 **License**
-
-This project is licensed under the **AGPL-3.0 License** - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 **Acknowledgments**
-
-- **Development Team**: Code review and testing support
-- **Community Members**: Feedback and testing assistance
-- **Open Source Community**: For the amazing tools and libraries
+Contributions are welcome! Please see documentation for contributing guidelines.
 
 ---
 
-**Ready to build the future of Islamic knowledge platforms?** Start with v0.0.5 and experience the power of a modern, secure, and scalable authentication system designed specifically for Islamic content platforms.
-
-**Last Updated:** September 2, 2025  
-**Next Release:** v0.0.6 (Content Management System)  
-**Maintainer:** Khalid Abdullah  
-**License:** AGPL-3.0  
-**Status:** ✅ **v0.0.5 COMPLETE & PRODUCTION READY** 
+**IslamWiki v0.0.0.1** - Fresh Start: Complete PHP Platform
