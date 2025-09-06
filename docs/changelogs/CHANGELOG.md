@@ -5,6 +5,58 @@ All notable changes to IslamWiki will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.0.4] - 2025-09-06
+
+### Added
+- **Comprehensive User Profile System**
+  - Social media-style user profiles with cover photos and avatars
+  - Clean URL structure (`/user/{username}`) for better SEO and sharing
+  - Profile tabs: Posts, Photos, Events, About, and Activity sections
+  - Social statistics: followers, following, articles, and posts counts
+
+- **Social Networking Features**
+  - Follow/unfollow system with real-time updates
+  - User posts with privacy controls (public, community, followers, private)
+  - Post interactions: like, comment, and share functionality
+  - Personalized activity feed showing posts from followed users
+  - AJAX-powered interactions for seamless user experience
+
+- **Enhanced Database Schema**
+  - New tables: `user_follows`, `user_posts`, `post_interactions`, `user_photos`, `user_events`, `user_achievements`, `post_comments`
+  - Extended user profiles with interests, education, profession, expertise areas
+  - Performance optimizations with proper indexing
+  - Data integrity with foreign key constraints
+
+- **User Interface Improvements**
+  - Responsive design optimized for mobile devices
+  - Real-time follow/unfollow and like/unlike functionality
+  - Updated navigation with profile and feed links
+  - Create post functionality for community engagement
+
+### Enhanced
+- **Wiki Integration**
+  - Seamless integration with existing wiki system
+  - Article attribution and sharing capabilities
+  - User expertise recognition in Islamic knowledge areas
+
+- **Security & Privacy**
+  - Granular privacy controls for user content
+  - Comprehensive input validation and sanitization
+  - Proper access control for profile viewing
+  - CSRF protection for all forms
+
+### Technical
+- **URL Routing**
+  - Pretty URLs for user profiles with tab support
+  - SEO-friendly structure for better search engine indexing
+  - Backward compatibility with existing wiki URLs
+
+- **Performance**
+  - Optimized database queries for social interactions
+  - Efficient AJAX handlers for real-time updates
+  - Mobile-optimized responsive design
+
+
 ## [0.0.0.3] - 2025-09-06
 
 ### Added
@@ -292,3 +344,13 @@ This project uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
 - **v0.0.5**: Advanced user permissions and content moderation
 - **v0.0.6**: API endpoints and third-party integrations
 - **v0.1.0**: Mobile app and advanced features
+
+### Fixed
+- **User Dropdown**: Resolved CSS conflicts causing dropdown not to show for logged-in users
+- **Admin Access**: Fixed 403 Forbidden error when accessing `/admin` panel
+- **Search Functionality**: Resolved 500 errors in wiki search from header search box
+- **Header Styling**: Fixed asset path issues and broken navigation links
+- **Homepage Content**: Resolved blank content area below header
+- **URL Routing**: Fixed admin panel routing and clean URL implementation
+- **CSS Conflicts**: Removed duplicate and conflicting CSS rules
+- **JavaScript Display**: Fixed JavaScript code appearing as text on pages

@@ -32,7 +32,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$article_id]);
 $versions = $stmt->fetchAll();
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="article-history">
@@ -184,4 +184,4 @@ include 'header.php';
 }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

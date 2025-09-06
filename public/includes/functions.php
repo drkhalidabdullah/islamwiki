@@ -57,7 +57,14 @@ function get_user_roles($user_id) {
         WHERE ur.user_id = ?
     ");
     $stmt->execute([$user_id]);
-    return $stmt->fetchAll();
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
 }
 
 function has_role($user_id, $role_name) {
@@ -273,3 +280,446 @@ function is_reviewer($user_id = null) {
     }
     return $user_id && has_role($user_id, 'reviewer');
 }
+
+// User Profile System Functions
+
+function get_user_by_username($username) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND is_active = 1");
+    $stmt->execute([$username]);
+    return $stmt->fetch();
+}
+
+function get_user_followers($user_id, $limit = 20, $offset = 0) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT u.*, uf.created_at as followed_at 
+        FROM users u 
+        JOIN user_follows uf ON u.id = uf.follower_id 
+        WHERE uf.following_id = ? 
+        ORDER BY uf.created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function get_user_following($user_id, $limit = 20, $offset = 0) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT u.*, uf.created_at as followed_at 
+        FROM users u 
+        JOIN user_follows uf ON u.id = uf.following_id 
+        WHERE uf.follower_id = ? 
+        ORDER BY uf.created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function follow_user($follower_id, $following_id) {
+    global $pdo;
+    if ($follower_id == $following_id) return false;
+    
+    $stmt = $pdo->prepare("
+        INSERT IGNORE INTO user_follows (follower_id, following_id) 
+        VALUES (?, ?)
+    ");
+    return $stmt->execute([$follower_id, $following_id]);
+}
+
+function unfollow_user($follower_id, $following_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        DELETE FROM user_follows 
+        WHERE follower_id = ? AND following_id = ?
+    ");
+    return $stmt->execute([$follower_id, $following_id]);
+}
+
+function is_following($follower_id, $following_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as count 
+        FROM user_follows 
+        WHERE follower_id = ? AND following_id = ?
+    ");
+    $stmt->execute([$follower_id, $following_id]);
+    $result = $stmt->fetch();
+    return $result['count'] > 0;
+}
+
+function get_followers_count($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE following_id = ?");
+    $stmt->execute([$user_id]);
+    $result = $stmt->fetch();
+    return $result['count'];
+}
+
+function get_following_count($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE follower_id = ?");
+    $stmt->execute([$user_id]);
+    $result = $stmt->fetch();
+    return $result['count'];
+}
+
+function create_user_post($user_id, $content, $type = 'text', $media_url = null, $article_id = null) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        INSERT INTO user_posts (user_id, content, post_type, media_url, article_id) 
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    return $stmt->execute([$user_id, $content, $type, $media_url, $article_id]);
+}
+
+function get_user_posts($user_id, $limit = 20, $offset = 0, $public_only = true) {
+    global $pdo;
+    $where_clause = $public_only ? "AND is_public = 1" : "";
+    $stmt = $pdo->prepare("
+        SELECT up.*, u.username, u.display_name, u.avatar 
+        FROM user_posts up 
+        JOIN users u ON up.user_id = u.id 
+        WHERE up.user_id = ? $where_clause
+        ORDER BY up.created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function get_feed_posts($user_id, $limit = 20, $offset = 0) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT up.*, u.username, u.display_name, u.avatar 
+        FROM user_posts up 
+        JOIN users u ON up.user_id = u.id 
+        WHERE (up.user_id = ? OR up.user_id IN (
+            SELECT following_id FROM user_follows WHERE follower_id = ?
+        )) AND up.is_public = 1
+        ORDER BY up.created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function like_post($user_id, $post_id) {
+    global $pdo;
+    $pdo->beginTransaction();
+    
+    try {
+        // Add like interaction
+        $stmt = $pdo->prepare("
+            INSERT IGNORE INTO post_interactions (post_id, user_id, interaction_type) 
+            VALUES (?, ?, 'like')
+        ");
+        $stmt->execute([$post_id, $user_id]);
+        
+        // Update likes count
+        $stmt = $pdo->prepare("
+            UPDATE user_posts 
+            SET likes_count = (
+                SELECT COUNT(*) FROM post_interactions 
+                WHERE post_id = ? AND interaction_type = 'like'
+            ) 
+            WHERE id = ?
+        ");
+        $stmt->execute([$post_id, $post_id]);
+        
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        $pdo->rollback();
+        return false;
+    }
+}
+
+function unlike_post($user_id, $post_id) {
+    global $pdo;
+    $pdo->beginTransaction();
+    
+    try {
+        // Remove like interaction
+        $stmt = $pdo->prepare("
+            DELETE FROM post_interactions 
+            WHERE post_id = ? AND user_id = ? AND interaction_type = 'like'
+        ");
+        $stmt->execute([$post_id, $user_id]);
+        
+        // Update likes count
+        $stmt = $pdo->prepare("
+            UPDATE user_posts 
+            SET likes_count = (
+                SELECT COUNT(*) FROM post_interactions 
+                WHERE post_id = ? AND interaction_type = 'like'
+            ) 
+            WHERE id = ?
+        ");
+        $stmt->execute([$post_id, $post_id]);
+        
+        $pdo->commit();
+        return true;
+    } catch (Exception $e) {
+        $pdo->rollback();
+        return false;
+    }
+}
+
+function is_post_liked($user_id, $post_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as count 
+        FROM post_interactions 
+        WHERE post_id = ? AND user_id = ? AND interaction_type = 'like'
+    ");
+    $stmt->execute([$post_id, $user_id]);
+    $result = $stmt->fetch();
+    return $result['count'] > 0;
+}
+
+function get_user_photos($user_id, $limit = 20, $offset = 0, $public_only = true) {
+    global $pdo;
+    $where_clause = $public_only ? "AND is_public = 1" : "";
+    $stmt = $pdo->prepare("
+        SELECT * FROM user_photos 
+        WHERE user_id = ? $where_clause
+        ORDER BY created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function get_user_events($user_id, $limit = 20, $offset = 0, $public_only = true) {
+    global $pdo;
+    $where_clause = $public_only ? "AND is_public = 1" : "";
+    $stmt = $pdo->prepare("
+        SELECT * FROM user_events 
+        WHERE user_id = ? $where_clause
+        ORDER BY start_date DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function get_user_achievements($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT * FROM user_achievements 
+        WHERE user_id = ? 
+        ORDER BY earned_at DESC
+    ");
+    $stmt->execute([$user_id]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post["parsed_content"] = parse_post_markdown($post["content"]);
+    }
+    
+    return $posts;
+}
+
+function get_user_stats($user_id) {
+    global $pdo;
+    
+    // Get article stats
+    $stmt = $pdo->prepare("
+        SELECT 
+            COUNT(*) as total_articles,
+            COUNT(CASE WHEN status = 'published' THEN 1 END) as published_articles,
+            COUNT(CASE WHEN status = 'draft' THEN 1 END) as draft_articles,
+            SUM(view_count) as total_views
+        FROM wiki_articles 
+        WHERE author_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    $article_stats = $stmt->fetch();
+    
+    // Get social stats
+    $followers_count = get_followers_count($user_id);
+    $following_count = get_following_count($user_id);
+    
+    // Get post stats
+    $stmt = $pdo->prepare("
+        SELECT 
+            COUNT(*) as total_posts,
+            SUM(likes_count) as total_likes,
+            SUM(comments_count) as total_comments
+        FROM user_posts 
+        WHERE user_id = ? AND is_public = 1
+    ");
+    $stmt->execute([$user_id]);
+    $post_stats = $stmt->fetch();
+    
+    return [
+        'articles' => $article_stats,
+        'followers' => $followers_count,
+        'following' => $following_count,
+        'posts' => $post_stats
+    ];
+}
+
+function can_view_profile($viewer_id, $profile_user_id) {
+    global $pdo;
+    
+    // User can always view their own profile
+    if ($viewer_id == $profile_user_id) return true;
+    
+    // Get profile privacy level
+    $stmt = $pdo->prepare("
+        SELECT privacy_level FROM user_profiles 
+        WHERE user_id = ?
+    ");
+    $stmt->execute([$profile_user_id]);
+    $profile = $stmt->fetch();
+    
+    if (!$profile) return true; // Default to public if no profile settings
+    
+    switch ($profile['privacy_level']) {
+        case 'public':
+            return true;
+        case 'community':
+            return is_logged_in();
+        case 'followers':
+            return is_following($viewer_id, $profile_user_id);
+        case 'private':
+            return false;
+        default:
+            return true;
+    }
+}
+
+function get_user_profile_complete($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT u.*, up.* 
+        FROM users u 
+        LEFT JOIN user_profiles up ON u.id = up.user_id 
+        WHERE u.id = ?
+    ");
+    $stmt->execute([$user_id]);
+    return $stmt->fetch();
+}
+
+/**
+ * Parse markdown content for user posts
+ */
+function parse_post_markdown($content) {
+    // Simple markdown parser for posts
+    $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
+    
+    // Headers
+    $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
+    $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
+    $content = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $content);
+    
+    // Bold
+    $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
+    
+    // Italic
+    $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
+    
+    // Strikethrough
+    $content = preg_replace('/~~(.*?)~~/', '<del>$1</del>', $content);
+    
+    // Code blocks
+    $content = preg_replace('/```([\s\S]*?)```/', '<pre><code>$1</code></pre>', $content);
+    
+    // Inline code
+    $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+    
+    // Links
+    $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" target="_blank" rel="noopener">$1</a>', $content);
+    
+    // Images
+    $content = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">', $content);
+    
+    // Blockquotes
+    $content = preg_replace('/^> (.*$)/m', '<blockquote>$1</blockquote>', $content);
+    
+    // Lists
+    $content = preg_replace('/^\* (.*$)/m', '<li>$1</li>', $content);
+    $content = preg_replace('/^- (.*$)/m', '<li>$1</li>', $content);
+    $content = preg_replace('/^(\d+)\. (.*$)/m', '<li>$2</li>', $content);
+    
+    // Wrap consecutive list items in ul/ol
+    $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
+    
+    // Line breaks
+    $content = nl2br($content);
+    
+    return $content;
+}
+
+/**
+ * Get user posts with markdown parsing
+ */
+function get_user_posts_with_markdown($user_id, $limit = 10, $offset = 0) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT up.*, u.username, u.display_name 
+        FROM user_posts up 
+        JOIN users u ON up.user_id = u.id 
+        WHERE up.user_id = ? AND up.is_public = 1 
+        ORDER BY up.created_at DESC 
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    $posts = $stmt->fetchAll();
+    
+    // Parse markdown for each post
+    foreach ($posts as &$post) {
+        $post['parsed_content'] = parse_post_markdown($post['content']);
+    }
+    
+    return $posts;
+}
+

@@ -86,7 +86,7 @@ $page_title = $article['title'];
 $parser = new MarkdownParser('');
 $parsed_content = $parser->parse($article['content']);
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="article-container">
@@ -195,4 +195,4 @@ include 'header.php';
     <?php endif; ?>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

@@ -87,7 +87,7 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $popular_articles = $stmt->fetchAll();
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="wiki-homepage">
@@ -96,12 +96,6 @@ include 'header.php';
             <h1>Islamic Knowledge Wiki</h1>
             <p>Explore comprehensive articles about Islam, Islamic history, and Islamic teachings.</p>
             
-            <div class="search-box">
-                <form action="search.php" method="GET">
-                    <input type="text" name="q" placeholder="Search articles..." value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
         </div>
     </div>
     
@@ -221,9 +215,6 @@ include 'header.php';
     color: #666;
 }
 
-.search-box {
-    margin: 2rem 0;
-}
 
 .search-box form {
     display: flex;
@@ -399,4 +390,4 @@ include 'header.php';
 }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

@@ -1,11 +1,11 @@
-# IslamWiki - Comprehensive Islamic Knowledge Platform
+# IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.3-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
-[![PHP](https://img.shields.io/badge/PHP-8.3+-green.svg)](https://php.net)
+[![Version](https://img.shields.io/badge/version-0.0.0.4-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://mysql.com)
-[![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A comprehensive, modern Islamic knowledge platform built with PHP, featuring a full-featured wiki system, user management, and content management capabilities.
+A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and community features.
 
 ## 🚀 Features
 
@@ -15,204 +15,221 @@ A comprehensive, modern Islamic knowledge platform built with PHP, featuring a f
 - **Live Preview**: Real-time markdown rendering
 - **Version Control**: Complete article history and restoration
 - **Smart Link Detection**: Existing pages (blue) vs missing pages (red)
-- **Pretty URLs**: SEO-friendly URLs like `/wiki/Islam` instead of `/wiki/article.php?slug=islam`
+- **Clean URLs**: SEO-friendly URLs like `/wiki/Islam` instead of `/wiki/article.php?slug=islam`
 
-### 👥 **Enhanced User Management**
-- **Multi-Role System**: Admin, Moderator, Editor, User, Guest, Scholar, Reviewer roles
-- **User Authentication**: Secure login/registration with password hashing
-- **Complete Admin Panel**: Full user editing, password reset, and role management
-- **User Profiles**: Comprehensive profile management
-- **Activity Tracking**: User actions and statistics
-- **Draft Collaboration**: Multi-user collaboration on draft articles
+### 👥 **Social Networking Features**
+- **User Profiles**: Facebook-style profiles with cover photos, avatars, and social stats
+- **Follow System**: Follow/unfollow other users with real-time AJAX updates
+- **User Posts**: Create and share text posts with privacy controls
+- **Activity Feed**: Personalized feed showing posts from followed users
+- **Post Interactions**: Like, comment, and share posts with engagement tracking
+- **Privacy Controls**: Public, community, followers-only, and private content visibility
+- **Social Statistics**: Track followers, following, articles, and posts counts
 
-### 🔍 **Advanced Search**
-- **Full-Text Search**: Search across titles, content, and excerpts
-- **Category Filtering**: Filter results by article categories
-- **Multiple Sort Options**: By relevance, title, date, or views
-- **Search Suggestions**: Popular articles when no results found
-- **Highlighted Results**: Search terms highlighted in results
+### 🎨 **Modern User Interface**
+- **Facebook-Style Header**: Clean, modern header with global search and user dropdown
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Dark/Light Themes**: User preference-based theme switching
+- **Interactive Elements**: Smooth animations and hover effects
+- **Accessibility**: ARIA labels and keyboard navigation support
 
-### 📝 **Content Management**
-- **Article Creation**: Rich markdown editor with toolbar
-- **Enhanced Article Editing**: Full-featured editing with category selection and featured articles
-- **Category System**: Organized content categorization
-- **Featured Articles**: Highlight important content
-- **Draft System**: Save articles as drafts before publishing
-- **Scholar Verification**: Content verification system for accuracy
-- **Content Statistics**: View counts and engagement metrics
+### 🔧 **Enhanced User Management**
+- **Role-Based Access**: Admin, moderator, and user roles with different permissions
+- **User Profiles**: Comprehensive profiles with bio, interests, and expertise areas
+- **Activity Tracking**: User activity logs and engagement metrics
+- **Privacy Settings**: Granular privacy controls for user data
+- **Account Management**: Profile editing, password changes, and account settings
 
-### 🎨 **Modern Interface**
-- **Responsive Design**: Works on all devices
-- **Professional Styling**: Clean, modern interface
-- **Intuitive Navigation**: Easy-to-use wiki interface
-- **Accessibility**: WCAG compliant design
-- **"Powered by IslamWiki" Branding**: Professional footer badge
+### 🛡️ **Security & Performance**
+- **Secure Authentication**: Password hashing, session management, and CSRF protection
+- **Input Validation**: Comprehensive input sanitization and validation
+- **SQL Injection Prevention**: Prepared statements for all database queries
+- **XSS Protection**: Proper output escaping and content filtering
+- **Performance Optimization**: Database indexing, query optimization, and caching
 
-### 🛡️ **Security & Administration**
-- **Enhanced Admin Panel**: Complete user management with modal-based editing
-- **Password Reset**: Secure password reset functionality
-- **Role-Based Access**: Comprehensive permission system
-- **Input Validation**: Advanced sanitization and validation
-- **Session Management**: Secure session handling
+### 📱 **Mobile-First Design**
+- **Responsive Layout**: Optimized for mobile, tablet, and desktop
+- **Touch-Friendly**: Large touch targets and gesture support
+- **Fast Loading**: Optimized assets and lazy loading
+- **Offline Support**: Basic offline functionality for reading
 
-## 🛠️ Technology Stack
+## 🎯 **What's New in v0.0.0.4**
 
-- **Backend**: PHP 8.3+ with PDO
-- **Database**: MySQL 8.0+ with comprehensive schema
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: Custom CSS with responsive design
-- **Server**: Apache with URL rewriting support
+### 🆕 **Major Features**
+- **Social Media Integration**: Complete social networking system with profiles, posts, and feeds
+- **Facebook-Style Interface**: Modern, clean design inspired by popular social platforms
+- **User Dropdown**: Fixed and fully functional user dropdown with admin panel access
+- **Clean URL System**: All URLs now use clean format without .php extensions
+- **Enhanced Admin Panel**: Fixed admin access issues and improved functionality
 
-## 📦 Installation
+### 🐛 **Critical Bug Fixes**
+- **User Dropdown**: Resolved CSS conflicts causing dropdown not to show
+- **Admin Access**: Fixed 403 Forbidden error when accessing admin panel
+- **Search Functionality**: Resolved 500 errors in wiki search
+- **Header Styling**: Fixed asset path issues and broken navigation links
+- **Homepage Content**: Resolved blank content area below header
 
-### Prerequisites
-- PHP 8.3 or higher
-- MySQL 8.0 or higher
-- Apache web server with mod_rewrite enabled
-- Composer (optional, for future package management)
+### 🔧 **Technical Improvements**
+- **Database Schema**: New tables for social features with proper indexing
+- **CSS Architecture**: Unified styling system with resolved conflicts
+- **JavaScript Enhancement**: Modern event handling and AJAX functionality
+- **URL Routing**: Clean URL system with proper .htaccess configuration
 
-### Quick Start
+## 📋 **System Requirements**
 
-1. **Clone the repository**
+### Minimum Requirements
+- **PHP**: 8.1 or higher
+- **MySQL**: 8.0 or higher
+- **Apache**: 2.4 with mod_rewrite enabled
+- **Memory**: 256MB RAM minimum
+- **Storage**: 100MB free space
+
+### Required PHP Extensions
+- PDO
+- PDO_MySQL
+- JSON
+- Session
+- OpenSSL
+- mbstring
+- fileinfo
+
+## 🚀 **Quick Start**
+
+### Installation
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/drkhalidabdullah/islamwiki.git
    cd islamwiki
    ```
 
-2. **Set up the database**
+2. **Set up the database**:
    ```bash
-   mysql -u root -p < setup_database_fixed.sql
-   mysql -u root -p islamwiki < database_migration_v0.0.0.3.sql
+   mysql -u root -p < setup_database.sql
+   mysql -u root -p < database_migration_v0.0.0.4.sql
    ```
 
-3. **Configure Apache**
-   - Ensure mod_rewrite is enabled
-   - Set DocumentRoot to the project directory
-   - The included .htaccess files will handle URL rewriting
-
-4. **Start the server**
+3. **Configure the application**:
    ```bash
-   cd public
-   php -S 0.0.0.0:80
+   cp public/config/config.php.example public/config/config.php
+   # Edit config.php with your database credentials
    ```
 
-5. **Access the platform**
-   - Open your browser to `http://localhost`
+4. **Set up the web server**:
+   - Point your web server document root to the `public/` directory
+   - Ensure mod_rewrite is enabled for clean URLs
+   - Set proper file permissions
+
+5. **Access the application**:
+   - Visit your domain in a web browser
    - Default admin credentials: `admin` / `password`
 
-### Production Setup
+### Default Admin Account
+- **Username**: `admin`
+- **Password**: `password`
 
-For production deployment:
+## 📖 **Documentation**
 
-1. **Configure Apache Virtual Host**
-   ```apache
-   <VirtualHost *:80>
-       ServerName yourdomain.com
-       DocumentRoot /path/to/islamwiki/public
-       
-       <Directory /path/to/islamwiki/public>
-           AllowOverride All
-           Require all granted
-       </Directory>
-   </VirtualHost>
-   ```
+- **[Installation Guide](docs/guides/INSTALLATION.md)** - Detailed setup instructions
+- **[User Manual](docs/guides/USER_MANUAL.md)** - How to use IslamWiki features
+- **[Admin Guide](docs/guides/ADMIN_GUIDE.md)** - Administration and management
+- **[API Documentation](docs/api/)** - RESTful API endpoints
+- **[Architecture](docs/architecture/)** - System architecture and design
+- **[Changelog](docs/changelogs/CHANGELOG.md)** - Complete version history
 
-2. **Set proper file permissions**
-   ```bash
-   chmod -R 755 /path/to/islamwiki
-   chown -R www-data:www-data /path/to/islamwiki
-   ```
+## 🏗️ **Architecture**
 
-3. **Configure SSL (recommended)**
-   - Use Let's Encrypt or your preferred SSL provider
-   - Update Apache configuration for HTTPS
+### Technology Stack
+- **Backend**: PHP 8.1+ with PDO for database access
+- **Database**: MySQL 8.0+ with optimized schema
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Styling**: Custom CSS with responsive design
+- **Icons**: Font Awesome 6.0
+- **Server**: Apache 2.4 with mod_rewrite
 
-## 🎯 Key Features in v0.0.0.3
+### Project Structure
+```
+islamwiki/
+├── public/                 # Web-accessible files
+│   ├── admin/             # Admin panel files
+│   ├── assets/            # CSS, JS, images
+│   ├── config/            # Configuration files
+│   ├── includes/          # Shared PHP includes
+│   ├── wiki/              # Wiki functionality
+│   └── *.php              # Main application files
+├── docs/                  # Documentation
+│   ├── api/               # API documentation
+│   ├── architecture/      # System architecture
+│   ├── changelogs/        # Version changelogs
+│   ├── guides/            # User guides
+│   └── releases/          # Release notes
+└── *.sql                  # Database files
+```
 
-### 🌐 Pretty URL System
-- Clean, SEO-friendly URLs for all articles
-- Automatic slug capitalization for consistency
-- Apache .htaccess configuration for URL rewriting
+## 🤝 **Contributing**
 
-### 👥 Enhanced Admin Panel
-- Complete user management with edit and reset password functionality
-- Modal-based user editing interface
-- User status management (Active/Inactive)
-- Role management with new scholar and reviewer roles
-
-### 📝 Draft Collaboration System
-- Multi-user collaboration on draft articles
-- Draft visibility controls (author-only, editors, all logged-in users)
-- Scholar verification system for content accuracy
-- Draft notifications and activity tracking
-
-### 🔍 Article Not Found Handling
-- User-friendly "Article Not Found" page
-- Automatic article creation suggestions for editors
-- Context-aware error messages based on permissions
-
-## 📖 Documentation
-
-- **[Installation Guide](docs/guides/INSTALLATION.md)**: Detailed setup instructions
-- **[User Guide](docs/guides/USER_GUIDE.md)**: How to use IslamWiki
-- **[API Reference](docs/api/API_REFERENCE.md)**: API documentation
-- **[Changelog](docs/changelogs/CHANGELOG.md)**: Complete version history
-- **[Release Notes](docs/releases/RELEASE_NOTES.md)**: Release overview
-
-## 🔄 Version History
-
-### v0.0.0.3 - "Enhanced Administration" (Current)
-- Pretty URL system for SEO-friendly links
-- Enhanced admin panel with complete user management
-- Draft collaboration and scholar verification system
-- Article not found handling with creation suggestions
-- Fixed critical bugs and improved stability
-
-### v0.0.0.2 - "Wiki Revolution"
-- Complete markdown-based wiki system
-- Rich text editor with visual toolbar
-- Wiki linking system with smart detection
-- Article version control and restoration
-- Advanced search with full-text capabilities
-
-### v0.0.0.1 - "Fresh Start"
-- Complete PHP platform rebuild
-- User authentication and role management
-- Basic wiki system with article management
-- Admin panel with comprehensive tools
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ### Development Setup
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -m 'Add amazing feature'`
+5. Push to the branch: `git push origin feature/amazing-feature`
+6. Open a Pull Request
 
-## 📄 License
+### Code Standards
+- Follow PSR-12 coding standards for PHP
+- Use semantic versioning for releases
+- Write comprehensive tests
+- Document all new features
+- Follow security best practices
 
-This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0) - see the [LICENSE](LICENSE) file for details.
+## 📊 **Roadmap**
 
-## 🆘 Support
+### v0.0.0.5 (Planned)
+- **Real-time Notifications**: WebSocket-based notifications
+- **Advanced Search**: Full-text search with filters
+- **File Uploads**: Image and document upload system
+- **Email Integration**: Email notifications and verification
+- **API Endpoints**: RESTful API for mobile apps
+
+### v0.1.0 (Future)
+- **Mobile App**: Native mobile application
+- **Multi-language**: Internationalization support
+- **Advanced Analytics**: User behavior tracking
+- **Content Moderation**: Automated content filtering
+- **Performance Monitoring**: Real-time performance metrics
+
+## 🐛 **Bug Reports & Feature Requests**
 
 - **Issues**: [GitHub Issues](https://github.com/drkhalidabdullah/islamwiki/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/drkhalidabdullah/islamwiki/discussions)
-- **Documentation**: [Wiki](https://github.com/drkhalidabdullah/islamwiki/wiki)
+- **Security**: Report security issues privately to security@islamwiki.com
 
-## 🎯 Roadmap
+## 📄 **License**
 
-### Upcoming Features
-- **v0.0.0.4**: Multi-language support and translation system
-- **v0.0.0.5**: Advanced user permissions and content moderation
-- **v0.0.0.6**: API endpoints and third-party integrations
-- **v0.1.0**: Community features and collaboration tools
-- **v1.0.0**: Production-ready stability and performance
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 **Acknowledgments**
+
+- **Contributors**: Thanks to all contributors who help improve IslamWiki
+- **Community**: The Islamic community for feedback and support
+- **Open Source**: Built on the shoulders of open source technologies
+
+## 📞 **Support**
+
+- **Documentation**: Check our comprehensive documentation
+- **Community**: Join our community discussions
+- **Email**: Contact support for technical assistance
+- **GitHub**: Open an issue for bugs or feature requests
 
 ---
 
-**IslamWiki** - Empowering Islamic knowledge through technology
+**Version**: 0.0.0.4  
+**Release Date**: September 6, 2025  
+**Status**: Latest Release  
+**Codename**: "Social Community Platform"
 
-Built with ❤️ for the global Islamic community
+[![GitHub stars](https://img.shields.io/github/stars/drkhalidabdullah/islamwiki?style=social)](https://github.com/drkhalidabdullah/islamwiki/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/drkhalidabdullah/islamwiki?style=social)](https://github.com/drkhalidabdullah/islamwiki/network)
+[![GitHub issues](https://img.shields.io/github/issues/drkhalidabdullah/islamwiki)](https://github.com/drkhalidabdullah/islamwiki/issues)

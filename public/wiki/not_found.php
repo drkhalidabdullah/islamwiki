@@ -13,7 +13,7 @@ if (empty($requested_title) && !empty($requested_slug)) {
     $requested_title = ucfirst(str_replace('-', ' ', $requested_slug));
 }
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="not-found-container">
@@ -248,4 +248,4 @@ include 'header.php';
 }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

@@ -35,7 +35,7 @@ $page_title = $version['title'] . ' (Version ' . $version['version_number'] . ')
 $parser = new MarkdownParser('');
 $parsed_content = $parser->parse($version['content']);
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="article-version">
@@ -275,4 +275,4 @@ include 'header.php';
 }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

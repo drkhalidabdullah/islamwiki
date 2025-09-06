@@ -1,0 +1,52 @@
+RewriteEngine On
+RewriteBase /
+
+# Handle home page - redirect /home to index.php
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^home/?$ /index.php [R=301,L]
+
+# Handle user profile URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^user/([A-Za-z0-9_-]+)/(posts|photos|events|about|activity)/?$ user_profile.php?username=$1&tab=$2 [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^user/([A-Za-z0-9_-]+)/?$ user_profile.php?username=$1 [QSA,L]
+
+# Handle wiki search specifically (MUST come before wiki article rule)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wiki/search/?$ wiki/search.php [QSA,L]
+
+# Handle other wiki directory requests (MUST come before wiki article rule)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wiki/([^/]+)/?$ wiki/$1 [QSA,L]
+
+# Handle pretty URLs for wiki articles (MUST come after other wiki rules)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wiki/([A-Za-z0-9_-]+)/?$ wiki/article.php?slug=$1 [QSA,L]
+
+
+# Handle admin panel
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^admin/?$ admin.php [QSA,L]
+
+# Remove .php extension for common pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Handle other requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/user/
+RewriteCond %{REQUEST_URI} !^/wiki/
+RewriteRule ^(.*)$ $1 [QSA,L]

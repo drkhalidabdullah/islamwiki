@@ -37,7 +37,7 @@ $articles = $stmt->fetchAll();
 
 $page_title = $category['name'];
 
-include 'header.php';
+include '../includes/header.php';
 ?>
 
 <div class="category-container">
@@ -126,4 +126,4 @@ include 'header.php';
 }
 </style>
 
-<?php include 'footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

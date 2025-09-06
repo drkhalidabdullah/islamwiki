@@ -2,176 +2,207 @@
 
 This document provides an overview of all IslamWiki releases, from the initial version to the latest release.
 
-## Current Release: v0.0.0.3
+## Current Release: v0.0.0.4
 
 **Release Date**: September 6, 2025  
 **Status**: Latest Release  
-**Codename**: "Enhanced Administration"
+**Codename**: "Social Community Platform"
 
 ### Overview
-Major release featuring enhanced admin panel functionality, pretty URLs, draft collaboration system, and comprehensive user management tools.
+Major release featuring comprehensive user profile system, social networking features, Facebook-style interface, and enhanced community functionality. This release transforms IslamWiki from a traditional wiki into a modern social learning platform.
 
 ### Key Features
-- Pretty URL system for SEO-friendly article links
-- Enhanced admin panel with complete user management
-- Draft collaboration and scholar verification system
-- Article not found handling with creation suggestions
-- Enhanced user interface with "Powered by IslamWiki" branding
-- Fixed critical bugs and improved system stability
+- **Social Media-Style User Profiles**: Facebook-like profiles with cover photos, avatars, and social statistics
+- **Social Networking**: Follow/unfollow system, user posts, and personalized activity feeds
+- **Modern Interface**: Facebook-style header with global search and user dropdown
+- **Rich Content Creation**: Markdown editor with live preview for posts and articles
+- **Clean URL System**: Pretty URLs without .php extensions for better SEO
+- **Enhanced Admin Panel**: Fixed admin access and improved user management
+- **Mobile Responsive**: Fully responsive design for all devices
+- **AJAX Interactions**: Real-time follow/like functionality without page reloads
 
-[Read Full Release Notes](changelogs/v0.0.0.3.md)
+### Technical Improvements
+- **Database Schema**: New tables for social features with proper indexing
+- **URL Routing**: Clean URL system with proper .htaccess configuration
+- **CSS Architecture**: Unified styling system with resolved conflicts
+- **JavaScript Enhancement**: Modern event handling and AJAX functionality
+- **Security**: Enhanced authentication and role-based access control
+
+[Read Full Release Notes](changelogs/v0.0.0.4.md)
 
 ---
 
 ## Release History
 
-### v0.0.0.3 - "Enhanced Administration" (September 6, 2025)
+### v0.0.0.4 - "Social Community Platform" (September 6, 2025)
 **Status**: Latest Release
 
 **Major Features:**
-- Pretty URL system (`/wiki/Islam` instead of `/wiki/article.php?slug=islam`)
-- Complete admin panel with user editing and password reset
-- Draft collaboration system with multi-user support
-- Scholar verification system for content accuracy
-- Enhanced article editing with full feature parity
-- Article not found page with creation suggestions
+- Comprehensive user profile system with social media features
+- Follow/unfollow system with real-time updates
+- User posts with privacy controls and rich text editing
+- Facebook-style header with global search and user dropdown
+- Clean URL system removing .php extensions
+- Enhanced admin panel with fixed access issues
+- Mobile-responsive design with modern UI/UX
 
 **Technical Improvements:**
-- Apache .htaccess configuration for URL rewriting
-- Enhanced database schema with collaboration features
-- Fixed critical internal server errors
-- Improved file structure and includes
-- Better error handling and validation
+- New database tables for social features
+- Resolved CSS conflicts and JavaScript issues
+- Fixed admin panel routing and access
+- Improved search functionality
+- Enhanced security and authentication
 
 **Bug Fixes:**
-- Fixed edit user functionality in admin dashboard
-- Resolved article editing with missing features
-- Corrected database connection issues
-- Fixed path resolution problems
+- User dropdown not showing for logged-in users
+- Admin panel 403 Forbidden error
+- Search functionality 500 errors
+- Header styling and asset path issues
+- Homepage blank content area
 
-[Full Changelog](changelogs/v0.0.0.3.md)
-
-### v0.0.0.2 - "Wiki Revolution" (September 6, 2025)
+### v0.0.0.3 - "Enhanced Administration" (September 6, 2025)
 **Status**: Previous Release
 
 **Major Features:**
-- Complete wiki system with markdown editing
-- Rich text editor with visual toolbar
-- Wiki linking system with smart detection
-- Article version control and restoration
-- Advanced search with full-text capabilities
-- Professional wiki interface and navigation
+- Pretty URL system for SEO-friendly article links
+- Enhanced admin panel with complete user management
+- Draft collaboration and scholar verification system
+- Article not found handling with creation suggestions
+- Enhanced user interface with "Powered by IslamWiki" branding
 
 **Technical Improvements:**
-- Modular markdown parser system
-- Enhanced database schema with version control
-- Optimized search performance
-- Improved code architecture and organization
+- Improved database schema with better indexing
+- Enhanced security with proper input validation
+- Better error handling and user feedback
+- Optimized queries for better performance
 
-[Full Changelog](changelogs/v0.0.0.2.md)
+**Bug Fixes:**
+- Fixed article creation and editing issues
+- Resolved user management problems
+- Improved system stability and reliability
 
-### v0.0.0.1 - "Fresh Start" (September 6, 2025)
+### v0.0.0.2 - "Foundation" (September 6, 2025)
 **Status**: Previous Release
 
 **Major Features:**
-- Complete PHP platform rebuild (removed React)
-- User authentication and role management
-- Basic wiki system with article management
-- Admin panel with comprehensive tools
-- Database schema with user and content system
+- Basic wiki functionality with article creation and editing
+- User authentication and registration system
+- Admin panel for content management
+- Article categorization and search functionality
+- Basic user interface with responsive design
 
-**Technical Features:**
-- Secure password hashing and session management
-- CSRF protection and input sanitization
-- Responsive design and accessibility features
-- Clean file structure with public/ directory
+**Technical Improvements:**
+- Database schema implementation
+- User session management
+- Basic security measures
+- File upload functionality
 
-[Full Changelog](changelogs/v0.0.0.1.md)
+### v0.0.0.1 - "Initial Release" (September 6, 2025)
+**Status**: Previous Release
 
----
+**Major Features:**
+- Initial project setup and configuration
+- Basic file structure and documentation
+- Database setup and initial schema
+- Basic authentication system
+- Initial user interface
 
-## Version Numbering
-
-IslamWiki uses semantic versioning with the format `MAJOR.MINOR.PATCH`:
-
-- **MAJOR**: Breaking changes or major feature additions
-- **MINOR**: New features that are backward compatible  
-- **PATCH**: Bug fixes and minor improvements
-
-### Development Phases
-
-- **0.0.x**: Alpha releases - Core functionality and major features
-- **0.1.x**: Beta releases - Feature completion and refinement
-- **0.2.x**: Release candidate - Bug fixes and polish
-- **1.0.0**: Stable release - Production ready
+**Technical Improvements:**
+- Project structure establishment
+- Basic configuration files
+- Initial documentation
+- Development environment setup
 
 ---
 
-## Upcoming Releases
+## Upgrade Path
 
-### v0.0.0.4 - "Global Reach" (Planned)
-**Target Date**: TBD
+### From v0.0.0.3 to v0.0.0.4
+1. **Backup**: Create full database and file backup
+2. **Migration**: Run `database_migration_v0.0.0.4.sql`
+3. **Files**: Replace all files with new versions
+4. **Configuration**: Update any custom configurations
+5. **Testing**: Verify all new features work correctly
+6. **Cache**: Clear browser and server cache
 
-**Planned Features:**
-- Multi-language support and translation system
-- Advanced user permissions and content moderation
-- API endpoints for third-party integrations
-- Enhanced mobile experience
-
-### v0.1.0 - "Community Edition" (Planned)
-**Target Date**: TBD
-
-**Planned Features:**
-- Community features and collaboration tools
-- Advanced content moderation
-- User-generated content system
-- Social features and user interactions
-
-### v1.0.0 - "Production Ready" (Planned)
-**Target Date**: TBD
-
-**Planned Features:**
-- Production-ready stability
-- Performance optimizations
-- Security hardening
-- Complete documentation and guides
+### Breaking Changes
+- **URL Structure**: All URLs now use clean format (no .php extensions)
+- **Header Layout**: New Facebook-style header design
+- **Database Schema**: New tables require migration
+- **Asset Paths**: All paths now absolute (starting with /)
 
 ---
 
-## Installation & Upgrade
+## System Requirements
 
-### Latest Release (v0.0.0.3)
-```bash
-git clone https://github.com/drkhalidabdullah/islamwiki.git
-cd islamwiki
-git checkout v0.0.0.3
-mysql -u root -p < setup_database_fixed.sql
-mysql -u root -p islamwiki < database_migration_v0.0.0.3.sql
-cd public
-php -S 0.0.0.0:80
-```
+### Minimum Requirements
+- **PHP**: 8.1 or higher
+- **MySQL**: 8.0 or higher
+- **Apache**: 2.4 with mod_rewrite enabled
+- **Memory**: 256MB RAM minimum
+- **Storage**: 100MB free space
 
-### Upgrade from Previous Version
-1. Backup your current installation
-2. Pull the latest changes: `git pull origin master`
-3. Run database migrations: `mysql -u root -p islamwiki < database_migration_v0.0.0.3.sql`
-4. Clear caches and restart your server
+### Recommended Requirements
+- **PHP**: 8.2 or higher
+- **MySQL**: 8.0 or higher
+- **Apache**: 2.4 with mod_rewrite enabled
+- **Memory**: 512MB RAM or higher
+- **Storage**: 1GB free space
+
+### Required PHP Extensions
+- PDO
+- PDO_MySQL
+- JSON
+- Session
+- OpenSSL
+- mbstring
+- fileinfo
 
 ---
 
-## Support & Documentation
+## Support and Documentation
 
+### Documentation
 - **Installation Guide**: [docs/guides/INSTALLATION.md](guides/INSTALLATION.md)
-- **User Guide**: [docs/guides/USER_GUIDE.md](guides/USER_GUIDE.md)
-- **API Documentation**: [docs/api/API_REFERENCE.md](api/API_REFERENCE.md)
-- **Changelog**: [docs/changelogs/CHANGELOG.md](changelogs/CHANGELOG.md)
+- **User Manual**: [docs/guides/USER_MANUAL.md](guides/USER_MANUAL.md)
+- **Admin Guide**: [docs/guides/ADMIN_GUIDE.md](guides/ADMIN_GUIDE.md)
+- **API Documentation**: [docs/api/](api/)
+- **Architecture**: [docs/architecture/](architecture/)
+
+### Support
+- **Issues**: Report bugs and feature requests on GitHub
+- **Community**: Join our community discussions
+- **Email**: Contact support for technical assistance
+- **Documentation**: Check our comprehensive documentation
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to contribute to IslamWiki.
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to contribute to IslamWiki.
+
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+### Code Standards
+- Follow PSR-12 coding standards for PHP
+- Use semantic versioning for releases
+- Write comprehensive tests
+- Document all new features
+- Follow security best practices
 
 ---
 
-**IslamWiki** - Empowering Islamic knowledge through technology
+**Last Updated**: September 6, 2025  
+**Version**: 0.0.0.4  
+**Status**: Latest Release
