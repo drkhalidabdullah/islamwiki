@@ -1,5 +1,20 @@
 # Changelog
 
+
+## [0.0.0.7] - 2025-09-07
+
+### Comprehensive Search System
+- **Multi-Content Search**: Search across articles, users, messages, and more
+- **Advanced Filtering**: Filter by content type, category, and sort options
+- **Real-time Suggestions**: AJAX-powered search suggestions
+- **Search Analytics**: Track search patterns and popular queries
+- **Search History**: Personal search history for logged-in users
+- **Enhanced UI/UX**: Modern search interface with responsive design
+- **Database Optimization**: Added search indexes and analytics tables
+- **API Enhancements**: New AJAX search suggestions endpoint
+- **Privacy Protection**: Message search limited to participants
+- **Performance Improvements**: Optimized queries and pagination
+
 ## [0.0.0.6] - 2025-09-07
 
 ### Major Restructuring & Clean URLs

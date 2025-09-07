@@ -5,17 +5,36 @@ require_once '../../includes/functions.php';
 header('Content-Type: application/json');
 
 if (!is_logged_in()) {
-    echo json_encode(['success' => false, 'message' => 'Not logged in']);
-    exit();
+    echo json_encode(['error' => 'Not logged in']);
+    exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$messages = get_recent_messages($user_id, 20);
-$unread_count = get_unread_message_count($user_id);
+$count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
 
-echo json_encode([
-    'success' => true,
-    'messages' => $messages,
-    'unread_count' => $unread_count
-]);
+try {
+    if ($count_only) {
+        // Get unread message count
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM messages WHERE recipient_id = ? AND is_read = 0");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        echo json_encode(['count' => (int)$result['count']]);
+    } else {
+        // Get recent messages
+        $stmt = $pdo->prepare("
+            SELECT m.*, u.username, u.display_name 
+            FROM messages m 
+            LEFT JOIN users u ON m.sender_id = u.id 
+            WHERE m.recipient_id = ? 
+            ORDER BY m.created_at DESC 
+            LIMIT 10
+        ");
+        $stmt->execute([$_SESSION['user_id']]);
+        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo json_encode(['messages' => $messages]);
+    }
+} catch (Exception $e) {
+    echo json_encode(['error' => 'Database error']);
+}
 ?>
