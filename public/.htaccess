@@ -78,6 +78,14 @@ RewriteRule ^search/?$ search/index.php [QSA,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^search/suggestions/?$ search/suggestions.php [QSA,L]
+RewriteRule ^api/search/history/?$ api/search/history.php [QSA,L]
+RewriteRule ^api/search/saved/?$ api/search/saved.php [QSA,L]
+RewriteRule ^search/api/load-more/?$ search/api/load-more.php [QSA,L]
+RewriteRule ^search/semantic/?$ search/semantic-search.php [QSA,L]
+RewriteRule ^search/analytics/?$ search/analytics.php [QSA,L]
+RewriteRule ^search/personalization/?$ search/personalization.php [QSA,L]
+RewriteRule ^search/clustering/?$ search/clustering.php [QSA,L]
+RewriteRule ^search/insights/?$ search/insights.php [QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
