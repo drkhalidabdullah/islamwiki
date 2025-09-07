@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.0.0.5] - 2025-09-07
+
+### Added
+- **Real-Time Messaging & Notifications System**
+  - Complete messaging infrastructure with database schema and AJAX endpoints
+  - Real-time notifications for friend requests, messages, and system alerts
+  - Dynamic header dropdowns for chats and notifications with live data
+  - Auto-refresh functionality every 30 seconds for real-time updates
+  - Notification badges with unread counts and pulse animations
+
+- **Comprehensive Friends & Social Networking**
+  - Friends system with request/accept/decline workflow
+  - Friend suggestions based on mutual connections
+  - Social navigation with dedicated friends pages and sub-sections
+  - AJAX-powered interactions for seamless friend management
+  - Database integration with proper foreign key constraints
+
+- **Enhanced User Interface & Navigation**
+  - Fixed header navigation with proper highlighting logic
+  - Responsive design improvements for mobile and desktop
+  - Clean URL structure for user profiles (`/user/{username}`)
+  - Improved dropdown functionality for all header elements
+  - Better error handling and user feedback
+
+### Changed
+- **Removed redundant feed functionality** - home page now serves as the main feed
+- **Improved navigation highlighting** - fixed wiki page highlighting conflicts
+- **Enhanced header layout** - messages and notifications icons now display side-by-side
+- **Streamlined user interface** - removed unnecessary elements and improved organization
+
+### Fixed
+- **Wiki navigation highlighting** - no longer highlights both home and wiki icons
+- **Header icon overlap** - messages and notifications now display properly
+- **User dropdown functionality** - properly toggles and closes
+- **User profile URLs** - `/user/{username}` now works correctly
+- **Database foreign key constraints** - fixed migration issues
+- **Missing PHP functions** - added functions causing 500 errors
+- **AJAX endpoint functionality** - all real-time features now work properly
+
+### Technical Improvements
+- **Database enhancements** - new notifications and messages tables
+- **Code quality improvements** - better error handling and validation
+- **Performance optimizations** - efficient queries and responsive design
+- **Security enhancements** - proper input sanitization and authentication
+
+
+
 All notable changes to IslamWiki will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

@@ -1,9 +1,9 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.4-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.5-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-8.1+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://mysql.com)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and community features.
 
@@ -208,7 +208,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## 📄 **License**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 **Acknowledgments**
 

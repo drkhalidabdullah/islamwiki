@@ -34,6 +34,15 @@ RewriteRule ^wiki/([A-Za-z0-9_-]+)/?$ wiki/article.php?slug=$1 [QSA,L]
 
 
 # Handle admin panel
+
+# Handle friends pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^friends/([A-Za-z0-9_-]+)/?$ friends/$1.php [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^friends/?$ friends.php [QSA,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^admin/?$ admin.php [QSA,L]

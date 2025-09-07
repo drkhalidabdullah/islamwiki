@@ -79,7 +79,7 @@ include 'includes/header.php';
                         <?php endforeach; ?>
                     </div>
                     <div class="section-footer">
-                        <a href="/feed" class="btn btn-outline">View All Posts</a>
+                        <a href="#posts" class="btn btn-outline">View All Posts</a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -127,10 +127,6 @@ include 'includes/header.php';
                             <i class="fas fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
-                        <a href="/feed" class="quick-action">
-                            <i class="fas fa-newspaper"></i>
-                            <span>View Feed</span>
-                        </a>
                     <?php else: ?>
                         <a href="/register" class="quick-action">
                             <i class="fas fa-user-plus"></i>
@@ -170,3 +166,4 @@ include 'includes/header.php';
     </div>
 </div>
 
+<?php include "includes/footer.php"; ?>

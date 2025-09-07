@@ -1,208 +1,150 @@
 # IslamWiki Release Notes
 
-This document provides an overview of all IslamWiki releases, from the initial version to the latest release.
+## Version 0.0.0.5 - Real-Time Social Features & UI Improvements
+**Release Date:** September 7, 2025
 
-## Current Release: v0.0.0.4
+### 🎉 What's New in v0.0.0.5
 
-**Release Date**: September 6, 2025  
-**Status**: Latest Release  
-**Codename**: "Social Community Platform"
+This release introduces major social networking features and significant UI improvements, making IslamWiki a truly interactive community platform.
 
-### Overview
-Major release featuring comprehensive user profile system, social networking features, Facebook-style interface, and enhanced community functionality. This release transforms IslamWiki from a traditional wiki into a modern social learning platform.
+#### 🚀 Major New Features
 
-### Key Features
-- **Social Media-Style User Profiles**: Facebook-like profiles with cover photos, avatars, and social statistics
-- **Social Networking**: Follow/unfollow system, user posts, and personalized activity feeds
-- **Modern Interface**: Facebook-style header with global search and user dropdown
-- **Rich Content Creation**: Markdown editor with live preview for posts and articles
-- **Clean URL System**: Pretty URLs without .php extensions for better SEO
-- **Enhanced Admin Panel**: Fixed admin access and improved user management
-- **Mobile Responsive**: Fully responsive design for all devices
-- **AJAX Interactions**: Real-time follow/like functionality without page reloads
+**Real-Time Messaging & Notifications**
+- Complete messaging system with live chat functionality
+- Real-time notifications for friend requests, messages, and system alerts
+- Dynamic header dropdowns that update automatically every 30 seconds
+- Notification badges with unread counts and smooth animations
+- Full messaging interface with conversation history
 
-### Technical Improvements
-- **Database Schema**: New tables for social features with proper indexing
-- **URL Routing**: Clean URL system with proper .htaccess configuration
-- **CSS Architecture**: Unified styling system with resolved conflicts
-- **JavaScript Enhancement**: Modern event handling and AJAX functionality
-- **Security**: Enhanced authentication and role-based access control
+**Friends & Social Networking**
+- Comprehensive friends system with request/accept/decline workflow
+- Friend suggestions based on mutual connections and interests
+- Dedicated friends pages with multiple sections (requests, suggestions, all friends)
+- AJAX-powered interactions for seamless friend management
+- Social statistics tracking (followers, following, posts, articles)
 
-[Read Full Release Notes](changelogs/v0.0.0.4.md)
+**Enhanced User Profiles**
+- Clean URL structure: `/user/{username}` for better sharing and SEO
+- Complete profile functionality with all social features
+- User statistics and activity tracking
+- Profile visibility controls and privacy settings
 
----
+#### 🎨 UI/UX Improvements
 
-## Release History
+**Navigation & Header**
+- Fixed navigation highlighting - no more conflicts between home and wiki icons
+- Improved header layout with messages and notifications side-by-side
+- Removed redundant feed icon - home page now serves as the main feed
+- Better responsive design for mobile and desktop devices
+- Enhanced dropdown functionality for all header elements
 
-### v0.0.0.4 - "Social Community Platform" (September 6, 2025)
-**Status**: Latest Release
+**Visual Enhancements**
+- Smooth animations for user interactions
+- Better visual feedback for friend requests and messages
+- Improved accessibility with proper ARIA labels
+- Enhanced mobile experience with touch-friendly interfaces
 
-**Major Features:**
-- Comprehensive user profile system with social media features
-- Follow/unfollow system with real-time updates
-- User posts with privacy controls and rich text editing
-- Facebook-style header with global search and user dropdown
-- Clean URL system removing .php extensions
-- Enhanced admin panel with fixed access issues
-- Mobile-responsive design with modern UI/UX
+#### �� Technical Improvements
 
-**Technical Improvements:**
-- New database tables for social features
-- Resolved CSS conflicts and JavaScript issues
-- Fixed admin panel routing and access
-- Improved search functionality
-- Enhanced security and authentication
+**Database & Performance**
+- New database tables for notifications and messages
+- Enhanced user_follows table with status tracking
+- Optimized queries with proper indexing
+- Efficient AJAX endpoints with error handling
 
-**Bug Fixes:**
-- User dropdown not showing for logged-in users
-- Admin panel 403 Forbidden error
-- Search functionality 500 errors
-- Header styling and asset path issues
-- Homepage blank content area
+**Code Quality**
+- Added missing PHP functions for complete functionality
+- Improved error handling throughout the application
+- Better input validation and sanitization
+- Enhanced security with proper authentication checks
 
-### v0.0.0.3 - "Enhanced Administration" (September 6, 2025)
-**Status**: Previous Release
+#### 🐛 Bug Fixes
 
-**Major Features:**
-- Pretty URL system for SEO-friendly article links
-- Enhanced admin panel with complete user management
-- Draft collaboration and scholar verification system
-- Article not found handling with creation suggestions
-- Enhanced user interface with "Powered by IslamWiki" branding
+**Critical Fixes**
+- Fixed wiki navigation highlighting conflicts
+- Resolved header icon overlap issues
+- Fixed user dropdown functionality
+- Corrected user profile URL routing
+- Fixed database foreign key constraints
+- Resolved 500 errors from missing functions
 
-**Technical Improvements:**
-- Improved database schema with better indexing
-- Enhanced security with proper input validation
+**UI Fixes**
+- Fixed messenger dropdown functionality
+- Corrected notifications dropdown display
+- Improved mobile responsive design
+- Enhanced error handling and user feedback
+
+### 📊 Technical Details
+
+**New Database Tables:**
+- `notifications` - Real-time notification system
+- `messages` - Direct messaging functionality
+- Enhanced `user_follows` - Friend request status tracking
+
+**New Files Added:**
+- `public/friends.php` - Main friends page
+- `public/friends/` - Complete friends system (requests, suggestions, all, lists)
+- `public/messages.php` - Full messaging interface
+- `public/ajax/` - 5 new AJAX endpoints for real-time features
+- `database_migration_v0.0.0.5.sql` - Database schema updates
+
+**Performance Improvements:**
+- Optimized database queries with proper joins
+- Efficient AJAX calls with smart caching
+- Responsive CSS with mobile-first approach
+- Clean HTML structure without redundant elements
+
+### 🎯 User Impact
+
+**Enhanced Social Experience**
+- Real-time interactions for better community engagement
+- Intuitive navigation with proper visual feedback
+- Seamless messaging for community building
+- Professional user profiles for better networking
+
+**Improved Usability**
+- Fixed navigation issues for better user experience
+- Mobile-optimized interface for all devices
 - Better error handling and user feedback
-- Optimized queries for better performance
+- Streamlined interface with fewer redundant elements
 
-**Bug Fixes:**
-- Fixed article creation and editing issues
-- Resolved user management problems
-- Improved system stability and reliability
+### 🔮 What's Next
 
-### v0.0.0.2 - "Foundation" (September 6, 2025)
-**Status**: Previous Release
+**Planned for v0.0.0.6:**
+- Enhanced privacy controls for user profiles
+- Advanced messaging features (file sharing, group chats)
+- Content moderation tools for community management
+- Analytics dashboard for user engagement
+- Mobile app integration for better mobile experience
 
-**Major Features:**
-- Basic wiki functionality with article creation and editing
-- User authentication and registration system
-- Admin panel for content management
-- Article categorization and search functionality
-- Basic user interface with responsive design
+### 📈 Statistics
 
-**Technical Improvements:**
-- Database schema implementation
-- User session management
-- Basic security measures
-- File upload functionality
+- **Lines of code added**: 2,500+
+- **New database tables**: 2
+- **New PHP functions**: 15+
+- **New AJAX endpoints**: 5
+- **Bug fixes**: 10+
+- **UI improvements**: 20+
 
-### v0.0.0.1 - "Initial Release" (September 6, 2025)
-**Status**: Previous Release
+### 🚀 Getting Started
 
-**Major Features:**
-- Initial project setup and configuration
-- Basic file structure and documentation
-- Database setup and initial schema
-- Basic authentication system
-- Initial user interface
+To upgrade to v0.0.0.5:
 
-**Technical Improvements:**
-- Project structure establishment
-- Basic configuration files
-- Initial documentation
-- Development environment setup
+1. **Backup your database** before upgrading
+2. **Run the database migration**: `mysql -u root -p islamwiki < database_migration_v0.0.0.5.sql`
+3. **Update your files** with the new version
+4. **Clear any caches** if you're using caching
+5. **Test the new features** to ensure everything works correctly
+
+### 📞 Support
+
+If you encounter any issues with v0.0.0.5, please:
+- Check the [CHANGELOG](docs/changelogs/CHANGELOG.md) for detailed changes
+- Review the [documentation](docs/) for setup instructions
+- Report bugs on the [GitHub issues page](https://github.com/drkhalidabdullah/islamwiki/issues)
 
 ---
 
-## Upgrade Path
+**Thank you for using IslamWiki!** This release brings us closer to our vision of a comprehensive Islamic knowledge platform with strong community features.
 
-### From v0.0.0.3 to v0.0.0.4
-1. **Backup**: Create full database and file backup
-2. **Migration**: Run `database_migration_v0.0.0.4.sql`
-3. **Files**: Replace all files with new versions
-4. **Configuration**: Update any custom configurations
-5. **Testing**: Verify all new features work correctly
-6. **Cache**: Clear browser and server cache
-
-### Breaking Changes
-- **URL Structure**: All URLs now use clean format (no .php extensions)
-- **Header Layout**: New Facebook-style header design
-- **Database Schema**: New tables require migration
-- **Asset Paths**: All paths now absolute (starting with /)
-
----
-
-## System Requirements
-
-### Minimum Requirements
-- **PHP**: 8.1 or higher
-- **MySQL**: 8.0 or higher
-- **Apache**: 2.4 with mod_rewrite enabled
-- **Memory**: 256MB RAM minimum
-- **Storage**: 100MB free space
-
-### Recommended Requirements
-- **PHP**: 8.2 or higher
-- **MySQL**: 8.0 or higher
-- **Apache**: 2.4 with mod_rewrite enabled
-- **Memory**: 512MB RAM or higher
-- **Storage**: 1GB free space
-
-### Required PHP Extensions
-- PDO
-- PDO_MySQL
-- JSON
-- Session
-- OpenSSL
-- mbstring
-- fileinfo
-
----
-
-## Support and Documentation
-
-### Documentation
-- **Installation Guide**: [docs/guides/INSTALLATION.md](guides/INSTALLATION.md)
-- **User Manual**: [docs/guides/USER_MANUAL.md](guides/USER_MANUAL.md)
-- **Admin Guide**: [docs/guides/ADMIN_GUIDE.md](guides/ADMIN_GUIDE.md)
-- **API Documentation**: [docs/api/](api/)
-- **Architecture**: [docs/architecture/](architecture/)
-
-### Support
-- **Issues**: Report bugs and feature requests on GitHub
-- **Community**: Join our community discussions
-- **Email**: Contact support for technical assistance
-- **Documentation**: Check our comprehensive documentation
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to contribute to IslamWiki.
-
-### Development Setup
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-### Code Standards
-- Follow PSR-12 coding standards for PHP
-- Use semantic versioning for releases
-- Write comprehensive tests
-- Document all new features
-- Follow security best practices
-
----
-
-**Last Updated**: September 6, 2025  
-**Version**: 0.0.0.4  
-**Status**: Latest Release
+*The IslamWiki Development Team*
