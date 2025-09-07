@@ -58,10 +58,10 @@ $is_messages = ($current_script == "messages.php" || strpos($current_uri, "/mess
                     <a href="/wiki" class="nav-item <?php echo $is_wiki ? "active" : ""; ?>">
                         <i class="fas fa-book"></i>
                     </a>
-                    <a href="/friends" class="nav-item <?php echo $is_friends ? "active" : ""; ?>">
+                    <a href="/friends" class="nav-item <?php echo $is_friends ? "active" : ""; ?>" <?php if (!is_logged_in()) echo 'style="display: none;"'; ?>>
                         <i class="fas fa-users"></i>
                     </a>
-                    <a href="/dashboard" class="nav-item <?php echo $is_dashboard ? "active" : ""; ?>">
+                    <a href="/dashboard" class="nav-item <?php echo $is_dashboard ? "active" : ""; ?>" <?php if (!is_logged_in()) echo 'style="display: none;"'; ?>>
                         <i class="fas fa-tachometer-alt"></i>
                     </a>
                 </nav>

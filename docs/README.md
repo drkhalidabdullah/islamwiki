@@ -2,6 +2,40 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
+## 🎯 Current Version: 0.0.0.6
+
+**Latest Release:** September 7, 2025  
+**Status:** Production Ready ✅  
+**Type:** Major Restructuring & Enhancement Release
+
+## 🚀 What's New in v0.0.0.6
+
+### Complete File Restructuring
+- **Industry-standard directory layout** with organized file structure
+- **Modular architecture** with pages/, modules/, api/, config/, includes/ directories
+- **Better code maintainability** and developer experience
+- **Improved separation of concerns** for future development
+
+### Clean URL Implementation
+- **Full clean URL system** via .htaccess rewrite rules
+- **No more .php extensions** in user-facing URLs
+- **SEO-friendly URLs** for better search engine optimization
+- **25+ clean URL routes** implemented across the application
+
+### Enhanced User Experience
+- **Conditional navigation** showing/hiding based on login status
+- **Professional chat options dropdown** with toggle switches
+- **Improved header design** with better icon organization
+- **Smart navigation highlighting** based on current page
+
+### Comprehensive Route Management
+- **Authentication routes**: /login, /register
+- **User routes**: /dashboard, /profile, /settings, /user/{username}
+- **Social routes**: /friends, /friends/requests, /friends/suggestions, /friends/all, /friends/lists, /messages, /create_post
+- **Wiki routes**: /wiki, /wiki/search, /wiki/{slug}, /create_article, /edit_article, /delete_article, /restore_version, /manage_categories
+- **Admin routes**: /admin, /manage_users, /system_settings
+- **API routes**: /ajax/{endpoint}
+
 ## 📚 Documentation Structure
 
 ### 📖 [User Guides](guides/)
@@ -24,127 +58,166 @@ Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowl
 
 ### 📝 [Changelogs](changelogs/)
 - **CHANGELOG.md**: Complete version history
-- **v0.0.0.2.md**: Latest release notes
-- **v0.0.0.1.md**: Previous release notes
+- **v0.0.0.6.md**: Latest release notes (Major Restructuring)
+- **v0.0.0.5.md**: Previous release notes (Real-Time Messaging)
+- **v0.0.0.4.md**: Previous release notes
+- **v0.0.0.3.md**: Previous release notes
+- **v0.0.0.2.md**: Previous release notes
+- **v0.0.0.1.md**: Initial release notes
 
 ### 🚀 [Releases](releases/)
-- **RELEASE_NOTES.md**: Overview of all releases
+- **RELEASE_NOTES.md**: Current release information
 - **Version History**: Complete release timeline
 
-## 🎯 Quick Start
+## 🏗️ Project Structure
 
-### For Users
-1. Read the [User Guide](guides/USER_GUIDE.md) to get started
-2. Check out the [Wiki Guide](guides/WIKI_GUIDE.md) for content creation
-3. Explore the [API Documentation](api/API_REFERENCE.md) for integrations
-
-### For Developers
-1. Review the [Architecture Overview](architecture/ARCHITECTURE_OVERVIEW.md)
-2. Study the [Database Schema](architecture/DATABASE_SCHEMA.md)
-3. Follow the [Installation Guide](guides/INSTALLATION.md)
-
-### For Administrators
-1. Read the [Admin Guide](guides/ADMIN_GUIDE.md)
-2. Review the [Security Guide](architecture/SECURITY_GUIDE.md)
-3. Check the [Deployment Guide](architecture/DEPLOYMENT_GUIDE.md)
-
-## 🔍 Current Version: v0.0.0.2
-
-### What's New
-- **Complete Wiki System**: Markdown-based editing with rich text editor
-- **Version Control**: Article history and restoration capabilities
-- **Advanced Search**: Full-text search with filters and suggestions
-- **Wiki Linking**: `[[Page Name]]` syntax with smart detection
-- **Professional Interface**: Enhanced UI with responsive design
+### Directory Layout
+```
+html/
+├── public/                    # Web-accessible files
+│   ├── pages/                # Page files organized by category
+│   │   ├── auth/            # Authentication pages
+│   │   ├── user/            # User-related pages
+│   │   ├── social/          # Social features
+│   │   ├── wiki/            # Wiki management
+│   │   └── admin/           # Administrative pages
+│   ├── modules/             # Modular components
+│   │   ├── wiki/           # Wiki module
+│   │   └── friends/        # Friends module
+│   ├── api/                # API endpoints
+│   │   └── ajax/          # AJAX endpoints
+│   ├── config/             # Configuration files
+│   ├── includes/           # Shared includes
+│   ├── assets/             # Static assets
+│   └── .htaccess          # URL rewriting rules
+├── docs/                   # Documentation
+├── database_migration_*.sql # Database migration files
+└── README.md              # Project overview
+```
 
 ### Key Features
-- **Markdown Editor**: Visual toolbar with live preview
-- **Wiki Links**: Bidirectional linking between articles
-- **Version History**: Complete audit trail of changes
-- **Smart Search**: Advanced search with category filtering
-- **Test Content**: Islam, Allah, Muslim articles included
+- **Clean URL System**: All routes use clean URLs without .php extensions
+- **Modular Architecture**: Organized code structure for better maintainability
+- **Real-Time Features**: Messaging and notifications with AJAX
+- **Social Networking**: Friends system with requests and suggestions
+- **Wiki System**: Complete wiki functionality with version control
+- **Admin Panel**: Comprehensive administrative tools
+- **Responsive Design**: Mobile-friendly interface
+- **Security**: Proper authentication and authorization
 
-## 📊 Feature Matrix
+## 🚀 Quick Start
 
-| Feature | v0.0.0.1 | v0.0.0.2 | Status |
-|---------|----------|----------|---------|
-| User Authentication | ✅ | ✅ | Complete |
-| Basic Wiki | ✅ | ✅ | Enhanced |
-| Markdown Editor | ❌ | ✅ | New |
-| Wiki Linking | ❌ | ✅ | New |
-| Version Control | ❌ | ✅ | New |
-| Advanced Search | ❌ | ✅ | New |
-| Admin Panel | ✅ | ✅ | Enhanced |
-| Mobile Support | ✅ | ✅ | Enhanced |
+### Prerequisites
+- **Apache web server** with mod_rewrite enabled
+- **PHP 7.4+** with standard extensions
+- **MySQL 5.7+** database
+- **Proper file permissions** for web server
 
-## 🛠️ Technology Stack
+### Installation
+1. **Clone or download** the project files
+2. **Upload to web server** in the appropriate directory
+3. **Configure database** connection in `public/config/config.php`
+4. **Run database migrations** using the provided SQL files
+5. **Set proper permissions** for uploads and cache directories
+6. **Test all routes** to ensure proper functionality
 
-- **Backend**: PHP 8.3+ with PDO
-- **Database**: MySQL 8.0+ with comprehensive schema
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: Custom CSS with responsive design
-- **Security**: Password hashing, CSRF protection, input sanitization
+### Configuration
+- **Database settings**: Update `public/config/config.php`
+- **Site settings**: Configure in admin panel after installation
+- **File permissions**: Ensure web server can read/write to necessary directories
 
-## 📁 Project Structure
+## 🔧 Development
 
-```
-islamwiki/
-├── public/                 # Web-accessible files
-│   ├── config/            # Configuration files
-│   ├── includes/          # PHP includes and functions
-│   │   └── markdown/      # Markdown parser
-│   ├── assets/            # CSS, JS, images
-│   ├── wiki/              # Wiki system
-│   └── admin.php          # Admin panel
-├── docs/                  # Documentation (this directory)
-│   ├── changelogs/        # Version changelogs
-│   ├── releases/          # Release notes
-│   ├── guides/            # User guides
-│   ├── api/               # API documentation
-│   └── architecture/      # Technical documentation
-└── setup_database_fixed.sql # Database schema
-```
+### File Organization
+- **Pages**: All page files in `public/pages/` organized by category
+- **Modules**: Reusable components in `public/modules/`
+- **API**: AJAX endpoints in `public/api/ajax/`
+- **Config**: Configuration files in `public/config/`
+- **Includes**: Shared PHP files in `public/includes/`
 
-## 🎯 Getting Help
+### URL Routing
+- **Clean URLs**: All routes use clean URLs via .htaccess
+- **Rewrite Rules**: Comprehensive .htaccess configuration
+- **Route Protection**: Proper authentication for protected routes
+- **API Endpoints**: AJAX endpoints properly routed
+
+### Code Standards
+- **PHP**: Follow PSR standards where applicable
+- **HTML**: Semantic markup with proper accessibility
+- **CSS**: Organized stylesheets with consistent naming
+- **JavaScript**: Modern ES6+ with proper error handling
+
+## 📊 Version History
+
+### v0.0.0.6 (Current) - Major Restructuring
+- Complete file system reorganization
+- Clean URL implementation
+- Enhanced navigation and user experience
+- Comprehensive route management
+- Friends module enhancement
+- Technical improvements and bug fixes
+
+### v0.0.0.5 - Real-Time Messaging
+- Real-time messaging and notifications system
+- Comprehensive friends and social networking
+- Enhanced user interface and navigation
+- AJAX-powered interactions
+- Database integration improvements
+
+### v0.0.0.4 - Previous Features
+- Additional features and improvements
+- Bug fixes and optimizations
+
+### v0.0.0.3 - Previous Features
+- Feature additions and enhancements
+- Performance improvements
+
+### v0.0.0.2 - Previous Features
+- Early feature development
+- Core functionality implementation
+
+### v0.0.0.1 - Initial Release
+- Basic wiki functionality
+- User authentication system
+- Core features implementation
+
+## 🤝 Contributing
+
+### Development Guidelines
+- **Follow the established file structure**
+- **Use clean URLs for all new routes**
+- **Maintain proper include paths**
+- **Test all functionality thoroughly**
+- **Update documentation for new features**
+
+### Code Organization
+- **Pages**: Place new pages in appropriate category directory
+- **Modules**: Create reusable components in modules directory
+- **API**: Add new AJAX endpoints in api/ajax directory
+- **Assets**: Organize CSS/JS files in assets directory
+
+## 📞 Support
 
 ### Documentation
-- **User Issues**: Check the [User Guide](guides/USER_GUIDE.md)
-- **Technical Issues**: Review the [Architecture Overview](architecture/ARCHITECTURE_OVERVIEW.md)
-- **Installation Problems**: See the [Installation Guide](guides/INSTALLATION.md)
+- **Complete documentation** available in this directory
+- **API reference** for developers
+- **User guides** for end users
+- **Architecture guides** for system administrators
 
-### Support Channels
-- **GitHub Issues**: [Report bugs and request features](https://github.com/drkhalidabdullah/islamwiki/issues)
-- **Email Support**: support@islamwiki.org
-- **Community**: Join our community discussions
-
-### Contributing
-- **Code Contributions**: See our [Contributing Guide](../CONTRIBUTING.md)
-- **Documentation**: Help improve these docs
-- **Testing**: Help test new features and report issues
-
-## 📈 Roadmap
-
-### v0.0.0.3 (Planned)
-- Multi-language support and translation system
-- Advanced user permissions and content moderation
-- API endpoints for third-party integrations
-
-### v0.1.0 (Planned)
-- Community features and collaboration tools
-- Advanced content moderation
-- User-generated content system
-
-### v1.0.0 (Planned)
-- Production-ready stability
-- Performance optimizations
-- Security hardening
+### Issues and Bugs
+- **Report issues** through appropriate channels
+- **Include version information** when reporting bugs
+- **Provide detailed reproduction steps**
+- **Check existing documentation** before reporting
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the terms specified in the LICENSE file.
 
 ---
 
-**IslamWiki Documentation** - Comprehensive guides for users, developers, and administrators
+**IslamWiki v0.0.0.6** - A modern Islamic knowledge platform with clean architecture and enhanced user experience.
 
-*Last updated: September 6, 2025*
+**Last Updated:** September 7, 2025  
+**Documentation Version:** 0.0.0.6  
+**Status:** Production Ready ✅

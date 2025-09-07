@@ -1,5 +1,79 @@
 # Changelog
 
+## [0.0.0.6] - 2025-09-07
+
+### Major Restructuring & Clean URLs
+- **Complete File System Reorganization**
+  - Restructured entire project with industry-standard directory layout
+  - Organized files into logical categories: pages/, modules/, api/, config/, includes/
+  - Improved code maintainability and developer experience
+  - Better separation of concerns and modular architecture
+
+- **Clean URL Implementation**
+  - Full clean URL system via .htaccess rewrite rules
+  - Removed all .php extensions from user-facing URLs
+  - SEO-friendly URLs for better search engine optimization
+  - Consistent routing across the entire application
+
+- **Enhanced Navigation & User Experience**
+  - Conditional navigation display (hide friends/dashboard when not logged in)
+  - Professional chat options dropdown with toggle switches
+  - Improved header design with better icon organization
+  - Smart navigation highlighting based on current page
+
+- **Comprehensive Route Management**
+  - 25+ clean URL routes implemented
+  - Proper .htaccess rules for all pages and modules
+  - API endpoint routing for AJAX calls
+  - User profile routing with tab support
+  - Wiki article routing with slug support
+
+- **Friends Module Enhancement**
+  - Complete friends sub-routing system
+  - All friends pages accessible via clean URLs
+  - Proper include path management for modular components
+  - Enhanced friends functionality with better organization
+
+- **Technical Improvements**
+  - Fixed all include paths for restructured files
+  - Updated all redirects to use clean URLs
+  - Resolved file system permission issues
+  - Improved error handling and route protection
+  - Better database connection management
+
+- **Bug Fixes**
+  - Fixed all 404 errors on main routes
+  - Resolved include path issues in moved files
+  - Corrected redirect loops in authentication flow
+  - Fixed API endpoint routing for AJAX calls
+  - Resolved navigation highlighting problems
+  - Fixed dropdown menu interactions and closing behavior
+
+### Files Restructured
+- **Pages Directory**: auth/, user/, social/, wiki/, admin/
+- **Modules Directory**: wiki/, friends/
+- **API Directory**: ajax/ with all endpoints
+- **Configuration**: Centralized config management
+- **Assets**: Organized CSS, JS, and image files
+
+### Routes Implemented
+- Authentication: /login, /register
+- User: /dashboard, /profile, /settings, /user/{username}
+- Social: /friends, /friends/requests, /friends/suggestions, /friends/all, /friends/lists, /messages, /create_post
+- Wiki: /wiki, /wiki/search, /wiki/{slug}, /create_article, /edit_article, /delete_article, /restore_version, /manage_categories
+- Admin: /admin, /manage_users, /system_settings
+- API: /ajax/{endpoint}
+
+### Security & Performance
+- All protected routes properly secured
+- Login requirement enforcement for sensitive pages
+- Efficient .htaccess rules with proper conditions
+- Optimized include paths reducing file system calls
+- Clean URL structure improving SEO and user experience
+
+
+# Changelog
+
 ## [0.0.0.5] - 2025-09-07
 
 ### Added
