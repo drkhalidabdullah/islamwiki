@@ -68,7 +68,7 @@ include "../../includes/header.php";;
     </div>
     
     <div class="version-actions">
-        <a href="history.php?id=<?php echo $version['article_id']; ?>" class="btn">Back to History</a>
+        <a href="/wiki/<?php echo $version['slug']; ?>/history" class="btn">Back to History</a>
         <?php if (is_logged_in() && (is_admin() || $version['author_id'] == $_SESSION['user_id'])): ?>
             <a href="../restore_version.php?id=<?php echo $version['id']; ?>" 
                class="btn btn-warning"

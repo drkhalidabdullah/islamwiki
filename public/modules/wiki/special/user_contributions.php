@@ -165,9 +165,9 @@ include "../../../includes/header.php";
                     
                     <div class="contribution-actions">
                         <a href="/wiki/<?php echo $contribution['slug']; ?>" class="btn btn-sm" title="View">View</a>
-                        <a href="/wiki/history.php?slug=<?php echo urlencode($contribution['slug']); ?>" class="btn btn-sm" title="History">History</a>
+                        <a href="/wiki/<?php echo $contribution['slug']; ?>/history" class="btn btn-sm" title="History">History</a>
                         <?php if (is_logged_in() && is_editor()): ?>
-                            <a href="/pages/wiki/edit_article.php?id=<?php echo $contribution['id']; ?>" class="btn btn-sm" title="Edit">Edit</a>
+                            <a href="/wiki/<?php echo $contribution['slug']; ?>/edit" class="btn btn-sm" title="Edit">Edit</a>
                         <?php endif; ?>
                     </div>
                 </div>

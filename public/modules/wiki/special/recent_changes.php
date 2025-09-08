@@ -129,9 +129,9 @@ include "../../../includes/header.php";
                     
                     <div class="change-actions">
                         <a href="/wiki/<?php echo $change['slug']; ?>" class="btn btn-sm" title="View">View</a>
-                        <a href="/wiki/history.php?slug=<?php echo urlencode($change['slug']); ?>" class="btn btn-sm" title="History">History</a>
+                        <a href="/wiki/<?php echo $change['slug']; ?>/history" class="btn btn-sm" title="History">History</a>
                         <?php if (is_logged_in() && is_editor()): ?>
-                            <a href="/pages/wiki/edit_article.php?id=<?php echo $change['id']; ?>" class="btn btn-sm" title="Edit">Edit</a>
+                            <a href="/wiki/<?php echo $change['slug']; ?>/edit" class="btn btn-sm" title="Edit">Edit</a>
                         <?php endif; ?>
                     </div>
                 </div>

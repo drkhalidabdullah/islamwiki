@@ -63,7 +63,7 @@ include '../../includes/header.php';
             <a href="/wiki/<?php echo $article['slug']; ?>" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Article
             </a>
-            <a href="/wiki/history.php?slug=<?php echo urlencode($article['slug']); ?>" class="btn btn-secondary">
+            <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn btn-secondary">
                 <i class="fas fa-history"></i> Article History
             </a>
         </div>

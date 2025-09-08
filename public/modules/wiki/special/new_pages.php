@@ -183,9 +183,9 @@ include "../../../includes/header.php";
                     
                     <div class="page-actions">
                         <a href="/wiki/<?php echo $page['slug']; ?>" class="btn btn-sm btn-primary">Read</a>
-                        <a href="/wiki/history.php?slug=<?php echo urlencode($page['slug']); ?>" class="btn btn-sm btn-secondary">History</a>
+                        <a href="/wiki/<?php echo $page['slug']; ?>/history" class="btn btn-sm btn-secondary">History</a>
                         <?php if (is_logged_in() && is_editor()): ?>
-                            <a href="/pages/wiki/edit_article.php?id=<?php echo $page['id']; ?>" class="btn btn-sm btn-secondary">Edit</a>
+                            <a href="/wiki/<?php echo $page['slug']; ?>/edit" class="btn btn-sm btn-secondary">Edit</a>
                         <?php endif; ?>
                     </div>
                 </div>
