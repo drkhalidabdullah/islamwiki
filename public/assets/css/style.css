@@ -2109,6 +2109,8 @@ body {
 
 .user-menu .dropdown-menu.show {
     display: block !important;
+    padding: 0 !important;
+    content: "" !important;
 }
 
 .user-menu .dropdown-menu a {
@@ -3817,6 +3819,8 @@ body {
 
 .messages-dropdown .dropdown-menu.show, .notifications-dropdown .dropdown-menu.show {
     display: block !important;
+    padding: 0 !important;
+    content: "" !important;
 }
 
 .dropdown-header {
@@ -5219,6 +5223,11 @@ body {
 /* Sidebar Separator */
 .sidebar-separator {
     border: 1px solid red !important; /* Debug border */
+    width: 100% !important;
+    min-height: 3px !important;
+    display: block !important;
+    padding: 0 !important;
+    content: "" !important;
     height: 3px;
     background: rgba(255, 255, 255, 0.8);
     margin: 15px 10px;
@@ -5229,6 +5238,11 @@ body {
 @media (max-width: 768px) {
     .sidebar-separator {
     border: 1px solid red !important; /* Debug border */
+    width: 100% !important;
+    min-height: 3px !important;
+    display: block !important;
+    padding: 0 !important;
+    content: "" !important;
         margin: 12px 8px;
     }
 }
@@ -5236,6 +5250,11 @@ body {
 @media (max-width: 480px) {
     .sidebar-separator {
     border: 1px solid red !important; /* Debug border */
+    width: 100% !important;
+    min-height: 3px !important;
+    display: block !important;
+    padding: 0 !important;
+    content: "" !important;
         margin: 10px 6px;
     }
 }
