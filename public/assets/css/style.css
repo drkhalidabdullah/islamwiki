@@ -5222,7 +5222,6 @@ body {
 
 /* Sidebar Separator */
 .sidebar-separator {
-    border: 1px solid red !important; /* Debug border */
     width: 100% !important;
     min-height: 3px !important;
     display: block !important;
@@ -5237,7 +5236,6 @@ body {
 /* Responsive separator adjustments */
 @media (max-width: 768px) {
     .sidebar-separator {
-    border: 1px solid red !important; /* Debug border */
     width: 100% !important;
     min-height: 3px !important;
     display: block !important;
@@ -5249,7 +5247,6 @@ body {
 
 @media (max-width: 480px) {
     .sidebar-separator {
-    border: 1px solid red !important; /* Debug border */
     width: 100% !important;
     min-height: 3px !important;
     display: block !important;
