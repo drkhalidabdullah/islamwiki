@@ -9,33 +9,39 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 
 ## 🎯 Current Version: 0.0.0.8
 
-**Latest Release:** September 7, 2025  
+**Latest Release:** January 27, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Search System Release
+**Type:** Major Community Features Release
 
-## 🚀 What's New in v0.0.0.7
+## 🚀 What's New in v0.0.0.8
 
-### 🔍 **Comprehensive Search System**
-- **Multi-content search** across articles, users, messages, and more
-- **Advanced filtering** by content type, category, date range, and author
-- **Smart search suggestions** with real-time auto-complete
-- **Professional search interface** with clean, responsive design
-- **Search analytics** and result optimization
-- **Universal search integration** across all platform modules
+### 👥 **Community Groups & Events System**
+- **Community Groups**: Create and join public, private, or restricted groups
+- **Group Management**: Admin, moderator, and member roles with proper permissions
+- **Community Events**: Organize online, offline, and hybrid events
+- **Event Attendance**: Track and manage event attendees
+- **Group Posts**: Share content within specific community groups
 
-### 🎨 **Enhanced User Interface**
-- **Conditional navigation** showing appropriate options based on login status
-- **Messages and notifications dropdowns** with real-time updates
-- **Professional header design** with consistent styling across all pages
-- **Mobile-responsive search** with touch-optimized interface
-- **Smart search highlighting** and result previews
+### 🔍 **Enhanced Search Engine**
+- **Multi-Content Search**: Search across Wiki Pages, Posts, People, Groups, Events, and Ummah content
+- **Advanced Filtering**: Left sidebar with content type filters and category selection
+- **Smart Suggestions**: Popular searches and trending topics in sidebar
+- **Search Analytics**: Comprehensive search query tracking and optimization
+- **Professional Interface**: Modern design with rich result previews
+
+### 🎨 **Improved User Experience**
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Smart No-Results**: Helpful suggestions when no results found
+- **Search History**: Track and display recent searches for logged-in users
+- **Content Type Icons**: Visual icons for each content type in search results
+- **Rich Result Previews**: Detailed result cards with metadata and engagement metrics
 
 ### 🏗️ **Technical Improvements**
-- **Database optimization** with full-text search indexes
-- **Clean URL system** for search functionality (`/search`, `/search/suggestions`)
-- **AJAX-powered features** for real-time search suggestions
-- **Performance optimization** with efficient search queries
-- **Comprehensive error handling** and user feedback
+- **New Database Schema**: Groups, events, and enhanced search analytics tables
+- **Full-Text Search**: Optimized database indexes for better search performance
+- **AJAX Integration**: Real-time search with debounced input and instant results
+- **Performance Optimization**: Efficient queries with proper indexing and caching
+- **Enhanced Security**: Improved input validation and SQL injection protection
 
 ## 🚀 Features
 
@@ -61,6 +67,8 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Friends System**: Add friends, send requests, and manage connections
 - **Friend Suggestions**: AI-powered friend recommendations
 - **Social Posts**: Create and share posts with the community
+- **Community Groups**: Join and create groups with different privacy levels
+- **Community Events**: Organize and attend online, offline, and hybrid events
 - **Notifications**: Real-time notifications for messages, friend requests, and interactions
 - **User Profiles**: Comprehensive user profiles with bio, interests, and activity
 
@@ -231,11 +239,11 @@ This project is licensed under the AGPL License - see the [LICENSE](LICENSE) fil
 
 ## 🎯 **Roadmap**
 
-### **Version 0.0.0.8** (Planned)
-- Advanced search features (AI-powered search, semantic search)
-- Enhanced mobile experience
-- Performance optimizations
-- Additional social features
+### **Version 0.0.0.8** (Released)
+- Community groups and events system
+- Enhanced search engine with multi-content support
+- Advanced filtering and search analytics
+- Improved mobile experience and responsive design
 
 ### **Version 0.1.0** (Future)
 - Multi-language support
