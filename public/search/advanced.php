@@ -1,7 +1,7 @@
 <?php
-require_once "../config/config.php";
-require_once "../includes/functions.php";
-require_once "../includes/wiki_functions.php";
+require_once __DIR__ . "/../config/config.php";
+require_once __DIR__ . "/../includes/functions.php";
+require_once __DIR__ . "/../includes/wiki_functions.php";
 
 $page_title = "Advanced Search";
 $is_search_page = true; // Hide header search

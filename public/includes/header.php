@@ -24,8 +24,7 @@ if ($message) {
     <link rel="stylesheet" href="/assets/css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <?php if (isset($is_search_page) && $is_search_page): ?>
-    <link rel="stylesheet" href="/assets/css/enhanced-search-v2.css">
-    <link rel="stylesheet" href="/assets/css/search-results-fix.css">
+    <link rel="stylesheet" href="/assets/css/search.css">
     <?php endif; ?>
     <?php if (strpos($_SERVER["REQUEST_URI"] ?? "", "/wiki/") === 0 && basename($_SERVER["REQUEST_URI"] ?? "") !== "wiki"): ?>
     <link rel="stylesheet" href="/assets/css/wiki-article-styling.css">

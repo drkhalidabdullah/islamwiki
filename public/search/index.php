@@ -61,55 +61,34 @@ include "../includes/header.php";
                 <div class="filter-group">
                     <h4>Content Type</h4>
                     <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="all" <?php echo ($content_type === 'all') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-search"></i>
-                                All Content
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="articles" <?php echo ($content_type === 'articles') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-book"></i>
-                                Wiki Pages
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="posts" <?php echo ($content_type === 'posts') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-comment"></i>
-                                Posts
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="people" <?php echo ($content_type === 'people') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-users"></i>
-                                People
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="groups" <?php echo ($content_type === 'groups') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-layer-group"></i>
-                                Groups
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="events" <?php echo ($content_type === 'events') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-calendar"></i>
-                                Events
-                            </span>
-                        </label>
-                        <label class="filter-option">
-                            <input type="radio" name="content_type" value="ummah" <?php echo ($content_type === 'ummah') ? 'checked' : ''; ?>>
-                            <span class="filter-label">
-                                <i class="fas fa-mosque"></i>
-                                Ummah
-                            </span>
-                        </label>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=all" class="filter-link <?php echo ($content_type === 'all') ? 'active' : ''; ?>">
+                            <i class="fas fa-search"></i>
+                            All Content
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=articles" class="filter-link <?php echo ($content_type === 'articles') ? 'active' : ''; ?>">
+                            <i class="fas fa-book"></i>
+                            Wiki Pages
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=posts" class="filter-link <?php echo ($content_type === 'posts') ? 'active' : ''; ?>">
+                            <i class="fas fa-comment"></i>
+                            Posts
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=people" class="filter-link <?php echo ($content_type === 'people') ? 'active' : ''; ?>">
+                            <i class="fas fa-users"></i>
+                            People
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=groups" class="filter-link <?php echo ($content_type === 'groups') ? 'active' : ''; ?>">
+                            <i class="fas fa-layer-group"></i>
+                            Groups
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=events" class="filter-link <?php echo ($content_type === 'events') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar"></i>
+                            Events
+                        </a>
+                        <a href="?q=<?php echo urlencode($query); ?>&type=ummah" class="filter-link <?php echo ($content_type === 'ummah') ? 'active' : ''; ?>">
+                            <i class="fas fa-mosque"></i>
+                            Ummah
+                        </a>
                     </div>
                 </div>
 
@@ -286,12 +265,7 @@ class EnhancedSearch {
             this.clearSearch();
         });
 
-        // Filter changes
-        document.querySelectorAll('input[name="content_type"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                this.updateFilters();
-            });
-        });
+        // Filter changes (no longer needed for content type as they're now links)
 
         document.querySelectorAll('.filter-select').forEach(select => {
             select.addEventListener('change', () => {
@@ -343,7 +317,7 @@ class EnhancedSearch {
     async fetchSearchResults(query, page = 1) {
         const formData = new FormData();
         formData.append('q', query);
-        formData.append('type', document.querySelector('input[name="content_type"]:checked').value);
+        formData.append('type', this.getCurrentContentType());
         formData.append('category', document.querySelector('select[name="category"]')?.value || '');
         formData.append('sort', document.querySelector('select[name="sort"]').value);
         formData.append('page', page);
@@ -676,12 +650,18 @@ class EnhancedSearch {
         this.showWelcome();
     }
 
+    getCurrentContentType() {
+        // Get content type from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('type') || 'all';
+    }
+
     updateFilters() {
         const form = document.getElementById('searchForm');
         const formData = new FormData(form);
         
         // Update hidden inputs
-        form.querySelector('input[name="type"]').value = document.querySelector('input[name="content_type"]:checked').value;
+        form.querySelector('input[name="type"]').value = this.getCurrentContentType();
         form.querySelector('input[name="category"]').value = document.querySelector('select[name="category"]')?.value || '';
         form.querySelector('input[name="sort"]').value = document.querySelector('select[name="sort"]').value;
 
@@ -692,9 +672,20 @@ class EnhancedSearch {
     }
 
     loadInitialResults() {
-        const query = document.getElementById('searchInput').value.trim();
-        if (query) {
+        // Check if there's a query parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlQuery = urlParams.get('q');
+        
+        if (urlQuery) {
+            // Set the search input value from URL parameter
+            document.getElementById('searchInput').value = urlQuery;
             this.performSearch();
+        } else {
+            // Check if there's a value in the search input
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                this.performSearch();
+            }
         }
     }
 }
@@ -706,13 +697,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Clear filters function
 function clearFilters() {
-    document.querySelector('input[name="content_type"][value="all"]').checked = true;
+    // Reset category and sort filters
     document.querySelectorAll('.filter-select').forEach(select => {
         select.selectedIndex = 0;
     });
     
-    const search = new EnhancedSearch();
-    search.updateFilters();
+    // Redirect to all content type
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q') || '';
+    window.location.href = `?q=${encodeURIComponent(query)}&type=all`;
 }
 </script>
 
