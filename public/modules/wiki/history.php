@@ -24,7 +24,7 @@ $article_id = $article['id'];
 
 $stmt = $pdo->prepare("SELECT av.*, u.username, u.display_name 
     FROM article_versions av 
-    JOIN users u ON av.author_id = u.id 
+    JOIN users u ON av.created_by = u.id 
     WHERE av.article_id = ? 
     ORDER BY av.version_number DESC
 ");
@@ -38,9 +38,9 @@ include "../../includes/header.php";;
     <div class="history-header">
         <h1>History: <?php echo htmlspecialchars($article['title']); ?></h1>
         <div class="history-actions">
-            <a href="<?php echo ucfirst(article['slug']); ?>" class="btn">View Article</a>
-            <?php if (is_logged_in() && (is_admin() || $article['author_id'] == $_SESSION['user_id'])): ?>
-                <a href="../edit_article.php?id=<?php echo $article['id']; ?>" class="btn">Edit Article</a>
+            <a href="/wiki/<?php echo $article['slug']; ?>" class="btn">View Article</a>
+            <?php if (is_logged_in() && (is_admin() || $article['created_by'] == $_SESSION['user_id'])): ?>
+                <a href="/wiki/<?php echo $article['slug']; ?>/edit<?php echo $article['id']; ?>" class="btn">Edit Article</a>
             <?php endif; ?>
         </div>
     </div>
@@ -61,15 +61,14 @@ include "../../includes/header.php";;
                     </div>
                 </div>
                 
-                <?php if ($version['change_summary']): ?>
+                <?php if ($version['changes_summary']): ?>
                 <div class="change-summary">
-                    <strong>Changes:</strong> <?php echo htmlspecialchars($version['change_summary']); ?>
+                    <strong>Changes:</strong> <?php echo htmlspecialchars($version['changes_summary']); ?>
                 </div>
                 <?php endif; ?>
                 
                 <div class="version-actions">
-                    <a href="version.php?id=<?php echo $version['id']; ?>" class="btn btn-sm">View Version</a>
-                    <?php if (is_logged_in() && (is_admin() || $version['author_id'] == $_SESSION['user_id'])): ?>
+                    <?php if (is_logged_in() && (is_admin() || $version['created_by'] == $_SESSION['user_id'])): ?>
                         <a href="../restore_version.php?id=<?php echo $version['id']; ?>" 
                            class="btn btn-sm btn-warning"
                            onclick="return confirm('Are you sure you want to restore this version?')">Restore</a>

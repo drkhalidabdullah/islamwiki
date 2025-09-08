@@ -1,133 +1,28 @@
 RewriteEngine On
-RewriteBase /
 
-# Handle page routes
+# Wiki pretty URLs
+# /wiki/article-name -> /modules/wiki/article.php?slug=article-name
+RewriteRule ^wiki/([a-zA-Z0-9\-]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
+
+# /wiki/article-name/history -> /modules/wiki/history.php?slug=article-name
+RewriteRule ^wiki/([a-zA-Z0-9\-]+)/history/?$ /modules/wiki/history.php?slug=$1 [L,QSA]
+
+# /wiki/article-name/talk -> /modules/wiki/talk.php?slug=article-name
+RewriteRule ^wiki/([a-zA-Z0-9\-]+)/talk/?$ /modules/wiki/talk.php?slug=$1 [L,QSA]
+
+# /wiki/article-name/edit -> /pages/wiki/edit_article.php?slug=article-name
+RewriteRule ^wiki/([a-zA-Z0-9\-]+)/edit/?$ /pages/wiki/edit_article.php?slug=$1 [L,QSA]
+
+# Special pages
+RewriteRule ^wiki/special/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/special/$1.php [L,QSA]
+
+# Category pages
+RewriteRule ^wiki/category/([a-zA-Z0-9\-]+)/?$ /modules/wiki/category.php?slug=$1 [L,QSA]
+
+# Default wiki index
+RewriteRule ^wiki/?$ /modules/wiki/index.php [L,QSA]
+
+# Handle trailing slashes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^login/?$ pages/auth/login.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^register/?$ pages/auth/register.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^dashboard/?$ pages/user/dashboard.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^profile/?$ pages/user/profile.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^settings/?$ pages/user/settings.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^create_post/?$ pages/social/create_post.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^messages/?$ pages/social/messages.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^friends/?$ pages/social/friends.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^create_article/?$ pages/wiki/create_article.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^edit_article/?$ pages/wiki/edit_article.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^delete_article/?$ pages/wiki/delete_article.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^restore_version/?$ pages/wiki/restore_version.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^manage_categories/?$ pages/wiki/manage_categories.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^manage_users/?$ pages/admin/manage_users.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^system_settings/?$ pages/admin/system_settings.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^admin/?$ pages/admin/admin.php [QSA,L]
-
-# Handle wiki routes
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^wiki/?$ modules/wiki/index.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^search/?$ search/index.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^search/suggestions/?$ search/suggestions.php [QSA,L]
-RewriteRule ^api/search/history/?$ api/search/history.php [QSA,L]
-RewriteRule ^api/search/saved/?$ api/search/saved.php [QSA,L]
-RewriteRule ^search/api/load-more/?$ search/api/load-more.php [QSA,L]
-RewriteRule ^search/semantic/?$ search/semantic-search.php [QSA,L]
-RewriteRule ^search/analytics/?$ search/analytics.php [QSA,L]
-RewriteRule ^search/personalization/?$ search/personalization.php [QSA,L]
-RewriteRule ^search/clustering/?$ search/clustering.php [QSA,L]
-RewriteRule ^search/insights/?$ search/insights.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^wiki/search/?$ search/index.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^wiki/([A-Za-z0-9_-]+)/?$ modules/wiki/article.php?slug=$1 [QSA,L]
-
-# Handle API endpoints
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ajax/(.*)$ api/ajax/$1 [QSA,L]
-
-# Handle user profile URLs
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^user/([A-Za-z0-9_-]+)/(posts|photos|events|about|activity)/?$ pages/user/user_profile.php?username=$1&tab=$2 [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^user/([A-Za-z0-9_-]+)/?$ pages/user/user_profile.php?username=$1 [QSA,L]
-
-# Remove .php extension for common pages
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^([^\.]+)$ $1.php [NC,L]
-
-# Friends sub-routes
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^friends/requests/?$ modules/friends/requests.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^friends/suggestions/?$ modules/friends/suggestions.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^friends/all/?$ modules/friends/all.php [QSA,L]
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^friends/lists/?$ modules/friends/lists.php [QSA,L]
+RewriteRule ^(.*)/$ /$1 [R=301,L]

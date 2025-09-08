@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_id = (int)($_POST['category_id'] ?? 0);
     $status = sanitize_input($_POST['status'] ?? 'draft');
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+
+    $changes_summary = sanitize_input($_POST['changes_summary'] ?? '');
     
     // Validation
     if (empty($title)) {
@@ -66,6 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 WHERE id = ?
             ");
             if ($stmt->execute([$title, $content, $excerpt, $category_id ?: null, $status, $slug, $is_featured, $article_id])) {
+
+            // Create new version entry for the edit
+            $stmt = $pdo->prepare("
+                INSERT INTO article_versions 
+                (article_id, version_number, title, content, excerpt, changes_summary, created_by) 
+                VALUES (?, (SELECT COALESCE(MAX(version_number), 0) + 1 FROM article_versions WHERE article_id = ?), ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $article_id,
+                $article_id,
+                $title,
+                $content,
+                $excerpt,
+                $changes_summary ?: "Updated article",
+                $_SESSION[user_id]
+            ]);
                 $success = 'Article updated successfully.';
                 log_activity('article_updated', "Updated article ID: $article_id");
             } else {
@@ -150,6 +168,12 @@ include "../../includes/header.php";;
                 </div>
                 <div id="preview-container" style="display: none;">
                     <div id="preview-content"></div>
+
+        <div class="form-group">
+            <label for="changes_summary">Edit Summary</label>
+            <input type="text" id="changes_summary" name="changes_summary" 
+                   placeholder="Briefly describe what you changed (optional)">
+        </div>
                 </div>
             </div>
         </div>

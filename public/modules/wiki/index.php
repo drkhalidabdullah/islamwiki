@@ -75,6 +75,18 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $popular_articles = $stmt->fetchAll();
 
+// Get all published articles for the comprehensive list
+$stmt = $pdo->prepare("
+    SELECT wa.*, u.display_name, u.username, cc.name as category_name 
+    FROM wiki_articles wa 
+    JOIN users u ON wa.author_id = u.id 
+    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    WHERE wa.status = 'published'
+    ORDER BY wa.title ASC
+");
+$stmt->execute();
+$all_articles = $stmt->fetchAll();
+
 // Get article statistics
 $stmt = $pdo->query("SELECT COUNT(*) as total_articles FROM wiki_articles WHERE status = 'published'");
 $total_articles = $stmt->fetch()['total_articles'];
@@ -107,7 +119,7 @@ include "../../includes/header.php";
                 <h3>Popular Articles</h3>
                 <div class="popular-list">
                     <?php foreach ($popular_articles as $article): ?>
-                    <a href="<?php echo ucfirst($article['slug']); ?>" class="popular-item">
+                    <a href="/wiki/<?php echo $article['slug']; ?>" class="popular-item">
                         <span class="popular-title"><?php echo htmlspecialchars($article['title']); ?></span>
                         <span class="popular-views"><?php echo number_format($article['view_count']); ?> views</span>
                     </a>
@@ -130,12 +142,39 @@ include "../../includes/header.php";
                         <span>Create Article</span>
                     </a>
                     <?php endif; ?>
+                    <a href="#all-articles" class="action-item" onclick="document.querySelector('.all-articles-section').scrollIntoView({behavior: 'smooth'});">
+                        <i class="fas fa-list"></i>
+                        <span>Browse All Articles</span>
+                    </a>
                     <a href="/wiki" class="action-item">
                         <i class="fas fa-random"></i>
                         <span>Random Article</span>
                     </a>
                 </div>
             </div>
+
+            <!-- Alphabet Navigation -->
+            <?php if (!empty($all_articles)): ?>
+            <div class="sidebar-section">
+                <h3>Browse by Letter</h3>
+                <div class="alphabet-nav">
+                    <?php 
+                    $letters = [];
+                    foreach ($all_articles as $article) {
+                        $letter = strtoupper(substr($article['title'], 0, 1));
+                        if (!in_array($letter, $letters)) {
+                            $letters[] = $letter;
+                        }
+                    }
+                    sort($letters);
+                    foreach ($letters as $letter): ?>
+                        <a href="#letter-<?php echo $letter; ?>" class="alphabet-link" onclick="document.querySelector('#letter-<?php echo $letter; ?>').scrollIntoView({behavior: 'smooth'});">
+                            <?php echo $letter; ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Main Wiki Content -->
@@ -197,7 +236,7 @@ include "../../includes/header.php";
                             <?php endif; ?>
                         </div>
                         <h3 class="article-title">
-                            <a href="<?php echo ucfirst($article['slug']); ?>">
+                            <a href="/wiki/<?php echo $article['slug']; ?>">
                                 <?php echo htmlspecialchars($article['title']); ?>
                             </a>
                         </h3>
@@ -230,7 +269,7 @@ include "../../includes/header.php";
                     <div class="recent-article-item">
                         <div class="recent-article-content">
                             <h4 class="recent-title">
-                                <a href="<?php echo ucfirst($article['slug']); ?>">
+                                <a href="/wiki/<?php echo $article['slug']; ?>">
                                     <?php echo htmlspecialchars($article['title']); ?>
                                 </a>
                             </h4>
@@ -245,6 +284,50 @@ include "../../includes/header.php";
                         <?php endif; ?>
                     </div>
                     <?php endforeach; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
+            <!-- All Articles Section -->
+            <?php if (!empty($all_articles)): ?>
+            <section class="all-articles-section" id="all-articles">
+                <div class="section-header">
+                    <h2>All Wiki Articles</h2>
+                    <div class="articles-count"><?php echo count($all_articles); ?> articles</div>
+                </div>
+                <div class="articles-alphabetical">
+                    <?php 
+                    $current_letter = '';
+                    $letter_count = 0;
+                    foreach ($all_articles as $article): 
+                        $first_letter = strtoupper(substr($article['title'], 0, 1));
+                        if ($first_letter !== $current_letter):
+                            if ($current_letter !== ''): ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="alphabet-section" id="letter-<?php echo $first_letter; ?>">
+                                <h3 class="alphabet-header"><?php echo $first_letter; ?></h3>
+                                <div class="alphabet-articles">
+                            <?php 
+                            $current_letter = $first_letter;
+                            $letter_count = 0;
+                        endif;
+                        $letter_count++;
+                    ?>
+                        <div class="article-link-item">
+                            <a href="/wiki/<?php echo $article['slug']; ?>" class="article-link">
+                                <span class="article-title"><?php echo htmlspecialchars($article['title']); ?></span>
+                                <?php if ($article['category_name']): ?>
+                                    <span class="article-category"><?php echo htmlspecialchars($article['category_name']); ?></span>
+                                <?php endif; ?>
+                                <span class="article-views"><?php echo number_format($article['view_count']); ?> views</span>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if ($current_letter !== ''): ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </section>
             <?php endif; ?>

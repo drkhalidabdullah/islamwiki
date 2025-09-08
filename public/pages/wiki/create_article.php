@@ -68,6 +68,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $article_id = $pdo->lastInsertId();
             
             // If published, set published_at
+
+            // Create initial version entry
+            $stmt = $pdo->prepare("
+                INSERT INTO article_versions 
+                (article_id, version_number, title, content, excerpt, changes_summary, created_by) 
+                VALUES (?, 1, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $article_id,
+                $title,
+                $content,
+                $excerpt,
+                "Initial creation",
+                $_SESSION[user_id]
+            ]);
             if ($status === 'published') {
                 $stmt = $pdo->prepare("UPDATE wiki_articles SET published_at = NOW() WHERE id = ?");
                 $stmt->execute([$article_id]);

@@ -39,9 +39,8 @@ class MarkdownParser {
             $class = $exists ? 'wiki-link' : 'wiki-link missing';
             
             return sprintf(
-                '<a href="%s%s" class="%s" title="%s">%s</a>',
-                $this->wiki_base_url,
-                ucfirst($slug),
+                '<a href="/wiki/%s" class="%s" title="%s">%s</a>',
+                $slug,
                 $class,
                 htmlspecialchars($page_name),
                 htmlspecialchars($display_text)
@@ -89,10 +88,10 @@ class MarkdownParser {
      * Parse standard markdown syntax
      */
     private function parseMarkdown($content) {
-        // Headers
+        // Headers (skip H1 since it's already in the page header)
         $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
         $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
-        $content = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $content);
+        $content = preg_replace('/^# (.*$)/m', '<h2>$1</h2>', $content); // Convert H1 to H2
         
         // Bold and italic
         $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
