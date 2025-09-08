@@ -40,11 +40,9 @@ if ($message) {
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
         <!-- Logo at top -->
-        <div class="sidebar-logo">
-            <a href="/" class="logo-link" title="IslamWiki">
-                <i class="fas fa-book-open"></i>
-            </a>
-        </div>
+        <a href="/" class="sidebar-item" title="IslamWiki Home">
+            <i class="fas fa-book-open"></i>
+        </a>
         
         <!-- Main Navigation -->
         <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
@@ -68,16 +66,35 @@ if ($message) {
             <i class="fas fa-users"></i>
         </a>
         
-        <!-- Separator between friends and create post -->
-        <div class="sidebar-separator"></div>
+        <!-- Create Dropdown -->
+        <div class="sidebar-dropdown">
+            <a href="#" class="sidebar-item dropdown-trigger" title="Create" data-target="createMenu">
+                <i class="fas fa-plus"></i>
+            </a>
+            <div class="dropdown-menu" id="createMenu">
+                <a href="/create_post" class="dropdown-item">
+                    <i class="fas fa-edit"></i>
+                    <span>Create Post</span>
+                </a>
+                <a href="/pages/wiki/create_article.php" class="dropdown-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Create Article</span>
+                </a>
+            </div>
+        </div>
         
-        <a href="/create_post" class="sidebar-item" title="Create Post">
-            <i class="fas fa-plus"></i>
-        </a>
-        
-        <a href="/messages" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/messages') === 0) ? 'active' : ''; ?>" title="Messages">
-            <i class="fas fa-comments"></i>
-        </a>
+        <!-- Messages Dropdown -->
+        <div class="sidebar-dropdown">
+            <a href="#" class="sidebar-item dropdown-trigger" title="Messages" data-target="messagesMenu">
+                <i class="fas fa-comments"></i>
+            </a>
+            <div class="dropdown-menu" id="messagesMenu">
+                <a href="/messages" class="dropdown-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </a>
+            </div>
+        </div>
         
         <a href="/settings" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/settings') === 0) ? 'active' : ''; ?>" title="Settings">
             <i class="fas fa-cog"></i>
@@ -118,3 +135,59 @@ if ($message) {
             <?php echo htmlspecialchars($message['message']); ?>
         </div>
         <?php endif; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("Dropdown script loaded");
+    
+    // Get all dropdown triggers
+    const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
+    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+    
+    console.log("Found dropdown triggers:", dropdownTriggers.length);
+    console.log("Found dropdown menus:", dropdownMenus.length);
+    
+    // Close all dropdowns
+    function closeAllDropdowns() {
+        dropdownMenus.forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+    
+    // Add click event to each trigger
+    dropdownTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const targetId = this.getAttribute('data-target');
+            const targetMenu = document.getElementById(targetId);
+            
+            console.log("Clicked trigger:", this.title, "Target:", targetId);
+            
+            if (targetMenu) {
+                // Close all other dropdowns first
+                closeAllDropdowns();
+                
+                // Toggle this dropdown
+                targetMenu.classList.toggle('show');
+                console.log("Menu show state:", targetMenu.classList.contains('show'));
+            }
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.sidebar-dropdown')) {
+            closeAllDropdowns();
+        }
+    });
+    
+    // Close dropdowns when clicking on dropdown items
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function() {
+            closeAllDropdowns();
+        });
+    });
+});
+</script>
