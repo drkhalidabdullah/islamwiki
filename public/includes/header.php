@@ -57,9 +57,34 @@ if ($message) {
         <div class="sidebar-separator"></div>
         
         <!-- Main Navigation -->
-        <a href="/search" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search">
-            <i class="fas fa-search"></i>
-        </a>
+        <div class="search-container">
+            <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="toggleSearchPopup(event)">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            <!-- Search Popup -->
+            <div class="search-popup" id="searchPopup">
+                <div class="search-popup-content">
+                    <div class="search-popup-header">
+                        <h3>Search IslamWiki</h3>
+                        <button class="search-popup-close" onclick="closeSearchPopup()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form class="search-popup-form" onsubmit="performSearch(event)">
+                        <div class="search-input-group">
+                            <input type="text" id="searchInput" name="q" placeholder="Search articles, users, content..." autocomplete="off" required>
+                            <button type="submit" class="search-submit-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-suggestions" id="searchSuggestions">
+                            <!-- Suggestions will be loaded here -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         
         <!-- Separator -->
         <div class="sidebar-separator"></div>
@@ -251,5 +276,171 @@ document.addEventListener("DOMContentLoaded", function() {
     // Make functions globally available
     window.toggleSidebar = toggleSidebar;
     window.closeSidebar = closeSidebar;
+    
+    // Search popup functionality
+    let searchTimeout;
+    
+    function toggleSearchPopup(event) {
+        event.preventDefault();
+        const popup = document.getElementById('searchPopup');
+        popup.classList.toggle('show');
+        
+        if (popup.classList.contains('show')) {
+            // Focus on search input when popup opens
+            setTimeout(() => {
+                document.getElementById('searchInput').focus();
+            }, 100);
+        }
+    }
+    
+    function closeSearchPopup() {
+        const popup = document.getElementById('searchPopup');
+        popup.classList.remove('show');
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchSuggestions').innerHTML = '';
+    }
+    
+    function performSearch(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value.trim();
+        
+        if (query) {
+            // Redirect to search page with query
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        }
+    }
+    
+    // Load search suggestions as user types
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                // Clear previous timeout
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
+                }
+                
+                if (query.length >= 2) {
+                    // Debounce search suggestions
+                    searchTimeout = setTimeout(() => {
+                        loadSearchSuggestions(query);
+                    }, 300);
+                } else {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+            
+            // Handle suggestion clicks
+            suggestionsContainer.addEventListener('click', function(e) {
+                const suggestionItem = e.target.closest('.search-suggestion-item');
+                if (suggestionItem) {
+                    const query = suggestionItem.dataset.query;
+                    if (query) {
+                        document.getElementById('searchInput').value = query;
+                        performSearch(e);
+                    }
+                }
+            });
+        }
+    });
+    
+    function loadSearchSuggestions(query) {
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        
+        // Show loading state
+        suggestionsContainer.innerHTML = `
+            <div class="search-loading">
+                <i class="fas fa-spinner"></i> Loading suggestions...
+            </div>
+        `;
+        
+        // Fetch suggestions via AJAX
+        fetch(`/api/ajax/search_suggestions.php?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                displaySuggestions(data);
+            })
+            .catch(error => {
+                console.error('Error loading suggestions:', error);
+                suggestionsContainer.innerHTML = `
+                    <div class="no-suggestions">
+                        <i class="fas fa-search"></i><br>
+                        No suggestions available
+                    </div>
+                `;
+            });
+    }
+    
+    function displaySuggestions(suggestions) {
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        
+        if (!suggestions || suggestions.length === 0) {
+            suggestionsContainer.innerHTML = `
+                <div class="no-suggestions">
+                    <i class="fas fa-search"></i><br>
+                    No suggestions found
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        suggestions.forEach(suggestion => {
+            const icon = getSuggestionIcon(suggestion.suggestion_type || suggestion.content_type);
+            html += `
+                <div class="search-suggestion-item" data-query="${suggestion.suggestion}">
+                    <i class="${icon}"></i>
+                    <div class="suggestion-text">
+                        <div class="suggestion-title">${suggestion.suggestion}</div>
+                        <div class="suggestion-meta">${suggestion.suggestion_type || suggestion.content_type || 'Search term'}</div>
+                    </div>
+                    <div class="suggestion-count">${suggestion.search_count || 0} searches</div>
+                </div>
+            `;
+        });
+        
+        suggestionsContainer.innerHTML = html;
+    }
+    
+    function getSuggestionIcon(type) {
+        switch (type) {
+            case 'article':
+                return 'fas fa-book';
+            case 'user':
+                return 'fas fa-user';
+            case 'category':
+                return 'fas fa-folder';
+            case 'trending':
+                return 'fas fa-fire';
+            default:
+                return 'fas fa-search';
+        }
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+        const popup = document.getElementById('searchPopup');
+        const searchContainer = document.querySelector('.search-container');
+        
+        if (popup && popup.classList.contains('show') && !searchContainer.contains(e.target)) {
+            closeSearchPopup();
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSearchPopup();
+        }
+    });
+    
+    // Make functions globally available
+    window.toggleSearchPopup = toggleSearchPopup;
+    window.closeSearchPopup = closeSearchPopup;
+    window.performSearch = performSearch;
 });
 </script>

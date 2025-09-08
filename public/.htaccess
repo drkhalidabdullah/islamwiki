@@ -40,6 +40,9 @@ RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 
 # Search pages
 RewriteRule ^search/advanced/?$ /search/advanced.php [L,QSA]
 
+# API endpoints
+RewriteRule ^api/ajax/search_suggestions/?$ /api/ajax/search_suggestions.php [L,QSA]
+
 # Social pages
 RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]
 RewriteRule ^friends/requests/?$ /modules/friends/requests.php [L,QSA]
