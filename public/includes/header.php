@@ -40,9 +40,11 @@ if ($message) {
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
         <!-- Logo at top -->
-        <a href="/" class="sidebar-item" title="IslamWiki Home">
-            <i class="fas fa-book-open"></i>
-        </a>
+        <div class="sidebar-logo">
+            <a href="/" class="logo-link" title="IslamWiki">
+                <i class="fas fa-book-open"></i>
+            </a>
+        </div>
         
         <!-- Main Navigation -->
         <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">

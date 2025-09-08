@@ -5139,3 +5139,79 @@ body {
         font-size: 16px;
     }
 }
+
+/* Sidebar Logo Styles */
+.sidebar-logo {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #3498db;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.logo-link:hover {
+    background: rgba(52, 152, 219, 0.2);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.logo-link i {
+    font-size: 20px;
+}
+
+/* Tooltip for logo */
+.logo-link::after {
+    content: attr(title);
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1002;
+}
+
+.logo-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Responsive logo adjustments */
+@media (max-width: 768px) {
+    .logo-link::after {
+        left: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-link::after {
+        left: 40px;
+    }
+    
+    .logo-link {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .logo-link i {
+        font-size: 18px;
+    }
+}
