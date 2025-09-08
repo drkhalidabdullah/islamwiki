@@ -68,6 +68,9 @@ if ($message) {
             <i class="fas fa-users"></i>
         </a>
         
+        <!-- Separator between friends and create post -->
+        <div class="sidebar-separator"></div>
+        
         <a href="/create_post" class="sidebar-item" title="Create Post">
             <i class="fas fa-plus"></i>
         </a>

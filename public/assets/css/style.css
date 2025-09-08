@@ -5215,3 +5215,24 @@ body {
         font-size: 18px;
     }
 }
+
+/* Sidebar Separator */
+.sidebar-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 15px 10px;
+    border-radius: 1px;
+}
+
+/* Responsive separator adjustments */
+@media (max-width: 768px) {
+    .sidebar-separator {
+        margin: 12px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-separator {
+        margin: 10px 6px;
+    }
+}
