@@ -44,7 +44,17 @@ if ($message) {
             <i class="fas fa-book-open"></i>
         </a>
         
+        <!-- Separator -->
+        <div class="sidebar-separator"></div>
+        
         <!-- Main Navigation -->
+        <a href="/search" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search">
+            <i class="fas fa-search"></i>
+        </a>
+        
+        <!-- Separator -->
+        <div class="sidebar-separator"></div>
+        
         <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
             <i class="fas fa-home"></i>
         </a>
@@ -53,18 +63,9 @@ if ($message) {
             <i class="fas fa-book"></i>
         </a>
         
-        <a href="/search" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search">
-            <i class="fas fa-search"></i>
-        </a>
-        
         <?php if (is_logged_in()): ?>
-        <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
-            <i class="fas fa-tachometer-alt"></i>
-        </a>
-        
-        <a href="/friends" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0) ? 'active' : ''; ?>" title="Friends">
-            <i class="fas fa-users"></i>
-        </a>
+        <!-- Separator -->
+        <div class="sidebar-separator"></div>
         
         <!-- Create Dropdown -->
         <div class="sidebar-dropdown">
@@ -83,6 +84,9 @@ if ($message) {
             </div>
         </div>
         
+        <!-- Separator -->
+        <div class="sidebar-separator"></div>
+        
         <!-- Messages Dropdown -->
         <div class="sidebar-dropdown">
             <a href="#" class="sidebar-item dropdown-trigger" title="Messages" data-target="messagesMenu">
@@ -95,6 +99,14 @@ if ($message) {
                 </a>
             </div>
         </div>
+        
+        <a href="/friends" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0) ? 'active' : ''; ?>" title="Friends">
+            <i class="fas fa-users"></i>
+        </a>
+        
+        <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+        </a>
         
         <a href="/settings" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/settings') === 0) ? 'active' : ''; ?>" title="Settings">
             <i class="fas fa-cog"></i>

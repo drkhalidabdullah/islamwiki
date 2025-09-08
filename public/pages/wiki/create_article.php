@@ -47,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if (empty($errors)) {
+        // Remove any H1 headings from content to prevent duplicate titles
+        $content = preg_replace('/^# .*$/m', '', $content);
+        $content = trim($content);
+        
         try {
             $stmt = $pdo->prepare("
                 INSERT INTO wiki_articles 

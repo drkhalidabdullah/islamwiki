@@ -5077,6 +5077,14 @@ body {
     visibility: visible;
 }
 
+/* Sidebar separator */
+.sidebar-separator {
+    width: 30px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+}
+
 /* User profile section at bottom */
 .sidebar-user {
     margin-top: auto;

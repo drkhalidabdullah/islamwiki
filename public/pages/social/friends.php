@@ -56,6 +56,7 @@ include "../../includes/header.php";;
                         <span>All friends</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
+                    <a href="/friends/lists" class="friends-nav-item">
                         <i class="fas fa-list"></i>
                         <span>Custom Lists</span>
                         <i class="fas fa-chevron-right"></i>

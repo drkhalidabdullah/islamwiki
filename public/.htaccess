@@ -22,6 +22,28 @@ RewriteRule ^wiki/category/([a-zA-Z0-9\-]+)/?$ /modules/wiki/category.php?slug=$
 # Default wiki index
 RewriteRule ^wiki/?$ /modules/wiki/index.php [L,QSA]
 
+# Auth pages
+RewriteRule ^login/?$ /pages/auth/login.php [L,QSA]
+RewriteRule ^register/?$ /pages/auth/register.php [L,QSA]
+
+# User pages
+RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]
+RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
+RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
+RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
+
+# Social pages
+RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]
+RewriteRule ^friends/requests/?$ /modules/friends/requests.php [L,QSA]
+RewriteRule ^friends/suggestions/?$ /modules/friends/suggestions.php [L,QSA]
+RewriteRule ^friends/lists/?$ /modules/friends/lists.php [L,QSA]
+RewriteRule ^friends/all/?$ /modules/friends/all.php [L,QSA]
+RewriteRule ^create_post/?$ /pages/social/create_post.php [L,QSA]
+RewriteRule ^messages/?$ /pages/social/messages.php [L,QSA]
+
+# Admin pages
+RewriteRule ^admin/?$ /pages/admin/admin.php [L,QSA]
+
 # Handle trailing slashes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
