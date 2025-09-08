@@ -342,7 +342,7 @@ body {
 }
 
 .dropdown-divider {
-    height: 1px;
+    height: 2px;
     background-color: #ecf0f1;
     margin: 0.5rem 0;
     border: none;
@@ -760,11 +760,11 @@ body {
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .nav-item.active {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .nav-item.active::after {
@@ -811,7 +811,7 @@ body {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #4a5568;
     text-decoration: none;
     border-radius: 50%;
@@ -849,7 +849,7 @@ body {
 }
 
 .user-profile:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .profile-img {
@@ -905,7 +905,7 @@ body {
 }
 
 .btn-login:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .btn-register {
@@ -4919,7 +4919,7 @@ body {
 }
 
 .footer-powered {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #ecf0f1;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -4962,7 +4962,7 @@ body {
 }
 
 .footer-powered {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #ecf0f1;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -5040,7 +5040,7 @@ body {
 }
 
 .sidebar-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.3);
     color: #ffffff;
 }
 
@@ -5218,8 +5218,8 @@ body {
 
 /* Sidebar Separator */
 .sidebar-separator {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
     margin: 15px 10px;
     border-radius: 1px;
 }
