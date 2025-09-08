@@ -22,6 +22,11 @@ RewriteRule ^wiki/category/([a-zA-Z0-9\-]+)/?$ /modules/wiki/category.php?slug=$
 # Default wiki index
 RewriteRule ^wiki/?$ /modules/wiki/index.php [L,QSA]
 
+# Wiki management pages
+RewriteRule ^wiki/upload/?$ /pages/wiki/upload_file.php [L,QSA]
+RewriteRule ^wiki/manage/redirects/?$ /pages/wiki/manage_redirects.php [L,QSA]
+RewriteRule ^wiki/manage/files/?$ /pages/wiki/manage_files.php [L,QSA]
+
 # Auth pages
 RewriteRule ^login/?$ /pages/auth/login.php [L,QSA]
 RewriteRule ^register/?$ /pages/auth/register.php [L,QSA]
@@ -31,6 +36,9 @@ RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]
 RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
+
+# Search pages
+RewriteRule ^search/advanced/?$ /search/advanced.php [L,QSA]
 
 # Social pages
 RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]

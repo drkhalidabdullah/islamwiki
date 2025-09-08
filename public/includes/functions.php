@@ -29,6 +29,90 @@ function show_message($message, $type = 'info') {
     $_SESSION['message_type'] = $type;
 }
 
+function format_file_size($bytes) {
+    if ($bytes >= 1073741824) {
+        return number_format($bytes / 1073741824, 2) . ' GB';
+    } elseif ($bytes >= 1048576) {
+        return number_format($bytes / 1048576, 2) . ' MB';
+    } elseif ($bytes >= 1024) {
+        return number_format($bytes / 1024, 2) . ' KB';
+    } else {
+        return $bytes . ' bytes';
+    }
+}
+
+function has_permission($user_id, $permission) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT r.permissions 
+        FROM user_roles ur
+        JOIN roles r ON ur.role_id = r.id
+        WHERE ur.user_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    $roles = $stmt->fetchAll();
+    
+    foreach ($roles as $role) {
+        $permissions = json_decode($role['permissions'], true) ?: [];
+        if (in_array($permission, $permissions)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+function require_permission($permission) {
+    if (!is_logged_in()) {
+        header("Location: /login");
+        exit();
+    }
+    
+    if (!has_permission($_SESSION['user_id'], $permission)) {
+        show_message('Access denied. You do not have permission to perform this action.', 'error');
+        redirect('/dashboard');
+    }
+}
+
+function get_user_roles($user_id) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT r.* 
+        FROM user_roles ur
+        JOIN roles r ON ur.role_id = r.id
+        WHERE ur.user_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    return $stmt->fetchAll();
+}
+
+function assign_role($user_id, $role_id, $granted_by = null) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT IGNORE INTO user_roles (user_id, role_id, granted_by) 
+            VALUES (?, ?, ?)
+        ");
+        return $stmt->execute([$user_id, $role_id, $granted_by]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function remove_role($user_id, $role_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("DELETE FROM user_roles WHERE user_id = ? AND role_id = ?");
+        return $stmt->execute([$user_id, $role_id]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
 function get_message() {
     if (isset($_SESSION['message'])) {
         $message = $_SESSION['message'];
@@ -47,17 +131,6 @@ function verify_password($password, $hash) {
     return password_verify($password, $hash);
 }
 
-function get_user_roles($user_id) {
-    global $pdo;
-    $stmt = $pdo->prepare("
-        SELECT r.name, r.display_name 
-        FROM user_roles ur 
-        JOIN roles r ON ur.role_id = r.id 
-        WHERE ur.user_id = ?
-    ");
-    $stmt->execute([$user_id]);
-    return $stmt->fetchAll();
-}
 
 function has_role($user_id, $role_name) {
     global $pdo;

@@ -28,6 +28,69 @@ function get_wiki_namespaces($active_only = true) {
 }
 
 /**
+ * Check if a slug has a redirect and return the target article
+ */
+function get_redirect_target($slug) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT r.to_article_id, a.slug as target_slug, a.title as target_title
+        FROM wiki_redirects r
+        JOIN wiki_articles a ON r.to_article_id = a.id
+        WHERE r.from_slug = ?
+    ");
+    $stmt->execute([$slug]);
+    return $stmt->fetch();
+}
+
+/**
+ * Create a redirect from one slug to another
+ */
+function create_redirect($from_slug, $to_article_id, $created_by) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO wiki_redirects (from_slug, to_article_id, created_by) 
+            VALUES (?, ?, ?)
+        ");
+        return $stmt->execute([$from_slug, $to_article_id, $created_by]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/**
+ * Delete a redirect by ID
+ */
+function delete_redirect($redirect_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("DELETE FROM wiki_redirects WHERE id = ?");
+        return $stmt->execute([$redirect_id]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/**
+ * Get all redirects with target article information
+ */
+function get_all_redirects() {
+    global $pdo;
+    
+    $stmt = $pdo->query("
+        SELECT r.*, a.title as target_title, a.slug as target_slug, u.username as created_by_username
+        FROM wiki_redirects r
+        JOIN wiki_articles a ON r.to_article_id = a.id
+        JOIN users u ON r.created_by = u.id
+        ORDER BY r.created_at DESC
+    ");
+    return $stmt->fetchAll();
+}
+
+/**
  * Get namespace by ID or name
  */
 function get_wiki_namespace($identifier) {

@@ -208,6 +208,11 @@ include "../includes/header.php";
                             <i class="fas fa-search"></i> Search
                         </button>
                     </div>
+                    <div class="search-options">
+                        <a href="/search/advanced" class="btn btn-secondary">
+                            <i class="fas fa-cog"></i> Advanced Search
+                        </a>
+                    </div>
                 </form>
             </div>
 
@@ -710,5 +715,31 @@ function clearFilters() {
     search.updateFilters();
 }
 </script>
+
+<style>
+.search-options {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.search-options .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.search-options .btn:hover {
+    background: #545b62;
+    color: white;
+    text-decoration: none;
+}
+</style>
 
 <?php include "../includes/footer.php"; ?>

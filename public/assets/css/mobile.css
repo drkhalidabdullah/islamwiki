@@ -1,0 +1,660 @@
+/* Mobile Optimization for IslamWiki */
+
+/* Base mobile styles */
+@media (max-width: 768px) {
+    /* Sidebar adjustments */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .sidebar-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1001;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+        padding-top: 4rem;
+    }
+    
+    /* Mobile overlay for sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    /* Wiki article mobile styles */
+    .wiki-article {
+        padding: 1rem;
+    }
+    
+    .article-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .article-title {
+        font-size: 1.5rem;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .article-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .article-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* Article content mobile styles */
+    .article-content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .article-content h2 {
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .article-content h3 {
+        font-size: 1.2rem;
+        margin-top: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-content h4 {
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-content p {
+        margin-bottom: 1rem;
+    }
+    
+    .article-content ul,
+    .article-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .article-content li {
+        margin-bottom: 0.25rem;
+    }
+    
+    .article-content blockquote {
+        margin: 1rem 0;
+        padding: 1rem;
+        border-left: 4px solid #007bff;
+        background: #f8f9fa;
+    }
+    
+    .article-content pre {
+        overflow-x: auto;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    
+    .article-content code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-size: 0.9rem;
+    }
+    
+    /* Wiki links mobile styles */
+    .wiki-link {
+        word-break: break-word;
+    }
+    
+    /* Tables mobile styles */
+    .article-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+    
+    .article-content th,
+    .article-content td {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    .article-content th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    /* Mobile table wrapper for horizontal scroll */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Edit form mobile styles */
+    .edit-form {
+        padding: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+    
+    .form-group textarea {
+        min-height: 200px;
+        resize: vertical;
+    }
+    
+    .form-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    /* Search mobile styles */
+    .search-page-container {
+        padding: 1rem;
+    }
+    
+    .search-form {
+        margin-bottom: 2rem;
+    }
+    
+    .search-input-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .search-button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .search-filters {
+        margin-top: 1rem;
+    }
+    
+    .filter-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Admin panel mobile styles */
+    .admin-page {
+        padding: 1rem;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .admin-actions {
+        justify-content: center;
+    }
+    
+    .action-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .action-card {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Table mobile styles */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        min-width: 600px;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Modal mobile styles */
+    .modal-content {
+        width: 95%;
+        margin: 2% auto;
+        max-height: 90vh;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
+    
+    /* File upload mobile styles */
+    .upload-page {
+        padding: 1rem;
+    }
+    
+    .upload-form {
+        padding: 1rem;
+    }
+    
+    .files-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .file-card {
+        padding: 1rem;
+    }
+    
+    .file-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .file-actions .btn {
+        width: 100%;
+    }
+    
+    /* Navigation mobile styles */
+    .breadcrumb {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .breadcrumb-item {
+        font-size: 0.9rem;
+    }
+    
+    /* Pagination mobile styles */
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .pagination .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* Alert mobile styles */
+    .alert {
+        margin: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+    
+    /* Button mobile styles */
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        min-height: 44px; /* iOS touch target minimum */
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        min-height: 36px;
+    }
+    
+    /* Form mobile styles */
+    .form {
+        gap: 1rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Card mobile styles */
+    .card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .card h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Dropdown mobile styles */
+    .dropdown-menu {
+        position: static;
+        display: none;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+    }
+    
+    .dropdown-menu.show {
+        display: block;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+    
+    /* Touch-friendly improvements */
+    .sidebar-item {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sidebar-item i {
+        font-size: 1.2rem;
+    }
+    
+    /* Prevent zoom on input focus (iOS) */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    textarea,
+    select {
+        font-size: 16px;
+    }
+    
+    /* Improve touch targets */
+    a, button, input, select, textarea {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Hide desktop-only elements */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    /* Show mobile-only elements */
+    .mobile-only {
+        display: block !important;
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+    }
+    
+    .action-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .files-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Large mobile styles */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0.5rem;
+        padding-top: 3.5rem;
+    }
+    
+    .sidebar-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .article-title {
+        font-size: 1.3rem;
+    }
+    
+    .card {
+        padding: 0.75rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape mobile styles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .main-content {
+        margin-left: 200px;
+    }
+    
+    .sidebar-toggle {
+        display: none;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar,
+    .sidebar-toggle,
+    .sidebar-overlay,
+    .article-actions,
+    .form-actions,
+    .btn,
+    .pagination,
+    .alert {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .article-content {
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+    
+    .article-title {
+        font-size: 18pt;
+        margin-bottom: 1rem;
+    }
+    
+    .article-content h2 {
+        font-size: 14pt;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-content h3 {
+        font-size: 13pt;
+        margin-top: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .article-content h4 {
+        font-size: 12pt;
+        margin-top: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .article-content p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-content ul,
+    .article-content ol {
+        margin-bottom: 0.5rem;
+    }
+    
+    .article-content blockquote {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        border-left: 2px solid #000;
+        background: #f5f5f5;
+    }
+    
+    .article-content pre {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: #f5f5f5;
+        border: 1px solid #ccc;
+        font-size: 10pt;
+    }
+    
+    .article-content table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .article-content th,
+    .article-content td {
+        border: 1px solid #000;
+        padding: 0.25rem;
+        font-size: 10pt;
+    }
+    
+    .article-content th {
+        background: #f0f0f0;
+        font-weight: bold;
+    }
+}

@@ -12,6 +12,14 @@ if (!$slug) {
     redirect('index.php');
 }
 
+// Check for redirects first
+$redirect = get_redirect_target($slug);
+if ($redirect) {
+    // Redirect to the target article
+    header("Location: /wiki/" . $redirect['target_slug'], true, 301);
+    exit;
+}
+
 // Get article
 $stmt = $pdo->prepare("
     SELECT wa.*, u.username, u.display_name, cc.name as category_name, cc.slug as category_slug 

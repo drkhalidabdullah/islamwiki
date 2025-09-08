@@ -99,6 +99,76 @@ include "../../includes/header.php";;
         </div>
     </div>
     
+    <!-- Quick Actions -->
+    <div class="admin-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <a href="manage_users.php" class="action-card">
+                <div class="action-icon">👥</div>
+                <div class="action-content">
+                    <h3>Manage Users</h3>
+                    <p>View and edit user accounts</p>
+                </div>
+            </a>
+            
+            <a href="../wiki/create_article.php" class="action-card">
+                <div class="action-icon">📝</div>
+                <div class="action-content">
+                    <h3>Create Article</h3>
+                    <p>Add new wiki articles</p>
+                </div>
+            </a>
+            
+            <a href="/wiki/manage/redirects" class="action-card">
+                <div class="action-icon">🔄</div>
+                <div class="action-content">
+                    <h3>Manage Redirects</h3>
+                    <p>Create and manage page redirects</p>
+                </div>
+            </a>
+            
+            <a href="/wiki/manage/files" class="action-card">
+                <div class="action-icon">📁</div>
+                <div class="action-content">
+                    <h3>Manage Files</h3>
+                    <p>View and manage uploaded files</p>
+                </div>
+            </a>
+            
+            <a href="manage_permissions.php" class="action-card">
+                <div class="action-icon">🔐</div>
+                <div class="action-content">
+                    <h3>Manage Permissions</h3>
+                    <p>Configure user roles and permissions</p>
+                </div>
+            </a>
+            
+            <a href="maintenance.php" class="action-card">
+                <div class="action-icon">🔧</div>
+                <div class="action-content">
+                    <h3>Maintenance Tools</h3>
+                    <p>System maintenance and cleanup</p>
+                </div>
+            </a>
+            
+            <a href="analytics.php" class="action-card">
+                <div class="action-icon">📊</div>
+                <div class="action-content">
+                    <h3>Analytics & Reports</h3>
+                    <p>View site analytics and reports</p>
+                </div>
+            </a>
+            
+            <a href="system_settings.php" class="action-card">
+                <div class="action-icon">⚙️</div>
+                <div class="action-content">
+                    <h3>System Settings</h3>
+                    <p>Configure site settings</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
     <div class="admin-content">
         <div class="admin-section">
             <h2>Recent Users</h2>
@@ -245,6 +315,64 @@ include "../../includes/header.php";;
 }
 
 .stat-content p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.admin-actions {
+    margin-bottom: 3rem;
+}
+
+.admin-actions h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.action-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 50%;
+}
+
+.action-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.action-content p {
     margin: 0;
     color: #666;
     font-size: 0.9rem;

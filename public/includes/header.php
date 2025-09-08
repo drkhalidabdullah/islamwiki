@@ -21,6 +21,7 @@ if ($message) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <?php if (isset($is_search_page) && $is_search_page): ?>
     <link rel="stylesheet" href="/assets/css/enhanced-search-v2.css">
@@ -37,6 +38,14 @@ if ($message) {
     <?php endif; ?>
 </head>
 <body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
         <!-- Logo at top -->
@@ -80,6 +89,10 @@ if ($message) {
                 <a href="/pages/wiki/create_article.php" class="dropdown-item">
                     <i class="fas fa-file-alt"></i>
                     <span>Create Article</span>
+                </a>
+                <a href="/wiki/upload" class="dropdown-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload File</span>
                 </a>
             </div>
         </div>
@@ -201,5 +214,42 @@ document.addEventListener("DOMContentLoaded", function() {
             closeAllDropdowns();
         });
     });
+    
+    // Mobile sidebar functionality
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+    
+    function closeSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+    
+    // Close sidebar when clicking on sidebar items (mobile)
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    });
+    
+    // Close sidebar on window resize if desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    });
+    
+    // Make functions globally available
+    window.toggleSidebar = toggleSidebar;
+    window.closeSidebar = closeSidebar;
 });
 </script>
