@@ -5156,16 +5156,16 @@ body {
 
 .sidebar-dropdown .dropdown-menu {
     position: absolute;
-    left: 65px;
+    left: 50px;
     top: 0;
     background: #34495e;
-    border-radius: 8px;
+    border-radius: 0 8px 8px 0;
     box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     padding: 8px 0;
     min-width: 180px;
     display: none;
     z-index: 1003;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: none;
     opacity: 0;
     transform: translateX(-10px);
     transition: all 0.3s ease;
@@ -5212,6 +5212,10 @@ body {
 
 .dropdown-trigger {
     cursor: pointer;
+}
+
+.dropdown-trigger::after {
+    display: none !important;
 }
 
 .dropdown-trigger:hover {
@@ -5455,14 +5459,14 @@ body {
 /* Responsive dropdown adjustments */
 @media (max-width: 768px) {
     .sidebar-dropdown .dropdown-menu {
-        left: 55px;
+        left: 40px;
         min-width: 160px;
     }
 }
 
 @media (max-width: 480px) {
     .sidebar-dropdown .dropdown-menu {
-        left: 50px;
+        left: 35px;
         min-width: 140px;
     }
     
