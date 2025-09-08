@@ -4,16 +4,15 @@ require_once __DIR__ . '/../../includes/functions.php';
 
 $page_title = 'Article History';
 
-$article_id = (int)($_GET['id'] ?? 0);
-
-if (!$article_id) {
-    show_message('Article ID is required.', 'error');
+$slug = $_GET['slug'] ?? '';
+if (!$slug) {
+    show_message('Article slug is required.', 'error');
     redirect('/');
 }
 
-// Get article
-$stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
-$stmt->execute([$article_id]);
+// Get article by slug
+$stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE slug = ?");
+$stmt->execute([$slug]);
 $article = $stmt->fetch();
 
 if (!$article) {
@@ -21,9 +20,9 @@ if (!$article) {
     redirect('/');
 }
 
-// Get article versions
-$stmt = $pdo->prepare("
-    SELECT av.*, u.username, u.display_name 
+$article_id = $article['id'];
+
+$stmt = $pdo->prepare("SELECT av.*, u.username, u.display_name 
     FROM article_versions av 
     JOIN users u ON av.author_id = u.id 
     WHERE av.article_id = ? 

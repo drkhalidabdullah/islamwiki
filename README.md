@@ -7,7 +7,7 @@
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
 
-## 🎯 Current Version: 0.0.0.7
+## 🎯 Current Version: 0.0.0.8
 
 **Latest Release:** September 7, 2025  
 **Status:** Production Ready ✅  

@@ -22,6 +22,19 @@ if ($message) {
     <title><?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <?php if (isset($is_search_page) && $is_search_page): ?>
+    <link rel="stylesheet" href="/assets/css/enhanced-search-v2.css">
+    <link rel="stylesheet" href="/assets/css/search-results-fix.css">
+    <?php endif; ?>
+    <?php if (strpos($_SERVER["REQUEST_URI"] ?? "", "/wiki/") === 0 && basename($_SERVER["REQUEST_URI"] ?? "") !== "wiki"): ?>
+    <link rel="stylesheet" href="/assets/css/wiki-article-styling.css">
+    <?php endif; ?>
+    <?php if ($_SERVER["REQUEST_URI"] === "/" || $_SERVER["REQUEST_URI"] === ""): ?>
+    <link rel="stylesheet" href="/assets/css/homepage-redesign.css">
+    <?php endif; ?>
+    <?php if (strpos($_SERVER["REQUEST_URI"] ?? "", "/wiki") === 0 && basename($_SERVER["REQUEST_URI"] ?? "") === "wiki"): ?>
+    <link rel="stylesheet" href="/assets/css/wiki-index-redesign.css">
+    <?php endif; ?>
 </head>
 <body>
     <header class="header">

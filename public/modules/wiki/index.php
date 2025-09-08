@@ -57,24 +57,12 @@ $stmt = $pdo->prepare("
     LEFT JOIN content_categories cc ON wa.category_id = cc.id
     WHERE " . implode(' AND ', $where_conditions) . "
     ORDER BY wa.published_at DESC 
-    LIMIT 12
+    LIMIT 8
 ");
 $stmt->execute($params);
 $recent_articles = $stmt->fetchAll();
 
-// Get popular articles (most viewed) with proper permissions
-$where_conditions = [];
-$params = [];
-
-if (!$is_logged_in) {
-    $where_conditions[] = "wa.status = 'published'";
-} elseif (!$is_editor) {
-    $where_conditions[] = "(wa.status = 'published' OR (wa.status = 'draft' AND wa.author_id = ?))";
-    $params[] = $user_id;
-} else {
-    $where_conditions[] = "(wa.status = 'published' OR wa.status = 'draft')";
-}
-
+// Get popular articles
 $stmt = $pdo->prepare("
     SELECT wa.*, u.display_name, u.username, cc.name as category_name 
     FROM wiki_articles wa 
@@ -87,307 +75,181 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $popular_articles = $stmt->fetchAll();
 
-include "../../includes/header.php";;
+// Get article statistics
+$stmt = $pdo->query("SELECT COUNT(*) as total_articles FROM wiki_articles WHERE status = 'published'");
+$total_articles = $stmt->fetch()['total_articles'];
+
+$stmt = $pdo->query("SELECT COUNT(*) as total_categories FROM content_categories WHERE is_active = 1");
+$total_categories = $stmt->fetch()['total_categories'];
+
+include "../../includes/header.php";
 ?>
 
-<div class="wiki-homepage">
-    <div class="hero-section">
-        <div class="card">
-            <h1>Islamic Knowledge Wiki</h1>
-            <p>Explore comprehensive articles about Islam, Islamic history, and Islamic teachings.</p>
-            
-        </div>
-    </div>
-    
-    <?php if (!empty($featured_articles)): ?>
-    <section class="featured-articles">
-        <h2>Featured Articles</h2>
-        <div class="articles-grid">
-            <?php foreach ($featured_articles as $article): ?>
-            <div class="card article-card">
-                <div class="article-meta">
-                    <span class="category"><?php echo htmlspecialchars($article['category_name']); ?></span>
-                    <span class="date"><?php echo format_date($article['published_at']); ?></span>
-                    <?php if ($article['status'] === 'draft'): ?>
-                        <span class="draft-indicator">📝 Draft</span>
-                    <?php endif; ?>
-                </div>
-                <h3><a href="<?php echo ucfirst($article['slug']); ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
-                <p><?php echo truncate_text($article['excerpt'] ?: strip_tags($article['content']), 120); ?></p>
-                <div class="article-footer">
-                    <span class="author">By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></span>
-                    <?php if ($article['status'] === 'published'): ?>
-                        <span class="views"><?php echo number_format($article['view_count']); ?> views</span>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </section>
-    <?php endif; ?>
-    
-    <div class="wiki-content">
-        <div class="categories-sidebar">
-            <h3>Categories</h3>
-            <ul class="category-list">
-                <?php foreach ($categories as $category): ?>
-                <li>
-                    <a href="category.php?slug=<?php echo $category['slug']; ?>">
-                        <?php echo htmlspecialchars($category['name']); ?>
+<div class="wiki-page-container">
+    <div class="wiki-layout">
+        <!-- Left Sidebar -->
+        <div class="wiki-sidebar">
+            <div class="sidebar-section">
+                <h3>Browse Categories</h3>
+                <div class="category-list">
+                    <?php foreach ($categories as $category): ?>
+                    <a href="category.php?slug=<?php echo $category['slug']; ?>" class="category-item">
+                        <i class="fas fa-folder"></i>
+                        <span><?php echo htmlspecialchars($category['name']); ?></span>
                     </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-            
-            <div class="popular-articles">
-                <h3>Popular Articles</h3>
-                <ul>
-                    <?php foreach ($popular_articles as $article): ?>
-                    <li>
-                        <a href="<?php echo ucfirst($article['slug']); ?>">
-                            <?php echo htmlspecialchars($article['title']); ?>
-                        </a>
-                        <?php if ($article['status'] === 'published'): ?>
-                            <span class="views">(<?php echo number_format($article['view_count']); ?> views)</span>
-                        <?php endif; ?>
-                    </li>
                     <?php endforeach; ?>
-                </ul>
+                </div>
+            </div>
+
+            <!-- Popular Articles -->
+            <?php if (!empty($popular_articles)): ?>
+            <div class="sidebar-section">
+                <h3>Popular Articles</h3>
+                <div class="popular-list">
+                    <?php foreach ($popular_articles as $article): ?>
+                    <a href="<?php echo ucfirst($article['slug']); ?>" class="popular-item">
+                        <span class="popular-title"><?php echo htmlspecialchars($article['title']); ?></span>
+                        <span class="popular-views"><?php echo number_format($article['view_count']); ?> views</span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Quick Actions -->
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="/search?type=articles" class="action-item">
+                        <i class="fas fa-search"></i>
+                        <span>Search Articles</span>
+                    </a>
+                    <?php if ($is_logged_in && $is_editor): ?>
+                    <a href="/create_article" class="action-item">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Article</span>
+                    </a>
+                    <?php endif; ?>
+                    <a href="/wiki" class="action-item">
+                        <i class="fas fa-random"></i>
+                        <span>Random Article</span>
+                    </a>
+                </div>
             </div>
         </div>
-        
-        <div class="recent-articles">
-            <h2>Recent Articles</h2>
-            <div class="articles-list">
-                <?php foreach ($recent_articles as $article): ?>
-                <div class="card article-item">
-                    <h4><a href="<?php echo ucfirst($article['slug']); ?>"><?php echo htmlspecialchars($article['title']); ?></a></h4>
-                    <div class="article-meta">
-                        <span class="category"><?php echo htmlspecialchars($article['category_name']); ?></span>
-                        <span class="author">By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></span>
-                        <span class="date"><?php echo format_date($article['published_at']); ?></span>
-                        <?php if ($article['status'] === 'published'): ?>
-                            <span class="views"><?php echo number_format($article['view_count']); ?> views</span>
-                        <?php else: ?>
-                            <span class="draft-indicator">📝 Draft</span>
+
+        <!-- Main Wiki Content -->
+        <div class="wiki-main">
+            <!-- Wiki Header -->
+            <div class="wiki-header">
+                <h1>Islamic Knowledge Wiki</h1>
+                <p>Explore comprehensive articles about Islam, Islamic history, and Islamic teachings</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><?php echo number_format($total_articles); ?></h3>
+                        <p>Articles</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><?php echo number_format($total_categories); ?></h3>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><?php echo number_format(array_sum(array_column($recent_articles, 'view_count'))); ?></h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Articles -->
+            <?php if (!empty($featured_articles)): ?>
+            <section class="featured-section">
+                <div class="section-header">
+                    <h2>Featured Articles</h2>
+                    <a href="/search?type=articles&featured=1" class="view-all-link">View All</a>
+                </div>
+                <div class="articles-grid">
+                    <?php foreach ($featured_articles as $article): ?>
+                    <div class="article-card">
+                        <div class="article-header">
+                            <div class="article-meta">
+                                <span class="category-tag"><?php echo htmlspecialchars($article['category_name']); ?></span>
+                                <span class="article-date"><?php echo format_date($article['published_at']); ?></span>
+                            </div>
+                            <?php if ($article['status'] === 'draft'): ?>
+                                <span class="draft-badge">Draft</span>
+                            <?php endif; ?>
+                        </div>
+                        <h3 class="article-title">
+                            <a href="<?php echo ucfirst($article['slug']); ?>">
+                                <?php echo htmlspecialchars($article['title']); ?>
+                            </a>
+                        </h3>
+                        <p class="article-excerpt">
+                            <?php echo truncate_text($article['excerpt'] ?: strip_tags($article['content']), 120); ?>
+                        </p>
+                        <div class="article-footer">
+                            <div class="article-stats">
+                                <span class="views">
+                                    <i class="fas fa-eye"></i>
+                                    <?php echo number_format($article['view_count']); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+            <?php endif; ?>
+
+            <!-- Recent Articles -->
+            <?php if (!empty($recent_articles)): ?>
+            <section class="recent-section">
+                <div class="section-header">
+                    <h2>Recent Articles</h2>
+                    <a href="/search?type=articles&sort=date" class="view-all-link">View All</a>
+                </div>
+                <div class="recent-articles-list">
+                    <?php foreach ($recent_articles as $article): ?>
+                    <div class="recent-article-item">
+                        <div class="recent-article-content">
+                            <h4 class="recent-title">
+                                <a href="<?php echo ucfirst($article['slug']); ?>">
+                                    <?php echo htmlspecialchars($article['title']); ?>
+                                </a>
+                            </h4>
+                            <div class="recent-meta">
+                                <span class="recent-category"><?php echo htmlspecialchars($article['category_name']); ?></span>
+                                <span class="recent-date"><?php echo format_date($article['published_at']); ?></span>
+                                <span class="recent-views"><?php echo number_format($article['view_count']); ?> views</span>
+                            </div>
+                        </div>
+                        <?php if ($article['status'] === 'draft'): ?>
+                            <span class="draft-indicator">Draft</span>
                         <?php endif; ?>
                     </div>
-                    <p><?php echo truncate_text($article['excerpt'] ?: strip_tags($article['content']), 100); ?></p>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
-            </div>
-            
-            <div class="wiki-actions">
-                <?php if (is_logged_in() && is_editor()): ?>
-                    <a href="../create_article.php" class="btn btn-success">Create New Article</a>
-                <?php endif; ?>
-                <a href="search.php" class="btn">Browse All Articles</a>
-            </div>
+            </section>
+            <?php endif; ?>
         </div>
     </div>
 </div>
 
-<style>
-.wiki-homepage {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.hero-section {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.hero-section .card {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.hero-section h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #2c3e50;
-}
-
-.hero-section p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #666;
-}
-
-
-.search-box form {
-    display: flex;
-    gap: 0.5rem;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.search-box input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.search-box button {
-    padding: 0.75rem 1.5rem;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.search-box button:hover {
-    background: #2980b9;
-}
-
-.wiki-content {
-    display: grid;
-    grid-template-columns: 250px 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.categories-sidebar {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-    height: fit-content;
-}
-
-.categories-sidebar h3 {
-    margin-top: 0;
-    color: #2c3e50;
-}
-
-.category-list {
-    list-style: none;
-    padding: 0;
-}
-
-.category-list li {
-    margin: 0.5rem 0;
-}
-
-.category-list a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-.category-list a:hover {
-    text-decoration: underline;
-}
-
-.popular-articles {
-    margin-top: 2rem;
-}
-
-.popular-articles ul {
-    list-style: none;
-    padding: 0;
-}
-
-.popular-articles li {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-}
-
-.popular-articles a {
-    color: #2c3e50;
-    text-decoration: none;
-}
-
-.popular-articles a:hover {
-    color: #3498db;
-}
-
-.views {
-    color: #666;
-    font-size: 0.8rem;
-}
-
-.draft-indicator {
-    color: #f39c12;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.articles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-.article-card {
-    transition: transform 0.2s ease;
-}
-
-.article-card:hover {
-    transform: translateY(-2px);
-}
-
-.article-meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.article-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.articles-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.article-item {
-    padding: 1.5rem;
-}
-
-.article-item h4 {
-    margin-top: 0;
-}
-
-.article-item .article-meta {
-    margin: 0.5rem 0;
-}
-
-.wiki-actions {
-    margin-top: 2rem;
-    text-align: center;
-}
-
-.wiki-actions .btn {
-    margin: 0 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .wiki-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .categories-sidebar {
-        order: 2;
-    }
-    
-    .articles-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-
-<?php include "../../includes/footer.php";; ?>
+<?php include "../../includes/footer.php"; ?>

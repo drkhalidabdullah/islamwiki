@@ -2,20 +2,15 @@
 require_once "../config/config.php";
 require_once "../includes/functions.php";
 
-$page_title = "Search";
+$page_title = "Comprehensive Search";
+$is_search_page = true; // Hide header search
 
 // Get search parameters
 $query = $_GET['q'] ?? '';
 $content_type = $_GET['type'] ?? 'all';
 $category = $_GET['category'] ?? '';
 $sort = $_GET['sort'] ?? 'relevance';
-
-// Initialize results
-$results = [
-    'articles' => [],
-    'users' => [],
-    'messages' => []
-];
+$page = max(1, (int)($_GET['page'] ?? 1));
 
 // Get categories for filter
 $categories = [];
@@ -27,92 +22,102 @@ try {
     error_log("Error fetching categories: " . $e->getMessage());
 }
 
-// Perform search if query is provided
-if (!empty($query)) {
-    // Search articles
-    if ($content_type === 'all' || $content_type === 'articles') {
-        $sql = "SELECT a.*, c.name as category_name, u.username as author_username, u.display_name as author_name
-                FROM wiki_articles a
-                LEFT JOIN content_categories c ON a.category_id = c.id
-                LEFT JOIN users u ON a.author_id = u.id
-                WHERE a.status = 'published'";
+// Get search suggestions for empty query
+$suggestions = [];
+$trending = [];
+if (empty($query)) {
+    try {
+        $stmt = $pdo->prepare("SELECT suggestion, suggestion_type, content_type, search_count 
+                               FROM search_suggestions 
+                               WHERE is_active = 1 
+                               ORDER BY search_count DESC 
+                               LIMIT 10");
+        $stmt->execute();
+        $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $params = [];
-        
-        if (!empty($query)) {
-            $sql .= " AND (a.title LIKE ? OR a.content LIKE ? OR a.excerpt LIKE ?)";
-            $params[] = "%$query%"; $params[] = "%$query%"; $params[] = "%$query%";
-        }
-        
-        if (!empty($category)) {
-            $sql .= " AND a.category_id = :category";
-            $params[':category'] = $category;
-        }
-        
-        // Add sorting
-        switch ($sort) {
-            case 'title':
-                $sql .= " ORDER BY a.title ASC";
-                break;
-            case 'date':
-                $sql .= " ORDER BY a.published_at DESC";
-                break;
-            case 'relevance':
-            default:
-                $sql .= " ORDER BY a.view_count DESC, a.published_at DESC";
-                break;
-        }
-        
-        $sql .= " LIMIT 50";
-        
-        try {
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-            $results['articles'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error searching articles: " . $e->getMessage());
-        }
+        $stmt = $pdo->prepare("SELECT suggestion, search_count, content_type
+                               FROM search_suggestions 
+                               WHERE is_active = 1 AND suggestion_type = 'trending'
+                               ORDER BY search_count DESC 
+                               LIMIT 5");
+        $stmt->execute();
+        $trending = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching suggestions: " . $e->getMessage());
     }
 }
 
-// Calculate total results
-$total_results = count($results['articles']) + count($results['users']) + count($results['messages']);
-
 include "../includes/header.php";
 ?>
-<?php
-?>
 
-<div class="search-page">
-    <div class="search-header">
-        <h1>Comprehensive Search</h1>
-        <p>Discover knowledge across articles, users, and content with our advanced search system</p>
-    </div>
-    
-    <div class="search-form-container">
-        <form method="GET" class="search-form">
-            <div class="search-input-group">
-                <input type="text" name="q" value="<?php echo htmlspecialchars($query); ?>" 
-                       placeholder="Search everything..." required>
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-            
-            <div class="search-filters">
-                <div class="filter-group">
-                    <label>Content Type</label>
-                    <select name="type">
-                        <option value="all" <?php echo ($content_type === 'all') ? 'selected' : ''; ?>>All Content</option>
-                        <option value="articles" <?php echo ($content_type === 'articles') ? 'selected' : ''; ?>>Articles</option>
-                        <option value="users" <?php echo ($content_type === 'users') ? 'selected' : ''; ?>>Users</option>
-                        <?php if ($is_logged_in): ?>
-                        <option value="messages" <?php echo ($content_type === 'messages') ? 'selected' : ''; ?>>My Messages</option>
-                        <?php endif; ?>
-                    </select>
-                </div>
+<div class="search-page-container">
+    <div class="search-layout">
+        <!-- Left Sidebar Filters -->
+        <div class="search-sidebar">
+            <div class="sidebar-section">
+                <h3>Search Filters</h3>
                 
+                <!-- Content Type Filter -->
                 <div class="filter-group">
-                    <label>Category</label>
-                    <select name="category">
+                    <h4>Content Type</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="all" <?php echo ($content_type === 'all') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-search"></i>
+                                All Content
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="articles" <?php echo ($content_type === 'articles') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-book"></i>
+                                Wiki Pages
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="posts" <?php echo ($content_type === 'posts') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-comment"></i>
+                                Posts
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="people" <?php echo ($content_type === 'people') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-users"></i>
+                                People
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="groups" <?php echo ($content_type === 'groups') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-layer-group"></i>
+                                Groups
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="events" <?php echo ($content_type === 'events') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-calendar"></i>
+                                Events
+                            </span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="content_type" value="ummah" <?php echo ($content_type === 'ummah') ? 'checked' : ''; ?>>
+                            <span class="filter-label">
+                                <i class="fas fa-mosque"></i>
+                                Ummah
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Category Filter (for articles) -->
+                <?php if ($content_type === 'all' || $content_type === 'articles'): ?>
+                <div class="filter-group">
+                    <h4>Category</h4>
+                    <select name="category" class="filter-select">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?php echo $cat['id']; ?>" <?php echo ($category == $cat['id']) ? 'selected' : ''; ?>>
@@ -121,98 +126,589 @@ include "../includes/header.php";
                         <?php endforeach; ?>
                     </select>
                 </div>
-                
+                <?php endif; ?>
+
+                <!-- Sort Options -->
                 <div class="filter-group">
-                    <label>Sort By</label>
-                    <select name="sort">
+                    <h4>Sort By</h4>
+                    <select name="sort" class="filter-select">
                         <option value="relevance" <?php echo ($sort === 'relevance') ? 'selected' : ''; ?>>Relevance</option>
-                        <option value="title" <?php echo ($sort === 'title') ? 'selected' : ''; ?>>Title</option>
                         <option value="date" <?php echo ($sort === 'date') ? 'selected' : ''; ?>>Date</option>
+                        <option value="title" <?php echo ($sort === 'title') ? 'selected' : ''; ?>>Title</option>
+                        <option value="popularity" <?php echo ($sort === 'popularity') ? 'selected' : ''; ?>>Popularity</option>
                     </select>
                 </div>
+
+                <!-- Clear Filters -->
+                <div class="filter-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
             </div>
-            
-            <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">Apply Filters</button>
-                <a href="/search" class="btn btn-secondary">Clear All</a>
-            </div>
-        </form>
-    </div>
-    
-    <?php if (!empty($query)): ?>
-    <div class="search-results-container">
-        <div class="search-results-header">
-            <h3>Search Results</h3>
-            <div class="results-count"><?php echo $total_results; ?> results</div>
-        </div>
-        
-        <?php if ($total_results > 0): ?>
-            <h4><?php echo $total_results; ?> results for "<?php echo htmlspecialchars($query); ?>"</h4>
-            
-            <?php if (!empty($results['articles'])): ?>
-            <div class="results-section">
-                <h5>Articles (<?php echo count($results['articles']); ?>)</h5>
-                <div class="results-list">
-                    <?php foreach ($results['articles'] as $article): ?>
-                    <div class="result-item">
-                        <div class="result-item-header">
-                            <div class="result-icon">
-                                <i class="fas fa-book"></i>
-                            </div>
-                            <div class="result-content">
-                                <h4 class="result-title">
-                                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>">
-                                        <?php echo htmlspecialchars($article['title']); ?>
-                                    </a>
-                                </h4>
-                                <div class="result-excerpt">
-                                    <?php 
-                                    $excerpt = $article['excerpt'] ?: strip_tags($article['content']);
-                                    echo htmlspecialchars(substr($excerpt, 0, 200)) . (strlen($excerpt) > 200 ? '...' : '');
-                                    ?>
-                                </div>
-                                <div class="result-meta">
-                                    <div class="result-category"><?php echo htmlspecialchars($article['category_name'] ?: 'Uncategorized'); ?></div>
-                                    <div class="result-meta-item">
-                                        <i class="fas fa-calendar"></i>
-                                        <span><?php echo date('M j, Y', strtotime($article['published_at'])); ?></span>
-                                    </div>
-                                    <div class="result-meta-item">
-                                        <i class="fas fa-eye"></i>
-                                        <span><?php echo number_format($article['view_count']); ?> views</span>
-                                    </div>
-                                </div>
-                                <div class="result-footer">
-                                    <div class="result-author">
-                                        <div class="result-author-avatar">
-                                            <?php echo strtoupper(substr($article['author_name'] ?: $article['author_username'], 0, 1)); ?>
-                                        </div>
-                                        <span>By <?php echo htmlspecialchars($article['author_name'] ?: $article['author_username']); ?></span>
-                                    </div>
-                                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" class="result-link">
-                                        Read more <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+            <!-- Search Suggestions -->
+            <?php if (!empty($suggestions)): ?>
+            <div class="sidebar-section">
+                <h3>Popular Searches</h3>
+                <div class="suggestions-list">
+                    <?php foreach ($suggestions as $suggestion): ?>
+                    <a href="?q=<?php echo urlencode($suggestion['suggestion']); ?>&type=<?php echo $suggestion['content_type'] ?? 'all'; ?>" 
+                       class="suggestion-item">
+                        <span class="suggestion-text"><?php echo htmlspecialchars($suggestion['suggestion']); ?></span>
+                        <span class="suggestion-count"><?php echo $suggestion['search_count']; ?></span>
+                    </a>
                     <?php endforeach; ?>
                 </div>
             </div>
             <?php endif; ?>
-            
-        <?php else: ?>
+
+            <!-- Trending Topics -->
+            <?php if (!empty($trending)): ?>
+            <div class="sidebar-section">
+                <h3>Trending</h3>
+                <div class="trending-list">
+                    <?php foreach ($trending as $topic): ?>
+                    <a href="?q=<?php echo urlencode($topic['suggestion']); ?>&type=<?php echo $topic['content_type'] ?? 'all'; ?>" 
+                       class="trending-item">
+                        <span class="trending-text"><?php echo htmlspecialchars($topic['suggestion']); ?></span>
+                        <span class="trending-badge">Trending</span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Main Search Content -->
+        <div class="search-main">
+            <!-- Search Header -->
+            <div class="search-header">
+                <h1>Comprehensive Search</h1>
+                <p>Discover knowledge across articles, users, groups, events, and community content</p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="search-form-container">
+                <form method="GET" class="search-form" id="searchForm">
+                    <input type="hidden" name="type" value="<?php echo htmlspecialchars($content_type); ?>">
+                    <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
+                    <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>">
+                    
+                    <div class="search-input-group">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" name="q" value="<?php echo htmlspecialchars($query); ?>" 
+                                   placeholder="Search everything..." class="search-input" id="searchInput" required>
+                            <button type="button" class="clear-search" id="clearSearch" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-primary search-btn">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Results -->
+            <div class="search-results-container" id="searchResults">
+                <?php if (!empty($query)): ?>
+                    <div class="search-loading" id="searchLoading">
+                        <div class="spinner"></div>
+                        <span>Searching...</span>
+                    </div>
+                    <div class="search-results" id="searchResultsContent" style="display: none;">
+                        <!-- Results will be loaded via AJAX -->
+                    </div>
+                <?php else: ?>
+                    <div class="search-welcome">
+                        <div class="welcome-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Start Your Search</h3>
+                        <p>Enter a search term above to discover content across our platform</p>
+                        
+                        <?php if (!empty($suggestions)): ?>
+                        <div class="quick-suggestions">
+                            <h4>Try searching for:</h4>
+                            <div class="suggestion-tags">
+                                <?php foreach (array_slice($suggestions, 0, 6) as $suggestion): ?>
+                                <a href="?q=<?php echo urlencode($suggestion['suggestion']); ?>&type=<?php echo $suggestion['content_type'] ?? 'all'; ?>" 
+                                   class="suggestion-tag">
+                                    <?php echo htmlspecialchars($suggestion['suggestion']); ?>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Search JavaScript -->
+<script>
+class EnhancedSearch {
+    constructor() {
+        this.currentQuery = '';
+        this.currentPage = 1;
+        this.isLoading = false;
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.loadInitialResults();
+    }
+
+    bindEvents() {
+        // Search form submission
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.performSearch();
+        });
+
+        // Real-time search input
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            this.handleSearchInput(e.target.value);
+        });
+
+        // Clear search button
+        document.getElementById('clearSearch').addEventListener('click', () => {
+            this.clearSearch();
+        });
+
+        // Filter changes
+        document.querySelectorAll('input[name="content_type"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updateFilters();
+            });
+        });
+
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', () => {
+                this.updateFilters();
+            });
+        });
+    }
+
+    handleSearchInput(query) {
+        this.currentQuery = query;
+        
+        // Show/hide clear button
+        const clearBtn = document.getElementById('clearSearch');
+        clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+
+        // Debounce search
+        clearTimeout(this.searchTimeout);
+        if (query.length >= 2) {
+            this.searchTimeout = setTimeout(() => {
+                this.performSearch();
+            }, 500);
+        } else if (query.length === 0) {
+            this.showWelcome();
+        }
+    }
+
+    async performSearch() {
+        if (this.isLoading) return;
+
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) {
+            this.showWelcome();
+            return;
+        }
+
+        this.currentQuery = query;
+        this.currentPage = 1;
+        this.showLoading();
+
+        try {
+            const results = await this.fetchSearchResults(query, 1);
+            this.displayResults(results);
+        } catch (error) {
+            console.error('Search error:', error);
+            this.showError('Search failed. Please try again.');
+        }
+    }
+
+    async fetchSearchResults(query, page = 1) {
+        const formData = new FormData();
+        formData.append('q', query);
+        formData.append('type', document.querySelector('input[name="content_type"]:checked').value);
+        formData.append('category', document.querySelector('select[name="category"]')?.value || '');
+        formData.append('sort', document.querySelector('select[name="sort"]').value);
+        formData.append('page', page);
+        formData.append('limit', 20);
+
+        const response = await fetch('/search/enhanced-search-api.php?' + new URLSearchParams(formData));
+        if (!response.ok) {
+            throw new Error('Search request failed');
+        }
+
+        return await response.json();
+    }
+
+    displayResults(data) {
+        const resultsContainer = document.getElementById('searchResultsContent');
+        
+        if (!data.success) {
+            this.showError(data.error || 'Search failed');
+            return;
+        }
+
+        if (data.total_results === 0) {
+            this.showNoResults(data.query, data.suggestions);
+            return;
+        }
+
+        let html = `
+            <div class="search-results-header">
+                <h3>Search Results</h3>
+                <div class="results-count">${data.total_results} results for "${data.query}"</div>
+            </div>
+        `;
+
+        // Display results by content type
+        Object.keys(data.results).forEach(contentType => {
+            const results = data.results[contentType];
+            if (results.length > 0) {
+                html += this.renderContentTypeResults(contentType, results);
+            }
+        });
+
+        resultsContainer.innerHTML = html;
+        this.hideLoading();
+        resultsContainer.style.display = 'block';
+    }
+
+    renderContentTypeResults(contentType, results) {
+        const typeConfig = {
+            articles: { title: 'Wiki Pages', icon: 'fas fa-book', color: '#3498db' },
+            users: { title: 'People', icon: 'fas fa-users', color: '#e74c3c' },
+            posts: { title: 'Posts', icon: 'fas fa-comment', color: '#2ecc71' },
+            groups: { title: 'Groups', icon: 'fas fa-layer-group', color: '#9b59b6' },
+            events: { title: 'Events', icon: 'fas fa-calendar', color: '#f39c12' },
+            ummah: { title: 'Ummah', icon: 'fas fa-mosque', color: '#1abc9c' }
+        };
+
+        const config = typeConfig[contentType] || { title: contentType, icon: 'fas fa-file', color: '#95a5a6' };
+
+        let html = `
+            <div class="results-section">
+                <h4 class="section-title">
+                    <i class="${config.icon}" style="color: ${config.color}"></i>
+                    ${config.title} (${results.length})
+                </h4>
+                <div class="results-list">
+        `;
+
+        results.forEach(result => {
+            html += this.renderResultItem(contentType, result);
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        return html;
+    }
+
+    renderResultItem(contentType, item) {
+        switch (contentType) {
+            case 'articles':
+                return this.renderArticleResult(item);
+            case 'users':
+                return this.renderUserResult(item);
+            case 'posts':
+                return this.renderPostResult(item);
+            case 'groups':
+                return this.renderGroupResult(item);
+            case 'events':
+                return this.renderEventResult(item);
+            case 'ummah':
+                return this.renderUmmahResult(item);
+            default:
+                return '';
+        }
+    }
+
+    renderArticleResult(article) {
+        const excerpt = article.excerpt || article.content ? 
+            article.content.substring(0, 200) + '...' : 'No description available';
+        
+        return `
+            <div class="result-item article-result">
+                <div class="result-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/wiki/${article.slug}">${article.title}</a>
+                    </h5>
+                    <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${excerpt}</p>
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-category">${article.category_name || 'Uncategorized'}</span>
+                        <span class="result-date">${new Date(article.published_at).toLocaleDateString()}</span>
+                        <span class="result-views">${article.view_count} views</span>
+                    </div>
+                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
+                        By ${article.author_name || article.author_username}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderUserResult(user) {
+        return `
+            <div class="result-item user-result">
+                <div class="result-avatar">
+                    ${user.avatar ? 
+                        `<img src="${user.avatar}" alt="${user.display_name}">` : 
+                        `<div class="avatar-placeholder">${user.display_name.charAt(0).toUpperCase()}</div>`
+                    }
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/user/${user.username}">${user.display_name}</a>
+                    </h5>
+                    <p class="result-username">@${user.username}</p>
+                    ${user.bio ? `<p class="result-bio">${user.bio}</p>` : ''}
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-joined">Joined ${new Date(user.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderPostResult(post) {
+        const content = post.content.length > 150 ? 
+            post.content.substring(0, 150) + '...' : post.content;
+        
+        return `
+            <div class="result-item post-result">
+                <div class="result-icon">
+                    <i class="fas fa-comment"></i>
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/posts/${post.id}">Post by ${post.display_name}</a>
+                    </h5>
+                    <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${content}</p>
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-date">${new Date(post.created_at).toLocaleDateString()}</span>
+                        <span class="result-likes">${post.likes_count} likes</span>
+                        ${post.group_name ? `<span class="result-group">in ${post.group_name}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderGroupResult(group) {
+        return `
+            <div class="result-item group-result">
+                <div class="result-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/groups/${group.slug}">${group.name}</a>
+                    </h5>
+                    <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${group.description || 'No description available'}</p>
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-members">${group.members_count} members</span>
+                        <span class="result-posts">${group.posts_count} posts</span>
+                        <span class="result-type">${group.group_type}</span>
+                    </div>
+                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
+                        Created by ${group.creator_name}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderEventResult(event) {
+        const startDate = new Date(event.start_date);
+        const isOnline = event.event_type === 'online';
+        
+        return `
+            <div class="result-item event-result">
+                <div class="result-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/events/${event.slug}">${event.title}</a>
+                    </h5>
+                    <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${event.description || 'No description available'}</p>
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-date">${startDate.toLocaleDateString()}</span>
+                        <span class="result-time">${startDate.toLocaleTimeString()}</span>
+                        <span class="result-location">${isOnline ? 'Online' : event.location}</span>
+                        <span class="result-attendees">${event.current_attendees} attending</span>
+                    </div>
+                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
+                        Organized by ${event.creator_name}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderUmmahResult(item) {
+        const typeConfig = {
+            featured_article: { icon: 'fas fa-star', title: 'Featured Article' },
+            discussion: { icon: 'fas fa-comments', title: 'Community Discussion' },
+            announcement: { icon: 'fas fa-bullhorn', title: 'Community Announcement' }
+        };
+
+        const config = typeConfig[item.content_type] || { icon: 'fas fa-file', title: 'Community Content' };
+
+        return `
+            <div class="result-item ummah-result">
+                <div class="result-icon">
+                    <i class="${config.icon}"></i>
+                </div>
+                <div class="result-content">
+                    <h5 class="result-title">
+                        <a href="/${item.content_type === 'featured_article' ? 'wiki/' + item.slug : 'posts/' + item.id}">
+                            ${item.title || item.content.substring(0, 50) + '...'}
+                        </a>
+                    </h5>
+                    <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${item.excerpt || item.description || item.content.substring(0, 150) + '...'}</p>
+                    <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span class="result-type">${config.title}</span>
+                        <span class="result-date">${new Date(item.created_at || item.published_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    showNoResults(query, suggestions) {
+        const resultsContainer = document.getElementById('searchResultsContent');
+        
+        let html = `
             <div class="no-results">
                 <div class="no-results-icon">
                     <i class="fas fa-search"></i>
                 </div>
                 <h4>No results found</h4>
-                <p>No results found for "<?php echo htmlspecialchars($query); ?>"</p>
-                <p>Try adjusting your search terms or filters.</p>
+                <p>No results found for "${query}"</p>
+                <div class="no-results-suggestions">
+                    <h5>Try these suggestions:</h5>
+                    <ul>
+                        <li>Check your spelling</li>
+                        <li>Try different keywords</li>
+                        <li>Use more general terms</li>
+                        <li>Try searching in different content types</li>
+                    </ul>
+                </div>
+        `;
+
+        if (suggestions && suggestions.length > 0) {
+            html += `
+                <div class="suggested-searches">
+                    <h5>Popular searches:</h5>
+                    <div class="suggestion-tags">
+                        ${suggestions.slice(0, 5).map(s => 
+                            `<a href="?q=${encodeURIComponent(s.suggestion)}&type=${s.content_type || 'all'}" class="suggestion-tag">${s.suggestion}</a>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+
+        resultsContainer.innerHTML = html;
+        this.hideLoading();
+        resultsContainer.style.display = 'block';
+    }
+
+    showLoading() {
+        this.isLoading = true;
+        document.getElementById('searchLoading').style.display = 'block';
+        document.getElementById('searchResultsContent').style.display = 'none';
+    }
+
+    hideLoading() {
+        this.isLoading = false;
+        document.getElementById('searchLoading').style.display = 'none';
+    }
+
+    showError(message) {
+        const resultsContainer = document.getElementById('searchResultsContent');
+        resultsContainer.innerHTML = `
+            <div class="search-error">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4>Search Error</h4>
+                <p>${message}</p>
             </div>
-        <?php endif; ?>
-    </div>
-    <?php endif; ?>
-</div>
+        `;
+        this.hideLoading();
+        resultsContainer.style.display = 'block';
+    }
+
+    showWelcome() {
+        document.getElementById('searchResultsContent').style.display = 'none';
+        document.querySelector('.search-welcome').style.display = 'block';
+    }
+
+    clearSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('clearSearch').style.display = 'none';
+        this.showWelcome();
+    }
+
+    updateFilters() {
+        const form = document.getElementById('searchForm');
+        const formData = new FormData(form);
+        
+        // Update hidden inputs
+        form.querySelector('input[name="type"]').value = document.querySelector('input[name="content_type"]:checked').value;
+        form.querySelector('input[name="category"]').value = document.querySelector('select[name="category"]')?.value || '';
+        form.querySelector('input[name="sort"]').value = document.querySelector('select[name="sort"]').value;
+
+        // Perform search if there's a query
+        if (this.currentQuery) {
+            this.performSearch();
+        }
+    }
+
+    loadInitialResults() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (query) {
+            this.performSearch();
+        }
+    }
+}
+
+// Initialize search when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new EnhancedSearch();
+});
+
+// Clear filters function
+function clearFilters() {
+    document.querySelector('input[name="content_type"][value="all"]').checked = true;
+    document.querySelectorAll('.filter-select').forEach(select => {
+        select.selectedIndex = 0;
+    });
+    
+    const search = new EnhancedSearch();
+    search.updateFilters();
+}
+</script>
 
 <?php include "../includes/footer.php"; ?>

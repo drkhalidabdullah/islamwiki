@@ -1,0 +1,249 @@
+/* Search Results Styling Fix - Better Spacing and Visual Hierarchy */
+
+/* Fix result item spacing and typography */
+.result-item {
+    padding: 2rem !important;
+    margin-bottom: 1.5rem !important;
+    line-height: 1.6 !important;
+}
+
+.result-content {
+    margin-left: 1.5rem !important;
+}
+
+/* Fix result title spacing */
+.result-title {
+    margin-bottom: 1rem !important;
+    line-height: 1.4 !important;
+}
+
+.result-title a {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Fix result excerpt spacing and readability */
+.result-excerpt {
+    margin-bottom: 1.5rem !important;
+    line-height: 1.7 !important;
+    font-size: 1rem !important;
+    color: var(--text-secondary) !important;
+    padding: 0 !important;
+}
+
+/* Fix result meta spacing and layout */
+.result-meta {
+    margin-bottom: 1rem !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    align-items: center !important;
+}
+
+.result-category,
+.result-type {
+    margin-bottom: 0 !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+.result-date,
+.result-views,
+.result-likes,
+.result-members,
+.result-posts,
+.result-attendees,
+.result-joined {
+    font-size: 0.9rem !important;
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Fix result author spacing */
+.result-author {
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid var(--border-light) !important;
+    font-size: 0.95rem !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+}
+
+/* Fix section titles */
+.section-title {
+    margin-bottom: 2rem !important;
+    padding-bottom: 1rem !important;
+    border-bottom: 2px solid var(--border-light) !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+}
+
+/* Fix results list spacing */
+.results-list {
+    gap: 1.5rem !important;
+}
+
+/* Fix search results header */
+.search-results-header {
+    margin-bottom: 2.5rem !important;
+    padding: 2rem !important;
+}
+
+.search-results-header h3 {
+    font-size: 1.8rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.results-count {
+    font-size: 1rem !important;
+    padding: 0.75rem 1.5rem !important;
+}
+
+/* Fix result icon sizing */
+.result-icon {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.5rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Fix Ummah result specific styling */
+.ummah-result .result-excerpt {
+    margin-bottom: 1.25rem !important;
+}
+
+.ummah-result .result-meta {
+    margin-bottom: 1.25rem !important;
+}
+
+/* Fix featured article tag spacing */
+.result-meta .result-type {
+    margin-right: 0.75rem !important;
+    margin-bottom: 0 !important;
+}
+
+/* Improve overall card visual hierarchy */
+.result-item {
+    border: 1px solid var(--border-light) !important;
+    border-radius: var(--radius-lg) !important;
+    background: var(--bg-primary) !important;
+    box-shadow: var(--shadow-md) !important;
+    transition: all 0.3s ease !important;
+}
+
+.result-item:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Fix mobile responsiveness */
+@media (max-width: 768px) {
+    .result-item {
+        padding: 1.5rem !important;
+    }
+    
+    .result-content {
+        margin-left: 1rem !important;
+    }
+    
+    .result-title a {
+        font-size: 1.2rem !important;
+    }
+    
+    .result-excerpt {
+        font-size: 0.95rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    
+    .result-meta {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+}
+
+/* Fix text overflow and wrapping */
+.result-excerpt {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+}
+
+/* Improve visual separation between elements */
+.result-item > * {
+    margin-bottom: 0 !important;
+}
+
+.result-item > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Fix specific spacing issues */
+.result-item .result-title + .result-excerpt {
+    margin-top: 0.75rem !important;
+}
+
+.result-item .result-excerpt + .result-meta {
+    margin-top: 0 !important;
+}
+
+.result-item .result-meta + .result-author {
+    margin-top: 0 !important;
+}
+
+/* Ensure proper spacing for all result types */
+.article-result,
+.user-result,
+.post-result,
+.group-result,
+.event-result,
+.ummah-result {
+    padding: 2rem !important;
+}
+
+/* Fix avatar sizing in user results */
+.result-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    flex-shrink: 0 !important;
+}
+
+.avatar-placeholder {
+    font-size: 1.5rem !important;
+}
+
+/* Improve readability of metadata */
+.result-meta > * {
+    display: inline-block !important;
+    margin-right: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
+.result-meta > *:last-child {
+    margin-right: 0 !important;
+}
+
+/* Fix featured article styling */
+.result-type {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Ensure consistent spacing across all content types */
+.results-section {
+    margin-bottom: 3rem !important;
+}
+
+.results-section:last-child {
+    margin-bottom: 0 !important;
+}
