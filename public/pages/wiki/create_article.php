@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $content,
                 $excerpt,
                 "Initial creation",
-                $_SESSION[user_id]
+                $_SESSION['user_id']
             ]);
             if ($status === 'published') {
                 $stmt = $pdo->prepare("UPDATE wiki_articles SET published_at = NOW() WHERE id = ?");
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             show_message('Article created successfully!', 'success');
-            redirect("wiki/article.php?slug=" . urlencode($slug));
+            redirect("/wiki/" . urlencode($slug));
             
         } catch (Exception $e) {
             $errors[] = 'Error creating article: ' . $e->getMessage();

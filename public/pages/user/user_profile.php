@@ -115,7 +115,7 @@ include "../../includes/header.php";;
         
         <div class="profile-actions">
             <?php if ($current_user_id == $profile_user['id']): ?>
-                <a href="/settings.php" class="btn btn-primary">Edit Profile</a>
+                <a href="/settings" class="btn btn-primary">Edit Profile</a>
             <?php else: ?>
                 <?php if ($current_user_id): ?>
                     <button class="btn btn-primary follow-btn" data-user-id="<?php echo $profile_user['id']; ?>" data-following="<?php echo $is_following ? 'true' : 'false'; ?>">
@@ -198,7 +198,13 @@ include "../../includes/header.php";;
                             </div>
                             
                             <div class="post-content">
-                                <p><?php echo $post["parsed_content"] ?? nl2br(htmlspecialchars($post["content"])); ?></p>
+                                <?php 
+                                if (isset($post["parsed_content"]) && !empty($post["parsed_content"])) {
+                                    echo $post["parsed_content"];
+                                } else {
+                                    echo '<p>' . nl2br(htmlspecialchars($post["content"])) . '</p>';
+                                }
+                                ?>
                                 
                                 <?php if ($post['post_type'] == 'image' && !empty($post['media_url'])): ?>
                                     <div class="post-media">

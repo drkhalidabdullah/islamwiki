@@ -141,6 +141,10 @@ if ($message) {
             <i class="fas fa-users"></i>
         </a>
         
+        <a href="/pages/user/watchlist.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/watchlist') !== false) ? 'active' : ''; ?>" title="My Watchlist">
+            <i class="fas fa-eye"></i>
+        </a>
+        
         <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
             <i class="fas fa-tachometer-alt"></i>
         </a>

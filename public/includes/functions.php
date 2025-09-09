@@ -269,6 +269,42 @@ function format_date($date, $format = 'M j, Y') {
     return date($format, strtotime($date));
 }
 
+function time_ago($datetime) {
+    $time = time() - strtotime($datetime);
+    
+    if ($time < 60) {
+        return 'just now';
+    } elseif ($time < 3600) {
+        $minutes = floor($time / 60);
+        return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+    } elseif ($time < 86400) {
+        $hours = floor($time / 3600);
+        return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+    } elseif ($time < 2592000) {
+        $days = floor($time / 86400);
+        return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+    } elseif ($time < 31536000) {
+        $months = floor($time / 2592000);
+        return $months . ' month' . ($months > 1 ? 's' : '') . ' ago';
+    } else {
+        $years = floor($time / 31536000);
+        return $years . ' year' . ($years > 1 ? 's' : '') . ' ago';
+    }
+}
+
+function createSlug($text) {
+    // Convert to lowercase
+    $text = strtolower($text);
+    
+    // Replace spaces and special characters with hyphens
+    $text = preg_replace('/[^a-z0-9]+/', '-', $text);
+    
+    // Remove leading/trailing hyphens
+    $text = trim($text, '-');
+    
+    return $text;
+}
+
 function truncate_text($text, $length = 150) {
     if (strlen($text) <= $length) {
         return $text;
@@ -486,12 +522,73 @@ function get_user_stats($user_id) {
 }
 
 // User content functions
+function create_user_post($user_id, $content, $post_type = 'text', $media_url = null, $link_url = null, $link_title = null, $link_description = null, $link_image = null, $article_id = null, $is_public = 1) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO user_posts 
+            (user_id, content, post_type, media_url, link_url, link_title, link_description, link_image, article_id, is_public, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ");
+        
+        $result = $stmt->execute([
+            $user_id,
+            $content,
+            $post_type,
+            $media_url,
+            $link_url,
+            $link_title,
+            $link_description,
+            $link_image,
+            $article_id,
+            $is_public
+        ]);
+        
+        return $result ? $pdo->lastInsertId() : false;
+    } catch (Exception $e) {
+        error_log("Error creating user post: " . $e->getMessage());
+        return false;
+    }
+}
+
 function get_user_posts_with_markdown($user_id, $limit = 20, $offset = 0, $include_markdown = false) {
     global $pdo;
     
-    // For now, return empty array since posts table might not exist
-    // This can be implemented when posts functionality is added
-    return [];
+    try {
+        $stmt = $pdo->prepare("
+            SELECT up.*, u.username, u.display_name, u.avatar
+            FROM user_posts up
+            JOIN users u ON up.user_id = u.id
+            WHERE up.user_id = ? AND up.is_public = 1
+            ORDER BY up.created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$user_id, $limit, $offset]);
+        $posts = $stmt->fetchAll();
+        
+        // Parse markdown content for each post
+        if ($include_markdown && !empty($posts)) {
+            try {
+                require_once __DIR__ . '/markdown/MarkdownParser.php';
+                $parser = new MarkdownParser();
+                
+                foreach ($posts as &$post) {
+                    if (!empty($post['content'])) {
+                        $post['parsed_content'] = $parser->parse($post['content']);
+                        error_log("Parsed content for post {$post['id']}: " . $post['parsed_content']);
+                    }
+                }
+            } catch (Exception $e) {
+                error_log("Error parsing markdown: " . $e->getMessage());
+            }
+        }
+        
+        return $posts;
+    } catch (Exception $e) {
+        error_log("Error getting user posts: " . $e->getMessage());
+        return [];
+    }
 }
 
 function get_user_photos($user_id, $limit = 20, $offset = 0, $include_metadata = false) {

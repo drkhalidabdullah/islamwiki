@@ -26,9 +26,10 @@ $stmt = $pdo->prepare("
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     LEFT JOIN content_categories cc ON wa.category_id = cc.id 
-    WHERE (wa.slug = ? OR wa.slug = ?) AND wa.status = 'published'
+    WHERE (wa.slug = ? OR wa.slug = ?) 
+    AND (wa.status = 'published' OR (wa.status = 'draft' AND (wa.author_id = ? OR ?)))
 ");
-$stmt->execute([$slug, ucfirst($slug)]);
+$stmt->execute([$slug, ucfirst($slug), $_SESSION['user_id'] ?? 0, is_editor() ? 1 : 0]);
 $article = $stmt->fetch();
 
 if (!$article) {
@@ -542,8 +543,19 @@ function toggleWatchlist(articleId, button) {
             article_id: articleId
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (response.status === 401) {
+            showToast('Please log in to use the watchlist', 'error');
+            return;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return;
+        
+        console.log('Watchlist API response:', data);
+        
         if (data.success) {
             if (action === 'add') {
                 button.classList.add('watched');
@@ -559,7 +571,7 @@ function toggleWatchlist(articleId, button) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Watchlist API error:', error);
         showToast('Error updating watchlist', 'error');
     });
 }

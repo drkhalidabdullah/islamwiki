@@ -86,7 +86,7 @@ include "../../includes/header.php";;
                     </div>
                     
                     <div class="toolbar-group">
-                        <button type="button" class="toolbar-btn" data-action="preview" title="Preview">
+                        <button type="button" class="toolbar-btn" data-action="toggle-preview" title="Toggle Preview">
                             <i class="fas fa-eye"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="help" title="Markdown Help">
@@ -96,17 +96,21 @@ include "../../includes/header.php";;
                 </div>
                 
                 <!-- Editor and Preview Container -->
-                <div class="editor-container">
-                    <textarea 
-                        id="content" 
-                        name="content" 
-                        rows="12" 
-                        placeholder="Share your thoughts, insights, or questions...&#10;&#10;You can use Markdown formatting:&#10;**bold text**&#10;*italic text*&#10;# Heading&#10;> Quote&#10;`code`&#10;[link](url)&#10;- list item"
-                        required
-                    ><?php echo htmlspecialchars($_POST['content'] ?? ''); ?></textarea>
-                    
-                    <div id="preview" class="preview-container" style="display: none;">
-                        <div class="preview-content"></div>
+                <div class="post-editor-container">
+                    <div class="post-editor-main">
+                        <textarea 
+                            id="content" 
+                            name="content" 
+                            rows="12" 
+                            placeholder="Share your thoughts, insights, or questions...&#10;&#10;You can use Markdown formatting:&#10;**bold text**&#10;*italic text*&#10;# Heading&#10;> Quote&#10;`code`&#10;[link](url)&#10;- list item"
+                            required
+                        ><?php echo htmlspecialchars($_POST['content'] ?? ''); ?></textarea>
+                    </div>
+                    <div id="preview-container" class="preview-container">
+                        <div class="preview-header">
+                            <h4>Preview</h4>
+                        </div>
+                        <div id="preview-content" class="preview-content"></div>
                     </div>
                 </div>
                 
@@ -205,7 +209,7 @@ include "../../includes/header.php";;
 
 <style>
 .create-post-container {
-    max-width: 800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -269,9 +273,15 @@ include "../../includes/header.php";;
     border-color: #007bff;
 }
 
-/* Editor Container */
-.editor-container {
-    position: relative;
+/* Post Editor Container */
+.post-editor-container {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.post-editor-main {
+    flex: 1;
 }
 
 #content {
@@ -284,7 +294,7 @@ include "../../includes/header.php";;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     line-height: 1.5;
     resize: vertical;
-    min-height: 200px;
+    min-height: 400px;
     background: white;
 }
 
@@ -296,54 +306,80 @@ include "../../includes/header.php";;
 
 /* Preview Container */
 .preview-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: white;
+    flex: 1;
+    background: #fff;
     border: 1px solid #e9ecef;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    padding: 16px;
+    border-radius: 6px;
+    min-height: 400px;
     overflow-y: auto;
-    z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 16px;
+    border-radius: 6px 6px 0 0;
+}
+
+.preview-header h4 {
+    margin: 0;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .preview-content {
     line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 16px;
+    flex: 1;
 }
 
 .preview-content h1,
 .preview-content h2,
-.preview-content h3 {
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
     margin-top: 0;
     margin-bottom: 16px;
     color: #2c3e50;
+    font-weight: 600;
 }
 
-.preview-content h1 { font-size: 1.8rem; }
-.preview-content h2 { font-size: 1.5rem; }
+.preview-content h1 { font-size: 1.8rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; }
+.preview-content h2 { font-size: 1.5rem; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; }
 .preview-content h3 { font-size: 1.3rem; }
+.preview-content h4 { font-size: 1.1rem; }
+.preview-content h5 { font-size: 1rem; }
+.preview-content h6 { font-size: 0.9rem; color: #6c757d; }
 
 .preview-content p {
     margin-bottom: 16px;
+    color: #333;
 }
 
 .preview-content blockquote {
     border-left: 4px solid #007bff;
-    padding-left: 16px;
+    padding: 12px 16px;
     margin: 16px 0;
+    background: #f8f9fa;
     color: #6c757d;
     font-style: italic;
+    border-radius: 0 4px 4px 0;
 }
 
 .preview-content code {
-    background: #f8f9fa;
+    background: #f1f3f4;
     padding: 2px 6px;
     border-radius: 3px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 0.9em;
+    color: #d63384;
 }
 
 .preview-content pre {
@@ -352,11 +388,13 @@ include "../../includes/header.php";;
     border-radius: 6px;
     overflow-x: auto;
     margin: 16px 0;
+    border: 1px solid #e9ecef;
 }
 
 .preview-content pre code {
     background: none;
     padding: 0;
+    color: #333;
 }
 
 .preview-content ul,
@@ -365,17 +403,60 @@ include "../../includes/header.php";;
     padding-left: 24px;
 }
 
+.preview-content ul {
+    list-style-type: disc;
+}
+
+.preview-content ol {
+    list-style-type: decimal;
+}
+
 .preview-content li {
     margin-bottom: 8px;
+    color: #333;
 }
 
 .preview-content a {
     color: #007bff;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .preview-content a:hover {
     text-decoration: underline;
+    color: #0056b3;
+}
+
+.preview-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 8px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-content hr {
+    border: none;
+    height: 1px;
+    background: #e9ecef;
+    margin: 24px 0;
+}
+
+/* Empty state styling */
+.preview-content p[style*="color: #999"] {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 2px dashed #dee2e6;
+}
+
+.preview-content p[style*="color: #dc3545"] {
+    text-align: center;
+    padding: 20px;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
 }
 
 /* Character Count */
@@ -516,6 +597,11 @@ include "../../includes/header.php";;
 @media (max-width: 768px) {
     .create-post-container {
         padding: 10px;
+        max-width: 100%;
+    }
+    
+    .post-editor-container {
+        flex-direction: column;
     }
     
     .markdown-toolbar {
@@ -542,39 +628,79 @@ include "../../includes/header.php";;
         width: 95%;
         margin: 20px;
     }
+    
+    #content {
+        min-height: 300px;
+    }
+    
+    .preview-container {
+        min-height: 300px;
+    }
 }
 </style>
 
 <script>
-// Simple Markdown Parser
+// Enhanced Markdown Parser
 function parseMarkdown(text) {
-    return text
-        // Headers
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        // Bold
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        // Italic
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        // Strikethrough
-        .replace(/~~(.*?)~~/g, '<del>$1</del>')
-        // Code blocks
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        // Inline code
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        // Links
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-        // Images
-        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
-        // Blockquotes
-        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-        // Lists
-        .replace(/^\* (.*$)/gim, '<li>$1</li>')
-        .replace(/^- (.*$)/gim, '<li>$1</li>')
-        .replace(/^(\d+)\. (.*$)/gim, '<li>$2</li>')
-        // Line breaks
-        .replace(/\n/g, '<br>');
+    if (!text) return '';
+    
+    let html = text;
+    
+    // Code blocks (must be processed first to avoid conflicts)
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Blockquotes
+    html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    
+    // Lists - process unordered lists
+    html = html.replace(/^(\*|\-)\s+(.*$)/gim, '<li>$2</li>');
+    
+    // Lists - process ordered lists
+    html = html.replace(/^(\d+)\.\s+(.*$)/gim, '<li>$2</li>');
+    
+    // Wrap consecutive list items in ul/ol tags
+    html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/g, function(match) {
+        // Check if it's an ordered list (contains numbers)
+        const isOrdered = /^\d+\./.test(text.split('\n').find(line => line.trim().match(/^\d+\./)));
+        const tag = isOrdered ? 'ol' : 'ul';
+        return `<${tag}>${match}</${tag}>`;
+    });
+    
+    // Inline formatting (must be processed after block elements)
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
+    html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // Links and images
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
+    
+    // Convert line breaks to paragraphs for better structure
+    html = html.split('\n\n').map(paragraph => {
+        paragraph = paragraph.trim();
+        if (!paragraph) return '';
+        
+        // Skip if it's already a block element
+        if (paragraph.match(/^<(h[1-6]|pre|blockquote|ul|ol|li)/)) {
+            return paragraph;
+        }
+        
+        // Convert single line breaks to <br> within paragraphs
+        paragraph = paragraph.replace(/\n/g, '<br>');
+        return `<p>${paragraph}</p>`;
+    }).join('\n');
+    
+    // Clean up empty paragraphs
+    html = html.replace(/<p><br><\/p>/g, '');
+    html = html.replace(/<p><\/p>/g, '');
+    
+    return html;
 }
 
 // Toolbar functionality
@@ -592,7 +718,24 @@ document.addEventListener('DOMContentLoaded', function() {
         charCount.textContent = textarea.value.length;
     }
     
-    textarea.addEventListener('input', updateCharCount);
+    // Debounced preview update
+    let previewTimeout;
+    
+    // Update preview when content changes (if preview is visible)
+    function onContentChange() {
+        updateCharCount();
+        const previewContainer = document.getElementById('preview-container');
+        if (previewContainer && previewContainer.style.display !== 'none') {
+            // Clear previous timeout
+            if (previewTimeout) {
+                clearTimeout(previewTimeout);
+            }
+            // Update preview with a small delay to avoid too many updates
+            previewTimeout = setTimeout(updatePreview, 100);
+        }
+    }
+    
+    textarea.addEventListener('input', onContentChange);
     updateCharCount();
     
     // Toolbar buttons
@@ -639,7 +782,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'list':
                     newText = `- ${selectedText}`;
                     break;
-                case 'preview':
+                case 'toggle-preview':
                     togglePreview();
                     return;
                 case 'help':
@@ -658,18 +801,43 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Preview functionality
     function togglePreview() {
-        const isPreview = preview.style.display !== 'none';
-        if (isPreview) {
-            preview.style.display = 'none';
-            textarea.style.display = 'block';
-            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+        const previewContainer = document.getElementById('preview-container');
+        const isPreviewVisible = previewContainer.style.display !== 'none' && previewContainer.style.display !== '';
+        
+        if (isPreviewVisible) {
+            previewContainer.style.display = 'none';
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Show Preview';
         } else {
-            previewContent.innerHTML = parseMarkdown(textarea.value);
-            preview.style.display = 'block';
-            textarea.style.display = 'none';
-            previewBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+            previewContainer.style.display = 'flex';
+            updatePreview();
+            previewBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
         }
     }
+    
+    function updatePreview() {
+        const content = textarea.value.trim();
+        console.log('Updating preview with content:', content.substring(0, 50) + '...');
+        
+        if (!content) {
+            previewContent.innerHTML = '<p style="color: #999; font-style: italic;">No content to preview</p>';
+            return;
+        }
+        
+        try {
+            const html = parseMarkdown(content);
+            previewContent.innerHTML = html;
+            console.log('Preview updated successfully');
+        } catch (error) {
+            console.error('Preview error:', error);
+            previewContent.innerHTML = '<p style="color: #dc3545;">Error generating preview</p>';
+        }
+    }
+    
+    // Initialize preview on page load
+    const previewContainer = document.getElementById('preview-container');
+    previewContainer.style.display = 'flex'; // Show preview by default
+    previewBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview'; // Set initial button text
+    updatePreview();
     
     previewBtn.addEventListener('click', togglePreview);
     

@@ -50,10 +50,11 @@ include "../../includes/header.php";;
     
     <div class="dashboard-actions">
         <?php if (is_editor()): ?>
-            <a href="create_article.php" class="btn btn-success">Create New Article</a>
+            <a href="/pages/wiki/create_article.php" class="btn btn-success">Create New Article</a>
         <?php endif; ?>
-        <a href="profile.php" class="btn">Edit Profile</a>
-        <a href="settings.php" class="btn">Settings</a>
+        <a href="/pages/user/watchlist.php" class="btn">My Watchlist</a>
+        <a href="profile" class="btn">Edit Profile</a>
+        <a href="settings" class="btn">Settings</a>
     </div>
     
     <?php if (!empty($user_articles)): ?>

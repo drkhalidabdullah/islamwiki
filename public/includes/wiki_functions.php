@@ -324,7 +324,7 @@ function is_in_watchlist($user_id, $article_id) {
 /**
  * Get user's watchlist
  */
-function get_user_watchlist($user_id, $limit = 50) {
+function get_user_watchlist($user_id, $limit = 50, $offset = 0) {
     global $pdo;
     
     $stmt = $pdo->prepare("
@@ -332,10 +332,32 @@ function get_user_watchlist($user_id, $limit = 50) {
                u.username, u.display_name, wn.name as namespace_name
         FROM user_watchlists uw
         JOIN wiki_articles wa ON uw.article_id = wa.id
-        JOIN users u ON wa.last_edit_by = u.id
-        JOIN wiki_namespaces wn ON wa.namespace_id = wn.id
+        LEFT JOIN users u ON wa.last_edit_by = u.id
+        LEFT JOIN wiki_namespaces wn ON wa.namespace_id = wn.id
         WHERE uw.user_id = ?
         ORDER BY wa.last_edit_at DESC
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$user_id, $limit, $offset]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get recent changes to watched articles
+ */
+function get_recent_watchlist_changes($user_id, $limit = 10) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT av.*, wa.title, wa.slug, wa.id as article_id,
+               u.username, u.display_name, wn.name as namespace_name
+        FROM article_versions av
+        JOIN wiki_articles wa ON av.article_id = wa.id
+        JOIN user_watchlists uw ON wa.id = uw.article_id
+        LEFT JOIN users u ON av.created_by = u.id
+        LEFT JOIN wiki_namespaces wn ON wa.namespace_id = wn.id
+        WHERE uw.user_id = ? AND av.created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ORDER BY av.created_at DESC
         LIMIT ?
     ");
     $stmt->execute([$user_id, $limit]);

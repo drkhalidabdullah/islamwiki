@@ -90,7 +90,10 @@ include "../../includes/header.php";;
                     <div class="version-number">v<?php echo $version['version_number']; ?></div>
                     <div class="version-details">
                         <div class="version-author"><?php echo htmlspecialchars($version['display_name'] ?: $version['username']); ?></div>
-                        <div class="version-date"><?php echo format_date($version['created_at']); ?></div>
+                        <div class="version-date">
+                            <?php echo format_date($version['created_at'], 'M j, Y g:i A'); ?>
+                            <span class="version-relative">(<?php echo time_ago($version['created_at']); ?>)</span>
+                        </div>
                         <?php if ($version['changes_summary']): ?>
                         <div class="version-changes"><?php echo htmlspecialchars($version['changes_summary']); ?></div>
                         <?php endif; ?>
@@ -258,6 +261,12 @@ include "../../includes/header.php";;
     font-size: 0.8rem;
     color: #666;
     margin-top: 0.25rem;
+}
+
+.version-relative {
+    color: #999;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
 }
 
 .version-changes {
