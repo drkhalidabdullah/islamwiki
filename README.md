@@ -1,17 +1,37 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.9-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.10-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
 
-## 🎯 Current Version: 0.0.0.9
+## 🎯 Current Version: 0.0.0.10
 
-**Latest Release:** January 8, 2025  
+**Latest Release:** September 9, 2025  
 **Status:** Production Ready ✅  
-**Type:** UI/UX Enhancement & Bug Fixes Release
+**Type:** Critical Bug Fixes & Feature Enhancement Release
+
+## 🚀 What's New in v0.0.0.10
+
+### 🐛 **Critical Bug Fixes**
+- **Fixed create_post.php 500 Error**: Resolved internal server error when creating posts
+- **Fixed create_article.php Draft Status**: Resolved 500 error when creating draft articles
+- **Fixed Profile Posts Display**: Resolved issue where user posts weren't showing in profiles
+- **Fixed Markdown Parsing**: Resolved regex error preventing markdown rendering
+
+### ✨ **New Features & Enhancements**
+- **Side-by-Side Live Preview**: Real-time markdown preview for create_post page
+- **User Watchlist System**: Complete watchlist functionality for tracking article changes
+- **Article History Timestamps**: Added detailed timestamps with relative time display
+- **Enhanced Error Handling**: Better user feedback throughout the application
+
+### 🔧 **Technical Improvements**
+- **Enhanced Database Functions**: Added comprehensive user post management
+- **Markdown Parser Improvements**: Enhanced markdown processing capabilities
+- **Responsive Design**: Improved mobile and tablet experience
+- **Better Error Handling**: Comprehensive error logging and debugging
 
 ## 🚀 What's New in v0.0.0.9
 

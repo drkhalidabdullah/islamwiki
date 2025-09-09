@@ -2,11 +2,31 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.9
+## 🎯 Current Version: 0.0.0.10
 
-**Latest Release:** January 8, 2025  
+**Latest Release:** September 9, 2025  
 **Status:** Production Ready ✅  
-**Type:** UI/UX Enhancement & Bug Fixes Release
+**Type:** Critical Bug Fixes & Feature Enhancement Release
+
+## 🚀 What's New in v0.0.0.10
+
+### Critical Bug Fixes
+- **Fixed create_post.php 500 Error**: Resolved internal server error when creating posts
+- **Fixed create_article.php Draft Status**: Resolved 500 error when creating draft articles
+- **Fixed Profile Posts Display**: Resolved issue where user posts weren't showing in profiles
+- **Fixed Markdown Parsing**: Resolved regex error preventing markdown rendering
+
+### New Features & Enhancements
+- **Side-by-Side Live Preview**: Real-time markdown preview for create_post page
+- **User Watchlist System**: Complete watchlist functionality for tracking article changes
+- **Article History Timestamps**: Added detailed timestamps with relative time display
+- **Enhanced Error Handling**: Better user feedback throughout the application
+
+### Technical Improvements
+- **Enhanced Database Functions**: Added comprehensive user post management
+- **Markdown Parser Improvements**: Enhanced markdown processing capabilities
+- **Responsive Design**: Improved mobile and tablet experience
+- **Better Error Handling**: Comprehensive error logging and debugging
 
 ## 🚀 What's New in v0.0.0.9
 
