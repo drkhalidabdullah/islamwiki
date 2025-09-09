@@ -46,7 +46,7 @@
 .article-header {
     background: transparent;
     color: var(--primary-color);
-    padding: 2rem 2rem 1.5rem;
+    padding: 1rem 2rem 0.5rem;
     position: relative;
     overflow: visible;
 }
@@ -221,7 +221,7 @@
 
 /* Article Content */
 .article-content {
-    padding: 3rem 2rem;
+    padding: 1rem 2rem;
     background: transparent;
     border: none;
     margin: 0;
@@ -936,4 +936,220 @@
 /* Hide duplicate title in article content */
 .article-content h1:first-child {
     display: none;
+}
+
+/* ========================================
+   COMPACT ARTICLE HEADER STYLES
+   ======================================== */
+
+.article-header-compact {
+    padding: 0.75rem 0;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 8px 8px 0 0;
+}
+
+.article-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.article-title-compact {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    flex: 1;
+    min-width: 0; /* Allow text to wrap */
+}
+
+.article-actions-compact {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-icon-compact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.btn-icon-compact:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-icon-compact.btn-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-icon-compact i {
+    font-size: 14px;
+}
+
+.talk-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.article-header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.article-category-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category-tag-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.category-tag-compact:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.category-tag-compact i {
+    font-size: 12px;
+}
+
+.no-category {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+.article-meta-compact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.article-date-compact,
+.article-views-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.article-date-compact i,
+.article-views-compact i {
+    font-size: 12px;
+    color: #adb5bd;
+}
+
+/* Mobile Responsive for Compact Header */
+@media (max-width: 768px) {
+    .article-header-compact {
+        padding: 1rem 0;
+    }
+    
+    .article-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .article-title-compact {
+        font-size: 1.5rem;
+        width: 100%;
+    }
+    
+    .article-actions-compact {
+        align-self: flex-end;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+    
+    .btn-icon-compact {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .article-header-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .article-meta-compact {
+        align-self: flex-end;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-header-compact {
+        padding: 0.75rem 0;
+    }
+    
+    .article-title-compact {
+        font-size: 1.25rem;
+    }
+    
+    .article-actions-compact {
+        gap: 0.25rem;
+    }
+    
+    .btn-icon-compact {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .btn-icon-compact i {
+        font-size: 12px;
+    }
+    
+    .article-meta-compact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
 }

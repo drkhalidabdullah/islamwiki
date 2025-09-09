@@ -9,13 +9,13 @@ require_login();
 // Check if user is admin
 if (!is_admin()) {
     show_message('Access denied. Admin privileges required.', 'error');
-    redirect('/dashboard');
+    redirect_with_return_url();
 }
 
 $user_id = (int)($_GET['id'] ?? 0);
 if (!$user_id) {
     show_message('Invalid user ID.', 'error');
-    redirect('/admin');
+    redirect_with_return_url('/admin');
 }
 
 $success = '';
@@ -61,7 +61,7 @@ $user = $stmt->fetch();
 
 if (!$user) {
     show_message('User not found.', 'error');
-    redirect('/admin');
+    redirect_with_return_url('/admin');
 }
 
 include "../../includes/header.php";;

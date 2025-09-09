@@ -14,6 +14,10 @@ function is_logged_in() {
 
 function require_login() {
     if (!is_logged_in()) {
+        // Store current URL as return URL
+        $current_url = $_SERVER['REQUEST_URI'];
+        $_SESSION['return_url'] = $current_url;
+        
         header("Location: /login");
         exit();
     }
@@ -22,6 +26,13 @@ function require_login() {
 function redirect($url) {
     header("Location: $url");
     exit();
+}
+
+function redirect_with_return_url($default_url = '/dashboard') {
+    // Use return URL if available, otherwise use default
+    $return_url = $_SESSION['return_url'] ?? $default_url;
+    unset($_SESSION['return_url']);
+    redirect($return_url);
 }
 
 function show_message($message, $type = 'info') {
@@ -65,13 +76,17 @@ function has_permission($user_id, $permission) {
 
 function require_permission($permission) {
     if (!is_logged_in()) {
+        // Store current URL as return URL
+        $current_url = $_SERVER['REQUEST_URI'];
+        $_SESSION['return_url'] = $current_url;
+        
         header("Location: /login");
         exit();
     }
     
     if (!has_permission($_SESSION['user_id'], $permission)) {
         show_message('Access denied. You do not have permission to perform this action.', 'error');
-        redirect('/dashboard');
+        redirect_with_return_url();
     }
 }
 

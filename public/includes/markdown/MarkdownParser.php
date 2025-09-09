@@ -111,13 +111,19 @@ class MarkdownParser {
         // Wrap consecutive list items in ul/ol
         $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
         
-        // Line breaks
+        // Line breaks - only convert double line breaks to paragraph breaks
         $content = preg_replace('/\n\n/', '</p><p>', $content);
-        $content = '<p>' . $content . '</p>';
+        
+        // Wrap in paragraph tags only if content doesn't start with a block element
+        if (!preg_match('/^<(h[1-6]|ul|ol|pre|blockquote)/', trim($content))) {
+            $content = '<p>' . $content . '</p>';
+        }
         
         // Clean up empty paragraphs
         $content = preg_replace('/<p><\/p>/', '', $content);
         $content = preg_replace('/<p>\s*<\/p>/', '', $content);
+        $content = preg_replace('/<p>\s*<(h[1-6])/', '<$1', $content);
+        $content = preg_replace('/<\/(h[1-6])>\s*<\/p>/', '</$1>', $content);
         
         return $content;
     }

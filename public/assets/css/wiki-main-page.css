@@ -1,0 +1,454 @@
+/* Wikipedia-style Main Page CSS for Islamic Wiki */
+
+/* Main page container */
+.wiki-main-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Liberation Sans', sans-serif;
+    line-height: 1.6;
+    color: #202122;
+}
+
+/* Hide article actions for main page by default, show on hover */
+.wiki-main-page .article-actions-top {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.wiki-main-page .article-actions-top:hover {
+    opacity: 1;
+}
+
+/* Make the actions more subtle for main page */
+.wiki-main-page .btn-icon {
+    background: rgba(248, 249, 250, 0.8);
+    border: 1px solid rgba(162, 169, 177, 0.3);
+}
+
+/* Top banner section */
+.mp-topbanner {
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mp-welcomecount {
+    text-align: center;
+}
+
+.mp-welcome h1 {
+    font-size: 2.5rem;
+    font-weight: normal;
+    margin: 0;
+    color: #000;
+}
+
+.mp-free {
+    font-size: 1.1rem;
+    color: #54595d;
+    margin: 0.5rem 0;
+}
+
+.articlecount ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.articlecount li {
+    font-size: 0.9rem;
+    color: #54595d;
+}
+
+.articlecount a {
+    color: #0645ad;
+    text-decoration: none;
+}
+
+.articlecount a:hover {
+    text-decoration: underline;
+}
+
+/* Main content sections */
+.mp-upper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mp-left,
+.mp-right {
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    padding: 1rem;
+}
+
+/* Section headers */
+.mp-h2 {
+    background: #eaecf0;
+    border: 1px solid #a2a9b1;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    padding: 0.5rem 1rem;
+    margin: -1rem -1rem 1rem -1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Featured article section */
+.mp-tfa {
+    margin-bottom: 1.5rem;
+}
+
+.mp-tfa h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.mp-tfa p {
+    margin: 0.5rem 0;
+    text-align: justify;
+}
+
+.mp-tfa a {
+    color: #0645ad;
+    text-decoration: none;
+}
+
+.mp-tfa a:hover {
+    text-decoration: underline;
+}
+
+/* Did you know section */
+.mp-dyk ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mp-dyk li {
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.mp-dyk li:before {
+    content: "...";
+    position: absolute;
+    left: 0;
+    color: #54595d;
+}
+
+.mp-dyk a {
+    color: #0645ad;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mp-dyk a:hover {
+    text-decoration: underline;
+}
+
+/* In the news section */
+.mp-itn ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mp-itn li {
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.mp-itn li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #54595d;
+}
+
+.mp-itn a {
+    color: #0645ad;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mp-itn a:hover {
+    text-decoration: underline;
+}
+
+/* On this day section */
+.mp-otd ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mp-otd li {
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.mp-otd li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #54595d;
+}
+
+.mp-otd a {
+    color: #0645ad;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mp-otd a:hover {
+    text-decoration: underline;
+}
+
+/* Featured picture section */
+.mp-lower {
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mp-tfp {
+    text-align: center;
+}
+
+.mp-tfp img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+}
+
+.mp-tfp p {
+    margin: 0.5rem 0;
+    text-align: justify;
+    font-size: 0.9rem;
+}
+
+/* Bottom sections */
+.mp-bottom {
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    padding: 1rem;
+}
+
+.mp-other-content,
+.mp-sister-content {
+    margin-bottom: 1.5rem;
+}
+
+.mp-other-content ul,
+.mp-sister-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+}
+
+.mp-other-content li,
+.mp-sister-content li {
+    margin: 0;
+}
+
+.mp-other-content a,
+.mp-sister-content a {
+    color: #0645ad;
+    text-decoration: none;
+    display: block;
+    padding: 0.25rem 0;
+}
+
+.mp-other-content a:hover,
+.mp-sister-content a:hover {
+    text-decoration: underline;
+}
+
+/* Language links */
+.mp-lang ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.25rem;
+}
+
+.mp-lang li {
+    margin: 0;
+}
+
+.mp-lang a {
+    color: #0645ad;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: block;
+    padding: 0.1rem 0;
+}
+
+.mp-lang a:hover {
+    text-decoration: underline;
+}
+
+/* Navigation links */
+.mp-nav {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #a2a9b1;
+    text-align: center;
+}
+
+.mp-nav a {
+    color: #0645ad;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+}
+
+.mp-nav a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .mp-upper {
+        grid-template-columns: 1fr;
+    }
+    
+    .mp-welcome h1 {
+        font-size: 2rem;
+    }
+    
+    .articlecount ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .mp-other-content ul,
+    .mp-sister-content ul {
+        grid-template-columns: 1fr;
+    }
+    
+    .mp-lang ul {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
+
+/* Islamic theme colors */
+.mp-topbanner {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-color: #2E5266;
+}
+
+.mp-h2 {
+    background: linear-gradient(135deg, #eaecf0 0%, #d1d5db 100%);
+    border-color: #2E5266;
+    color: #2E5266;
+}
+
+.mp-left,
+.mp-right,
+.mp-lower,
+.mp-bottom {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-color: #2E5266;
+}
+
+/* Enhanced typography */
+.mp-tfa h3,
+.mp-dyk a,
+.mp-itn a,
+.mp-otd a {
+    color: #2E5266;
+}
+
+.mp-tfa a,
+.mp-other-content a,
+.mp-sister-content a,
+.mp-lang a,
+.mp-nav a {
+    color: #0645ad;
+}
+
+.mp-tfa a:hover,
+.mp-dyk a:hover,
+.mp-itn a:hover,
+.mp-otd a:hover,
+.mp-other-content a:hover,
+.mp-sister-content a:hover,
+.mp-lang a:hover,
+.mp-nav a:hover {
+    color: #0b0080;
+    text-decoration: underline;
+}
+
+/* Image styling */
+.mp-tfp img {
+    border-color: #2E5266;
+    box-shadow: 0 2px 4px rgba(46, 82, 102, 0.1);
+}
+
+/* Special styling for Islamic content */
+.islamic-highlight {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.arabic-text {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Amiri', 'Scheherazade', 'Arial Unicode MS', sans-serif;
+}
+
+/* Featured content styling */
+.featured-content {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 1px solid #28a745;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.featured-content h3 {
+    color: #155724;
+    margin-top: 0;
+}
+
+/* News and events styling */
+.news-item {
+    border-left: 3px solid #007bff;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+}
+
+.historical-item {
+    border-left: 3px solid #6f42c1;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+}

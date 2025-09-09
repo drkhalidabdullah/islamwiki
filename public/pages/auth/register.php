@@ -4,9 +4,12 @@ require_once '../../includes/functions.php';
 
 $page_title = 'Register';
 
+// Get return URL from query parameter or session
+$return_url = $_GET['return'] ?? $_SESSION['return_url'] ?? '/dashboard';
+
 // Redirect if already logged in
 if (is_logged_in()) {
-    redirect('/dashboard');
+    redirect($return_url);
 }
 
 $error = '';
@@ -62,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 log_activity('user_registered', 'New user registered', $user_id);
                 
                 show_message('Registration successful! Please login.', 'success');
-                redirect('/login');
+                redirect('/login' . ($return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''));
             } else {
                 $error = 'Registration failed. Please try again.';
             }
@@ -121,7 +124,7 @@ include "../../includes/header.php";;
     </form>
     
     <p style="text-align: center; margin-top: 1rem;">
-        Already have an account? <a href="/login">Login here</a>
+        Already have an account? <a href="/login<?php echo $return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''; ?>">Login here</a>
     </p>
 </div>
 

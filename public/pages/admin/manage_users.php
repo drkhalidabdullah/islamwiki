@@ -9,7 +9,7 @@ require_login();
 // Check if user is admin
 if (!is_admin()) {
     show_message('Access denied. Admin privileges required.', 'error');
-    redirect('/dashboard');
+    redirect_with_return_url();
 }
 
 $success = '';

@@ -197,20 +197,25 @@ class WikiEditor {
     updatePreview() {
         if (this.preview) {
             // Send content to server for parsing
-            fetch('wiki/preview.php', {
+            fetch('/wiki/preview', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: 'content=' + encodeURIComponent(this.textarea.value)
             })
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.text();
+            })
             .then(html => {
                 this.preview.innerHTML = html;
             })
             .catch(error => {
                 console.error('Preview error:', error);
-                this.preview.innerHTML = '<p>Preview unavailable</p>';
+                this.preview.innerHTML = `<p>Preview error: ${error.message}</p>`;
             });
         }
     }

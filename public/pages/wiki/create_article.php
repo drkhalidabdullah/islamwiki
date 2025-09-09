@@ -9,7 +9,7 @@ require_login();
 // Check if user can create articles
 if (!is_editor()) {
     show_message('You do not have permission to create articles.', 'error');
-    redirect('/dashboard');
+    redirect_with_return_url();
 }
 
 $errors = [];

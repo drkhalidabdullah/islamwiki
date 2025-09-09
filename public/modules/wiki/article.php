@@ -55,59 +55,183 @@ if (is_logged_in()) {
 }
 
 include '../../includes/header.php';
+
+// Check if this is the Main_Page (for potential future use)
+$is_main_page = ($article['slug'] === 'Main_Page');
 ?>
 
 <div class="article-container">
     <article class="card">
         <header class="article-header">
-            <div class="article-actions-top">
-                <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon" title="View History">
-                    <i class="fas fa-history"></i>
-                </a>
-                <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon" title="Discussion">
-                    <i class="fas fa-comments"></i>
-                    <?php if ($talk_page): ?>
-                        <span class="talk-indicator" title="Has discussion"></span>
-                    <?php endif; ?>
-                </a>
-                <?php if (is_logged_in()): ?>
-                    <a href="#" class="btn-icon watchlist-btn <?php echo $is_watched ? 'watched' : ''; ?>" 
-                       title="<?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?>"
-                       onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                <?php endif; ?>
-                <?php if (is_logged_in() && is_editor()): ?>
-                    <a href="../edit_article.php?id=<?php echo $article['id']; ?>" class="btn-icon" title="Edit Article">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="../delete_article.php?id=<?php echo $article['id']; ?>" class="btn-icon btn-danger" title="Delete Article" onclick="return confirm('Are you sure you want to delete this article?')">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                <?php endif; ?>
-            </div>
-            <div class="article-title-row">
-                <h1 class="article-title"><?php echo htmlspecialchars($article['title']); ?></h1>
-                <div class="article-meta-inline">
-                    <span class="article-date"><?php echo format_date($article['published_at']); ?></span>
-                    <span class="article-views"><?php echo number_format($article['view_count']); ?> views</span>
+            <!-- Compact Header Layout -->
+            <div class="article-header-compact">
+                <!-- Top Row: Title on left, Tools on right -->
+                <div class="article-header-top">
+                    <h1 class="article-title-compact"><?php echo htmlspecialchars($article['title']); ?></h1>
+                    <div class="article-actions-compact">
+                        <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
+                            <i class="fas fa-history"></i>
+                        </a>
+                        <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon-compact" title="Discussion">
+                            <i class="fas fa-comments"></i>
+                            <?php if ($talk_page): ?>
+                                <span class="talk-indicator" title="Has discussion"></span>
+                            <?php endif; ?>
+                        </a>
+                        <?php if (is_logged_in()): ?>
+                            <a href="#" class="btn-icon-compact watchlist-btn <?php echo $is_watched ? 'watched' : ''; ?>" 
+                               title="<?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?>"
+                               onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        <?php endif; ?>
+                        <?php if (is_logged_in() && is_editor()): ?>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="btn-icon-compact" title="Edit Article">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="../delete_article.php?id=<?php echo $article['id']; ?>" class="btn-icon-compact btn-danger" title="Delete Article" onclick="return confirm('Are you sure you want to delete this article?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- Bottom Row: Category on left, Date and Views on right -->
+                <div class="article-header-bottom">
+                    <div class="article-category-compact">
+                        <?php if ($article['category_name']): ?>
+                            <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag-compact">
+                                <i class="fas fa-folder"></i>
+                                <?php echo htmlspecialchars($article['category_name']); ?>
+                            </a>
+                        <?php else: ?>
+                            <span class="no-category">No category</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="article-meta-compact">
+                        <span class="article-date-compact">
+                            <i class="fas fa-calendar"></i>
+                            <?php echo format_date($article['published_at']); ?>
+                        </span>
+                        <span class="article-views-compact">
+                            <i class="fas fa-eye"></i>
+                            <?php echo number_format($article['view_count']); ?> views
+                        </span>
+                    </div>
                 </div>
             </div>
-            
-            <?php if ($article['category_name']): ?>
-            <div class="article-categories">
-                <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag"><?php echo htmlspecialchars($article['category_name']); ?></a>
-            </div>
-            <?php endif; ?>
         </header>
         
         <div class="article-content">
-            <?php echo $parsed_content; ?>
+            <?php if (false): ?>
+                <!-- Wikipedia-style Main Page Layout -->
+                <div class="mp-topbanner">
+                    <div class="mp-welcomecount">
+                        <div class="mp-welcome">
+                            <h1>Welcome to Islamic Wiki</h1>,
+                        </div>
+                        <div class="mp-free">the free encyclopedia that anyone can edit.</div>
+                        <div class="articlecount">
+                            <ul>
+                                <li><a href="/wiki/special/user_contributions">1,234</a> active editors</li>
+                                <li><a href="/wiki/special/all_pages">567</a> articles in English</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mp-upper">
+                    <div class="mp-left">
+                        <h2 class="mp-h2">From today's featured article</h2>
+                        <div class="mp-tfa">
+                            <?php echo $parsed_content; ?>
+                        </div>
+                    </div>
+                    <div class="mp-right">
+                        <h2 class="mp-h2">In the news</h2>
+                        <div class="mp-itn">
+                            <ul>
+                                <li>Recent developments in Islamic education and scholarship</li>
+                                <li>New archaeological discoveries related to Islamic history</li>
+                                <li>Contemporary Islamic art and cultural exhibitions</li>
+                                <li>Interfaith dialogue initiatives around the world</li>
+                            </ul>
+                            <p><strong>Ongoing:</strong> Islamic education reforms, Preservation of Islamic heritage sites, Digital Islamic resources development</p>
+                        </div>
+                        
+                        <h2 class="mp-h2">On this day</h2>
+                        <div class="mp-otd">
+                            <p><strong>September 9th in Islamic History</strong></p>
+                            <ul>
+                                <li><strong>622 CE</strong> - The Hijra (migration) of Prophet Muhammad and his companions from Mecca to Medina</li>
+                                <li><strong>1187 CE</strong> - Saladin recaptures Jerusalem from the Crusaders</li>
+                                <li><strong>1924 CE</strong> - The abolition of the Ottoman Caliphate</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mp-lower">
+                    <h2 class="mp-h2">Today's featured picture</h2>
+                    <div class="mp-tfp">
+                        <img src="https://via.placeholder.com/300x200/2E5266/FFFFFF?text=Islamic+Calligraphy" alt="Islamic Calligraphy">
+                        <p><strong>Islamic Calligraphy Art</strong><br>
+                        Islamic calligraphy is the artistic practice of handwriting and calligraphy, based upon the Arabic script. It is known in Arabic as khatt (خط), derived from the word 'line', 'design', or 'construction'.</p>
+                        <p><em>Photograph credit:</em> Islamic Art Collection</p>
+                    </div>
+                </div>
+                
+                <div class="mp-bottom">
+                    <h2 class="mp-h2">Other areas of Islamic Wiki</h2>
+                    <div class="mp-other-content">
+                        <ul>
+                            <li><a href="/wiki/special/all_pages">Community portal</a> - The hub for editors, with resources, links, tasks, and announcements</li>
+                            <li><a href="/wiki/special/recent_changes">Village pump</a> - For discussions about Islamic Wiki itself</li>
+                            <li><a href="/wiki/special/new_pages">Site news</a> - Announcements, updates, articles, and press releases</li>
+                            <li><a href="/search">Teahouse</a> - For new editors to become acclimated and ask questions</li>
+                            <li><a href="/wiki/special/all_pages">Help desk</a> - Ask questions about using or editing Islamic Wiki</li>
+                            <li><a href="/search">Reference desk</a> - Ask research questions about Islamic topics</li>
+                            <li><a href="/wiki">Content portals</a> - Browse topics of interest</li>
+                        </ul>
+                    </div>
+                    
+                    <h2 class="mp-h2">Islamic Wiki's sister projects</h2>
+                    <div class="mp-sister-content">
+                        <ul>
+                            <li><a href="#">Islamic Texts</a> - Digital library of Islamic texts and manuscripts</li>
+                            <li><a href="#">Islamic Media</a> - Repository of Islamic images, videos, and audio</li>
+                            <li><a href="#">Islamic Data</a> - Structured data about Islamic topics</li>
+                            <li><a href="#">Islamic News</a> - News and current events from an Islamic perspective</li>
+                            <li><a href="#">Islamic Quotes</a> - Collection of Islamic sayings and quotations</li>
+                            <li><a href="#">Islamic Travel</a> - Travel guide for Islamic sites and destinations</li>
+                        </ul>
+                    </div>
+                    
+                    <h2 class="mp-h2">Islamic Wiki languages</h2>
+                    <div class="mp-lang">
+                        <ul>
+                            <li><a href="#">العربية (Arabic)</a></li>
+                            <li><a href="#">فارسی (Persian)</a></li>
+                            <li><a href="#">اردو (Urdu)</a></li>
+                            <li><a href="#">Türkçe (Turkish)</a></li>
+                            <li><a href="#">Bahasa Indonesia (Indonesian)</a></li>
+                            <li><a href="#">বাংলা (Bengali)</a></li>
+                            <li><a href="#">हिन्दी (Hindi)</a></li>
+                            <li><a href="#">Français (French)</a></li>
+                            <li><a href="#">Español (Spanish)</a></li>
+                            <li><a href="#">Deutsch (German)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php echo $parsed_content; ?>
+            <?php endif; ?>
         </div>
         
     </article>
     
     <!-- Related Articles -->
+    <?php if ($article['category_id']): ?>
     <?php
     // Get related articles (same category, excluding current)
     $stmt = $pdo->prepare("
@@ -137,6 +261,7 @@ include '../../includes/header.php';
             <?php endforeach; ?>
         </div>
     </div>
+    <?php endif; ?>
     <?php endif; ?>
 </div>
 
@@ -233,7 +358,6 @@ include '../../includes/header.php';
 .article-content {
     line-height: 1.7;
     color: #2c3e50;
-    margin-top: 1rem;
 }
 
 .article-content h2:first-child {

@@ -1,17 +1,20 @@
 RewriteEngine On
 
+# Wiki preview (must come before article rules)
+RewriteRule ^wiki/preview/?$ /modules/wiki/preview.php [L,QSA]
+
 # Wiki pretty URLs
 # /wiki/article-name -> /modules/wiki/article.php?slug=article-name
-RewriteRule ^wiki/([a-zA-Z0-9\-]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
 
 # /wiki/article-name/history -> /modules/wiki/history.php?slug=article-name
-RewriteRule ^wiki/([a-zA-Z0-9\-]+)/history/?$ /modules/wiki/history.php?slug=$1 [L,QSA]
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/history/?$ /modules/wiki/history.php?slug=$1 [L,QSA]
 
 # /wiki/article-name/talk -> /modules/wiki/talk.php?slug=article-name
-RewriteRule ^wiki/([a-zA-Z0-9\-]+)/talk/?$ /modules/wiki/talk.php?slug=$1 [L,QSA]
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/talk/?$ /modules/wiki/talk.php?slug=$1 [L,QSA]
 
 # /wiki/article-name/edit -> /pages/wiki/edit_article.php?slug=article-name
-RewriteRule ^wiki/([a-zA-Z0-9\-]+)/edit/?$ /pages/wiki/edit_article.php?slug=$1 [L,QSA]
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/edit/?$ /pages/wiki/edit_article.php?slug=$1 [L,QSA]
 
 # Special pages
 RewriteRule ^wiki/special/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/special/$1.php [L,QSA]
@@ -19,8 +22,8 @@ RewriteRule ^wiki/special/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/special/$1.php [L,Q
 # Category pages
 RewriteRule ^wiki/category/([a-zA-Z0-9\-]+)/?$ /modules/wiki/category.php?slug=$1 [L,QSA]
 
-# Default wiki index
-RewriteRule ^wiki/?$ /modules/wiki/index.php [L,QSA]
+# Default wiki index - redirect to Main_Page
+RewriteRule ^wiki/?$ /wiki/Main_Page [R=301,L]
 
 # Wiki management pages
 RewriteRule ^wiki/upload/?$ /pages/wiki/upload_file.php [L,QSA]
@@ -30,6 +33,7 @@ RewriteRule ^wiki/manage/files/?$ /pages/wiki/manage_files.php [L,QSA]
 # Auth pages
 RewriteRule ^login/?$ /pages/auth/login.php [L,QSA]
 RewriteRule ^register/?$ /pages/auth/register.php [L,QSA]
+RewriteRule ^logout/?$ /logout.php [L,QSA]
 
 # User pages
 RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]

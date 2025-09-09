@@ -9,14 +9,34 @@ require_login();
 // Check if user can edit articles
 if (!is_editor()) {
     show_message('You do not have permission to edit articles.', 'error');
-    redirect('/dashboard');
+    redirect_with_return_url();
 }
 
 $article_id = (int)($_GET['id'] ?? 0);
+$slug = $_GET['slug'] ?? '';
 
-if (!$article_id) {
-    show_message('Invalid article ID.', 'error');
-    redirect('/admin');
+// Handle both ID and slug parameters
+if ($article_id) {
+    // Get article by ID
+    $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
+    $stmt->execute([$article_id]);
+    $article = $stmt->fetch();
+} elseif ($slug) {
+    // Get article by slug
+    $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE slug = ?");
+    $stmt->execute([$slug]);
+    $article = $stmt->fetch();
+    if ($article) {
+        $article_id = $article['id'];
+    }
+} else {
+    show_message('Invalid article ID or slug.', 'error');
+    redirect_with_return_url('/admin');
+}
+
+if (!$article) {
+    show_message('Article not found.', 'error');
+    redirect_with_return_url('/admin');
 }
 
 $errors = [];
@@ -50,8 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Title must be less than 255 characters.';
     }
     
-    // Create slug from title
-    $slug = createSlug($title);
+    // Create slug from title, but preserve special slugs like Main_Page
+    if ($article['slug'] === 'Main_Page' && $title === 'Main Page') {
+        // Keep the special Main_Page slug
+        $slug = 'Main_Page';
+    } else {
+        $slug = generate_slug($title);
+    }
     
     // Check if slug already exists for other articles
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_articles WHERE slug = ? AND id != ?");
@@ -72,24 +97,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 WHERE id = ?
             ");
             if ($stmt->execute([$title, $content, $excerpt, $category_id ?: null, $status, $slug, $is_featured, $article_id])) {
-
-            // Create new version entry for the edit
-            $stmt = $pdo->prepare("
-                INSERT INTO article_versions 
-                (article_id, version_number, title, content, excerpt, changes_summary, created_by) 
-                VALUES (?, (SELECT COALESCE(MAX(version_number), 0) + 1 FROM article_versions WHERE article_id = ?), ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([
-                $article_id,
-                $article_id,
-                $title,
-                $content,
-                $excerpt,
-                $changes_summary ?: "Updated article",
-                $_SESSION[user_id]
-            ]);
+                // Create new version entry for the edit
+                try {
+                    $stmt = $pdo->prepare("
+                        INSERT INTO article_versions 
+                        (article_id, version_number, title, content, excerpt, changes_summary, created_by) 
+                        VALUES (?, (SELECT COALESCE(MAX(version_number), 0) + 1 FROM article_versions WHERE article_id = ?), ?, ?, ?, ?, ?)
+                    ");
+                    $stmt->execute([
+                        $article_id,
+                        $article_id,
+                        $title,
+                        $content,
+                        $excerpt,
+                        $changes_summary ?: "Updated article",
+                        $_SESSION['user_id']
+                    ]);
+                } catch (Exception $e) {
+                    // Log the error but don't fail the update
+                    error_log("Version creation failed: " . $e->getMessage());
+                }
                 $success = 'Article updated successfully.';
                 log_activity('article_updated', "Updated article ID: $article_id");
+                
+                // Redirect back to the article page
+                redirect("/wiki/$slug");
             } else {
                 $errors[] = 'Failed to update article.';
             }
@@ -99,15 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get article data
-$stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
-$stmt->execute([$article_id]);
-$article = $stmt->fetch();
-
-if (!$article) {
-    show_message('Article not found.', 'error');
-    redirect('/admin');
-}
+// Article data is already fetched above
 
 include "../../includes/header.php";;
 ?>
@@ -116,7 +140,7 @@ include "../../includes/header.php";;
     <div class="editor-header">
         <h1>Edit Article</h1>
         <div class="editor-actions">
-            <a href="admin.php" class="btn btn-secondary">Back to Admin Panel</a>
+            <a href="/wiki/<?php echo $article['slug']; ?>" class="btn btn-secondary">Back to Article</a>
         </div>
     </div>
     
@@ -172,14 +196,14 @@ include "../../includes/header.php";;
                 </div>
                 <div id="preview-container" style="display: none;">
                     <div id="preview-content"></div>
-
+                </div>
+            </div>
+        </div>
+        
         <div class="form-group">
             <label for="changes_summary">Edit Summary</label>
             <input type="text" id="changes_summary" name="changes_summary" 
                    placeholder="Briefly describe what you changed (optional)">
-        </div>
-                </div>
-            </div>
         </div>
         
         <div class="form-row">
