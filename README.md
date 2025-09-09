@@ -1,17 +1,41 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.7-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.9-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
 
-## 🎯 Current Version: 0.0.0.8
+## 🎯 Current Version: 0.0.0.9
 
-**Latest Release:** January 27, 2025  
+**Latest Release:** January 8, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Community Features Release
+**Type:** UI/UX Enhancement & Bug Fixes Release
+
+## 🚀 What's New in v0.0.0.9
+
+### 🎨 **Enhanced User Interface & Experience**
+- **Sidebar Navigation Improvements**: Added visual separators between navigation sections
+- **Search Popup Enhancement**: Full-screen search overlay with real-time suggestions
+- **Dropdown Menu Positioning**: Fixed sidebar dropdown positioning to eliminate gaps
+- **Search Results Optimization**: Made entire result containers clickable for better UX
+- **Article Page Redesign**: Transparent content containers for cleaner appearance
+- **Category Button Fixes**: Ensured category buttons are properly clickable
+
+### 🔍 **Search System Enhancements**
+- **Search Popup Integration**: Inline search popup with AJAX-powered suggestions
+- **Search Results Layout**: Improved horizontal alignment of icons and titles
+- **Content Type Filters**: Converted radio buttons to clean link-based filters
+- **Search Page Styling**: Consolidated conflicting CSS files into organized structure
+- **Real-time Suggestions**: Enhanced search suggestions with proper API endpoints
+
+### 🐛 **Bug Fixes & Improvements**
+- **URL Routing**: Fixed all navigation links and clean URL implementation
+- **PHP Path Issues**: Corrected include paths using `__DIR__` for better reliability
+- **CSS Conflicts**: Resolved multiple CSS file conflicts affecting styling
+- **Mobile Responsiveness**: Improved mobile experience across all components
+- **Error Handling**: Enhanced error handling for better user experience
 
 ## 🚀 What's New in v0.0.0.8
 

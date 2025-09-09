@@ -342,39 +342,7 @@ function get_user_watchlist($user_id, $limit = 50) {
     return $stmt->fetchAll();
 }
 
-/**
- * Create redirect
- */
-function create_redirect($from_slug, $to_article_id, $user_id) {
-    global $pdo;
-    
-    try {
-        $stmt = $pdo->prepare("
-            INSERT INTO wiki_redirects (from_slug, to_article_id, created_by) 
-            VALUES (?, ?, ?)
-        ");
-        $stmt->execute([$from_slug, $to_article_id, $user_id]);
-        return $pdo->lastInsertId();
-    } catch (Exception $e) {
-        return false;
-    }
-}
 
-/**
- * Get redirect target
- */
-function get_redirect_target($from_slug) {
-    global $pdo;
-    
-    $stmt = $pdo->prepare("
-        SELECT wr.*, wa.title, wa.slug 
-        FROM wiki_redirects wr
-        JOIN wiki_articles wa ON wr.to_article_id = wa.id
-        WHERE wr.from_slug = ?
-    ");
-    $stmt->execute([$from_slug]);
-    return $stmt->fetch();
-}
 
 /**
  * Upload file to wiki

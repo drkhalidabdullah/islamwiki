@@ -421,13 +421,13 @@ class EnhancedSearch {
             article.content.substring(0, 200) + '...' : 'No description available';
         
         return `
-            <div class="result-item article-result">
+            <a href="/wiki/${article.slug}" class="result-item article-result">
                 <div class="result-icon">
                     <i class="fas fa-book"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/wiki/${article.slug}">${article.title}</a>
+                        ${article.title}
                     </h5>
                     <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${excerpt}</p>
                     <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
@@ -435,17 +435,14 @@ class EnhancedSearch {
                         <span class="result-date">${new Date(article.published_at).toLocaleDateString()}</span>
                         <span class="result-views">${article.view_count} views</span>
                     </div>
-                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
-                        By ${article.author_name || article.author_username}
-                    </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 
     renderUserResult(user) {
         return `
-            <div class="result-item user-result">
+            <a href="/user/${user.username}" class="result-item user-result">
                 <div class="result-avatar">
                     ${user.avatar ? 
                         `<img src="${user.avatar}" alt="${user.display_name}">` : 
@@ -454,7 +451,7 @@ class EnhancedSearch {
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/user/${user.username}">${user.display_name}</a>
+                        ${user.display_name}
                     </h5>
                     <p class="result-username">@${user.username}</p>
                     ${user.bio ? `<p class="result-bio">${user.bio}</p>` : ''}
@@ -462,7 +459,7 @@ class EnhancedSearch {
                         <span class="result-joined">Joined ${new Date(user.created_at).toLocaleDateString()}</span>
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 
@@ -471,13 +468,13 @@ class EnhancedSearch {
             post.content.substring(0, 150) + '...' : post.content;
         
         return `
-            <div class="result-item post-result">
+            <a href="/posts/${post.id}" class="result-item post-result">
                 <div class="result-icon">
                     <i class="fas fa-comment"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/posts/${post.id}">Post by ${post.display_name}</a>
+                        Post by ${post.display_name}
                     </h5>
                     <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${content}</p>
                     <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
@@ -486,19 +483,19 @@ class EnhancedSearch {
                         ${post.group_name ? `<span class="result-group">in ${post.group_name}</span>` : ''}
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 
     renderGroupResult(group) {
         return `
-            <div class="result-item group-result">
+            <a href="/groups/${group.slug}" class="result-item group-result">
                 <div class="result-icon">
                     <i class="fas fa-layer-group"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/groups/${group.slug}">${group.name}</a>
+                        ${group.name}
                     </h5>
                     <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${group.description || 'No description available'}</p>
                     <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
@@ -506,11 +503,8 @@ class EnhancedSearch {
                         <span class="result-posts">${group.posts_count} posts</span>
                         <span class="result-type">${group.group_type}</span>
                     </div>
-                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
-                        Created by ${group.creator_name}
-                    </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 
@@ -519,13 +513,13 @@ class EnhancedSearch {
         const isOnline = event.event_type === 'online';
         
         return `
-            <div class="result-item event-result">
+            <a href="/events/${event.slug}" class="result-item event-result">
                 <div class="result-icon">
                     <i class="fas fa-calendar"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/events/${event.slug}">${event.title}</a>
+                        ${event.title}
                     </h5>
                     <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${event.description || 'No description available'}</p>
                     <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
@@ -534,11 +528,8 @@ class EnhancedSearch {
                         <span class="result-location">${isOnline ? 'Online' : event.location}</span>
                         <span class="result-attendees">${event.current_attendees} attending</span>
                     </div>
-                    <div class="result-author" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.95rem; color: #6b7280; font-weight: 500;">
-                        Organized by ${event.creator_name}
-                    </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 
@@ -552,15 +543,13 @@ class EnhancedSearch {
         const config = typeConfig[item.content_type] || { icon: 'fas fa-file', title: 'Community Content' };
 
         return `
-            <div class="result-item ummah-result">
+            <a href="/${item.content_type === 'featured_article' ? 'wiki/' + item.slug : 'posts/' + item.id}" class="result-item ummah-result">
                 <div class="result-icon">
                     <i class="${config.icon}"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
-                        <a href="/${item.content_type === 'featured_article' ? 'wiki/' + item.slug : 'posts/' + item.id}">
-                            ${item.title || item.content.substring(0, 50) + '...'}
-                        </a>
+                        ${item.title || item.content.substring(0, 50) + '...'}
                     </h5>
                     <p class="result-excerpt" style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1rem;">${item.excerpt || item.description || item.content.substring(0, 150) + '...'}</p>
                     <div class="result-meta" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
@@ -568,7 +557,7 @@ class EnhancedSearch {
                         <span class="result-date">${new Date(item.created_at || item.published_at).toLocaleDateString()}</span>
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     }
 

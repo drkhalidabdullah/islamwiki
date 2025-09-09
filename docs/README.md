@@ -2,11 +2,35 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.6
+## 🎯 Current Version: 0.0.0.9
 
-**Latest Release:** September 7, 2025  
+**Latest Release:** January 8, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Restructuring & Enhancement Release
+**Type:** UI/UX Enhancement & Bug Fixes Release
+
+## 🚀 What's New in v0.0.0.9
+
+### Enhanced User Interface & Experience
+- **Sidebar Navigation Improvements**: Added visual separators between navigation sections
+- **Search Popup Enhancement**: Full-screen search overlay with real-time suggestions
+- **Dropdown Menu Positioning**: Fixed sidebar dropdown positioning to eliminate gaps
+- **Search Results Optimization**: Made entire result containers clickable for better UX
+- **Article Page Redesign**: Transparent content containers for cleaner appearance
+- **Category Button Fixes**: Ensured category buttons are properly clickable
+
+### Search System Enhancements
+- **Search Popup Integration**: Inline search popup with AJAX-powered suggestions
+- **Search Results Layout**: Improved horizontal alignment of icons and titles
+- **Content Type Filters**: Converted radio buttons to clean link-based filters
+- **Search Page Styling**: Consolidated conflicting CSS files into organized structure
+- **Real-time Suggestions**: Enhanced search suggestions with proper API endpoints
+
+### Bug Fixes & Improvements
+- **URL Routing**: Fixed all navigation links and clean URL implementation
+- **PHP Path Issues**: Corrected include paths using `__DIR__` for better reliability
+- **CSS Conflicts**: Resolved multiple CSS file conflicts affecting styling
+- **Mobile Responsiveness**: Improved mobile experience across all components
+- **Error Handling**: Enhanced error handling for better user experience
 
 ## 🚀 What's New in v0.0.0.6
 
@@ -216,8 +240,8 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ---
 
-**IslamWiki v0.0.0.6** - A modern Islamic knowledge platform with clean architecture and enhanced user experience.
+**IslamWiki v0.0.0.9** - A modern Islamic knowledge platform with enhanced UI/UX and improved functionality.
 
-**Last Updated:** September 7, 2025  
-**Documentation Version:** 0.0.0.6  
+**Last Updated:** January 8, 2025  
+**Documentation Version:** 0.0.0.9  
 **Status:** Production Ready ✅

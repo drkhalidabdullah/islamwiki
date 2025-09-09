@@ -1,10 +1,7 @@
 <?php
-// Fix path issues for web server access
-$config_path = file_exists('../config/config.php') ? '../config/config.php' : 'config/config.php';
-$functions_path = file_exists('../include "../../includes/functions.php';
-
-require_once $config_path;
-require_once $functions_path;
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../includes/functions.php';
+require_once __DIR__ . '/../../includes/wiki_functions.php';
 
 $page_title = 'Category';
 
@@ -55,7 +52,7 @@ include "../../includes/header.php";;
             <div class="articles-grid">
                 <?php foreach ($articles as $article): ?>
                 <div class="card">
-                    <h3><a href="<?php echo ucfirst(article['slug']); ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
+                    <h3><a href="/wiki/<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h3>
                     <div class="article-meta">
                         <span class="author">By <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></span>
                         <span class="date"><?php echo format_date($article['published_at']); ?></span>

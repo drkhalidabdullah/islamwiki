@@ -1,5 +1,80 @@
 # Changelog
 
+## [0.0.0.9] - 2025-01-08
+
+### 🎨 Enhanced User Interface & Experience
+
+#### Sidebar Navigation Improvements
+- **Visual Separators**: Added clean separators between navigation sections for better organization
+- **Dropdown Menu Positioning**: Fixed sidebar dropdown positioning to eliminate visual gaps
+- **Navigation Flow**: Improved navigation hierarchy with logical grouping of menu items
+- **Mobile Optimization**: Enhanced mobile sidebar experience with proper touch targets
+
+#### Search System Enhancements
+- **Search Popup Integration**: Full-screen search overlay with real-time AJAX suggestions
+- **Search Results Optimization**: Made entire result containers clickable for improved UX
+- **Content Type Filters**: Converted radio button filters to clean link-based navigation
+- **Search Page Styling**: Consolidated conflicting CSS files into organized structure
+- **Real-time Suggestions**: Enhanced search suggestions with proper API endpoints
+
+#### Article Page Redesign
+- **Transparent Content Containers**: Removed visual containers for cleaner appearance
+- **Category Button Fixes**: Ensured category buttons are properly clickable with z-index fixes
+- **Article Header Layout**: Improved title and metadata positioning for better readability
+- **Content Styling**: Enhanced article content presentation with transparent backgrounds
+
+### 🔧 Technical Improvements
+
+#### Code Quality & Reliability
+- **PHP Path Issues**: Corrected include paths using `__DIR__` for better reliability
+- **CSS Conflicts**: Resolved multiple CSS file conflicts affecting styling consistency
+- **Error Handling**: Enhanced error handling for better user experience
+- **Code Organization**: Improved file structure and include management
+
+#### URL Routing & Navigation
+- **Clean URL Implementation**: Fixed all navigation links and clean URL routing
+- **Route Protection**: Enhanced route protection and authentication checks
+- **Navigation Consistency**: Improved navigation highlighting and active states
+- **Mobile Responsiveness**: Enhanced mobile navigation and touch interactions
+
+### 🐛 Bug Fixes
+
+#### Search System
+- **Search Results Display**: Fixed search result formatting and layout issues
+- **Search Suggestions**: Resolved AJAX search suggestion functionality
+- **Search Filters**: Fixed content type filter functionality and parameter handling
+- **Search Page Integration**: Corrected search page integration with main site styling
+
+#### User Interface
+- **Sidebar Dropdowns**: Fixed dropdown menu positioning and gap issues
+- **Article Page Styling**: Resolved article page container and styling conflicts
+- **Category Navigation**: Fixed category button clickability and navigation
+- **Mobile Interface**: Improved mobile responsiveness across all components
+
+#### System Integration
+- **CSS Conflicts**: Resolved conflicts between multiple CSS files
+- **JavaScript Functionality**: Fixed JavaScript interactions and event handling
+- **Database Queries**: Improved database query performance and error handling
+- **File Includes**: Corrected file include paths and dependency management
+
+### 📱 Mobile Improvements
+- **Touch Optimization**: Enhanced touch targets and mobile interactions
+- **Responsive Design**: Improved responsive layout across all screen sizes
+- **Mobile Navigation**: Optimized mobile sidebar and navigation experience
+- **Performance**: Enhanced mobile performance and loading times
+
+### 🔒 Security Enhancements
+- **Input Validation**: Improved input validation and sanitization
+- **XSS Prevention**: Enhanced XSS protection for user-generated content
+- **SQL Injection Protection**: Strengthened SQL injection prevention measures
+- **Access Control**: Improved access control and permission management
+
+### 📊 Performance Optimizations
+- **CSS Optimization**: Consolidated and optimized CSS files for better performance
+- **JavaScript Efficiency**: Improved JavaScript performance and loading
+- **Database Queries**: Optimized database queries for faster response times
+- **Asset Loading**: Enhanced asset loading and caching strategies
+
 ## [0.0.0.8] - 2025-01-27
 
 ### 🎉 Major Features Added

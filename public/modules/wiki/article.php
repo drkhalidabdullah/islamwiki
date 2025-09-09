@@ -1,8 +1,8 @@
 <?php
-require_once '../../config/config.php';
-require_once '../../includes/functions.php';
-require_once '../../includes/wiki_functions.php';
-require_once '../../includes/markdown/MarkdownParser.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../includes/functions.php';
+require_once __DIR__ . '/../../includes/wiki_functions.php';
+require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 
 $page_title = 'Article';
 
@@ -86,20 +86,19 @@ include '../../includes/header.php';
                     </a>
                 <?php endif; ?>
             </div>
-            <h1><?php echo htmlspecialchars($article['title']); ?></h1>
-            
-            <div class="article-meta">
-                <p>
-                    Published on <?php echo format_date($article['published_at']); ?>
-                    | <?php echo number_format($article['view_count']); ?> views
-                </p>
-                
-                <?php if ($article['category_name']): ?>
-                <div class="article-categories">
-                    <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag"><?php echo htmlspecialchars($article['category_name']); ?></a>
+            <div class="article-title-row">
+                <h1 class="article-title"><?php echo htmlspecialchars($article['title']); ?></h1>
+                <div class="article-meta-inline">
+                    <span class="article-date"><?php echo format_date($article['published_at']); ?></span>
+                    <span class="article-views"><?php echo number_format($article['view_count']); ?> views</span>
                 </div>
-                <?php endif; ?>
             </div>
+            
+            <?php if ($article['category_name']): ?>
+            <div class="article-categories">
+                <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag"><?php echo htmlspecialchars($article['category_name']); ?></a>
+            </div>
+            <?php endif; ?>
         </header>
         
         <div class="article-content">
