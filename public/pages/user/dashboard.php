@@ -1058,6 +1058,228 @@ body {
     text-decoration: underline;
 }
 
+/* Comment Modal Styles */
+.comment-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.comment-modal-content {
+    background-color: var(--bg-primary);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: var(--radius-xl);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-light);
+}
+
+.comment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.comment-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.comment-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.comment-form {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.comment-form .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.comments-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.comment-author strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.comment-time {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+.comment-content {
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-left: 44px;
+    white-space: pre-wrap;
+}
+
+.comment-actions {
+    margin-left: 44px;
+    margin-top: 8px;
+}
+
+.reply-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+}
+
+.reply-btn:hover {
+    background-color: var(--bg-secondary);
+}
+
+.comment-replies {
+    margin-left: 44px;
+    margin-top: 12px;
+    padding-left: 16px;
+    border-left: 2px solid var(--border-light);
+}
+
+.reply-item {
+    margin-bottom: 12px;
+}
+
+.reply-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.reply-author strong {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+.reply-time {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-left: 6px;
+}
+
+.reply-content {
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-left: 32px;
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+}
+
+.loading, .error, .no-comments {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.error {
+    color: var(--error-color);
+}
+
 /* Enhanced Card Styles */
 .featured-card,
 .post-card,
@@ -2033,9 +2255,222 @@ function updateLikeCount(postId, change) {
 }
 
 function openCommentModal(postId) {
-    // For now, just show a simple alert
-    // In a real implementation, this would open a comment modal
-    showToast('Comment feature coming soon!', 'info');
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('commentModal');
+    if (!modal) {
+        modal = createCommentModal();
+        document.body.appendChild(modal);
+    }
+    
+    // Set the post ID
+    modal.dataset.postId = postId;
+    
+    // Load comments for this post
+    loadComments(postId);
+    
+    // Show modal
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function createCommentModal() {
+    const modal = document.createElement('div');
+    modal.id = 'commentModal';
+    modal.className = 'comment-modal';
+    modal.innerHTML = `
+        <div class="comment-modal-content">
+            <div class="comment-modal-header">
+                <h3>Comments</h3>
+                <button class="close-btn" onclick="closeCommentModal()">&times;</button>
+            </div>
+            <div class="comment-modal-body">
+                <div class="comment-form">
+                    <textarea id="commentText" placeholder="Write a comment..." rows="3"></textarea>
+                    <button id="submitComment" class="btn btn-primary">Post Comment</button>
+                </div>
+                <div id="commentsList" class="comments-list">
+                    <!-- Comments will be loaded here -->
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners
+    modal.querySelector('#submitComment').addEventListener('click', submitComment);
+    modal.querySelector('#commentText').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            submitComment();
+        }
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeCommentModal();
+        }
+    });
+    
+    return modal;
+}
+
+function closeCommentModal() {
+    const modal = document.getElementById('commentModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function loadComments(postId) {
+    const commentsList = document.getElementById('commentsList');
+    commentsList.innerHTML = '<div class="loading">Loading comments...</div>';
+    
+    fetch(`/api/ajax/get_comments.php?post_id=${postId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayComments(data.comments);
+            } else {
+                commentsList.innerHTML = '<div class="error">Failed to load comments</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading comments:', error);
+            commentsList.innerHTML = '<div class="error">Error loading comments</div>';
+        });
+}
+
+function displayComments(comments) {
+    const commentsList = document.getElementById('commentsList');
+    
+    if (comments.length === 0) {
+        commentsList.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
+        return;
+    }
+    
+    let html = '';
+    comments.forEach(comment => {
+        html += `
+            <div class="comment-item">
+                <div class="comment-header">
+                    <img src="/assets/images/default-avatar.png" alt="User" class="comment-avatar">
+                    <div class="comment-author">
+                        <strong>${comment.display_name || comment.username}</strong>
+                        <span class="comment-time">${formatCommentTime(comment.created_at)}</span>
+                    </div>
+                </div>
+                <div class="comment-content">${escapeHtml(comment.content)}</div>
+                <div class="comment-actions">
+                    <button class="reply-btn" onclick="replyToComment(${comment.id})">Reply</button>
+                </div>
+                ${comment.replies && comment.replies.length > 0 ? displayReplies(comment.replies) : ''}
+            </div>
+        `;
+    });
+    
+    commentsList.innerHTML = html;
+}
+
+function displayReplies(replies) {
+    let html = '<div class="comment-replies">';
+    replies.forEach(reply => {
+        html += `
+            <div class="reply-item">
+                <div class="reply-header">
+                    <img src="/assets/images/default-avatar.png" alt="User" class="reply-avatar">
+                    <div class="reply-author">
+                        <strong>${reply.display_name || reply.username}</strong>
+                        <span class="reply-time">${formatCommentTime(reply.created_at)}</span>
+                    </div>
+                </div>
+                <div class="reply-content">${escapeHtml(reply.content)}</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    return html;
+}
+
+function submitComment() {
+    const postId = document.getElementById('commentModal').dataset.postId;
+    const content = document.getElementById('commentText').value.trim();
+    
+    if (!content) {
+        showToast('Please enter a comment', 'error');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submitComment');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+    
+    fetch('/api/ajax/add_comment.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            post_id: postId,
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('commentText').value = '';
+            loadComments(postId);
+            updateCommentCount(postId, 1);
+            showToast('Comment posted!', 'success');
+        } else {
+            showToast(data.message || 'Failed to post comment', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error posting comment:', error);
+        showToast('Error posting comment', 'error');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post Comment';
+    });
+}
+
+function replyToComment(commentId) {
+    // For now, just focus on the comment textarea
+    // In a full implementation, this would create a reply form
+    document.getElementById('commentText').focus();
+    showToast('Reply feature coming soon!', 'info');
+}
+
+function updateCommentCount(postId, change) {
+    const feedItems = document.querySelectorAll(`[data-post-id="${postId}"]`);
+    feedItems.forEach(item => {
+        const commentCountSpan = item.querySelector('.engagement-stats span i.fa-comment')?.parentElement;
+        if (commentCountSpan) {
+            const currentCount = parseInt(commentCountSpan.textContent.trim()) || 0;
+            const newCount = Math.max(0, currentCount + change);
+            commentCountSpan.innerHTML = `<i class="fas fa-comment"></i> ${newCount}`;
+        }
+    });
+}
+
+function formatCommentTime(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    
+    if (diff < 60000) return 'just now';
+    if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
+    
+    return date.toLocaleDateString();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function sharePost(postId) {

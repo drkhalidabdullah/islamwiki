@@ -686,3 +686,72 @@ function get_post_likes_count($post_id) {
         return 0;
     }
 }
+
+function add_comment($post_id, $user_id, $content, $parent_id = null) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO post_comments (post_id, user_id, content, parent_id) 
+            VALUES (?, ?, ?, ?)
+        ");
+        return $stmt->execute([$post_id, $user_id, $content, $parent_id]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function get_post_comments($post_id, $limit = 20, $offset = 0) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT pc.*, u.username, u.display_name, u.avatar
+            FROM post_comments pc
+            JOIN users u ON pc.user_id = u.id
+            WHERE pc.post_id = ? AND pc.parent_id IS NULL
+            ORDER BY pc.created_at ASC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$post_id, $limit, $offset]);
+        return $stmt->fetchAll();
+    } catch (Exception $e) {
+        return [];
+    }
+}
+
+function get_comment_replies($comment_id, $limit = 10) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT pc.*, u.username, u.display_name, u.avatar
+            FROM post_comments pc
+            JOIN users u ON pc.user_id = u.id
+            WHERE pc.parent_id = ?
+            ORDER BY pc.created_at ASC
+            LIMIT ?
+        ");
+        $stmt->execute([$comment_id, $limit]);
+        return $stmt->fetchAll();
+    } catch (Exception $e) {
+        return [];
+    }
+}
+
+function get_comment_count($post_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as count 
+            FROM post_comments 
+            WHERE post_id = ?
+        ");
+        $stmt->execute([$post_id]);
+        $result = $stmt->fetch();
+        return $result['count'];
+    } catch (Exception $e) {
+        return 0;
+    }
+}
