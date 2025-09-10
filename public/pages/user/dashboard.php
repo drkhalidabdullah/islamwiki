@@ -374,18 +374,25 @@ include "../../includes/header.php";
                 </div>
                 <div class="create-post-divider"></div>
                 <div class="create-post-actions">
-                    <button class="post-action-btn" onclick="openPostModal('live')">
-                        <i class="fas fa-video" style="color: #e74c3c;"></i>
-                        <span>Live video</span>
-                    </button>
-                    <button class="post-action-btn" onclick="openPostModal('photo')">
-                        <i class="fas fa-images" style="color: #27ae60;"></i>
-                        <span>Photo/video</span>
-                    </button>
-                    <button class="post-action-btn" onclick="openPostModal('reel')">
-                        <i class="fas fa-film" style="color: #e91e63;"></i>
-                        <span>Reel</span>
-                    </button>
+                    <div class="add-to-post-text">Add to your post:</div>
+                    <div class="post-action-buttons">
+                        <button class="post-action-btn" onclick="handlePhotoVideo()" title="Add Photo/Video">
+                            <i class="fas fa-images" style="color: #27ae60;"></i>
+                            <span>Photo/Video</span>
+                        </button>
+                        <button class="post-action-btn" onclick="handleTagPeople()" title="Tag People">
+                            <i class="fas fa-user-tag" style="color: #3b82f6;"></i>
+                            <span>Tag People</span>
+                        </button>
+                        <button class="post-action-btn" onclick="handleFeeling()" title="Add Feeling/Activity">
+                            <i class="fas fa-smile" style="color: #f59e0b;"></i>
+                            <span>Feeling/Activity</span>
+                        </button>
+                        <button class="post-action-btn" onclick="handleGIF()" title="Add GIF">
+                            <i class="fas fa-gift" style="color: #8b5cf6;"></i>
+                            <span>GIF</span>
+                        </button>
+                    </div>
                 </div>
             </div>
     
@@ -1778,25 +1785,38 @@ body {
 
 .create-post-actions {
     display: flex;
-    justify-content: space-around;
-    gap: 8px;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+}
+
+.add-to-post-text {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.post-action-buttons {
+    display: flex;
+    gap: 12px;
+    flex: 1;
 }
 
 .post-action-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 6px;
+    padding: 8px 12px;
     background: none;
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.2s ease;
-    flex: 1;
-    justify-content: center;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .post-action-btn:hover {
@@ -1806,11 +1826,89 @@ body {
 }
 
 .post-action-btn i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .post-action-btn span {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+}
+
+/* Image Preview Styling */
+.image-preview-container {
+    margin: 8px 0;
+    position: relative;
+}
+
+.image-preview {
+    position: relative;
+    display: inline-block;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.preview-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.remove-image-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+.simple-image-preview {
+    margin-bottom: 12px;
+    padding: 8px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.temp-image-holder {
+    margin: 8px 0;
+    padding: 8px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+/* Fullscreen mode image previews */
+.create-post-card.fullscreen .image-preview {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.create-post-card.fullscreen .preview-image {
+    max-height: 300px;
+}
+
+.create-post-card.fullscreen .temp-image-holder {
+    margin: 12px 0;
+    padding: 12px;
 }
 
 /* Post Content Styling */
@@ -3551,9 +3649,33 @@ function initializePostCreation() {
         // Remove existing listeners
         postInput.removeEventListener('input', handleInputChange);
         postInputSimple.removeEventListener('input', handleInputChange);
+        postInput.removeEventListener('paste', handlePaste);
+        postInputSimple.removeEventListener('paste', handlePaste);
         
         // Add listeners to current input
         currentInput.addEventListener('input', handleInputChange);
+        currentInput.addEventListener('paste', handlePaste);
+    }
+    
+    // Handle paste events
+    function handlePaste(e) {
+        const items = e.clipboardData.items;
+        
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            
+            if (item.type.indexOf('image') !== -1) {
+                e.preventDefault();
+                const file = item.getAsFile();
+                if (file) {
+                    // Auto-switch to formatting mode when pasting images
+                    if (!isFormattingMode) {
+                        toggleFormattingBtn.click();
+                    }
+                    handleImageUpload(file);
+                }
+            }
+        }
     }
     
     function handleInputChange() {
@@ -3732,8 +3854,11 @@ function initializePostCreation() {
     
     // Handle post submission
     submitBtn.addEventListener('click', function() {
-        const content = currentInput.value.trim();
+        let content = currentInput.value.trim();
         if (!content) return;
+        
+        // Convert image placeholders to Markdown
+        content = convertImagePlaceholdersToMarkdown(content);
         
         const isPublic = isPublicCheckbox.checked;
         
@@ -3906,6 +4031,266 @@ function showToast(message, type = 'info') {
             }
         }, 300);
     }, 3000);
+}
+
+function handlePhotoVideo() {
+    // Create file input for photo/video upload
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*,video/*';
+    input.multiple = true;
+    
+    input.onchange = function(e) {
+        const files = Array.from(e.target.files);
+        const hasImages = files.some(file => file.type.startsWith('image/'));
+        
+        // Auto-switch to formatting mode when uploading images
+        if (hasImages && !isFormattingMode) {
+            toggleFormattingBtn.click();
+        }
+        
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            } else if (file.type.startsWith('video/')) {
+                handleVideoUpload(file);
+            }
+        });
+    };
+    
+    input.click();
+}
+
+function handleTagPeople() {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const text = currentInput.value;
+    const cursorPos = currentInput.selectionStart;
+    
+    // Insert @ symbol for tagging
+    const newText = text.substring(0, cursorPos) + '@' + text.substring(cursorPos);
+    currentInput.value = newText;
+    currentInput.focus();
+    currentInput.setSelectionRange(cursorPos + 1, cursorPos + 1);
+    
+    showToast('Type username after @ to tag someone', 'info');
+}
+
+function handleFeeling() {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const text = currentInput.value;
+    const cursorPos = currentInput.selectionStart;
+    
+    // Insert feeling/activity text
+    const feeling = prompt('What are you feeling or doing?');
+    if (feeling) {
+        const newText = text.substring(0, cursorPos) + `Feeling ${feeling}` + text.substring(cursorPos);
+        currentInput.value = newText;
+        currentInput.focus();
+        currentInput.setSelectionRange(cursorPos + feeling.length + 8, cursorPos + feeling.length + 8);
+    }
+}
+
+function handleGIF() {
+    showToast('GIF functionality coming soon!', 'info');
+}
+
+function handleImageUpload(file) {
+    // Check file size (max 10MB - will be auto-scaled if larger than 2MB)
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('Image too large. Please choose an image smaller than 10MB.', 'error');
+        return;
+    }
+    
+    // Show loading state
+    showToast('Uploading image...', 'info');
+    
+    // Upload image to server first
+    uploadImageToServer(file).then(uploadResult => {
+        if (uploadResult.success) {
+            // Create image preview with server URL
+            const imageContainer = createImagePreview(file, uploadResult.url);
+            
+            // Insert image preview into editor
+            insertImagePreview(imageContainer, uploadResult.url);
+            
+            // Show appropriate success message
+            if (uploadResult.was_scaled) {
+                const originalSize = (uploadResult.original_size / 1024 / 1024).toFixed(1);
+                const finalSize = (uploadResult.final_size / 1024 / 1024).toFixed(1);
+                showToast(`Image scaled from ${originalSize}MB to ${finalSize}MB and uploaded`, 'success');
+            } else {
+                showToast('Image uploaded successfully', 'success');
+            }
+        } else {
+            console.error('Upload failed:', uploadResult);
+            showToast('Failed to upload image: ' + uploadResult.message, 'error');
+            
+            // Show debug info if available
+            if (uploadResult.debug) {
+                console.log('Debug info:', uploadResult.debug);
+            }
+        }
+    }).catch(error => {
+        console.error('Image upload error:', error);
+        showToast('Failed to upload image', 'error');
+    });
+}
+
+function uploadImageToServer(file) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        fetch('/api/ajax/upload_image.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resolve(data);
+            } else {
+                reject(new Error(data.message || 'Upload failed'));
+            }
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+
+function createImagePreview(file, imageUrl) {
+    const container = document.createElement('div');
+    container.className = 'image-preview-container';
+    container.innerHTML = `
+        <div class="image-preview">
+            <img src="${imageUrl}" alt="${file.name}" class="preview-image">
+            <button type="button" class="remove-image-btn" onclick="removeImagePreview(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    return container;
+}
+
+function insertImagePreview(imageContainer, imageUrl) {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const isFormattingMode = document.getElementById('postEditorContainer').style.display !== 'none';
+    
+    if (isFormattingMode) {
+        // Insert into the editor container
+        const editorContainer = document.getElementById('postEditorContainer');
+        const editor = document.getElementById('postContent');
+        
+        // Create a temporary div to hold the image
+        const tempDiv = document.createElement('div');
+        tempDiv.className = 'temp-image-holder';
+        tempDiv.appendChild(imageContainer);
+        
+        // Insert after the textarea
+        editor.parentNode.insertBefore(tempDiv, editor.nextSibling);
+        
+        // Add a placeholder in the textarea with server URL
+        const placeholder = `[IMAGE:${imageUrl}]`;
+        const text = editor.value;
+        const cursorPos = editor.selectionStart;
+        const newText = text.substring(0, cursorPos) + placeholder + text.substring(cursorPos);
+        editor.value = newText;
+        editor.focus();
+        editor.setSelectionRange(cursorPos + placeholder.length, cursorPos + placeholder.length);
+        
+        // Store the placeholder in the image container for later reference
+        imageContainer.setAttribute('data-placeholder', placeholder);
+    } else {
+        // For simple mode, show image above the input
+        const inputContainer = currentInput.parentNode;
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'simple-image-preview';
+        imageDiv.appendChild(imageContainer);
+        
+        // Insert before the input
+        inputContainer.insertBefore(imageDiv, currentInput);
+        
+        // Add placeholder text with server URL
+        const placeholder = `[IMAGE:${imageUrl}]`;
+        const text = currentInput.value;
+        const cursorPos = currentInput.selectionStart;
+        const newText = text.substring(0, cursorPos) + placeholder + text.substring(cursorPos);
+        currentInput.value = newText;
+        currentInput.focus();
+        currentInput.setSelectionRange(cursorPos + placeholder.length, cursorPos + placeholder.length);
+        
+        // Store the placeholder in the image container for later reference
+        imageContainer.setAttribute('data-placeholder', placeholder);
+    }
+    
+    // Trigger input change for validation
+    currentInput.dispatchEvent(new Event('input'));
+}
+
+function removeImagePreview(button) {
+    const container = button.closest('.image-preview-container');
+    if (container) {
+        const placeholder = container.getAttribute('data-placeholder');
+        if (placeholder) {
+            // Remove placeholder from text
+            const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+            const text = currentInput.value;
+            const newText = text.replace(placeholder, '');
+            currentInput.value = newText;
+            
+            // Trigger input change for validation
+            currentInput.dispatchEvent(new Event('input'));
+        }
+        container.remove();
+    }
+}
+
+function convertImagePlaceholdersToMarkdown(content) {
+    // Find all image previews and convert them to Markdown
+    const imageContainers = document.querySelectorAll('.image-preview-container');
+    let processedContent = content;
+    
+    imageContainers.forEach((container) => {
+        const img = container.querySelector('.preview-image');
+        const placeholder = container.getAttribute('data-placeholder');
+        
+        if (img && placeholder) {
+            const src = img.src;
+            const alt = img.alt;
+            const markdown = `![${alt}](${src})`;
+            
+            // Replace placeholder with actual Markdown
+            processedContent = processedContent.replace(placeholder, markdown);
+        }
+    });
+    
+    // Also handle any remaining [IMAGE:url] placeholders that might not have containers
+    processedContent = processedContent.replace(/\[IMAGE:([^\]]+)\]/g, (match, url) => {
+        return `![Image](${url})`;
+    });
+    
+    return processedContent;
+}
+
+function handleVideoUpload(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+        const text = currentInput.value;
+        const cursorPos = currentInput.selectionStart;
+        
+        // Insert video markdown
+        const videoMarkdown = `![${file.name}](${e.target.result})\n`;
+        const newText = text.substring(0, cursorPos) + videoMarkdown + text.substring(cursorPos);
+        currentInput.value = newText;
+        currentInput.focus();
+        currentInput.setSelectionRange(cursorPos + videoMarkdown.length, cursorPos + videoMarkdown.length);
+        
+        // Trigger input change for validation
+        currentInput.dispatchEvent(new Event('input'));
+    };
+    reader.readAsDataURL(file);
 }
 
 function openPostModal(type) {

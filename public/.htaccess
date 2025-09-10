@@ -46,6 +46,7 @@ RewriteRule ^search/advanced/?$ /search/advanced.php [L,QSA]
 
 # API endpoints
 RewriteRule ^api/ajax/search_suggestions/?$ /api/ajax/search_suggestions.php [L,QSA]
+RewriteRule ^api/ajax/upload_image/?$ /api/ajax/upload_image.php [L,QSA]
 
 # Social pages
 RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]

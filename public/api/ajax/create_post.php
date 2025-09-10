@@ -24,8 +24,8 @@ if (empty($content)) {
     exit();
 }
 
-if (strlen($content) > 5000) {
-    echo json_encode(['success' => false, 'message' => 'Post content too long (max 5000 characters)']);
+if (strlen($content) > 10000) {
+    echo json_encode(['success' => false, 'message' => 'Post content too long (max 10KB)']);
     exit();
 }
 
