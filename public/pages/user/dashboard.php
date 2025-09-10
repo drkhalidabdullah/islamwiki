@@ -2,6 +2,7 @@
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 require_once '../../includes/analytics.php';
+require_once '../../includes/markdown/MarkdownParser.php';
 
 $page_title = 'Dashboard';
 require_login();
@@ -63,7 +64,7 @@ if (!empty($following)) {
     }
 }
 
-// Get recent public posts from all users (excluding current user)
+// Get recent public posts from all users (including current user)
 $stmt = $pdo->prepare("
     SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
            COALESCE(like_counts.likes_count, 0) as likes_count,
@@ -88,11 +89,11 @@ $stmt = $pdo->prepare("
         WHERE interaction_type = 'share' 
         GROUP BY post_id
     ) share_counts ON up.id = share_counts.post_id
-    WHERE up.is_public = 1 AND up.user_id != ?
+    WHERE up.is_public = 1
     ORDER BY up.created_at DESC
     LIMIT 15
 ");
-$stmt->execute([$_SESSION['user_id']]);
+$stmt->execute();
 $recent_posts = $stmt->fetchAll();
 
 // Get recent published articles
@@ -280,17 +281,129 @@ include "../../includes/header.php";
         </div>
     </div>
     
+            <!-- Create Post Component -->
+            <div class="create-post-card">
+                <div class="create-post-header">
+                    <img src="/assets/images/default-avatar.png" alt="User" class="user-avatar">
+                    <div class="post-input-container">
+                        <!-- Markdown Toolbar -->
+                        <div class="markdown-toolbar" id="postToolbar" style="display: none;">
+                            <div class="toolbar-group">
+                                <button type="button" class="toolbar-btn" data-action="bold" title="Bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="italic" title="Italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="strikethrough" title="Strikethrough">
+                                    <i class="fas fa-strikethrough"></i>
+                                </button>
+    </div>
+    
+                            <div class="toolbar-group">
+                                <button type="button" class="toolbar-btn" data-action="heading" title="Heading">
+                                    <i class="fas fa-heading"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="quote" title="Quote">
+                                    <i class="fas fa-quote-left"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="code" title="Code">
+                                    <i class="fas fa-code"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button type="button" class="toolbar-btn" data-action="link" title="Link">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="list" title="List">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="image" title="Image">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="toolbar-group">
+                                <button type="button" class="toolbar-btn" data-action="toggle-preview" title="Toggle Preview">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-action="help" title="Markdown Help">
+                                    <i class="fas fa-question-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Editor and Preview Container -->
+                        <div class="post-editor-container" id="postEditorContainer" style="display: none;">
+                            <div class="post-editor-main">
+                                <textarea id="postContent" placeholder="What's on your mind, <?php echo htmlspecialchars($_SESSION['display_name'] ?: $_SESSION['username']); ?>?&#10;&#10;You can use Markdown formatting:&#10;**bold text**&#10;*italic text*&#10;# Heading&#10;> Quote&#10;`code`&#10;[link](url)&#10;- list item" class="post-input" rows="3"></textarea>
+                            </div>
+                            <div id="postPreviewContainer" class="post-preview-container" style="display: none;">
+                                <div class="preview-header">
+                                    <h4>Preview</h4>
+                                </div>
+                                <div id="postPreviewContent" class="preview-content"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Simple input (shown by default) -->
+                        <textarea id="postContentSimple" placeholder="What's on your mind, <?php echo htmlspecialchars($_SESSION['display_name'] ?: $_SESSION['username']); ?>?" class="post-input post-input-simple" rows="3"></textarea>
+                        
+                        <div class="post-input-footer">
+                            <div class="post-options">
+                                <button type="button" class="formatting-btn" id="toggleFormatting" title="Show formatting tools">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Format</span>
+                                </button>
+                                <label class="privacy-option">
+                                    <input type="checkbox" id="isPublic" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="privacy-text">Public</span>
+                                </label>
+                            </div>
+                            <div class="post-actions">
+                                <button id="cancelPost" class="btn-cancel" style="display: none;">Cancel</button>
+                                <button id="submitPost" class="btn-submit" disabled>Post</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="fullscreenBtn" class="fullscreen-btn" title="Toggle Fullscreen Editor">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+                <div class="create-post-divider"></div>
+                <div class="create-post-actions">
+                    <button class="post-action-btn" onclick="openPostModal('live')">
+                        <i class="fas fa-video" style="color: #e74c3c;"></i>
+                        <span>Live video</span>
+                    </button>
+                    <button class="post-action-btn" onclick="openPostModal('photo')">
+                        <i class="fas fa-images" style="color: #27ae60;"></i>
+                        <span>Photo/video</span>
+                    </button>
+                    <button class="post-action-btn" onclick="openPostModal('reel')">
+                        <i class="fas fa-film" style="color: #e91e63;"></i>
+                        <span>Reel</span>
+                    </button>
+                </div>
+            </div>
+    
             <!-- Feed Content -->
             <div class="feed-content">
                 <?php
-                // Get following content (posts and articles from followed users)
+                // Get following content (posts and articles from followed users + current user)
                 $following_content = [];
                 $following_ids = array_column($following, 'following_id');
                 
-                if (!empty($following_ids)) {
+                // Add current user to following list to include their posts
+                $following_ids[] = $_SESSION['user_id'];
+                
+                // Always include current user's content, even if not following anyone
+                if (true) {
                     $placeholders = str_repeat('?,', count($following_ids) - 1) . '?';
                     
-                    // Get posts from followed users
+                    // Get posts from followed users (including current user)
                     $stmt = $pdo->prepare("
                         SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
                                COALESCE(like_counts.likes_count, 0) as likes_count,
@@ -322,7 +435,7 @@ include "../../includes/header.php";
                     $stmt->execute($following_ids);
                     $following_posts = $stmt->fetchAll();
                     
-                    // Get articles from followed users
+                    // Get articles from followed users (including current user)
                     $stmt = $pdo->prepare("
                         SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'article' as content_type
                         FROM wiki_articles wa
@@ -404,7 +517,10 @@ include "../../includes/header.php";
                                     </span>
                                 </div>
                                 <div class="card-content">
-                                    <p><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
+                                    <div class="post-content"><?php 
+                                        $parser = new MarkdownParser();
+                                        echo $parser->parse($item['content']); 
+                                    ?></div>
                                 </div>
                                 <?php else: ?>
                                 <div class="card-header">
@@ -484,7 +600,10 @@ include "../../includes/header.php";
                                     </span>
                                 </div>
                                 <div class="card-content">
-                                    <p><?php echo nl2br(htmlspecialchars($item['content'])); ?></p>
+                                    <div class="post-content"><?php 
+                                        $parser = new MarkdownParser();
+                                        echo $parser->parse($item['content']); 
+                                    ?></div>
                                 </div>
                                 <?php else: ?>
                                 <div class="card-header">
@@ -639,6 +758,67 @@ include "../../includes/header.php";
                 <?php else: ?>
                 <p class="empty-state">Not following anyone yet. <a href="/search">Find people to follow</a></p>
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div id="helpModal" class="help-modal">
+    <div class="help-modal-content">
+        <div class="help-modal-header">
+            <h3>Markdown Help</h3>
+            <button type="button" class="help-modal-close">&times;</button>
+        </div>
+        <div class="help-modal-body">
+            <div class="help-section">
+                <h4>Text Formatting</h4>
+                <ul>
+                    <li><code>**bold text**</code> → <strong>bold text</strong></li>
+                    <li><code>*italic text*</code> → <em>italic text</em></li>
+                    <li><code>~~strikethrough~~</code> → <del>strikethrough</del></li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h4>Headings</h4>
+                <ul>
+                    <li><code># Heading 1</code></li>
+                    <li><code>## Heading 2</code></li>
+                    <li><code>### Heading 3</code></li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h4>Lists</h4>
+                <ul>
+                    <li><code>- Item 1</code></li>
+                    <li><code>- Item 2</code></li>
+                    <li><code>1. Numbered item</code></li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h4>Links & Images</h4>
+                <ul>
+                    <li><code>[Link text](URL)</code></li>
+                    <li><code>![Alt text](image URL)</code></li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h4>Code</h4>
+                <ul>
+                    <li><code>`inline code`</code></li>
+                    <li><code>```block code```</code></li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h4>Quotes</h4>
+                <ul>
+                    <li><code>> This is a quote</code></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -1278,6 +1458,812 @@ body {
 
 .error {
     color: var(--error-color);
+}
+
+/* Create Post Component Styles */
+.create-post-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+}
+
+.create-post-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.post-input-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.post-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    resize: vertical;
+    min-height: 60px;
+    max-height: 200px;
+    font-family: inherit;
+}
+
+.post-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--bg-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.post-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.post-input-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.post-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.privacy-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.privacy-option input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-light);
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.privacy-option input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.privacy-option input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.post-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-cancel {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.btn-submit {
+    padding: 8px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+    background: var(--text-tertiary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.fullscreen-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.fullscreen-btn:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.fullscreen-btn:active {
+    transform: scale(0.95);
+}
+
+.fullscreen-btn i {
+    font-size: 16px;
+}
+
+/* Fullscreen mode styles */
+.create-post-card.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    background: var(--bg-primary);
+    border-radius: 0;
+    margin: 0;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.create-post-card.fullscreen .create-post-header {
+    max-width: 95vw;
+    margin: 0 auto 20px auto;
+}
+
+.create-post-card.fullscreen .post-editor-container {
+    max-width: 95vw;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.create-post-card.fullscreen .post-input {
+    min-height: 500px;
+    max-height: 80vh;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.create-post-card.fullscreen .post-preview-container {
+    min-height: 500px;
+    max-height: 80vh;
+}
+
+.create-post-card.fullscreen .post-editor-container {
+    gap: 2rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.create-post-card.fullscreen .post-editor-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.create-post-card.fullscreen .post-preview-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.create-post-card.fullscreen .markdown-toolbar {
+    padding: 16px;
+    gap: 12px;
+}
+
+.create-post-card.fullscreen .toolbar-btn {
+    width: 36px;
+    height: 36px;
+}
+
+.create-post-card.fullscreen .toolbar-btn i {
+    font-size: 16px;
+}
+
+.create-post-card.fullscreen .create-post-actions {
+    max-width: 95vw;
+    margin: 0 auto;
+}
+
+.create-post-card.fullscreen .post-input-footer {
+    padding: 16px 0;
+}
+
+.create-post-card.fullscreen .formatting-btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+}
+
+.create-post-card.fullscreen .btn-submit,
+.create-post-card.fullscreen .btn-cancel {
+    padding: 12px 24px;
+    font-size: 1rem;
+}
+
+.create-post-card.fullscreen .preview-content {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.create-post-card.fullscreen .preview-content h1 { font-size: 1.8rem; }
+.create-post-card.fullscreen .preview-content h2 { font-size: 1.6rem; }
+.create-post-card.fullscreen .preview-content h3 { font-size: 1.4rem; }
+.create-post-card.fullscreen .preview-content h4 { font-size: 1.2rem; }
+.create-post-card.fullscreen .preview-content h5 { font-size: 1.1rem; }
+.create-post-card.fullscreen .preview-content h6 { font-size: 1rem; }
+
+/* Responsive fullscreen layout */
+@media (max-width: 1200px) {
+    .create-post-card.fullscreen .post-editor-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .create-post-card.fullscreen .create-post-header,
+    .create-post-card.fullscreen .post-editor-container,
+    .create-post-card.fullscreen .create-post-actions {
+        max-width: 90vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-post-card.fullscreen .create-post-header,
+    .create-post-card.fullscreen .post-editor-container,
+    .create-post-card.fullscreen .create-post-actions {
+        max-width: 95vw;
+    }
+    
+    .create-post-card.fullscreen .post-input,
+    .create-post-card.fullscreen .post-preview-container {
+        min-height: 300px;
+        max-height: 50vh;
+    }
+}
+
+.create-post-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 0 -20px 16px -20px;
+}
+
+.create-post-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.post-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.post-action-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.post-action-btn i {
+    font-size: 18px;
+}
+
+.post-action-btn span {
+    font-size: 0.9rem;
+}
+
+/* Post Content Styling */
+.post-content {
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+    margin: 16px 0 8px 0;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.post-content h1 { font-size: 1.5rem; }
+.post-content h2 { font-size: 1.3rem; }
+.post-content h3 { font-size: 1.1rem; }
+.post-content h4 { font-size: 1rem; }
+.post-content h5 { font-size: 0.9rem; }
+.post-content h6 { font-size: 0.8rem; }
+
+.post-content p {
+    margin: 8px 0;
+    color: var(--text-primary);
+}
+
+.post-content strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.post-content em {
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.post-content code {
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    color: var(--primary-color);
+    border: 1px solid var(--border-light);
+}
+
+.post-content pre {
+    background: var(--bg-secondary);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid var(--border-light);
+}
+
+.post-content pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    color: var(--text-primary);
+}
+
+.post-content ul,
+.post-content ol {
+    margin: 12px 0;
+    padding-left: 20px;
+}
+
+.post-content ul {
+    list-style-type: disc;
+}
+
+.post-content ol {
+    list-style-type: decimal;
+}
+
+.post-content li {
+    margin: 4px 0;
+    color: var(--text-primary);
+}
+
+.post-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.post-content a:hover {
+    text-decoration: underline;
+    color: var(--secondary-color);
+}
+
+.post-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding: 8px 16px;
+    margin: 12px 0;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 8px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Post Editor Toolbar Styles */
+.markdown-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin-bottom: 0;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 4px;
+    padding-right: 12px;
+    border-right: 1px solid var(--border-light);
+}
+
+.toolbar-group:last-child {
+    border-right: none;
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.toolbar-btn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.toolbar-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Post Editor Container */
+.post-editor-container {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+}
+
+.post-editor-main {
+    flex: 1;
+}
+
+.post-editor-main .post-input {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border-top: none;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    line-height: 1.5;
+    min-height: 120px;
+    max-height: 300px;
+}
+
+/* Post Preview Container */
+.post-preview-container {
+    flex: 1;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    min-height: 120px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-light);
+    padding: 8px 12px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.preview-header h4 {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preview-content {
+    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 12px;
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
+    margin: 8px 0 4px 0;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.preview-content h1 { font-size: 1.3rem; }
+.preview-content h2 { font-size: 1.2rem; }
+.preview-content h3 { font-size: 1.1rem; }
+.preview-content h4 { font-size: 1rem; }
+.preview-content h5 { font-size: 0.9rem; }
+.preview-content h6 { font-size: 0.8rem; }
+
+.preview-content p {
+    margin: 4px 0;
+    color: var(--text-primary);
+}
+
+.preview-content strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.preview-content em {
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.preview-content code {
+    background: var(--bg-secondary);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85em;
+    color: var(--primary-color);
+    border: 1px solid var(--border-light);
+}
+
+.preview-content pre {
+    background: var(--bg-secondary);
+    padding: 8px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 8px 0;
+    border: 1px solid var(--border-light);
+}
+
+.preview-content pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    color: var(--text-primary);
+}
+
+.preview-content ul,
+.preview-content ol {
+    margin: 8px 0;
+    padding-left: 16px;
+}
+
+.preview-content ul {
+    list-style-type: disc;
+}
+
+.preview-content ol {
+    list-style-type: decimal;
+}
+
+.preview-content li {
+    margin: 2px 0;
+    color: var(--text-primary);
+}
+
+.preview-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.preview-content a:hover {
+    text-decoration: underline;
+    color: var(--secondary-color);
+}
+
+.preview-content blockquote {
+    border-left: 3px solid var(--primary-color);
+    padding: 6px 12px;
+    margin: 8px 0;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+.preview-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 4px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Formatting Button */
+.formatting-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.formatting-btn:hover {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.formatting-btn i {
+    font-size: 14px;
+}
+
+/* Simple input styling */
+.post-input-simple {
+    border-radius: var(--radius-lg);
+    border-top: 1px solid var(--border-light);
+}
+
+/* Help Modal */
+.help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-modal-content {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+}
+
+.help-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.help-modal-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.help-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.help-modal-close:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.help-modal-body {
+    padding: 20px;
+}
+
+.help-section {
+    margin-bottom: 20px;
+}
+
+.help-section h4 {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.help-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.help-section li {
+    margin-bottom: 6px;
+    padding: 8px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+}
+
+.help-section code {
+    background: var(--bg-primary);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: var(--primary-color);
 }
 
 /* Enhanced Card Styles */
@@ -2040,6 +3026,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
+        
+        // Check liked posts after applying filter
+        setTimeout(checkLikedPosts, 100);
     }
     
     // Initialize the correct content section on page load
@@ -2050,6 +3039,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize on page load
     initializeContent();
+    
+    // Check and display liked posts
+    checkLikedPosts();
+    
+    // Initialize post creation functionality
+    initializePostCreation();
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -2069,14 +3064,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const postId = btn.dataset.postId;
             const icon = btn.querySelector('i');
             
-            // Toggle like state
-            btn.classList.toggle('active');
-            if (btn.classList.contains('active')) {
-                icon.style.color = '#e74c3c';
-                likePost(postId);
-            } else {
-                icon.style.color = '';
+            // Toggle like state based on current state
+            if (btn.classList.contains('liked')) {
+                btn.style.color = '';
+                btn.classList.remove('liked');
                 unlikePost(postId);
+            } else {
+                btn.style.color = '#ef4444';
+                btn.classList.add('liked');
+                likePost(postId);
             }
         } else if (e.target.closest('.comment-btn')) {
             e.preventDefault();
@@ -2471,6 +3467,452 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function checkLikedPosts() {
+    fetch('/api/ajax/get_liked_posts.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update UI for liked posts
+                data.liked_posts.forEach(postId => {
+                    const likeBtns = document.querySelectorAll(`[data-post-id="${postId}"].like-btn`);
+                    likeBtns.forEach(btn => {
+                        btn.style.color = '#ef4444';
+                        btn.classList.add('liked');
+                    });
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error checking liked posts:', error);
+        });
+}
+
+function initializePostCreation() {
+    const postInput = document.getElementById('postContent');
+    const postInputSimple = document.getElementById('postContentSimple');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const submitBtn = document.getElementById('submitPost');
+    const cancelBtn = document.getElementById('cancelPost');
+    const isPublicCheckbox = document.getElementById('isPublic');
+    const toggleFormattingBtn = document.getElementById('toggleFormatting');
+    const postToolbar = document.getElementById('postToolbar');
+    const postEditorContainer = document.getElementById('postEditorContainer');
+    const helpModal = document.getElementById('helpModal');
+    const helpModalClose = document.querySelector('.help-modal-close');
+    const createPostCard = document.querySelector('.create-post-card');
+    
+    let isFormattingMode = false;
+    let isFullscreenMode = false;
+    let currentInput = postInputSimple;
+    
+    // Handle formatting toggle
+    toggleFormattingBtn.addEventListener('click', function() {
+        isFormattingMode = !isFormattingMode;
+        
+        if (isFormattingMode) {
+            // Switch to formatting mode
+            postInputSimple.style.display = 'none';
+            postToolbar.style.display = 'flex';
+            postEditorContainer.style.display = 'flex';
+            currentInput = postInput;
+            
+            // Copy content from simple input to formatting input
+            postInput.value = postInputSimple.value;
+            
+            // Update button
+            this.innerHTML = '<i class="fas fa-edit"></i><span>Simple</span>';
+            this.title = 'Switch to simple mode';
+            
+            // Initialize toolbar
+            initializeToolbar();
+        } else {
+            // Switch to simple mode
+            postToolbar.style.display = 'none';
+            postEditorContainer.style.display = 'none';
+            postInputSimple.style.display = 'block';
+            currentInput = postInputSimple;
+            
+            // Copy content from formatting input to simple input
+            postInputSimple.value = postInput.value;
+            
+            // Update button
+            this.innerHTML = '<i class="fas fa-edit"></i><span>Format</span>';
+            this.title = 'Show formatting tools';
+        }
+        
+        // Update input handlers
+        updateInputHandlers();
+    });
+    
+    // Handle post input changes
+    function updateInputHandlers() {
+        // Remove existing listeners
+        postInput.removeEventListener('input', handleInputChange);
+        postInputSimple.removeEventListener('input', handleInputChange);
+        
+        // Add listeners to current input
+        currentInput.addEventListener('input', handleInputChange);
+    }
+    
+    function handleInputChange() {
+        const hasContent = this.value.trim().length > 0;
+        submitBtn.disabled = !hasContent;
+        cancelBtn.style.display = hasContent ? 'block' : 'none';
+        
+        // Update preview if in formatting mode
+        if (isFormattingMode) {
+            updatePreview();
+        }
+    }
+    
+    // Initialize toolbar functionality
+    function initializeToolbar() {
+        // Toolbar buttons
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.dataset.action;
+                const start = postInput.selectionStart;
+                const end = postInput.selectionEnd;
+                const selectedText = postInput.value.substring(start, end);
+                let newText = '';
+                
+                switch(action) {
+                    case 'bold':
+                        newText = `**${selectedText}**`;
+                        break;
+                    case 'italic':
+                        newText = `*${selectedText}*`;
+                        break;
+                    case 'strikethrough':
+                        newText = `~~${selectedText}~~`;
+                        break;
+                    case 'heading':
+                        newText = `## ${selectedText}`;
+                        break;
+                    case 'quote':
+                        newText = `> ${selectedText}`;
+                        break;
+                    case 'code':
+                        newText = `\`${selectedText}\``;
+                        break;
+                    case 'link':
+                        const url = prompt('Enter URL:');
+                        if (url) {
+                            newText = `[${selectedText || 'link text'}](${url})`;
+                        }
+                        break;
+                    case 'image':
+                        const imgUrl = prompt('Enter image URL:');
+                        if (imgUrl) {
+                            const altText = prompt('Enter alt text (optional):');
+                            newText = `![${altText || ''}](${imgUrl})`;
+                        }
+                        break;
+                    case 'list':
+                        newText = `- ${selectedText}`;
+                        break;
+                    case 'toggle-preview':
+                        togglePreview();
+                        return;
+                    case 'help':
+                        helpModal.style.display = 'flex';
+                        return;
+                }
+                
+                if (newText) {
+                    postInput.value = postInput.value.substring(0, start) + newText + postInput.value.substring(end);
+                    postInput.focus();
+                    postInput.setSelectionRange(start + newText.length, start + newText.length);
+                    handleInputChange.call(postInput);
+                }
+            });
+        });
+    }
+    
+    // Preview functionality
+    function togglePreview() {
+        const previewContainer = document.getElementById('postPreviewContainer');
+        const isPreviewVisible = previewContainer.style.display !== 'none';
+        
+        if (isPreviewVisible) {
+            previewContainer.style.display = 'none';
+            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="fas fa-eye"></i>';
+        } else {
+            previewContainer.style.display = 'flex';
+            updatePreview();
+            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="fas fa-eye-slash"></i>';
+        }
+    }
+    
+    function updatePreview() {
+        const content = postInput.value.trim();
+        const previewContent = document.getElementById('postPreviewContent');
+        
+        if (!content) {
+            previewContent.innerHTML = '<p style="color: #999; font-style: italic;">No content to preview</p>';
+            return;
+        }
+        
+        try {
+            // Use the same MarkdownParser as the server
+            const html = parseMarkdown(content);
+            previewContent.innerHTML = html;
+        } catch (error) {
+            console.error('Preview error:', error);
+            previewContent.innerHTML = '<p style="color: #dc3545;">Error generating preview</p>';
+        }
+    }
+    
+    // Markdown parser (client-side)
+    function parseMarkdown(text) {
+        if (!text) return '';
+        
+        let html = text;
+        
+        // Code blocks (must be processed first to avoid conflicts)
+        html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+        
+        // Headers
+        html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+        html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+        html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+        
+        // Blockquotes
+        html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+        
+        // Lists - process unordered lists
+        html = html.replace(/^(\*|\-)\s+(.*$)/gim, '<li>$2</li>');
+        
+        // Lists - process ordered lists
+        html = html.replace(/^(\d+)\.\s+(.*$)/gim, '<li>$2</li>');
+        
+        // Wrap consecutive list items in ul/ol tags
+        html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/g, function(match) {
+            const isOrdered = /^\d+\./.test(text.split('\n').find(line => line.trim().match(/^\d+\./)));
+            const tag = isOrdered ? 'ol' : 'ul';
+            return `<${tag}>${match}</${tag}>`;
+        });
+        
+        // Inline formatting (must be processed after block elements)
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
+        html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+        
+        // Links and images
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
+        
+        // Convert line breaks to paragraphs for better structure
+        html = html.split('\n\n').map(paragraph => {
+            paragraph = paragraph.trim();
+            if (!paragraph) return '';
+            
+            // Skip if it's already a block element
+            if (paragraph.match(/^<(h[1-6]|pre|blockquote|ul|ol|li)/)) {
+                return paragraph;
+            }
+            
+            // Convert single line breaks to <br> within paragraphs
+            paragraph = paragraph.replace(/\n/g, '<br>');
+            return `<p>${paragraph}</p>`;
+        }).join('\n');
+        
+        // Clean up empty paragraphs
+        html = html.replace(/<p><br><\/p>/g, '');
+        html = html.replace(/<p><\/p>/g, '');
+        
+        return html;
+    }
+    
+    // Initialize input handlers
+    updateInputHandlers();
+    
+    // Handle post submission
+    submitBtn.addEventListener('click', function() {
+        const content = currentInput.value.trim();
+        if (!content) return;
+        
+        const isPublic = isPublicCheckbox.checked;
+        
+        // Disable button during submission
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting...';
+        
+        // Submit post
+        fetch('/api/ajax/create_post.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: content,
+                post_type: 'text',
+                is_public: isPublic
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear input
+                currentInput.value = '';
+                submitBtn.disabled = true;
+                cancelBtn.style.display = 'none';
+                
+                // Show success message
+                showToast('Post created successfully!', 'success');
+                
+                // Add new post to the top of the feed
+                addPostToFeed(data.post);
+                
+                // Refresh the feed to show the new post
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showToast(data.message || 'Failed to create post', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating post:', error);
+            showToast('Failed to create post. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Post';
+        });
+    });
+    
+    // Handle cancel button
+    cancelBtn.addEventListener('click', function() {
+        currentInput.value = '';
+        submitBtn.disabled = true;
+        this.style.display = 'none';
+    });
+    
+    // Handle fullscreen toggle
+    fullscreenBtn.addEventListener('click', function() {
+        isFullscreenMode = !isFullscreenMode;
+        const icon = this.querySelector('i');
+        
+        if (isFullscreenMode) {
+            // Enter fullscreen mode
+            createPostCard.classList.add('fullscreen');
+            icon.className = 'fas fa-compress';
+            this.title = 'Exit Fullscreen';
+            
+            // Auto-enable formatting mode in fullscreen
+            if (!isFormattingMode) {
+                toggleFormattingBtn.click();
+            }
+        } else {
+            // Exit fullscreen mode
+            createPostCard.classList.remove('fullscreen');
+            icon.className = 'fas fa-expand';
+            this.title = 'Toggle Fullscreen Editor';
+        }
+    });
+    
+    // Handle escape key to exit fullscreen
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isFullscreenMode) {
+            fullscreenBtn.click();
+        }
+    });
+    
+    // Handle Enter key (Ctrl+Enter to submit)
+    function addKeydownListener() {
+        currentInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                if (!submitBtn.disabled) {
+                    submitBtn.click();
+                }
+            }
+        });
+    }
+    
+    // Add initial keydown listener
+    addKeydownListener();
+    
+    // Help modal functionality
+    helpModalClose.addEventListener('click', function() {
+        helpModal.style.display = 'none';
+    });
+    
+    helpModal.addEventListener('click', function(e) {
+        if (e.target === helpModal) {
+            helpModal.style.display = 'none';
+        }
+    });
+}
+
+function addPostToFeed(post) {
+    // This function would add the new post to the top of the feed
+    // For now, we'll just reload the page to show the new post
+    console.log('New post created:', post);
+}
+
+function showToast(message, type = 'info') {
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    // Add styles
+    Object.assign(toast.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '12px 20px',
+        borderRadius: '6px',
+        color: 'white',
+        fontWeight: '500',
+        zIndex: '10000',
+        opacity: '0',
+        transform: 'translateX(100%)',
+        transition: 'all 0.3s ease',
+        maxWidth: '300px',
+        wordWrap: 'break-word'
+    });
+    
+    // Set background color based on type
+    const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6'
+    };
+    toast.style.backgroundColor = colors[type] || colors.info;
+    
+    // Add to page
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
+
+function openPostModal(type) {
+    // For now, redirect to create post page with type parameter
+    // In a full implementation, this would open a modal
+    const params = new URLSearchParams({ type: type });
+    window.location.href = `/pages/social/create_post.php?${params.toString()}`;
 }
 
 function sharePost(postId) {
