@@ -622,7 +622,67 @@ function get_user_achievements($user_id) {
 function is_post_liked($user_id, $post_id) {
     global $pdo;
     
-    // For now, return false since likes table might not exist
-    // This can be implemented when likes functionality is added
-    return false;
+    try {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as count 
+            FROM post_interactions 
+            WHERE post_id = ? AND user_id = ? AND interaction_type = 'like'
+        ");
+        $stmt->execute([$post_id, $user_id]);
+        $result = $stmt->fetch();
+        return $result['count'] > 0;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function like_post($user_id, $post_id) {
+    global $pdo;
+    
+    try {
+        // Check if already liked
+        if (is_post_liked($user_id, $post_id)) {
+            return true; // Already liked
+        }
+        
+        // Add like
+        $stmt = $pdo->prepare("
+            INSERT INTO post_interactions (post_id, user_id, interaction_type) 
+            VALUES (?, ?, 'like')
+        ");
+        return $stmt->execute([$post_id, $user_id]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function unlike_post($user_id, $post_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            DELETE FROM post_interactions 
+            WHERE post_id = ? AND user_id = ? AND interaction_type = 'like'
+        ");
+        return $stmt->execute([$post_id, $user_id]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function get_post_likes_count($post_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as count 
+            FROM post_interactions 
+            WHERE post_id = ? AND interaction_type = 'like'
+        ");
+        $stmt->execute([$post_id]);
+        $result = $stmt->fetch();
+        return $result['count'];
+    } catch (Exception $e) {
+        return 0;
+    }
 }

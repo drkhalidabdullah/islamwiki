@@ -28,9 +28,29 @@ if (!empty($following)) {
     $placeholders = str_repeat('?,', count($following_ids) - 1) . '?';
     
     $stmt = $pdo->prepare("
-        SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type
+        SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
+               COALESCE(like_counts.likes_count, 0) as likes_count,
+               COALESCE(comment_counts.comments_count, 0) as comments_count,
+               COALESCE(share_counts.shares_count, 0) as shares_count
         FROM user_posts up
         JOIN users u ON up.user_id = u.id
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) as likes_count 
+            FROM post_interactions 
+            WHERE interaction_type = 'like' 
+            GROUP BY post_id
+        ) like_counts ON up.id = like_counts.post_id
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) as comments_count 
+            FROM post_comments 
+            GROUP BY post_id
+        ) comment_counts ON up.id = comment_counts.post_id
+        LEFT JOIN (
+            SELECT post_id, COUNT(*) as shares_count 
+            FROM post_interactions 
+            WHERE interaction_type = 'share' 
+            GROUP BY post_id
+        ) share_counts ON up.id = share_counts.post_id
         WHERE up.user_id IN ($placeholders) AND up.is_public = 1
         ORDER BY up.created_at DESC
         LIMIT 10
@@ -45,9 +65,29 @@ if (!empty($following)) {
 
 // Get recent public posts from all users (excluding current user)
 $stmt = $pdo->prepare("
-    SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type
+    SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
+           COALESCE(like_counts.likes_count, 0) as likes_count,
+           COALESCE(comment_counts.comments_count, 0) as comments_count,
+           COALESCE(share_counts.shares_count, 0) as shares_count
     FROM user_posts up
     JOIN users u ON up.user_id = u.id
+    LEFT JOIN (
+        SELECT post_id, COUNT(*) as likes_count 
+        FROM post_interactions 
+        WHERE interaction_type = 'like' 
+        GROUP BY post_id
+    ) like_counts ON up.id = like_counts.post_id
+    LEFT JOIN (
+        SELECT post_id, COUNT(*) as comments_count 
+        FROM post_comments 
+        GROUP BY post_id
+    ) comment_counts ON up.id = comment_counts.post_id
+    LEFT JOIN (
+        SELECT post_id, COUNT(*) as shares_count 
+        FROM post_interactions 
+        WHERE interaction_type = 'share' 
+        GROUP BY post_id
+    ) share_counts ON up.id = share_counts.post_id
     WHERE up.is_public = 1 AND up.user_id != ?
     ORDER BY up.created_at DESC
     LIMIT 15
@@ -237,7 +277,7 @@ include "../../includes/header.php";
                     <button class="filter-btn" data-filter="posts">Posts</button>
                     <button class="filter-btn" data-filter="articles">Articles</button>
                     <button class="filter-btn" data-filter="following">Following</button>
-                </div>
+        </div>
     </div>
     
             <!-- Feed Content -->
@@ -252,9 +292,29 @@ include "../../includes/header.php";
                     
                     // Get posts from followed users
                     $stmt = $pdo->prepare("
-                        SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type
+                        SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
+                               COALESCE(like_counts.likes_count, 0) as likes_count,
+                               COALESCE(comment_counts.comments_count, 0) as comments_count,
+                               COALESCE(share_counts.shares_count, 0) as shares_count
                         FROM user_posts up
                         JOIN users u ON up.user_id = u.id
+                        LEFT JOIN (
+                            SELECT post_id, COUNT(*) as likes_count 
+                            FROM post_interactions 
+                            WHERE interaction_type = 'like' 
+                            GROUP BY post_id
+                        ) like_counts ON up.id = like_counts.post_id
+                        LEFT JOIN (
+                            SELECT post_id, COUNT(*) as comments_count 
+                            FROM post_comments 
+                            GROUP BY post_id
+                        ) comment_counts ON up.id = comment_counts.post_id
+                        LEFT JOIN (
+                            SELECT post_id, COUNT(*) as shares_count 
+                            FROM post_interactions 
+                            WHERE interaction_type = 'share' 
+                            GROUP BY post_id
+                        ) share_counts ON up.id = share_counts.post_id
                         WHERE up.user_id IN ($placeholders) AND up.is_public = 1
                         ORDER BY up.created_at DESC
                         LIMIT 20
@@ -325,7 +385,7 @@ include "../../includes/header.php";
                     <div class="feed-section" id="following-content">
                         <?php if (!empty($following_content)): ?>
                             <?php foreach (array_slice($following_content, 0, 20) as $item): ?>
-                            <div class="feed-item" data-type="<?php echo $item['content_type']; ?>" data-filter="following">
+                            <div class="feed-item" data-type="<?php echo $item['content_type']; ?>" data-filter="following" <?php echo $item['content_type'] === 'post' ? 'data-post-id="' . $item['id'] . '"' : ''; ?>>
                                 <?php if ($item['content_type'] === 'post'): ?>
                                 <div class="card-header">
                                     <div class="author-info">
@@ -405,7 +465,7 @@ include "../../includes/header.php";
                     <div class="feed-section" id="all-content">
                         <?php if (!empty($all_content)): ?>
                             <?php foreach (array_slice($all_content, 0, 20) as $item): ?>
-                            <div class="feed-item" data-type="<?php echo $item['content_type']; ?>" data-filter="all">
+                            <div class="feed-item" data-type="<?php echo $item['content_type']; ?>" data-filter="all" <?php echo $item['content_type'] === 'post' ? 'data-post-id="' . $item['id'] . '"' : ''; ?>>
                                 <?php if ($item['content_type'] === 'post'): ?>
                                 <div class="card-header">
                                     <div class="author-info">
@@ -1905,9 +1965,18 @@ function likePost(postId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Update like button appearance
+            const likeBtn = document.querySelector(`[data-post-id="${postId}"].like-btn`);
+            if (likeBtn) {
+                likeBtn.style.color = '#ef4444';
+                likeBtn.classList.add('liked');
+            }
+            
+            // Update like count
+            updateLikeCount(postId, 1);
             showToast('Post liked!', 'success');
         } else {
-            showToast('Error liking post', 'error');
+            showToast(data.message || 'Error liking post', 'error');
         }
     })
     .catch(error => {
@@ -1930,14 +1999,36 @@ function unlikePost(postId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Update like button appearance
+            const likeBtn = document.querySelector(`[data-post-id="${postId}"].like-btn`);
+            if (likeBtn) {
+                likeBtn.style.color = '';
+                likeBtn.classList.remove('liked');
+            }
+            
+            // Update like count
+            updateLikeCount(postId, -1);
             showToast('Post unliked', 'info');
         } else {
-            showToast('Error unliking post', 'error');
+            showToast(data.message || 'Error unliking post', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         showToast('Error unliking post', 'error');
+    });
+}
+
+function updateLikeCount(postId, change) {
+    // Find all like count elements for this post
+    const feedItems = document.querySelectorAll(`[data-post-id="${postId}"]`);
+    feedItems.forEach(item => {
+        const likeCountSpan = item.querySelector('.engagement-stats span i.fa-heart')?.parentElement;
+        if (likeCountSpan) {
+            const currentCount = parseInt(likeCountSpan.textContent.trim()) || 0;
+            const newCount = Math.max(0, currentCount + change);
+            likeCountSpan.innerHTML = `<i class="fas fa-heart"></i> ${newCount}`;
+        }
     });
 }
 
