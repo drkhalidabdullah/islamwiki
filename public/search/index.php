@@ -2,6 +2,12 @@
 require_once "../config/config.php";
 require_once "../includes/functions.php";
 
+// Enforce rate limiting for search queries
+enforce_rate_limit('search_queries');
+
+// Include analytics
+require_once '../includes/analytics.php';
+
 $page_title = "Comprehensive Search";
 $is_search_page = true; // Hide header search
 
@@ -339,6 +345,9 @@ class EnhancedSearch {
             return;
         }
 
+        // Track search analytics
+        this.trackSearch(data.query, data.total_results);
+
         if (data.total_results === 0) {
             this.showNoResults(data.query, data.suggestions);
             return;
@@ -637,6 +646,22 @@ class EnhancedSearch {
         document.getElementById('searchInput').value = '';
         document.getElementById('clearSearch').style.display = 'none';
         this.showWelcome();
+    }
+
+    trackSearch(query, resultsCount) {
+        // Track search analytics
+        fetch('/api/ajax/track_search.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                results_count: resultsCount
+            })
+        }).catch(error => {
+            console.error('Search tracking error:', error);
+        });
     }
 
     getCurrentContentType() {

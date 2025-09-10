@@ -919,7 +919,7 @@ body {
 
 /* Body padding for fixed header */
 body {
-    padding-top: 56px;
+    padding-top: 10px;
 }
 
 /* Responsive Design */
@@ -1237,7 +1237,7 @@ body {
 
 /* Body padding for fixed header */
 body {
-    padding-top: 56px;
+    padding-top: 10px;
     background: #F0F2F5;
 }
 

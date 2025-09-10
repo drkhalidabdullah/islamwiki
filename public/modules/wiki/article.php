@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 
+// Enforce rate limiting for wiki article views
+enforce_rate_limit('wiki_views');
+
 $page_title = 'Article';
 
 $slug = $_GET['slug'] ?? '';
@@ -226,6 +229,39 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                 </div>
             <?php else: ?>
                 <?php echo $parsed_content; ?>
+            <?php endif; ?>
+        </div>
+        
+        <!-- Article Actions and Engagement -->
+        <div class="article-actions-section">
+            <!-- Report Button -->
+            <div class="article-report">
+                <button class="btn btn-outline btn-sm" onclick="showReportModal(<?php echo $article['id']; ?>, 'wiki_article')">
+                    <i class="fas fa-flag"></i> Report Content
+                </button>
+            </div>
+            
+            <!-- Guest Engagement Banner -->
+            <?php if (!is_logged_in()): ?>
+            <div class="guest-engagement-banner">
+                <div class="banner-content">
+                    <div class="banner-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="banner-text">
+                        <h4>Join the Community</h4>
+                        <p>Sign up to contribute to this article, edit content, and connect with other members</p>
+                    </div>
+                    <div class="banner-actions">
+                        <a href="/register" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Get Started
+                        </a>
+                        <a href="/login" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </div>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
         
@@ -633,8 +669,334 @@ style.textContent = `
             opacity: 0;
         }
     }
+    
+    /* Article Actions Section */
+    .article-actions-section {
+        margin-top: 2rem;
+        padding: 1rem 0;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .article-report {
+        margin-bottom: 1rem;
+    }
+    
+    /* Guest Engagement Banner */
+    .guest-engagement-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .banner-icon {
+        font-size: 3rem;
+        opacity: 0.9;
+    }
+    
+    .banner-text {
+        flex: 1;
+    }
+    
+    .banner-text h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .banner-text p {
+        margin: 0;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+    
+    .banner-actions {
+        display: flex;
+        gap: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .banner-actions .btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    
+    .banner-actions .btn-primary {
+        background: white;
+        color: #667eea;
+        border: 2px solid white;
+    }
+    
+    .banner-actions .btn-primary:hover {
+        background: transparent;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .banner-actions .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+    
+    .banner-actions .btn-outline:hover {
+        background: white;
+        color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    /* Report Modal */
+    .report-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .report-modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .report-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .report-modal-header h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .report-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+        padding: 0.25rem;
+    }
+    
+    .report-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .report-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .report-form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .report-form-group select,
+    .report-form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-family: inherit;
+    }
+    
+    .report-form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .report-form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .report-submit-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    
+    .report-submit-btn:hover {
+        background: #c82333;
+    }
+    
+    .report-submit-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .banner-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        .banner-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .banner-actions .btn {
+            width: 100%;
+        }
+        
+        .report-modal-content {
+            width: 95%;
+            margin: 1rem;
+        }
+        
+        .report-form-actions {
+            flex-direction: column;
+        }
+    }
 `;
 document.head.appendChild(style);
+
+// Report modal functionality
+function showReportModal(contentId, contentType) {
+    const modal = document.createElement('div');
+    modal.className = 'report-modal';
+    modal.innerHTML = `
+        <div class="report-modal-content">
+            <div class="report-modal-header">
+                <h3>Report Content</h3>
+                <button class="report-modal-close" onclick="closeReportModal()">&times;</button>
+            </div>
+            <div class="report-modal-body">
+                <form id="reportForm">
+                    <input type="hidden" name="content_id" value="${contentId}">
+                    <input type="hidden" name="content_type" value="${contentType}">
+                    
+                    <div class="report-form-group">
+                        <label for="reportReason">Reason for reporting:</label>
+                        <select name="reason" id="reportReason" required>
+                            <option value="">Select a reason</option>
+                            <option value="spam">Spam or promotional content</option>
+                            <option value="inappropriate">Inappropriate content</option>
+                            <option value="harassment">Harassment or bullying</option>
+                            <option value="copyright">Copyright violation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="report-form-group">
+                        <label for="reportDescription">Additional details (optional):</label>
+                        <textarea name="description" id="reportDescription" 
+                                  placeholder="Please provide additional details about why you're reporting this content..."></textarea>
+                    </div>
+                    
+                    <div class="report-form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeReportModal()">Cancel</button>
+                        <button type="submit" class="report-submit-btn">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Handle form submission
+    document.getElementById('reportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitReport(this);
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeReportModal();
+        }
+    });
+}
+
+function closeReportModal() {
+    const modal = document.querySelector('.report-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function submitReport(form) {
+    const submitBtn = form.querySelector('.report-submit-btn');
+    const originalText = submitBtn.textContent;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    
+    const formData = new FormData(form);
+    
+    fetch('/api/ajax/report_content.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            closeReportModal();
+        } else {
+            showToast(data.message || 'Failed to submit report', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Report submission error:', error);
+        showToast('Error submitting report. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    });
+}
+
+// Close modal with escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeReportModal();
+    }
+});
 </script>
 
 <?php include '../../includes/footer.php'; ?>

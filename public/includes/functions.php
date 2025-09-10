@@ -1,6 +1,10 @@
 <?php
 // Utility functions
 
+// Include rate limiting and moderation functions
+require_once __DIR__ . '/rate_limiter.php';
+require_once __DIR__ . '/moderation_functions.php';
+
 function sanitize_input($data) {
     $data = trim($data);
     $data = stripslashes($data);

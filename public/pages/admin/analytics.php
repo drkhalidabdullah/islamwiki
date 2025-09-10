@@ -1,235 +1,123 @@
 <?php
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
-require_once '../../includes/wiki_functions.php';
+require_once '../../includes/analytics.php';
 
-$page_title = 'Analytics & Reports';
-require_login();
-require_admin();
+$page_title = 'Analytics Dashboard';
 
-$current_user = get_user($_SESSION['user_id']);
-
-// Get date range
-$date_from = $_GET['date_from'] ?? date('Y-m-01'); // First day of current month
-$date_to = $_GET['date_to'] ?? date('Y-m-d'); // Today
-
-// Validate dates
-$date_from = date('Y-m-d', strtotime($date_from));
-$date_to = date('Y-m-d', strtotime($date_to));
+// Check admin permissions
+if (!is_admin()) {
+    redirect('/dashboard');
+}
 
 // Get analytics data
-$analytics = [];
+$days = (int)($_GET['days'] ?? 7);
+$metric = $_GET['metric'] ?? 'page_views';
 
-// Page views
-$stmt = $pdo->prepare("
-    SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as views
-    FROM wiki_articles 
-    WHERE created_at BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY date
-");
-$stmt->execute([$date_from . ' 00:00:00', $date_to . ' 23:59:59']);
-$analytics['page_views'] = $stmt->fetchAll();
+// Get various analytics data
+$page_views = get_analytics_data($days, 'page_views');
+$user_actions = get_analytics_data($days, 'user_actions');
+$popular_pages = get_popular_pages($days, 10);
+$user_engagement = get_user_engagement($days);
+$search_analytics = get_search_analytics($days, 10);
+$system_health = get_system_health();
 
-// Article creation trends
-$stmt = $pdo->prepare("
-    SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as articles
-    FROM wiki_articles 
-    WHERE created_at BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY date
-");
-$stmt->execute([$date_from . ' 00:00:00', $date_to . ' 23:59:59']);
-$analytics['article_creation'] = $stmt->fetchAll();
+// Get content popularity
+$wiki_popularity = get_content_popularity('wiki_article', $days, 5);
+$post_popularity = get_content_popularity('user_post', $days, 5);
 
-// Most viewed articles
-$stmt = $pdo->prepare("
-    SELECT 
-        wa.title,
-        wa.slug,
-        wa.view_count,
-        wa.created_at,
-        u.username,
-        u.display_name
-    FROM wiki_articles wa
-    JOIN users u ON wa.author_id = u.id
-    WHERE wa.status = 'published'
-    ORDER BY wa.view_count DESC
-    LIMIT 10
-");
-$stmt->execute();
-$analytics['most_viewed'] = $stmt->fetchAll();
-
-// Most active users
-$stmt = $pdo->prepare("
-    SELECT 
-        u.username,
-        u.display_name,
-        COUNT(wa.id) as articles_created,
-        SUM(wa.view_count) as total_views,
-        MAX(wa.created_at) as last_activity
-    FROM users u
-    LEFT JOIN wiki_articles wa ON u.id = wa.author_id
-    WHERE wa.created_at BETWEEN ? AND ?
-    GROUP BY u.id
-    ORDER BY articles_created DESC, total_views DESC
-    LIMIT 10
-");
-$stmt->execute([$date_from . ' 00:00:00', $date_to . ' 23:59:59']);
-$analytics['active_users'] = $stmt->fetchAll();
-
-// Category statistics
-$stmt = $pdo->prepare("
-    SELECT 
-        cc.name as category_name,
-        COUNT(wa.id) as article_count,
-        SUM(wa.view_count) as total_views,
-        AVG(wa.view_count) as avg_views
-    FROM content_categories cc
-    LEFT JOIN wiki_articles wa ON cc.id = wa.category_id
-    WHERE wa.status = 'published'
-    GROUP BY cc.id
-    ORDER BY article_count DESC
-");
-$stmt->execute();
-$analytics['categories'] = $stmt->fetchAll();
-
-// User registration trends
-$stmt = $pdo->prepare("
-    SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as registrations
-    FROM users 
-    WHERE created_at BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY date
-");
-$stmt->execute([$date_from . ' 00:00:00', $date_to . ' 23:59:59']);
-$analytics['user_registrations'] = $stmt->fetchAll();
-
-// Search statistics
-$stmt = $pdo->prepare("
-    SELECT 
-        suggestion,
-        search_count,
-        suggestion_type,
-        content_type
-    FROM search_suggestions 
-    WHERE is_active = 1
-    ORDER BY search_count DESC
-    LIMIT 20
-");
-$stmt->execute();
-$analytics['search_stats'] = $stmt->fetchAll();
-
-// File upload statistics
-$stmt = $pdo->prepare("
-    SELECT 
-        DATE(created_at) as date,
-        COUNT(*) as uploads,
-        SUM(file_size) as total_size
-    FROM wiki_files 
-    WHERE created_at BETWEEN ? AND ?
-    GROUP BY DATE(created_at)
-    ORDER BY date
-");
-$stmt->execute([$date_from . ' 00:00:00', $date_to . ' 23:59:59']);
-$analytics['file_uploads'] = $stmt->fetchAll();
-
-// System health metrics
-$stmt = $pdo->query("
-    SELECT 
-        (SELECT COUNT(*) FROM wiki_articles WHERE status = 'published') as published_articles,
-        (SELECT COUNT(*) FROM wiki_articles WHERE status = 'draft') as draft_articles,
-        (SELECT COUNT(*) FROM users WHERE is_active = 1) as active_users,
-        (SELECT COUNT(*) FROM wiki_files) as total_files,
-        (SELECT COUNT(*) FROM wiki_redirects) as total_redirects,
-        (SELECT COUNT(*) FROM article_versions) as total_versions
-");
-$analytics['system_health'] = $stmt->fetch();
-
-// Calculate totals
-$analytics['totals'] = [
-    'total_views' => array_sum(array_column($analytics['page_views'], 'views')),
-    'total_articles' => array_sum(array_column($analytics['article_creation'], 'articles')),
-    'total_registrations' => array_sum(array_column($analytics['user_registrations'], 'registrations')),
-    'total_uploads' => array_sum(array_column($analytics['file_uploads'], 'uploads')),
-    'total_upload_size' => array_sum(array_column($analytics['file_uploads'], 'total_size'))
-];
-
-include '../../includes/header.php';
+include "../../includes/header.php";
 ?>
 
-<div class="admin-page">
+<div class="admin-container">
     <div class="admin-header">
-        <h1>Analytics & Reports</h1>
-        <div class="admin-actions">
-            <a href="/admin" class="btn btn-secondary">Back to Admin Panel</a>
+        <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+        <p>Monitor site performance, user behavior, and content engagement</p>
+    </div>
+
+    <!-- Time Period Selector -->
+    <div class="analytics-controls">
+        <div class="time-period-selector">
+            <label for="days">Time Period:</label>
+            <select id="days" onchange="updateAnalytics()">
+                <option value="1" <?php echo $days === 1 ? 'selected' : ''; ?>>Last 24 Hours</option>
+                <option value="7" <?php echo $days === 7 ? 'selected' : ''; ?>>Last 7 Days</option>
+                <option value="30" <?php echo $days === 30 ? 'selected' : ''; ?>>Last 30 Days</option>
+                <option value="90" <?php echo $days === 90 ? 'selected' : ''; ?>>Last 90 Days</option>
+            </select>
         </div>
     </div>
 
-    <!-- Date Range Filter -->
-    <div class="card">
-        <h2>Date Range</h2>
-        <form method="GET" class="date-filter-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="date_from">From:</label>
-                    <input type="date" id="date_from" name="date_from" value="<?php echo $date_from; ?>">
+    <!-- System Health Overview -->
+    <div class="health-overview">
+        <h2>System Health</h2>
+        <div class="health-cards">
+            <div class="health-card <?php echo $system_health['database'] === 'healthy' ? 'healthy' : 'unhealthy'; ?>">
+                <div class="health-icon">
+                    <i class="fas fa-database"></i>
                 </div>
-                <div class="form-group">
-                    <label for="date_to">To:</label>
-                    <input type="date" id="date_to" name="date_to" value="<?php echo $date_to; ?>">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Update</button>
+                <div class="health-content">
+                    <h3>Database</h3>
+                    <p><?php echo ucfirst($system_health['database']); ?></p>
                 </div>
             </div>
-        </form>
+            <div class="health-card <?php echo $system_health['errors_last_hour'] < 10 ? 'healthy' : 'warning'; ?>">
+                <div class="health-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Errors (Last Hour)</h3>
+                    <p><?php echo number_format($system_health['errors_last_hour']); ?></p>
+                </div>
+            </div>
+            <div class="health-card <?php echo $system_health['avg_response_time'] < 1000 ? 'healthy' : 'warning'; ?>">
+                <div class="health-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Avg Response Time</h3>
+                    <p><?php echo number_format($system_health['avg_response_time'], 0); ?>ms</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Summary Statistics -->
-    <div class="card">
-        <h2>Summary Statistics</h2>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-icon">📊</div>
-                <div class="stat-content">
-                    <h3><?php echo number_format($analytics['totals']['total_views']); ?></h3>
-                    <p>Total Page Views</p>
-                </div>
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-eye"></i>
             </div>
-            <div class="stat-item">
-                <div class="stat-icon">📝</div>
-                <div class="stat-content">
-                    <h3><?php echo number_format($analytics['totals']['total_articles']); ?></h3>
-                    <p>Articles Created</p>
-                </div>
+            <div class="metric-content">
+                <h3><?php echo number_format(array_sum(array_column($page_views, 'count'))); ?></h3>
+                <p>Page Views</p>
             </div>
-            <div class="stat-item">
-                <div class="stat-icon">👥</div>
-                <div class="stat-content">
-                    <h3><?php echo number_format($analytics['totals']['total_registrations']); ?></h3>
-                    <p>New Users</p>
-                </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-users"></i>
             </div>
-            <div class="stat-item">
-                <div class="stat-icon">📁</div>
-                <div class="stat-content">
-                    <h3><?php echo number_format($analytics['totals']['total_uploads']); ?></h3>
-                    <p>Files Uploaded</p>
-                </div>
+            <div class="metric-content">
+                <h3><?php echo number_format($user_engagement['active_users'] ?? 0); ?></h3>
+                <p>Active Users</p>
             </div>
-            <div class="stat-item">
-                <div class="stat-icon">💾</div>
-                <div class="stat-content">
-                    <h3><?php echo format_file_size($analytics['totals']['total_upload_size']); ?></h3>
-                    <p>Storage Used</p>
-                </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-mouse-pointer"></i>
+            </div>
+            <div class="metric-content">
+                <h3><?php echo number_format($user_engagement['total_actions'] ?? 0); ?></h3>
+                <p>User Actions</p>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="metric-content">
+                <h3><?php echo number_format(array_sum(array_column($search_analytics, 'search_count'))); ?></h3>
+                <p>Search Queries</p>
             </div>
         </div>
     </div>
@@ -237,165 +125,86 @@ include '../../includes/header.php';
     <!-- Charts Section -->
     <div class="charts-section">
         <div class="chart-container">
-            <div class="card">
-                <h2>Page Views Over Time</h2>
-                <canvas id="pageViewsChart" width="400" height="200"></canvas>
-            </div>
+            <h3>Page Views Over Time</h3>
+            <canvas id="pageViewsChart" width="400" height="200"></canvas>
         </div>
-        
         <div class="chart-container">
-            <div class="card">
-                <h2>Article Creation Trends</h2>
-                <canvas id="articleCreationChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-container">
-            <div class="card">
-                <h2>User Registrations</h2>
-                <canvas id="userRegistrationsChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-container">
-            <div class="card">
-                <h2>File Uploads</h2>
-                <canvas id="fileUploadsChart" width="400" height="200"></canvas>
-            </div>
+            <h3>User Actions Over Time</h3>
+            <canvas id="userActionsChart" width="400" height="200"></canvas>
         </div>
     </div>
 
-    <!-- Most Viewed Articles -->
-    <div class="card">
-        <h2>Most Viewed Articles</h2>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Article</th>
-                        <th>Author</th>
-                        <th>Views</th>
-                        <th>Created</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($analytics['most_viewed'] as $index => $article): ?>
-                        <tr>
-                            <td><?php echo $index + 1; ?></td>
-                            <td>
-                                <a href="/wiki/<?php echo $article['slug']; ?>">
-                                    <?php echo htmlspecialchars($article['title']); ?>
-                                </a>
-                            </td>
-                            <td><?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?></td>
-                            <td><?php echo number_format($article['view_count']); ?></td>
-                            <td><?php echo format_date($article['created_at']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Most Active Users -->
-    <div class="card">
-        <h2>Most Active Users</h2>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Articles Created</th>
-                        <th>Total Views</th>
-                        <th>Last Activity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($analytics['active_users'] as $user): ?>
-                        <tr>
-                            <td>
-                                <a href="/user/<?php echo $user['username']; ?>">
-                                    <?php echo htmlspecialchars($user['display_name'] ?: $user['username']); ?>
-                                </a>
-                            </td>
-                            <td><?php echo number_format($user['articles_created']); ?></td>
-                            <td><?php echo number_format($user['total_views']); ?></td>
-                            <td><?php echo format_date($user['last_activity']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Category Statistics -->
-    <div class="card">
-        <h2>Category Statistics</h2>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Articles</th>
-                        <th>Total Views</th>
-                        <th>Avg Views</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($analytics['categories'] as $category): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($category['category_name']); ?></td>
-                            <td><?php echo number_format($category['article_count']); ?></td>
-                            <td><?php echo number_format($category['total_views']); ?></td>
-                            <td><?php echo number_format($category['avg_views'], 1); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Search Statistics -->
-    <div class="card">
-        <h2>Popular Search Terms</h2>
-        <div class="search-stats">
-            <?php foreach ($analytics['search_stats'] as $search): ?>
-                <div class="search-item">
-                    <span class="search-term"><?php echo htmlspecialchars($search['suggestion']); ?></span>
-                    <span class="search-count"><?php echo number_format($search['search_count']); ?> searches</span>
+    <!-- Popular Content -->
+    <div class="content-analytics">
+        <div class="analytics-section">
+            <h3>Popular Pages</h3>
+            <div class="content-list">
+                <?php foreach ($popular_pages as $page): ?>
+                <div class="content-item">
+                    <div class="content-info">
+                        <h4><?php echo htmlspecialchars($page['page']); ?></h4>
+                        <p><?php echo number_format($page['views']); ?> views</p>
+                    </div>
+                    <div class="content-stats">
+                        <span class="stat"><?php echo number_format($page['unique_users']); ?> users</span>
+                        <span class="stat"><?php echo number_format($page['unique_ips']); ?> IPs</span>
+                    </div>
                 </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="analytics-section">
+            <h3>Popular Search Queries</h3>
+            <div class="content-list">
+                <?php foreach ($search_analytics as $search): ?>
+                <div class="content-item">
+                    <div class="content-info">
+                        <h4><?php echo htmlspecialchars($search['query']); ?></h4>
+                        <p><?php echo number_format($search['search_count']); ?> searches</p>
+                    </div>
+                    <div class="content-stats">
+                        <span class="stat"><?php echo number_format($search['avg_results'], 1); ?> avg results</span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 
-    <!-- System Health -->
-    <div class="card">
-        <h2>System Health</h2>
-        <div class="health-metrics">
-            <div class="health-item">
-                <div class="health-label">Published Articles</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['published_articles']); ?></div>
+    <!-- Content Popularity -->
+    <div class="content-popularity">
+        <div class="analytics-section">
+            <h3>Popular Wiki Articles</h3>
+            <div class="content-list">
+                <?php foreach ($wiki_popularity as $content): ?>
+                <div class="content-item">
+                    <div class="content-info">
+                        <h4>Article #<?php echo $content['content_id']; ?></h4>
+                        <p><?php echo number_format($content['interactions']); ?> interactions</p>
+                    </div>
+                    <div class="content-stats">
+                        <span class="stat"><?php echo number_format($content['unique_users']); ?> users</span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
-            <div class="health-item">
-                <div class="health-label">Draft Articles</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['draft_articles']); ?></div>
-            </div>
-            <div class="health-item">
-                <div class="health-label">Active Users</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['active_users']); ?></div>
-            </div>
-            <div class="health-item">
-                <div class="health-label">Total Files</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['total_files']); ?></div>
-            </div>
-            <div class="health-item">
-                <div class="health-label">Redirects</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['total_redirects']); ?></div>
-            </div>
-            <div class="health-item">
-                <div class="health-label">Article Versions</div>
-                <div class="health-value"><?php echo number_format($analytics['system_health']['total_versions']); ?></div>
+        </div>
+
+        <div class="analytics-section">
+            <h3>Popular User Posts</h3>
+            <div class="content-list">
+                <?php foreach ($post_popularity as $content): ?>
+                <div class="content-item">
+                    <div class="content-info">
+                        <h4>Post #<?php echo $content['content_id']; ?></h4>
+                        <p><?php echo number_format($content['interactions']); ?> interactions</p>
+                    </div>
+                    <div class="content-stats">
+                        <span class="stat"><?php echo number_format($content['unique_users']); ?> users</span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
@@ -406,31 +215,23 @@ include '../../includes/header.php';
 
 <script>
 // Chart data
-const pageViewsData = <?php echo json_encode($analytics['page_views']); ?>;
-const articleCreationData = <?php echo json_encode($analytics['article_creation']); ?>;
-const userRegistrationsData = <?php echo json_encode($analytics['user_registrations']); ?>;
-const fileUploadsData = <?php echo json_encode($analytics['file_uploads']); ?>;
-
-// Helper function to format chart data
-function formatChartData(data, labelKey, valueKey) {
-    return {
-        labels: data.map(item => item[labelKey]),
-        datasets: [{
-            label: valueKey,
-            data: data.map(item => item[valueKey]),
-            borderColor: '#007bff',
-            backgroundColor: 'rgba(0, 123, 255, 0.1)',
-            tension: 0.4,
-            fill: true
-        }]
-    };
-}
+const pageViewsData = <?php echo json_encode($page_views); ?>;
+const userActionsData = <?php echo json_encode($user_actions); ?>;
 
 // Page Views Chart
 const pageViewsCtx = document.getElementById('pageViewsChart').getContext('2d');
 new Chart(pageViewsCtx, {
     type: 'line',
-    data: formatChartData(pageViewsData, 'date', 'views'),
+    data: {
+        labels: pageViewsData.map(item => item.date),
+        datasets: [{
+            label: 'Page Views',
+            data: pageViewsData.map(item => item.count),
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }]
+    },
     options: {
         responsive: true,
         scales: {
@@ -441,26 +242,20 @@ new Chart(pageViewsCtx, {
     }
 });
 
-// Article Creation Chart
-const articleCreationCtx = document.getElementById('articleCreationChart').getContext('2d');
-new Chart(articleCreationCtx, {
-    type: 'line',
-    data: formatChartData(articleCreationData, 'date', 'articles'),
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-// User Registrations Chart
-const userRegistrationsCtx = document.getElementById('userRegistrationsChart').getContext('2d');
-new Chart(userRegistrationsCtx, {
+// User Actions Chart
+const userActionsCtx = document.getElementById('userActionsChart').getContext('2d');
+new Chart(userActionsCtx, {
     type: 'bar',
-    data: formatChartData(userRegistrationsData, 'date', 'registrations'),
+    data: {
+        labels: userActionsData.map(item => item.date),
+        datasets: [{
+            label: 'User Actions',
+            data: userActionsData.map(item => item.count),
+            backgroundColor: '#28a745',
+            borderColor: '#1e7e34',
+            borderWidth: 1
+        }]
+    },
     options: {
         responsive: true,
         scales: {
@@ -471,129 +266,156 @@ new Chart(userRegistrationsCtx, {
     }
 });
 
-// File Uploads Chart
-const fileUploadsCtx = document.getElementById('fileUploadsChart').getContext('2d');
-new Chart(fileUploadsCtx, {
-    type: 'bar',
-    data: formatChartData(fileUploadsData, 'date', 'uploads'),
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
+// Update analytics when time period changes
+function updateAnalytics() {
+    const days = document.getElementById('days').value;
+    window.location.href = `?days=${days}`;
+}
 </script>
 
 <style>
-.admin-page {
-    max-width: 1400px;
+.admin-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 20px;
 }
 
 .admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e9ecef;
 }
 
 .admin-header h1 {
-    margin: 0;
     color: #2c3e50;
+    margin-bottom: 0.5rem;
 }
 
-.admin-actions {
+.analytics-controls {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.time-period-selector {
     display: flex;
+    align-items: center;
     gap: 1rem;
 }
 
-.card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 2rem;
+.time-period-selector label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.time-period-selector select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.health-overview {
     margin-bottom: 2rem;
 }
 
-.card h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
+.health-overview h2 {
     color: #2c3e50;
-    border-bottom: 1px solid #e9ecef;
-    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-.date-filter-form {
-    display: flex;
-    gap: 1rem;
-    align-items: end;
-}
-
-.form-row {
-    display: flex;
-    gap: 1rem;
-    align-items: end;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-}
-
-.form-group input {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.stats-grid {
+.health-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
-.stat-item {
-    background: #f8f9fa;
+.health-card {
+    background: white;
+    border-radius: 8px;
     padding: 1.5rem;
-    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.stat-icon {
+.health-card.healthy {
+    border-left: 4px solid #28a745;
+}
+
+.health-card.warning {
+    border-left: 4px solid #ffc107;
+}
+
+.health-card.unhealthy {
+    border-left: 4px solid #dc3545;
+}
+
+.health-icon {
     font-size: 2rem;
-    width: 60px;
-    height: 60px;
+}
+
+.health-card.healthy .health-icon {
+    color: #28a745;
+}
+
+.health-card.warning .health-icon {
+    color: #ffc107;
+}
+
+.health-card.unhealthy .health-icon {
+    color: #dc3545;
+}
+
+.health-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.health-content p {
+    margin: 0;
+    font-weight: 600;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.metric-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 50%;
+    font-size: 1.2rem;
 }
 
-.stat-content h3 {
+.metric-content h3 {
+    font-size: 1.8rem;
     margin: 0;
     color: #2c3e50;
-    font-size: 1.5rem;
 }
 
-.stat-content p {
+.metric-content p {
     margin: 0;
-    color: #666;
+    color: #6c757d;
     font-size: 0.9rem;
 }
 
@@ -607,157 +429,103 @@ new Chart(fileUploadsCtx, {
 .chart-container {
     background: white;
     border-radius: 8px;
+    padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 2rem;
 }
 
-.chart-container h2 {
+.chart-container h3 {
     margin-top: 0;
-    margin-bottom: 1.5rem;
     color: #2c3e50;
-    border-bottom: 1px solid #e9ecef;
-    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-.table-responsive {
-    overflow-x: auto;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-
-.table th,
-.table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.table tr:hover {
-    background: #f8f9fa;
-}
-
-.search-stats {
+.content-analytics {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.content-popularity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.analytics-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analytics-section h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.content-list {
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
-.search-item {
+.content-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 6px;
+    border-left: 4px solid #007bff;
 }
 
-.search-term {
-    font-weight: 500;
+.content-info h4 {
+    margin: 0 0 0.5rem 0;
     color: #2c3e50;
+    font-size: 1rem;
 }
 
-.search-count {
+.content-info p {
+    margin: 0;
     color: #6c757d;
     font-size: 0.9rem;
 }
 
-.health-metrics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+.content-stats {
+    display: flex;
+    gap: 1rem;
 }
 
-.health-item {
-    text-align: center;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-
-.health-label {
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.health-value {
-    color: #2c3e50;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border: none;
+.stat {
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
     border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-}
-
-.btn-primary {
-    background: #007bff;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #0056b3;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
+    font-size: 0.8rem;
+    color: #495057;
 }
 
 @media (max-width: 768px) {
-    .admin-page {
-        padding: 1rem;
-    }
-    
-    .admin-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-    
-    .form-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
     .charts-section {
         grid-template-columns: 1fr;
     }
     
-    .search-stats {
+    .content-analytics,
+    .content-popularity {
         grid-template-columns: 1fr;
     }
     
-    .health-metrics {
-        grid-template-columns: repeat(2, 1fr);
+    .content-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .content-stats {
+        align-self: flex-end;
     }
 }
 </style>
 
-<?php include '../../includes/footer.php'; ?>
+<?php include "../../includes/footer.php"; ?>
