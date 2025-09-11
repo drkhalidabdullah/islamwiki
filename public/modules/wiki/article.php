@@ -64,8 +64,7 @@ include '../../includes/header.php';
 $is_main_page = ($article['slug'] === 'Main_Page');
 ?>
 
-<div class="article-container">
-    <article class="card">
+<article class="card">
         <header class="article-header">
             <!-- Compact Header Layout -->
             <div class="article-header-compact">
@@ -126,110 +125,222 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             </div>
         </header>
         
-        <div class="article-content">
-            <?php if (false): ?>
-                <!-- Wikipedia-style Main Page Layout -->
-                <div class="mp-topbanner">
-                    <div class="mp-welcomecount">
-                        <div class="mp-welcome">
-                            <h1>Welcome to Islamic Wiki</h1>,
-                        </div>
-                        <div class="mp-free">the free encyclopedia that anyone can edit.</div>
-                        <div class="articlecount">
-                            <ul>
-                                <li><a href="/wiki/special/user_contributions">1,234</a> active editors</li>
-                                <li><a href="/wiki/special/all_pages">567</a> articles in English</li>
-                            </ul>
-                        </div>
+        <!-- Three-column layout: 15% | 70% | 15% -->
+        <div class="wiki-layout">
+            <!-- Left Sidebar: Table of Contents -->
+            <aside class="wiki-toc">
+                <div class="toc-header">
+                    <h3>Contents</h3>
+                    <button class="toc-toggle" onclick="toggleTOC()">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="toc-content" id="toc-content">
+                    <div class="toc-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Generating table of contents...
                     </div>
                 </div>
-                
-                <div class="mp-upper">
-                    <div class="mp-left">
-                        <h2 class="mp-h2">From today's featured article</h2>
-                        <div class="mp-tfa">
-                            <?php echo $parsed_content; ?>
-                        </div>
-                    </div>
-                    <div class="mp-right">
-                        <h2 class="mp-h2">In the news</h2>
-                        <div class="mp-itn">
-                            <ul>
-                                <li>Recent developments in Islamic education and scholarship</li>
-                                <li>New archaeological discoveries related to Islamic history</li>
-                                <li>Contemporary Islamic art and cultural exhibitions</li>
-                                <li>Interfaith dialogue initiatives around the world</li>
-                            </ul>
-                            <p><strong>Ongoing:</strong> Islamic education reforms, Preservation of Islamic heritage sites, Digital Islamic resources development</p>
+            </aside>
+            
+            <!-- Main Content Area -->
+            <main class="wiki-main-content">
+                <div class="article-content">
+                    <?php if (false): ?>
+                        <!-- Wikipedia-style Main Page Layout -->
+                        <div class="mp-topbanner">
+                            <div class="mp-welcomecount">
+                                <div class="mp-welcome">
+                                    <h1>Welcome to Islamic Wiki</h1>,
+                                </div>
+                                <div class="mp-free">the free encyclopedia that anyone can edit.</div>
+                                <div class="articlecount">
+                                    <ul>
+                                        <li><a href="/wiki/special/user_contributions">1,234</a> active editors</li>
+                                        <li><a href="/wiki/special/all_pages">567</a> articles in English</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                         
-                        <h2 class="mp-h2">On this day</h2>
-                        <div class="mp-otd">
-                            <p><strong>September 9th in Islamic History</strong></p>
-                            <ul>
-                                <li><strong>622 CE</strong> - The Hijra (migration) of Prophet Muhammad and his companions from Mecca to Medina</li>
-                                <li><strong>1187 CE</strong> - Saladin recaptures Jerusalem from the Crusaders</li>
-                                <li><strong>1924 CE</strong> - The abolition of the Ottoman Caliphate</li>
-                            </ul>
+                        <div class="mp-upper">
+                            <div class="mp-left">
+                                <h2 class="mp-h2">From today's featured article</h2>
+                                <div class="mp-tfa">
+                                    <?php echo $parsed_content; ?>
+                                </div>
+                            </div>
+                            <div class="mp-right">
+                                <h2 class="mp-h2">In the news</h2>
+                                <div class="mp-itn">
+                                    <ul>
+                                        <li>Recent developments in Islamic education and scholarship</li>
+                                        <li>New archaeological discoveries related to Islamic history</li>
+                                        <li>Contemporary Islamic art and cultural exhibitions</li>
+                                        <li>Interfaith dialogue initiatives around the world</li>
+                                    </ul>
+                                    <p><strong>Ongoing:</strong> Islamic education reforms, Preservation of Islamic heritage sites, Digital Islamic resources development</p>
+                                </div>
+                                
+                                <h2 class="mp-h2">On this day</h2>
+                                <div class="mp-otd">
+                                    <p><strong>September 9th in Islamic History</strong></p>
+                                    <ul>
+                                        <li><strong>622 CE</strong> - The Hijra (migration) of Prophet Muhammad and his companions from Mecca to Medina</li>
+                                        <li><strong>1187 CE</strong> - Saladin recaptures Jerusalem from the Crusaders</li>
+                                        <li><strong>1924 CE</strong> - The abolition of the Ottoman Caliphate</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div class="mp-lower">
+                            <h2 class="mp-h2">Today's featured picture</h2>
+                            <div class="mp-tfp">
+                                <img src="https://via.placeholder.com/300x200/2E5266/FFFFFF?text=Islamic+Calligraphy" alt="Islamic Calligraphy">
+                                <p><strong>Islamic Calligraphy Art</strong><br>
+                                Islamic calligraphy is the artistic practice of handwriting and calligraphy, based upon the Arabic script. It is known in Arabic as khatt (خط), derived from the word 'line', 'design', or 'construction'.</p>
+                                <p><em>Photograph credit:</em> Islamic Art Collection</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mp-bottom">
+                            <h2 class="mp-h2">Other areas of Islamic Wiki</h2>
+                            <div class="mp-other-content">
+                                <ul>
+                                    <li><a href="/wiki/special/all_pages">Community portal</a> - The hub for editors, with resources, links, tasks, and announcements</li>
+                                    <li><a href="/wiki/special/recent_changes">Village pump</a> - For discussions about Islamic Wiki itself</li>
+                                    <li><a href="/wiki/special/new_pages">Site news</a> - Announcements, updates, articles, and press releases</li>
+                                    <li><a href="/search">Teahouse</a> - For new editors to become acclimated and ask questions</li>
+                                    <li><a href="/wiki/special/all_pages">Help desk</a> - Ask questions about using or editing Islamic Wiki</li>
+                                    <li><a href="/search">Reference desk</a> - Ask research questions about Islamic topics</li>
+                                    <li><a href="/wiki">Content portals</a> - Browse topics of interest</li>
+                                </ul>
+                            </div>
+                            
+                            <h2 class="mp-h2">Islamic Wiki's sister projects</h2>
+                            <div class="mp-sister-content">
+                                <ul>
+                                    <li><a href="#">Islamic Texts</a> - Digital library of Islamic texts and manuscripts</li>
+                                    <li><a href="#">Islamic Media</a> - Repository of Islamic images, videos, and audio</li>
+                                    <li><a href="#">Islamic Data</a> - Structured data about Islamic topics</li>
+                                    <li><a href="#">Islamic News</a> - News and current events from an Islamic perspective</li>
+                                    <li><a href="#">Islamic Quotes</a> - Collection of Islamic sayings and quotations</li>
+                                    <li><a href="#">Islamic Travel</a> - Travel guide for Islamic sites and destinations</li>
+                                </ul>
+                            </div>
+                            
+                            <h2 class="mp-h2">Islamic Wiki languages</h2>
+                            <div class="mp-lang">
+                                <ul>
+                                    <li><a href="#">العربية (Arabic)</a></li>
+                                    <li><a href="#">فارسی (Persian)</a></li>
+                                    <li><a href="#">اردو (Urdu)</a></li>
+                                    <li><a href="#">Türkçe (Turkish)</a></li>
+                                    <li><a href="#">Bahasa Indonesia (Indonesian)</a></li>
+                                    <li><a href="#">বাংলা (Bengali)</a></li>
+                                    <li><a href="#">हिन्दी (Hindi)</a></li>
+                                    <li><a href="#">Français (French)</a></li>
+                                    <li><a href="#">Español (Spanish)</a></li>
+                                    <li><a href="#">Deutsch (German)</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php echo $parsed_content; ?>
+                    <?php endif; ?>
+                </div>
+            </main>
+            
+            <!-- Right Sidebar: Tools -->
+            <aside class="wiki-tools">
+                <div class="tools-section">
+                    <h3>Tools</h3>
+                    <ul class="tools-list">
+                        <li>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/what-links-here" class="tool-link">
+                                <i class="fas fa-link"></i>
+                                <span>What links here</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/page-info" class="tool-link">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Page information</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="tool-link" onclick="citePage()">
+                                <i class="fas fa-quote-left"></i>
+                                <span>Cite this page</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="tool-link" onclick="downloadPDF()">
+                                <i class="fas fa-download"></i>
+                                <span>Download as PDF</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="tools-section">
+                    <h3>Page Statistics</h3>
+                    <div class="stats-list">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span><?php echo number_format($article['view_count']); ?> views</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Created <?php echo date('M j, Y', strtotime($article['created_at'])); ?></span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-edit"></i>
+                            <span>Last edited <?php echo date('M j, Y', strtotime($article['updated_at'])); ?></span>
+                        </div>
+                        <?php if ($article['category_name']): ?>
+                        <div class="stat-item">
+                            <i class="fas fa-folder"></i>
+                            <span>Category: <?php echo htmlspecialchars($article['category_name']); ?></span>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
-                <div class="mp-lower">
-                    <h2 class="mp-h2">Today's featured picture</h2>
-                    <div class="mp-tfp">
-                        <img src="https://via.placeholder.com/300x200/2E5266/FFFFFF?text=Islamic+Calligraphy" alt="Islamic Calligraphy">
-                        <p><strong>Islamic Calligraphy Art</strong><br>
-                        Islamic calligraphy is the artistic practice of handwriting and calligraphy, based upon the Arabic script. It is known in Arabic as khatt (خط), derived from the word 'line', 'design', or 'construction'.</p>
-                        <p><em>Photograph credit:</em> Islamic Art Collection</p>
-                    </div>
+                <div class="tools-section">
+                    <h3>Quick Actions</h3>
+                    <ul class="tools-list">
+                        <?php if (is_logged_in() && is_editor()): ?>
+                        <li>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="tool-link">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit this page</span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                        <li>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/history" class="tool-link">
+                                <i class="fas fa-history"></i>
+                                <span>View history</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="tool-link">
+                                <i class="fas fa-comments"></i>
+                                <span>Discussion</span>
+                            </a>
+                        </li>
+                        <?php if (is_logged_in()): ?>
+                        <li>
+                            <a href="#" class="tool-link" onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
+                                <i class="fas fa-eye"></i>
+                                <span><?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?></span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
                 </div>
-                
-                <div class="mp-bottom">
-                    <h2 class="mp-h2">Other areas of Islamic Wiki</h2>
-                    <div class="mp-other-content">
-                        <ul>
-                            <li><a href="/wiki/special/all_pages">Community portal</a> - The hub for editors, with resources, links, tasks, and announcements</li>
-                            <li><a href="/wiki/special/recent_changes">Village pump</a> - For discussions about Islamic Wiki itself</li>
-                            <li><a href="/wiki/special/new_pages">Site news</a> - Announcements, updates, articles, and press releases</li>
-                            <li><a href="/search">Teahouse</a> - For new editors to become acclimated and ask questions</li>
-                            <li><a href="/wiki/special/all_pages">Help desk</a> - Ask questions about using or editing Islamic Wiki</li>
-                            <li><a href="/search">Reference desk</a> - Ask research questions about Islamic topics</li>
-                            <li><a href="/wiki">Content portals</a> - Browse topics of interest</li>
-                        </ul>
-                    </div>
-                    
-                    <h2 class="mp-h2">Islamic Wiki's sister projects</h2>
-                    <div class="mp-sister-content">
-                        <ul>
-                            <li><a href="#">Islamic Texts</a> - Digital library of Islamic texts and manuscripts</li>
-                            <li><a href="#">Islamic Media</a> - Repository of Islamic images, videos, and audio</li>
-                            <li><a href="#">Islamic Data</a> - Structured data about Islamic topics</li>
-                            <li><a href="#">Islamic News</a> - News and current events from an Islamic perspective</li>
-                            <li><a href="#">Islamic Quotes</a> - Collection of Islamic sayings and quotations</li>
-                            <li><a href="#">Islamic Travel</a> - Travel guide for Islamic sites and destinations</li>
-                        </ul>
-                    </div>
-                    
-                    <h2 class="mp-h2">Islamic Wiki languages</h2>
-                    <div class="mp-lang">
-                        <ul>
-                            <li><a href="#">العربية (Arabic)</a></li>
-                            <li><a href="#">فارسی (Persian)</a></li>
-                            <li><a href="#">اردو (Urdu)</a></li>
-                            <li><a href="#">Türkçe (Turkish)</a></li>
-                            <li><a href="#">Bahasa Indonesia (Indonesian)</a></li>
-                            <li><a href="#">বাংলা (Bengali)</a></li>
-                            <li><a href="#">हिन्दी (Hindi)</a></li>
-                            <li><a href="#">Français (French)</a></li>
-                            <li><a href="#">Español (Spanish)</a></li>
-                            <li><a href="#">Deutsch (German)</a></li>
-                        </ul>
-                    </div>
-                </div>
-            <?php else: ?>
-                <?php echo $parsed_content; ?>
-            <?php endif; ?>
+            </aside>
         </div>
         
         <!-- Article Actions and Engagement -->
@@ -300,7 +411,6 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     </div>
     <?php endif; ?>
     <?php endif; ?>
-</div>
 
 <style>
 .talk-indicator {
@@ -561,6 +671,483 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     color: white;
     text-decoration: none;
     transform: translateY(-1px);
+}
+
+/* ========================================
+   WIKI LAYOUT STYLES
+   ======================================== */
+
+/* Three-column layout: 250px | 1fr | 250px */
+.wiki-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr 250px;
+    gap: 2rem;
+    margin-top: 1rem;
+    max-width: 100%;
+    min-width: 900px;
+    overflow-x: auto;
+}
+
+/* Left Sidebar: Table of Contents */
+.wiki-toc {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+    border: 1px solid #e9ecef;
+}
+
+.toc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.toc-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.toc-toggle {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.toc-toggle:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.toc-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.toc-content.collapsed {
+    display: none;
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-item {
+    margin-bottom: 0.25rem;
+}
+
+.toc-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.toc-link:hover {
+    background: #e9ecef;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.toc-link.active {
+    background: #007bff;
+    color: white;
+    font-weight: 500;
+}
+
+.toc-level-1 { font-weight: 600; }
+.toc-level-2 { font-weight: 500; }
+.toc-level-3 { font-weight: 400; }
+.toc-level-4 { font-weight: 400; }
+.toc-level-5 { font-weight: 400; }
+.toc-level-6 { font-weight: 400; }
+
+.toc-empty {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+}
+
+.toc-loading {
+    color: #6c757d;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Main Content Area */
+.wiki-main-content {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    min-width: 0; /* Prevent grid overflow */
+}
+
+/* Right Sidebar: Tools */
+.wiki-tools {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+    border: 1px solid #e9ecef;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.tools-section {
+    margin-bottom: 2rem;
+}
+
+.tools-section:last-child {
+    margin-bottom: 0;
+}
+
+.tools-section h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tools-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tools-list li {
+    margin-bottom: 0.5rem;
+}
+
+.tool-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.tool-link:hover {
+    background: #e9ecef;
+    color: #007bff;
+    text-decoration: none;
+    transform: translateX(2px);
+}
+
+.tool-link i {
+    width: 16px;
+    text-align: center;
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.tool-link span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.tool-link:hover i {
+    color: #007bff;
+}
+
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stats-list .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    font-size: 0.75rem;
+    color: #6c757d;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.stats-list .stat-item i {
+    width: 16px;
+    text-align: center;
+    color: #007bff;
+    flex-shrink: 0;
+}
+
+.stats-list .stat-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .wiki-layout {
+        grid-template-columns: 220px 1fr 220px;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .wiki-layout {
+        grid-template-columns: 200px 1fr 200px;
+        gap: 1rem;
+    }
+    
+    .wiki-toc,
+    .wiki-tools {
+        padding: 0.75rem;
+    }
+    
+    .toc-header h3,
+    .tools-section h3 {
+        font-size: 0.9rem;
+    }
+    
+    .toc-link,
+    .tool-link {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .wiki-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        min-width: auto;
+        overflow-x: visible;
+    }
+    
+    .wiki-toc,
+    .wiki-tools {
+        position: static;
+        margin-bottom: 1rem;
+        min-width: auto;
+    }
+    
+    .wiki-main-content {
+        padding: 1.5rem;
+    }
+    
+    .toc-content {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .wiki-main-content {
+        padding: 1rem;
+    }
+    
+    .wiki-toc,
+    .wiki-tools {
+        padding: 0.5rem;
+    }
+    
+    .toc-header h3,
+    .tools-section h3 {
+        font-size: 0.85rem;
+    }
+    
+    .toc-link,
+    .tool-link {
+        font-size: 0.75rem;
+        padding: 0.375rem;
+    }
+}
+
+/* Citation Modal */
+.citation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.citation-modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.citation-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.citation-modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.citation-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0.25rem;
+}
+
+.citation-modal-body {
+    padding: 1.5rem;
+}
+
+.citation-format {
+    margin-bottom: 1.5rem;
+}
+
+.citation-format label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.citation-format textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.citation-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .wiki-layout {
+        grid-template-columns: 200px 1fr 250px;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .wiki-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .wiki-toc,
+    .wiki-tools {
+        position: static;
+        order: 2;
+    }
+    
+    .wiki-main-content {
+        order: 1;
+    }
+    
+    .wiki-toc {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wiki-layout {
+        gap: 0.5rem;
+    }
+    
+    .wiki-toc,
+    .wiki-tools {
+        padding: 0.75rem;
+    }
+    
+    .toc-content {
+        max-height: 50vh;
+    }
+    
+    .tools-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .citation-modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .citation-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .wiki-toc,
+    .wiki-tools {
+        padding: 0.5rem;
+    }
+    
+    .toc-header h3,
+    .tools-section h3 {
+        font-size: 1rem;
+    }
+    
+    .tool-link {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .stats-list .stat-item {
+        padding: 0.375rem;
+        font-size: 0.8rem;
+    }
 }
 </style>
 
@@ -996,6 +1583,337 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeReportModal();
     }
+});
+
+// Table of Contents functionality
+function generateTOC() {
+    const content = document.querySelector('.article-content');
+    const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const tocContent = document.getElementById('toc-content');
+    
+    if (headings.length === 0) {
+        tocContent.innerHTML = '<div class="toc-empty">No headings found in this article.</div>';
+        return;
+    }
+    
+    let tocHTML = '<ul class="toc-list">';
+    let tocCounter = 1;
+    
+    headings.forEach((heading, index) => {
+        // Skip the first h1 if it's the article title
+        if (index === 0 && heading.tagName === 'H1') {
+            return;
+        }
+        
+        const id = `heading-${tocCounter}`;
+        heading.id = id;
+        
+        const level = parseInt(heading.tagName.charAt(1));
+        const text = heading.textContent.trim();
+        const indent = (level - 2) * 20; // Indent based on heading level
+        
+        tocHTML += `
+            <li class="toc-item toc-level-${level}" style="padding-left: ${indent}px">
+                <a href="#${id}" class="toc-link" data-heading="${id}">
+                    ${text}
+                </a>
+            </li>
+        `;
+        
+        tocCounter++;
+    });
+    
+    tocHTML += '</ul>';
+    tocContent.innerHTML = tocHTML;
+    
+    // Add click handlers for smooth scrolling
+    const tocLinks = tocContent.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Set up scroll spy for active TOC highlighting
+    setupScrollSpy();
+}
+
+function toggleTOC() {
+    const tocContent = document.getElementById('toc-content');
+    const toggleBtn = document.querySelector('.toc-toggle i');
+    
+    tocContent.classList.toggle('collapsed');
+    
+    if (tocContent.classList.contains('collapsed')) {
+        toggleBtn.className = 'fas fa-chevron-right';
+    } else {
+        toggleBtn.className = 'fas fa-chevron-down';
+    }
+}
+
+function updateActiveTOCItem(activeId) {
+    const tocLinks = document.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-heading') === activeId) {
+            link.classList.add('active');
+        }
+    });
+}
+
+function setupScrollSpy() {
+    const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                updateActiveTOCItem(entry.target.id);
+            }
+        });
+    }, {
+        rootMargin: '-100px 0px -50% 0px'
+    });
+    
+    headings.forEach(heading => {
+        observer.observe(heading);
+    });
+}
+
+// Tools functionality
+function citePage() {
+    const articleTitle = document.querySelector('.article-title-compact').textContent;
+    const currentUrl = window.location.href;
+    const currentDate = new Date().toLocaleDateString();
+    
+    const citation = `"${articleTitle}." Islamic Wiki, ${currentDate}, ${currentUrl}.`;
+    
+    // Create modal for citation
+    const modal = document.createElement('div');
+    modal.className = 'citation-modal';
+    modal.innerHTML = `
+        <div class="citation-content">
+            <div class="citation-header">
+                <h3>Cite this page</h3>
+                <button class="citation-close" onclick="closeCitationModal()">&times;</button>
+            </div>
+            <div class="citation-body">
+                <p><strong>MLA Format:</strong></p>
+                <div class="citation-text">
+                    <textarea readonly>${citation}</textarea>
+                    <button onclick="copyCitation()" class="btn btn-primary">Copy Citation</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+}
+
+function closeCitationModal() {
+    const modal = document.querySelector('.citation-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function copyCitation() {
+    const textarea = document.querySelector('.citation-text textarea');
+    textarea.select();
+    document.execCommand('copy');
+    
+    // Show success message
+    const btn = document.querySelector('.citation-text button');
+    const originalText = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.background = '#28a745';
+    
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+    }, 2000);
+}
+
+function downloadPDF() {
+    showToast('PDF download feature coming soon!', 'info');
+    // Future implementation: Generate PDF from article content
+}
+
+// Close citation modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.querySelector('.citation-modal');
+    if (e.target === modal) {
+        closeCitationModal();
+    }
+});
+
+// Initialize TOC when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    generateTOC();
+});
+</script>
+
+<?php include '../../includes/footer.php'; ?>
+        // Skip the first h1 if it's the article title
+        if (index === 0 && heading.tagName === 'H1') {
+            return;
+        }
+        
+        const id = `heading-${tocCounter}`;
+        heading.id = id;
+        
+        const level = parseInt(heading.tagName.charAt(1));
+        const text = heading.textContent.trim();
+        const indent = (level - 2) * 20; // Indent based on heading level
+        
+        tocHTML += `
+            <li class="toc-item toc-level-${level}" style="padding-left: ${indent}px">
+                <a href="#${id}" class="toc-link" data-heading="${id}">
+                    ${text}
+                </a>
+            </li>
+        `;
+        
+        tocCounter++;
+    });
+    
+    tocHTML += '</ul>';
+    tocContent.innerHTML = tocHTML;
+    
+    // Add click handlers for smooth scrolling
+    const tocLinks = tocContent.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Update active TOC item
+                updateActiveTOCItem(targetId);
+            }
+        });
+    });
+    
+    // Set up scroll spy for active TOC highlighting
+    setupScrollSpy();
+}
+
+function updateActiveTOCItem(activeId) {
+    const tocLinks = document.querySelectorAll('.toc-link');
+    tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-heading') === activeId) {
+            link.classList.add('active');
+        }
+    });
+}
+
+function setupScrollSpy() {
+    const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                updateActiveTOCItem(entry.target.id);
+            }
+        });
+    }, {
+        rootMargin: '-20% 0px -70% 0px'
+    });
+    
+    headings.forEach(heading => {
+        if (heading.id) {
+            observer.observe(heading);
+        }
+    });
+}
+
+function toggleTOC() {
+    const tocContent = document.getElementById('toc-content');
+    const toggleBtn = document.querySelector('.toc-toggle i');
+    
+    if (tocContent.style.display === 'none') {
+        tocContent.style.display = 'block';
+        toggleBtn.className = 'fas fa-chevron-down';
+    } else {
+        tocContent.style.display = 'none';
+        toggleBtn.className = 'fas fa-chevron-right';
+    }
+}
+
+// Tools functionality
+function citePage() {
+    const title = document.querySelector('.article-title-compact').textContent;
+    const url = window.location.href;
+    const date = new Date().toLocaleDateString();
+    
+    const citation = `"${title}." Islamic Wiki. ${date}. Web. ${date}. <${url}>.`;
+    
+    // Create citation modal
+    const modal = document.createElement('div');
+    modal.className = 'citation-modal';
+    modal.innerHTML = `
+        <div class="citation-modal-content">
+            <div class="citation-modal-header">
+                <h3>Cite This Page</h3>
+                <button class="citation-modal-close" onclick="closeCitationModal()">&times;</button>
+            </div>
+            <div class="citation-modal-body">
+                <div class="citation-format">
+                    <label>MLA Format:</label>
+                    <textarea readonly>${citation}</textarea>
+                </div>
+                <div class="citation-actions">
+                    <button onclick="copyCitation('${citation}')" class="btn btn-primary">
+                        <i class="fas fa-copy"></i> Copy Citation
+                    </button>
+                    <button onclick="closeCitationModal()" class="btn btn-secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function closeCitationModal() {
+    const modal = document.querySelector('.citation-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function copyCitation(citation) {
+    navigator.clipboard.writeText(citation).then(() => {
+        showToast('Citation copied to clipboard!', 'success');
+        closeCitationModal();
+    }).catch(() => {
+        showToast('Failed to copy citation', 'error');
+    });
+}
+
+function downloadPDF() {
+    showToast('PDF download feature coming soon!', 'info');
+    // Future implementation: Generate PDF from article content
+}
+
+// Initialize TOC when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    generateTOC();
 });
 </script>
 
