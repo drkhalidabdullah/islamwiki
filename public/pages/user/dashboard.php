@@ -402,18 +402,15 @@ include "../../includes/header.php";
             <!-- Feed Content -->
             <div class="feed-content">
                 <?php
-                // Get following content (posts and articles from followed users + current user)
+                // Get following content (posts and articles from followed users only)
                 $following_content = [];
                 $following_ids = array_column($following, 'following_id');
                 
-                // Add current user to following list to include their posts
-                $following_ids[] = $_SESSION['user_id'];
-                
-                // Always include current user's content, even if not following anyone
-                if (true) {
+                // Only show content from users we're actually following (not including current user)
+                if (!empty($following_ids)) {
                     $placeholders = str_repeat('?,', count($following_ids) - 1) . '?';
                     
-                    // Get posts from followed users (including current user)
+                    // Get posts from followed users only
                     $stmt = $pdo->prepare("
                         SELECT up.*, u.username, u.display_name, u.avatar, 'post' as content_type,
                                COALESCE(like_counts.likes_count, 0) as likes_count,
@@ -445,7 +442,7 @@ include "../../includes/header.php";
                     $stmt->execute($following_ids);
                     $following_posts = $stmt->fetchAll();
                     
-                    // Get articles from followed users (including current user)
+                    // Get articles from followed users only
                     $stmt = $pdo->prepare("
                         SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'article' as content_type
                         FROM wiki_articles wa
