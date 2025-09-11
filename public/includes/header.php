@@ -23,6 +23,257 @@ if ($message) {
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+    /* Override body padding to ensure newsbar touches top */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Reset any potential spacing from parent elements */
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Add top padding to main content to account for fixed newsbar */
+    .main-content {
+        padding-top: 60px !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Newsbar Styles - positioned at absolute top, accounting for sidebar */
+    .newsbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 0;
+        margin: 0;
+        border-radius: 0;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 60px;
+        right: 0;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: calc(100% - 60px);
+        margin-top: 0;
+    }
+
+    .newsbar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .newsbar-left {
+        flex-shrink: 0;
+    }
+
+    .newsbar-center {
+        flex: 1;
+        margin: 0 1rem;
+    }
+
+    .newsbar-right {
+        flex-shrink: 0;
+    }
+
+    .newsbar-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .newsbar-ticker {
+        overflow: hidden;
+        position: relative;
+        height: 2rem;
+    }
+
+    .newsbar-items {
+        display: flex;
+        animation: newsbar-scroll 30s linear infinite;
+        gap: 3rem;
+        align-items: center;
+        height: 100%;
+    }
+
+    .newsbar-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 0 1rem;
+    }
+
+    .newsbar-time {
+        background: rgba(255,255,255,0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        flex-shrink: 0;
+    }
+
+    .newsbar-text {
+        font-size: 0.9rem;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+    .newsbar-controls {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .newsbar-pause,
+    .newsbar-close {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .newsbar-pause:hover,
+    .newsbar-close:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+
+    .newsbar.paused .newsbar-items {
+        animation-play-state: paused;
+    }
+
+    .newsbar.hidden {
+        display: none;
+    }
+
+    @keyframes newsbar-scroll {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    /* Responsive Newsbar */
+    @media (max-width: 992px) {
+        .newsbar {
+            left: 50px;
+            width: calc(100% - 50px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .newsbar {
+            left: 0;
+            width: 100%;
+        }
+        
+        .newsbar-content {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+        
+        .newsbar-left,
+        .newsbar-center,
+        .newsbar-right {
+            flex: none;
+            margin: 0;
+        }
+        
+        .newsbar-left {
+            order: 1;
+            text-align: center;
+        }
+        
+        .newsbar-center {
+            order: 2;
+        }
+        
+        .newsbar-right {
+            order: 3;
+            text-align: center;
+        }
+        
+        .newsbar-label {
+            justify-content: center;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        .newsbar-ticker {
+            height: 1.5rem;
+        }
+        
+        .newsbar-item {
+            gap: 0.5rem;
+            padding: 0 0.5rem;
+        }
+        
+        .newsbar-time {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+        
+        .newsbar-text {
+            font-size: 0.8rem;
+        }
+        
+        .newsbar-controls {
+            justify-content: center;
+        }
+        
+        .newsbar-pause,
+        .newsbar-close {
+            width: 1.8rem;
+            height: 1.8rem;
+            padding: 0.4rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .newsbar {
+            padding: 0.5rem 0;
+        }
+        
+        .newsbar-items {
+            animation-duration: 20s;
+        }
+        
+        .newsbar-item {
+            flex-direction: column;
+            gap: 0.25rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding-top: 50px !important;
+        }
+    }
+    </style>
     <?php if (isset($is_search_page) && $is_search_page): ?>
     <link rel="stylesheet" href="/assets/css/search.css">
     <?php endif; ?>
@@ -182,6 +433,50 @@ if ($message) {
         <?php endif; ?>
     </nav>
     
+    <!-- Newsbar -->
+    <div class="newsbar">
+        <div class="newsbar-content">
+            <div class="newsbar-left">
+                <div class="newsbar-label">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Latest News</span>
+                </div>
+            </div>
+            <div class="newsbar-center">
+                <div class="newsbar-ticker">
+                    <div class="newsbar-items">
+                        <div class="newsbar-item">
+                            <span class="newsbar-time">2 hours ago</span>
+                            <span class="newsbar-text">New Islamic Wiki feature: Enhanced search with AI-powered suggestions</span>
+                        </div>
+                        <div class="newsbar-item">
+                            <span class="newsbar-time">5 hours ago</span>
+                            <span class="newsbar-text">Community milestone: 1,000+ articles published on Islamic topics</span>
+                        </div>
+                        <div class="newsbar-item">
+                            <span class="newsbar-time">1 day ago</span>
+                            <span class="newsbar-text">Ramadan 2024: Special collection of fasting and prayer articles now available</span>
+                        </div>
+                        <div class="newsbar-item">
+                            <span class="newsbar-time">2 days ago</span>
+                            <span class="newsbar-text">New editor tools: Improved article creation and editing experience</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="newsbar-right">
+                <div class="newsbar-controls">
+                    <button class="newsbar-pause" onclick="toggleNewsbar()" title="Pause/Resume">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button class="newsbar-close" onclick="closeNewsbar()" title="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <main class="main-content">
         <?php if ($message): ?>
         <div class="alert alert-<?php echo $message['type']; ?>">
@@ -445,5 +740,40 @@ document.addEventListener("DOMContentLoaded", function() {
     window.toggleSearchPopup = toggleSearchPopup;
     window.closeSearchPopup = closeSearchPopup;
     window.performSearch = performSearch;
+    
+    // Newsbar functionality
+    function toggleNewsbar() {
+        const newsbar = document.querySelector('.newsbar');
+        const pauseBtn = document.querySelector('.newsbar-pause i');
+        
+        newsbar.classList.toggle('paused');
+        
+        if (newsbar.classList.contains('paused')) {
+            pauseBtn.className = 'fas fa-play';
+        } else {
+            pauseBtn.className = 'fas fa-pause';
+        }
+    }
+
+    function closeNewsbar() {
+        const newsbar = document.querySelector('.newsbar');
+        newsbar.classList.add('hidden');
+        
+        // Store preference in localStorage
+        localStorage.setItem('newsbar-hidden', 'true');
+    }
+
+    // Check if newsbar should be hidden on page load
+    const newsbarHidden = localStorage.getItem('newsbar-hidden');
+    if (newsbarHidden === 'true') {
+        const newsbar = document.querySelector('.newsbar');
+        if (newsbar) {
+            newsbar.classList.add('hidden');
+        }
+    }
+    
+    // Make newsbar functions globally available
+    window.toggleNewsbar = toggleNewsbar;
+    window.closeNewsbar = closeNewsbar;
 });
 </script>

@@ -257,13 +257,13 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     <h3>Tools</h3>
                     <ul class="tools-list">
                         <li>
-                            <a href="/wiki/<?php echo $article['slug']; ?>/what-links-here" class="tool-link">
+                            <a href="/wiki/special/what-links-here?slug=<?php echo urlencode($article['slug']); ?>" class="tool-link">
                                 <i class="fas fa-link"></i>
                                 <span>What links here</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/wiki/<?php echo $article['slug']; ?>/page-info" class="tool-link">
+                            <a href="/wiki/special/page-info?slug=<?php echo urlencode($article['slug']); ?>" class="tool-link">
                                 <i class="fas fa-info-circle"></i>
                                 <span>Page information</span>
                             </a>
@@ -1054,6 +1054,23 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     color: #2c3e50;
 }
 
+.citation-format select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    background: white;
+    cursor: pointer;
+}
+
+.citation-format select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
 .citation-format textarea {
     width: 100%;
     padding: 0.75rem;
@@ -1689,33 +1706,53 @@ function setupScrollSpy() {
 
 // Tools functionality
 function citePage() {
-    const articleTitle = document.querySelector('.article-title-compact').textContent;
-    const currentUrl = window.location.href;
-    const currentDate = new Date().toLocaleDateString();
-    
-    const citation = `"${articleTitle}." Islamic Wiki, ${currentDate}, ${currentUrl}.`;
-    
-    // Create modal for citation
-    const modal = document.createElement('div');
-    modal.className = 'citation-modal';
-    modal.innerHTML = `
-        <div class="citation-content">
-            <div class="citation-header">
-                <h3>Cite this page</h3>
-                <button class="citation-close" onclick="closeCitationModal()">&times;</button>
-            </div>
-            <div class="citation-body">
-                <p><strong>MLA Format:</strong></p>
-                <div class="citation-text">
-                    <textarea readonly>${citation}</textarea>
-                    <button onclick="copyCitation()" class="btn btn-primary">Copy Citation</button>
+    try {
+        const articleTitle = document.querySelector('.article-title-compact').textContent;
+        const currentUrl = window.location.href;
+        const currentDate = new Date();
+        
+        const citation = `${articleTitle}. (${currentDate.getFullYear()}, ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}). In *Islamic Wiki*. Retrieved ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}, from ${currentUrl}`;
+        
+        // Create modal for citation
+        const modal = document.createElement('div');
+        modal.className = 'citation-modal';
+        modal.innerHTML = `
+            <div class="citation-modal-content">
+                <div class="citation-modal-header">
+                    <h3>Cite This Page</h3>
+                    <button class="citation-modal-close" onclick="closeCitationModal()">&times;</button>
+                </div>
+                <div class="citation-modal-body">
+                    <div class="citation-format">
+                        <label for="citation-style">Citation Style:</label>
+                        <select id="citation-style" onchange="updateCitation()">
+                            <option value="mla">MLA 9th Edition</option>
+                            <option value="apa" selected>APA 7th Edition</option>
+                            <option value="chicago">Chicago 17th Edition</option>
+                            <option value="harvard">Harvard</option>
+                            <option value="ieee">IEEE</option>
+                        </select>
+                    </div>
+                    <div class="citation-format">
+                        <label id="citation-format-label">APA 7th Edition:</label>
+                        <textarea id="citation-text" readonly>${citation}</textarea>
+                    </div>
+                    <div class="citation-actions">
+                        <button onclick="copyCitation()" class="btn btn-primary">
+                            <i class="fas fa-copy"></i> Copy Citation
+                        </button>
+                        <button onclick="closeCitationModal()" class="btn btn-secondary">Close</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    modal.style.display = 'flex';
+        `;
+        
+        document.body.appendChild(modal);
+        modal.style.display = 'flex';
+    } catch (error) {
+        console.error('Error in citePage:', error);
+        showToast('Error: ' + error.message, 'error');
+    }
 }
 
 function closeCitationModal() {
@@ -1725,26 +1762,167 @@ function closeCitationModal() {
     }
 }
 
+function updateCitation() {
+    const style = document.getElementById('citation-style').value;
+    const label = document.getElementById('citation-format-label');
+    const textarea = document.getElementById('citation-text');
+    
+    if (!textarea) return;
+    
+    const articleTitle = document.querySelector('.article-title-compact').textContent;
+    const currentUrl = window.location.href;
+    const currentDate = new Date();
+    
+    let citation = '';
+    let formatLabel = '';
+    
+    switch(style) {
+        case 'mla':
+            formatLabel = 'MLA 9th Edition:';
+            citation = `"${articleTitle}." Islamic Wiki, ${currentDate.toLocaleDateString()}, ${currentUrl}.`;
+            break;
+        case 'apa':
+            formatLabel = 'APA 7th Edition:';
+            citation = `${articleTitle}. (${currentDate.getFullYear()}, ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}). In *Islamic Wiki*. Retrieved ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}, from ${currentUrl}`;
+            break;
+        case 'chicago':
+            formatLabel = 'Chicago 17th Edition:';
+            citation = `"${articleTitle}." Islamic Wiki. Last modified ${currentDate.toLocaleDateString()}. ${currentUrl}.`;
+            break;
+        case 'harvard':
+            formatLabel = 'Harvard Format:';
+            citation = `Islamic Wiki ${currentDate.getFullYear()}, '${articleTitle}', viewed ${currentDate.toLocaleDateString()}, <${currentUrl}>.`;
+            break;
+        case 'ieee':
+            formatLabel = 'IEEE Format:';
+            citation = `Islamic Wiki, "${articleTitle}," Islamic Wiki, ${currentDate.getFullYear()}. [Online]. Available: ${currentUrl}. [Accessed: ${currentDate.toLocaleDateString()}].`;
+            break;
+        default:
+            formatLabel = 'APA 7th Edition:';
+            citation = `${articleTitle}. (${currentDate.getFullYear()}, ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}). In *Islamic Wiki*. Retrieved ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}, from ${currentUrl}`;
+    }
+    
+    label.textContent = formatLabel;
+    textarea.value = citation;
+}
+
 function copyCitation() {
-    const textarea = document.querySelector('.citation-text textarea');
-    textarea.select();
-    document.execCommand('copy');
-    
-    // Show success message
-    const btn = document.querySelector('.citation-text button');
-    const originalText = btn.textContent;
-    btn.textContent = 'Copied!';
-    btn.style.background = '#28a745';
-    
-    setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-    }, 2000);
+    const textarea = document.getElementById('citation-text');
+    if (textarea) {
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            showToast('Citation copied to clipboard!', 'success');
+        } catch (err) {
+            // Fallback for modern browsers
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                showToast('Citation copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy citation', 'error');
+            });
+        }
+    }
 }
 
 function downloadPDF() {
-    showToast('PDF download feature coming soon!', 'info');
-    // Future implementation: Generate PDF from article content
+    try {
+        const articleTitle = document.querySelector('.article-title-compact').textContent;
+        const articleContent = document.querySelector('.article-content').innerHTML;
+        
+        // Create a new window for PDF generation
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${articleTitle} - Islamic Wiki</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        color: #333;
+                    }
+                    h1, h2, h3, h4, h5, h6 {
+                        color: #2c3e50;
+                        margin-top: 30px;
+                        margin-bottom: 15px;
+                    }
+                    h1 { font-size: 2.5em; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+                    h2 { font-size: 2em; }
+                    h3 { font-size: 1.5em; }
+                    p { margin-bottom: 15px; }
+                    ul, ol { margin-bottom: 15px; }
+                    blockquote {
+                        border-left: 4px solid #3498db;
+                        margin: 20px 0;
+                        padding-left: 20px;
+                        font-style: italic;
+                        color: #666;
+                    }
+                    code {
+                        background: #f4f4f4;
+                        padding: 2px 4px;
+                        border-radius: 3px;
+                        font-family: 'Courier New', monospace;
+                    }
+                    pre {
+                        background: #f4f4f4;
+                        padding: 15px;
+                        border-radius: 5px;
+                        overflow-x: auto;
+                    }
+                    .article-meta {
+                        background: #f8f9fa;
+                        padding: 15px;
+                        border-radius: 5px;
+                        margin-bottom: 30px;
+                        font-size: 0.9em;
+                        color: #666;
+                    }
+                    @media print {
+                        body { margin: 0; padding: 15px; }
+                        .no-print { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="article-meta">
+                    <strong>Islamic Wiki</strong><br>
+                    Article: ${articleTitle}<br>
+                    Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}<br>
+                    URL: ${window.location.href}
+                </div>
+                <h1>${articleTitle}</h1>
+                <div class="article-content">
+                    ${articleContent}
+                </div>
+                <script>
+                    window.onload = function() {
+                        // Remove any interactive elements
+                        const interactiveElements = document.querySelectorAll('button, a, input, select, textarea');
+                        interactiveElements.forEach(el => el.remove());
+                        
+                        // Trigger print dialog
+                        setTimeout(() => {
+                            window.print();
+                        }, 500);
+                    };
+                <\/script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        
+        showToast('PDF generation window opened. Use Ctrl+P to print or save as PDF.', 'info');
+    } catch (error) {
+        console.error('Error in downloadPDF:', error);
+        showToast('Error: ' + error.message, 'error');
+    }
 }
 
 // Close citation modal when clicking outside
@@ -1754,162 +1932,6 @@ document.addEventListener('click', function(e) {
         closeCitationModal();
     }
 });
-
-// Initialize TOC when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    generateTOC();
-});
-</script>
-
-<?php include '../../includes/footer.php'; ?>
-        // Skip the first h1 if it's the article title
-        if (index === 0 && heading.tagName === 'H1') {
-            return;
-        }
-        
-        const id = `heading-${tocCounter}`;
-        heading.id = id;
-        
-        const level = parseInt(heading.tagName.charAt(1));
-        const text = heading.textContent.trim();
-        const indent = (level - 2) * 20; // Indent based on heading level
-        
-        tocHTML += `
-            <li class="toc-item toc-level-${level}" style="padding-left: ${indent}px">
-                <a href="#${id}" class="toc-link" data-heading="${id}">
-                    ${text}
-                </a>
-            </li>
-        `;
-        
-        tocCounter++;
-    });
-    
-    tocHTML += '</ul>';
-    tocContent.innerHTML = tocHTML;
-    
-    // Add click handlers for smooth scrolling
-    const tocLinks = tocContent.querySelectorAll('.toc-link');
-    tocLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                
-                // Update active TOC item
-                updateActiveTOCItem(targetId);
-            }
-        });
-    });
-    
-    // Set up scroll spy for active TOC highlighting
-    setupScrollSpy();
-}
-
-function updateActiveTOCItem(activeId) {
-    const tocLinks = document.querySelectorAll('.toc-link');
-    tocLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-heading') === activeId) {
-            link.classList.add('active');
-        }
-    });
-}
-
-function setupScrollSpy() {
-    const headings = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                updateActiveTOCItem(entry.target.id);
-            }
-        });
-    }, {
-        rootMargin: '-20% 0px -70% 0px'
-    });
-    
-    headings.forEach(heading => {
-        if (heading.id) {
-            observer.observe(heading);
-        }
-    });
-}
-
-function toggleTOC() {
-    const tocContent = document.getElementById('toc-content');
-    const toggleBtn = document.querySelector('.toc-toggle i');
-    
-    if (tocContent.style.display === 'none') {
-        tocContent.style.display = 'block';
-        toggleBtn.className = 'fas fa-chevron-down';
-    } else {
-        tocContent.style.display = 'none';
-        toggleBtn.className = 'fas fa-chevron-right';
-    }
-}
-
-// Tools functionality
-function citePage() {
-    const title = document.querySelector('.article-title-compact').textContent;
-    const url = window.location.href;
-    const date = new Date().toLocaleDateString();
-    
-    const citation = `"${title}." Islamic Wiki. ${date}. Web. ${date}. <${url}>.`;
-    
-    // Create citation modal
-    const modal = document.createElement('div');
-    modal.className = 'citation-modal';
-    modal.innerHTML = `
-        <div class="citation-modal-content">
-            <div class="citation-modal-header">
-                <h3>Cite This Page</h3>
-                <button class="citation-modal-close" onclick="closeCitationModal()">&times;</button>
-            </div>
-            <div class="citation-modal-body">
-                <div class="citation-format">
-                    <label>MLA Format:</label>
-                    <textarea readonly>${citation}</textarea>
-                </div>
-                <div class="citation-actions">
-                    <button onclick="copyCitation('${citation}')" class="btn btn-primary">
-                        <i class="fas fa-copy"></i> Copy Citation
-                    </button>
-                    <button onclick="closeCitationModal()" class="btn btn-secondary">Close</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function closeCitationModal() {
-    const modal = document.querySelector('.citation-modal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-function copyCitation(citation) {
-    navigator.clipboard.writeText(citation).then(() => {
-        showToast('Citation copied to clipboard!', 'success');
-        closeCitationModal();
-    }).catch(() => {
-        showToast('Failed to copy citation', 'error');
-    });
-}
-
-function downloadPDF() {
-    showToast('PDF download feature coming soon!', 'info');
-    // Future implementation: Generate PDF from article content
-}
 
 // Initialize TOC when page loads
 document.addEventListener('DOMContentLoaded', function() {
