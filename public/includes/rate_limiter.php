@@ -11,12 +11,12 @@ class RateLimiter {
     public function __construct($pdo, $config = []) {
         $this->pdo = $pdo;
         $this->config = array_merge([
-            'wiki_views' => ['limit' => 100, 'window' => 3600], // 100 views per hour
-            'search_queries' => ['limit' => 50, 'window' => 3600], // 50 searches per hour
-            'api_requests' => ['limit' => 200, 'window' => 3600], // 200 API calls per hour
-            'registration_attempts' => ['limit' => 5, 'window' => 86400], // 5 attempts per day
-            'login_attempts' => ['limit' => 10, 'window' => 3600], // 10 attempts per hour
-            'report_content' => ['limit' => 20, 'window' => 3600], // 20 reports per hour
+            'wiki_views' => ['limit' => 1000, 'window' => 3600], // 1000 views per hour (increased for development)
+            'search_queries' => ['limit' => 200, 'window' => 3600], // 200 searches per hour
+            'api_requests' => ['limit' => 1000, 'window' => 3600], // 1000 API calls per hour
+            'registration_attempts' => ['limit' => 10, 'window' => 86400], // 10 attempts per day
+            'login_attempts' => ['limit' => 20, 'window' => 3600], // 20 attempts per hour
+            'report_content' => ['limit' => 50, 'window' => 3600], // 50 reports per hour
         ], $config);
     }
     

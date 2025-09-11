@@ -4,8 +4,10 @@ require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 
-// Enforce rate limiting for wiki article views
-enforce_rate_limit('wiki_views');
+// Enforce rate limiting for wiki article views (disabled in development)
+if (!defined('DEVELOPMENT_MODE') || !DEVELOPMENT_MODE) {
+    enforce_rate_limit('wiki_views');
+}
 
 $page_title = 'Article';
 
@@ -679,13 +681,14 @@ $is_main_page = ($article['slug'] === 'Main_Page');
 
 /* Three-column layout: 250px | 1fr | 250px */
 .wiki-layout {
-    display: grid;
-    grid-template-columns: 250px 1fr 250px;
-    gap: 2rem;
+    display: grid !important; /* Restore proper grid layout */
+    grid-template-columns: 250px 1fr 250px !important;
+    gap: 2rem !important;
     margin-top: 1rem;
     max-width: 100%;
     min-width: 900px;
-    overflow-x: auto;
+    position: static !important; /* Don't create stacking context that interferes with sticky */
+    overflow: visible !important; /* Allow sticky elements to work properly */
 }
 
 /* Left Sidebar: Table of Contents */
@@ -694,8 +697,25 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     border-radius: 8px;
     padding: 1rem;
     height: fit-content;
-    position: static;
+    position: -webkit-sticky !important; /* Safari support */
+    position: sticky !important; /* Use sticky positioning */
+    top: 70px !important; /* Stick below newsbar (newsbar is ~64px tall) */
+    max-height: calc(100vh - 90px) !important; /* Prevent overflow, account for newsbar + top position */
+    overflow-y: auto !important; /* Allow scrolling if content is too tall */
     border: 1px solid #e9ecef;
+    z-index: 9999 !important; /* Lower than newsbar (10000) to go under it when needed */
+    will-change: transform !important; /* Optimize for positioning */
+    transform: translateZ(0) !important; /* Force hardware acceleration */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* Add shadow for better visibility */
+    align-self: start !important; /* Start at top of grid cell */
+    /* Force sticky behavior */
+    -webkit-transform: translateZ(0) !important;
+    -moz-transform: translateZ(0) !important;
+    -ms-transform: translateZ(0) !important;
+    -o-transform: translateZ(0) !important;
+    /* Prevent overlay - force containment */
+    contain: layout style !important;
+    isolation: isolate !important;
 }
 
 .toc-header {
@@ -730,8 +750,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
 }
 
 .toc-content {
-    max-height: 70vh;
-    overflow-y: auto;
+    max-height: calc(100vh - 150px) !important; /* Account for header and newsbar */
+    overflow-y: auto !important;
+    padding: 0.5rem 0 !important;
 }
 
 .toc-content.collapsed {
@@ -739,36 +760,38 @@ $is_main_page = ($article['slug'] === 'Main_Page');
 }
 
 .toc-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 .toc-item {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.25rem !important;
 }
 
 .toc-link {
-    display: block;
-    padding: 0.5rem 0.75rem;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    display: block !important;
+    padding: 0.75rem 1rem !important;
+    color: #495057 !important;
+    text-decoration: none !important;
+    border-radius: 6px !important;
+    transition: all 0.2s !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
 }
 
 .toc-link:hover {
-    background: #e9ecef;
-    color: #007bff;
-    text-decoration: none;
+    background: #e9ecef !important;
+    color: #007bff !important;
+    text-decoration: none !important;
+    transform: translateX(2px) !important;
 }
 
 .toc-link.active {
-    background: #007bff;
-    color: white;
-    font-weight: 500;
+    background: #007bff !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3) !important;
 }
 
 .toc-level-1 { font-weight: 600; }
@@ -807,8 +830,25 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     border-radius: 8px;
     padding: 1rem;
     height: fit-content;
-    position: static;
+    position: -webkit-sticky !important; /* Safari support */
+    position: sticky !important; /* Use sticky positioning */
+    top: 70px !important; /* Stick below newsbar (newsbar is ~64px tall) */
+    max-height: calc(100vh - 90px) !important; /* Prevent overflow, account for newsbar + top position */
+    overflow-y: auto !important; /* Allow scrolling if content is too tall */
     border: 1px solid #e9ecef;
+    z-index: 9999 !important; /* Lower than newsbar (10000) to go under it when needed */
+    will-change: transform !important; /* Optimize for positioning */
+    transform: translateZ(0) !important; /* Force hardware acceleration */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* Add shadow for better visibility */
+    align-self: start !important; /* Start at top of grid cell */
+    /* Force sticky behavior */
+    -webkit-transform: translateZ(0) !important;
+    -moz-transform: translateZ(0) !important;
+    -ms-transform: translateZ(0) !important;
+    -o-transform: translateZ(0) !important;
+    /* Prevent overlay - force containment */
+    contain: layout style !important;
+    isolation: isolate !important;
     min-width: 0;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -950,12 +990,13 @@ $is_main_page = ($article['slug'] === 'Main_Page');
         grid-template-columns: 1fr;
         gap: 1rem;
         min-width: auto;
-        overflow-x: visible;
+        overflow: visible !important; /* Allow sticky elements to work properly */
     }
     
     .wiki-toc,
     .wiki-tools {
-        position: static;
+        position: sticky !important;
+        top: 70px !important; /* Match main rule */
         margin-bottom: 1rem;
         min-width: auto;
     }
@@ -1086,84 +1127,6 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     justify-content: flex-end;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .wiki-layout {
-        grid-template-columns: 200px 1fr 250px;
-        gap: 1.5rem;
-    }
-}
-
-@media (max-width: 992px) {
-    .wiki-layout {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .wiki-toc,
-    .wiki-tools {
-        position: static;
-        order: 2;
-    }
-    
-    .wiki-main-content {
-        order: 1;
-    }
-    
-    .wiki-toc {
-        margin-bottom: 1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .wiki-layout {
-        gap: 0.5rem;
-    }
-    
-    .wiki-toc,
-    .wiki-tools {
-        padding: 0.75rem;
-    }
-    
-    .toc-content {
-        max-height: 50vh;
-    }
-    
-    .tools-section {
-        margin-bottom: 1.5rem;
-    }
-    
-    .citation-modal-content {
-        width: 95%;
-        margin: 1rem;
-    }
-    
-    .citation-actions {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .wiki-toc,
-    .wiki-tools {
-        padding: 0.5rem;
-    }
-    
-    .toc-header h3,
-    .tools-section h3 {
-        font-size: 1rem;
-    }
-    
-    .tool-link {
-        padding: 0.5rem;
-        font-size: 0.85rem;
-    }
-    
-    .stats-list .stat-item {
-        padding: 0.375rem;
-        font-size: 0.8rem;
-    }
-}
 </style>
 
 <script>
@@ -1885,8 +1848,26 @@ function downloadPDF() {
                     @media print {
                         body { margin: 0; padding: 15px; }
                         .no-print { display: none; }
-                    }
-                </style>
+}
+
+/* Mobile Responsive - Override fixed positioning on small screens */
+@media (max-width: 768px) {
+    .wiki-toc,
+    .wiki-tools {
+        position: static !important; /* On mobile, use static positioning */
+        left: auto !important;
+        right: auto !important;
+        width: auto !important;
+        top: auto !important;
+        max-height: none !important;
+    }
+    
+    .wiki-main-content {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+</style>
             </head>
             <body>
                 <div class="article-meta">
@@ -1934,6 +1915,45 @@ document.addEventListener('click', function(e) {
 // Initialize TOC when page loads
 document.addEventListener('DOMContentLoaded', function() {
     generateTOC();
+    
+    // Force sticky positioning for sidebars
+    function enforceStickyPositioning() {
+        const toc = document.querySelector('.wiki-toc');
+        const tools = document.querySelector('.wiki-tools');
+        const newsbar = document.querySelector('.newsbar');
+        
+        if (toc) {
+            // Force sticky positioning
+            toc.style.position = 'sticky';
+            toc.style.top = '70px';
+            toc.style.zIndex = '9999';
+        }
+        
+        if (tools) {
+            // Force sticky positioning
+            tools.style.position = 'sticky';
+            tools.style.top = '70px';
+            tools.style.zIndex = '9999';
+            
+            // Check if tools sidebar is at the bottom and should go under newsbar
+            if (newsbar) {
+                const toolsRect = tools.getBoundingClientRect();
+                const newsbarRect = newsbar.getBoundingClientRect();
+                
+                // If tools sidebar bottom is near or below newsbar bottom, reduce z-index
+                if (toolsRect.bottom >= newsbarRect.bottom - 10) {
+                    tools.style.zIndex = '9998'; // Go under newsbar
+                } else {
+                    tools.style.zIndex = '9999'; // Stay above other content
+                }
+            }
+        }
+    }
+    
+    // Apply on load and scroll
+    enforceStickyPositioning();
+    window.addEventListener('scroll', enforceStickyPositioning);
+    window.addEventListener('resize', enforceStickyPositioning);
 });
 </script>
 
