@@ -53,10 +53,11 @@ if ($message) {
         position: fixed;
         top: 0;
         left: 60px;
-        right: 0;
         z-index: 10000;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: calc(100% - 60px);
+        width: calc(100vw - 60px);
+        max-width: calc(100vw - 60px);
+        box-sizing: border-box;
         margin-top: 0;
     }
 
@@ -67,6 +68,10 @@ if ($message) {
         position: relative;
         width: 100%;
         padding: 0 1rem;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        min-width: 0;
     }
 
     .newsbar-left {
@@ -76,10 +81,13 @@ if ($message) {
     .newsbar-center {
         flex: 1;
         margin: 0 1rem;
+        min-width: 0;
+        overflow: hidden;
     }
 
     .newsbar-right {
         flex-shrink: 0;
+        min-width: 0;
     }
 
     .newsbar-label {
@@ -98,6 +106,9 @@ if ($message) {
         overflow: hidden;
         position: relative;
         height: 2rem;
+        max-width: 100%;
+        flex: 1;
+        min-width: 0;
     }
 
     .newsbar-items {
@@ -106,6 +117,8 @@ if ($message) {
         gap: 3rem;
         align-items: center;
         height: 100%;
+        width: 200%;
+        overflow: hidden;
     }
 
     .newsbar-item {
@@ -136,6 +149,8 @@ if ($message) {
         display: flex;
         gap: 0.5rem;
         flex-shrink: 0;
+        min-width: 0;
+        white-space: nowrap;
     }
 
     .newsbar-pause,
@@ -149,9 +164,14 @@ if ($message) {
         transition: all 0.2s ease;
         width: 2rem;
         height: 2rem;
+        min-width: 2rem;
+        min-height: 2rem;
+        max-width: 2rem;
+        max-height: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
     }
 
     .newsbar-pause:hover,
@@ -181,14 +201,16 @@ if ($message) {
     @media (max-width: 992px) {
         .newsbar {
             left: 50px;
-            width: calc(100% - 50px);
+            width: calc(100vw - 50px);
+            max-width: calc(100vw - 50px);
         }
     }
     
     @media (max-width: 768px) {
         .newsbar {
             left: 0;
-            width: 100%;
+            width: 100vw;
+            max-width: 100vw;
         }
         
         .newsbar-content {
