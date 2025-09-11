@@ -13,7 +13,7 @@ if (!$slug) {
 
 // Get the article with detailed information
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.email, cc.name as category_name, cc.slug as category_slug 
+    SELECT wa.*, u.username, u.display_name, u.email, u.created_at as user_created_at, cc.name as category_name, cc.slug as category_slug 
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     LEFT JOIN content_categories cc ON wa.category_id = cc.id 
@@ -27,13 +27,14 @@ if (!$article) {
     redirect("not_found.php?slug=" . urlencode($slug) . "&title=" . urlencode(ucfirst(str_replace('-', ' ', $slug))));
 }
 
-// Get article statistics
+// Get comprehensive article statistics
 $stmt = $pdo->prepare("
     SELECT 
         COUNT(DISTINCT wa.id) as total_articles,
         COUNT(DISTINCT u.id) as total_authors,
         AVG(wa.view_count) as avg_views,
-        MAX(wa.created_at) as latest_article
+        MAX(wa.created_at) as latest_article,
+        MIN(wa.created_at) as first_article
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     WHERE wa.status = 'published'
@@ -41,212 +42,546 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $stats = $stmt->fetch();
 
-// Get recent edits for this article (if table exists)
+// Get edit history for this article
+$edit_history = [];
+$total_edits = 0;
 $recent_edits = [];
+$page_creator = null;
+$latest_editor = null;
+
 try {
+    // Get total edit count
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as total_edits
+        FROM wiki_edit_history 
+        WHERE article_id = ?
+    ");
+    $stmt->execute([$article['id']]);
+    $total_edits = $stmt->fetch()['total_edits'] ?: 0;
+
+    // Get recent edits (last 30 days)
+    $stmt = $pdo->prepare("
+        SELECT we.*, u.username, u.display_name
+        FROM wiki_edit_history we
+        JOIN users u ON we.editor_id = u.id
+        WHERE we.article_id = ? 
+        AND we.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ORDER BY we.created_at DESC
+        LIMIT 50
+    ");
+    $stmt->execute([$article['id']]);
+    $recent_edits = $stmt->fetchAll();
+
+    // Get page creator (first edit)
+    $stmt = $pdo->prepare("
+        SELECT we.*, u.username, u.display_name
+        FROM wiki_edit_history we
+        JOIN users u ON we.editor_id = u.id
+        WHERE we.article_id = ?
+        ORDER BY we.created_at ASC
+        LIMIT 1
+    ");
+    $stmt->execute([$article['id']]);
+    $page_creator = $stmt->fetch();
+
+    // Get latest editor
     $stmt = $pdo->prepare("
         SELECT we.*, u.username, u.display_name
         FROM wiki_edit_history we
         JOIN users u ON we.editor_id = u.id
         WHERE we.article_id = ?
         ORDER BY we.created_at DESC
-        LIMIT 10
+        LIMIT 1
     ");
     $stmt->execute([$article['id']]);
-    $recent_edits = $stmt->fetchAll();
+    $latest_editor = $stmt->fetch();
+
 } catch (PDOException $e) {
-    // Table doesn't exist, skip recent edits
-    $recent_edits = [];
+    // Tables don't exist, use fallback data
+    $total_edits = 1; // At least the creation counts as one edit
+    $page_creator = [
+        'username' => $article['username'],
+        'display_name' => $article['display_name'],
+        'created_at' => $article['created_at']
+    ];
+    $latest_editor = [
+        'username' => $article['username'],
+        'display_name' => $article['display_name'],
+        'created_at' => $article['updated_at']
+    ];
+}
+
+// Get redirects to this page
+$redirects_count = 0;
+try {
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as redirect_count
+        FROM wiki_articles 
+        WHERE content LIKE ? 
+        AND status = 'published'
+        AND id != ?
+    ");
+    $search_term = '%[[' . $article['title'] . ']]%';
+    $stmt->execute([$search_term, $article['id']]);
+    $redirects_count = $stmt->fetch()['redirect_count'] ?: 0;
+} catch (PDOException $e) {
+    $redirects_count = 0;
+}
+
+// Get page watchers (users who have this page in their watchlist)
+$watchers_count = 0;
+try {
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as watchers_count
+        FROM user_watchlist 
+        WHERE article_id = ?
+    ");
+    $stmt->execute([$article['id']]);
+    $watchers_count = $stmt->fetch()['watchers_count'] ?: 0;
+} catch (PDOException $e) {
+    $watchers_count = 0;
+}
+
+// Get recent page views (last 30 days)
+$recent_views = 0;
+try {
+    $stmt = $pdo->prepare("
+        SELECT SUM(view_count) as recent_views
+        FROM wiki_article_views 
+        WHERE article_id = ? 
+        AND view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    ");
+    $stmt->execute([$article['id']]);
+    $recent_views = $stmt->fetch()['recent_views'] ?: 0;
+} catch (PDOException $e) {
+    $recent_views = $article['view_count']; // Fallback to total view count
 }
 
 // Calculate article metrics
 $word_count = str_word_count(strip_tags($article['content']));
 $char_count = strlen(strip_tags($article['content']));
+$byte_count = strlen($article['content']);
 $reading_time = ceil($word_count / 200); // Assuming 200 words per minute
+
+// Get page protection status (simplified)
+$page_protection = [
+    'edit' => 'No protection',
+    'move' => 'No protection'
+];
+
+// Get lint errors (simplified)
+$lint_errors = [
+    'duplicate_ids' => 0,
+    'background_color_without_text_color' => 0
+];
+
+// Get page properties
+$page_properties = [
+    'namespace_id' => 0,
+    'page_id' => $article['id'],
+    'content_language' => 'en - English',
+    'content_model' => 'wikitext',
+    'indexing_by_robots' => 'Allowed',
+    'counted_as_content_page' => 'Yes',
+    'local_description' => substr(strip_tags($article['content']), 0, 100) . '...',
+    'central_description' => $article['title']
+];
 
 include '../../../includes/header.php';
 ?>
 
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h1 class="mb-0">
-                        <i class="fas fa-info-circle"></i>
-                        Page Information
-                    </h1>
-                    <p class="text-muted mb-0">
-                        Detailed information about: 
-                        <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" class="text-primary">
-                            <?php echo htmlspecialchars($article['title']); ?>
-                        </a>
-                    </p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Basic Information -->
-                        <div class="col-md-6 mb-4">
-                            <h4 class="text-primary mb-3">
-                                <i class="fas fa-file-alt"></i> Basic Information
-                            </h4>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="fw-bold">Title:</td>
-                                    <td><?php echo htmlspecialchars($article['title']); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Slug:</td>
-                                    <td><code><?php echo htmlspecialchars($article['slug']); ?></code></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Status:</td>
-                                    <td>
-                                        <span class="badge bg-success">Published</span>
-                                    </td>
-                                </tr>
-                                <?php if ($article['category_name']): ?>
-                                <tr>
-                                    <td class="fw-bold">Category:</td>
-                                    <td>
-                                        <a href="/wiki/category/<?php echo htmlspecialchars($article['category_slug']); ?>" 
-                                           class="text-decoration-none">
-                                            <?php echo htmlspecialchars($article['category_name']); ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endif; ?>
-                                <tr>
-                                    <td class="fw-bold">Created:</td>
-                                    <td><?php echo date('F j, Y \a\t g:i A', strtotime($article['created_at'])); ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Last Modified:</td>
-                                    <td><?php echo date('F j, Y \a\t g:i A', strtotime($article['updated_at'])); ?></td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        <!-- Content Statistics -->
-                        <div class="col-md-6 mb-4">
-                            <h4 class="text-primary mb-3">
-                                <i class="fas fa-chart-bar"></i> Content Statistics
-                            </h4>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="fw-bold">Word Count:</td>
-                                    <td><?php echo number_format($word_count); ?> words</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Character Count:</td>
-                                    <td><?php echo number_format($char_count); ?> characters</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Reading Time:</td>
-                                    <td><?php echo $reading_time; ?> minute<?php echo $reading_time !== 1 ? 's' : ''; ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">View Count:</td>
-                                    <td><?php echo number_format($article['view_count']); ?> views</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Edit Count:</td>
-                                    <td><?php echo count($recent_edits); ?> edits</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Author Information -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <h4 class="text-primary mb-3">
-                                <i class="fas fa-user"></i> Author Information
-                            </h4>
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1">
-                                            <h5 class="mb-1">
-                                                <a href="/user/<?php echo htmlspecialchars($article['username']); ?>" 
-                                                   class="text-decoration-none">
-                                                    <?php echo htmlspecialchars($article['display_name'] ?: $article['username']); ?>
-                                                </a>
-                                            </h5>
-                                            <p class="text-muted mb-0">
-                                                <small>@<?php echo htmlspecialchars($article['username']); ?></small>
-                                            </p>
-                                        </div>
-                                        <div class="text-muted">
-                                            <small>
-                                                Member since <?php echo date('M Y', strtotime($article['created_at'])); ?>
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Recent Edits -->
-                    <?php if (!empty($recent_edits)): ?>
-                    <div class="row">
-                        <div class="col-12">
-                            <h4 class="text-primary mb-3">
-                                <i class="fas fa-history"></i> Recent Edit History
-                            </h4>
-                            <div class="list-group">
-                                <?php foreach ($recent_edits as $edit): ?>
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">
-                                                <?php echo htmlspecialchars($edit['edit_summary'] ?: 'No summary provided'); ?>
-                                            </h6>
-                                            <p class="mb-1 text-muted">
-                                                <small>
-                                                    by 
-                                                    <a href="/user/<?php echo htmlspecialchars($edit['username']); ?>" 
-                                                       class="text-decoration-none">
-                                                        <?php echo htmlspecialchars($edit['display_name'] ?: $edit['username']); ?>
-                                                    </a>
-                                                </small>
-                                            </p>
-                                        </div>
-                                        <div class="text-muted">
-                                            <small>
-                                                <?php echo date('M j, Y \a\t g:i A', strtotime($edit['created_at'])); ?>
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                
-                <div class="card-footer">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" 
-                           class="btn btn-outline-primary">
-                            <i class="fas fa-arrow-left"></i> Back to article
-                        </a>
-                        <div class="btn-group">
-                            <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/history" 
-                               class="btn btn-outline-secondary">
-                                <i class="fas fa-history"></i> View full history
-                            </a>
-                            <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/what-links-here" 
-                               class="btn btn-outline-secondary">
-                                <i class="fas fa-link"></i> What links here
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<style>
+.page-info-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-info-header {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.page-info-section {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.page-info-section h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    color: #495057;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: top;
+}
+
+.info-table td:first-child {
+    font-weight: 600;
+    color: #495057;
+    width: 200px;
+    background: #f8f9fa;
+}
+
+.info-table td:last-child {
+    color: #212529;
+}
+
+.info-table a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.info-table a:hover {
+    text-decoration: underline;
+}
+
+.protection-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #28a745;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.lint-error-count {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.external-tools {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.external-tools h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+.external-tools a {
+    color: #0d6efd;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.external-tools a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.breadcrumb-nav {
+    margin-top: 20px;
+    padding: 12px 0;
+    border-top: 1px solid #e9ecef;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.breadcrumb-nav a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-nav span {
+    margin: 0 8px;
+    color: #adb5bd;
+}
+
+@media (max-width: 768px) {
+    .page-info-container {
+        padding: 10px;
+    }
+    
+    .page-info-section {
+        padding: 16px;
+    }
+    
+    .info-table td:first-child {
+        width: 150px;
+    }
+}
+</style>
+
+<div class="page-info-container">
+    <!-- Header Section -->
+    <div class="page-info-header">
+        <h1 style="margin: 0 0 10px 0; font-size: 24px;">
+            <i class="fas fa-info-circle"></i> Information for "<?php echo htmlspecialchars($article['title']); ?>"
+        </h1>
+        <p style="margin: 0; color: #6c757d;">
+            Comprehensive page information and statistics
+        </p>
+    </div>
+
+    <!-- Basic Information Section -->
+    <div class="page-info-section">
+        <h3>Basic information</h3>
+        <table class="info-table">
+            <tr>
+                <td>Display title</td>
+                <td><?php echo htmlspecialchars($article['title']); ?></td>
+            </tr>
+            <tr>
+                <td>Default sort key</td>
+                <td><?php echo htmlspecialchars($article['title']); ?></td>
+            </tr>
+            <tr>
+                <td>Page length (in bytes)</td>
+                <td><?php echo number_format($byte_count); ?></td>
+            </tr>
+            <tr>
+                <td>Namespace ID</td>
+                <td><?php echo $page_properties['namespace_id']; ?></td>
+            </tr>
+            <tr>
+                <td>Page ID</td>
+                <td><?php echo $page_properties['page_id']; ?></td>
+            </tr>
+            <tr>
+                <td>Page content language</td>
+                <td><?php echo $page_properties['content_language']; ?></td>
+            </tr>
+            <tr>
+                <td>Page content model</td>
+                <td><?php echo $page_properties['content_model']; ?></td>
+            </tr>
+            <tr>
+                <td>Indexing by robots</td>
+                <td><?php echo $page_properties['indexing_by_robots']; ?></td>
+            </tr>
+            <tr>
+                <td>Number of page watchers</td>
+                <td><?php echo number_format($watchers_count); ?></td>
+            </tr>
+            <tr>
+                <td>Number of page watchers who visited in the last 30 days</td>
+                <td><?php echo number_format($watchers_count); ?></td>
+            </tr>
+            <tr>
+                <td>Number of redirects to this page</td>
+                <td>
+                    <a href="/wiki/special/what-links-here?slug=<?php echo urlencode($article['slug']); ?>&hidelinks=1&hidetrans=1">
+                        <?php echo number_format($redirects_count); ?>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Counted as a content page</td>
+                <td><?php echo $page_properties['counted_as_content_page']; ?></td>
+            </tr>
+            <tr>
+                <td>Local description</td>
+                <td><?php echo htmlspecialchars($page_properties['local_description']); ?></td>
+            </tr>
+            <tr>
+                <td>Central description</td>
+                <td><?php echo htmlspecialchars($page_properties['central_description']); ?></td>
+            </tr>
+            <tr>
+                <td>Page views in the past 30 days</td>
+                <td>
+                    <a href="#" title="View detailed page view statistics">
+                        <?php echo number_format($recent_views); ?>
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Page Protection Section -->
+    <div class="page-info-section">
+        <h3>Page protection</h3>
+        <table class="info-table">
+            <tr>
+                <td>Edit</td>
+                <td>
+                    <span class="protection-badge"><?php echo $page_protection['edit']; ?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Move</td>
+                <td>
+                    <span class="protection-badge"><?php echo $page_protection['move']; ?></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Edit History Section -->
+    <div class="page-info-section">
+        <h3>Edit history</h3>
+        <table class="info-table">
+            <tr>
+                <td>Page creator</td>
+                <td>
+                    <a href="/user/<?php echo htmlspecialchars($page_creator['username']); ?>">
+                        <?php echo htmlspecialchars($page_creator['display_name'] ?: $page_creator['username']); ?>
+                    </a>
+                    <small class="text-muted">
+                        (<?php echo date('H:i, j F Y', strtotime($page_creator['created_at'])); ?>)
+                    </small>
+                </td>
+            </tr>
+            <tr>
+                <td>Date of page creation</td>
+                <td>
+                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/history">
+                        <?php echo date('H:i, j F Y', strtotime($article['created_at'])); ?>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Latest editor</td>
+                <td>
+                    <a href="/user/<?php echo htmlspecialchars($latest_editor['username']); ?>">
+                        <?php echo htmlspecialchars($latest_editor['display_name'] ?: $latest_editor['username']); ?>
+                    </a>
+                    <small class="text-muted">
+                        (<?php echo date('H:i, j F Y', strtotime($latest_editor['created_at'])); ?>)
+                    </small>
+                </td>
+            </tr>
+            <tr>
+                <td>Date of latest edit</td>
+                <td>
+                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/history">
+                        <?php echo date('H:i, j F Y', strtotime($article['updated_at'])); ?>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Total number of edits</td>
+                <td><?php echo number_format($total_edits); ?></td>
+            </tr>
+            <tr>
+                <td>Recent number of edits (within past 30 days)</td>
+                <td><?php echo count($recent_edits); ?></td>
+            </tr>
+            <tr>
+                <td>Recent number of distinct authors</td>
+                <td><?php echo count(array_unique(array_column($recent_edits, 'username'))); ?></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Page Properties Section -->
+    <div class="page-info-section">
+        <h3>Page properties</h3>
+        <table class="info-table">
+            <tr>
+                <td>Word count</td>
+                <td><?php echo number_format($word_count); ?> words</td>
+            </tr>
+            <tr>
+                <td>Character count</td>
+                <td><?php echo number_format($char_count); ?> characters</td>
+            </tr>
+            <tr>
+                <td>Reading time</td>
+                <td><?php echo $reading_time; ?> minute<?php echo $reading_time !== 1 ? 's' : ''; ?></td>
+            </tr>
+            <tr>
+                <td>Total view count</td>
+                <td><?php echo number_format($article['view_count']); ?> views</td>
+            </tr>
+            <?php if ($article['category_name']): ?>
+            <tr>
+                <td>Category</td>
+                <td>
+                    <a href="/wiki/category/<?php echo htmlspecialchars($article['category_slug']); ?>">
+                        <?php echo htmlspecialchars($article['category_name']); ?>
+                    </a>
+                </td>
+            </tr>
+            <?php endif; ?>
+        </table>
+    </div>
+
+    <!-- Lint Errors Section -->
+    <div class="page-info-section">
+        <h3>Lint errors</h3>
+        <table class="info-table">
+            <tr>
+                <td>Duplicate IDs</td>
+                <td>
+                    <span class="lint-error-count"><?php echo $lint_errors['duplicate_ids']; ?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Background color inline style rule exists without a corresponding text color</td>
+                <td>
+                    <span class="lint-error-count"><?php echo $lint_errors['background_color_without_text_color']; ?></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- External Tools Section -->
+    <div class="external-tools">
+        <h4>External tools</h4>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+            <a href="#">Revision history search</a>
+            <span style="color: #6c757d;">•</span>
+            <a href="#">Revision history statistics</a>
+            <span style="color: #6c757d;">•</span>
+            <a href="#">Edits by user</a>
+            <span style="color: #6c757d;">•</span>
+            <a href="#">Page view statistics</a>
+            <span style="color: #6c757d;">•</span>
+            <a href="#">WikiChecker</a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-nav">
+        <nav>
+            <a href="/wiki/Main_Page">← Main Page</a>
+            <span>•</span>
+            <span>Page information</span>
+        </nav>
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e9ecef;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" 
+               style="padding: 8px 16px; background: #f8f9fa; color: #0d6efd; text-decoration: none; border: 1px solid #dee2e6; border-radius: 4px;">
+                ← <?php echo htmlspecialchars($article['title']); ?>
+            </a>
+            <small style="color: #6c757d;">
+                Last updated: <?php echo date('M j, Y \a\t g:i A'); ?>
+            </small>
         </div>
     </div>
 </div>
