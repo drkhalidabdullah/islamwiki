@@ -101,6 +101,9 @@ class MarkdownParser {
         $content = preg_replace('/```(.*?)```/s', '<pre><code>$1</code></pre>', $content);
         $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
         
+        // Images
+        $content = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1" class="post-image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;">', $content);
+        
         // Links
         $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $content);
         

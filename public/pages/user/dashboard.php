@@ -238,7 +238,7 @@ include "../../includes/header.php";
                     <?php if (is_editor()): ?>
                     <a href="/pages/wiki/create_article.php" class="action-btn">
                         <i class="fas fa-file-alt"></i>
-                        <span>Write Article</span>
+                        <span>New Article</span>
                     </a>
                     <?php endif; ?>
                     <a href="/search" class="action-btn">
@@ -703,9 +703,12 @@ include "../../includes/header.php";
                     <div class="content-list">
                         <?php foreach ($my_posts as $post): ?>
                         <div class="content-item">
-                            <p><?php echo htmlspecialchars(truncate_text($post['content'], 80)); ?></p>
+                            <div class="post-content preview"><?php 
+                                $parser = new MarkdownParser();
+                                echo $parser->parse($post['content']);
+                            ?></div>
                             <p class="item-meta"><?php echo format_date($post['created_at']); ?></p>
-            </div>
+                        </div>
             <?php endforeach; ?>
         </div>
                     <?php else: ?>
@@ -885,7 +888,7 @@ body {
 
 .dashboard-layout {
     display: grid;
-    grid-template-columns: 320px 1fr 300px;
+    grid-template-columns: 420px 1fr 300px;
     gap: 32px;
     align-items: start;
     max-width: 1600px;
@@ -897,6 +900,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 32px;
+    width: 100%;
+    min-width: 0;
 }
 
 .profile-card {
@@ -1017,6 +1022,8 @@ body {
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-light);
     transition: all 0.2s ease;
+    width: 100%;
+    min-width: 0;
 }
 
 .quick-actions-card:hover,
@@ -1059,23 +1066,29 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .action-btn {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
+    gap: 8px;
+    padding: 10px 12px;
     background: var(--bg-secondary);
     border: none;
     border-radius: var(--radius-lg);
     color: var(--text-primary);
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 500;
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    min-width: 0;
+    width: 100%;
 }
 
 .action-btn::before {
@@ -1101,9 +1114,10 @@ body {
 }
 
 .action-btn i {
-    font-size: 1.1rem;
-    width: 20px;
+    font-size: 0.9rem;
+    width: 14px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 /* Enhanced Main Feed Styles */
@@ -2019,9 +2033,34 @@ body {
 .post-content img {
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
-    margin: 8px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    margin: 12px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-content img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Specific styling for post images */
+.post-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 /* Post Editor Toolbar Styles */
@@ -2694,6 +2733,72 @@ body {
     font-weight: 500;
 }
 
+/* Post content styling in My Content section */
+.content-item .post-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.content-item .post-content p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+}
+
+.content-item .post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.content-item .post-content h1,
+.content-item .post-content h2,
+.content-item .post-content h3,
+.content-item .post-content h4,
+.content-item .post-content h5,
+.content-item .post-content h6 {
+    margin: 6px 0 4px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.content-item .post-content strong {
+    font-weight: 600;
+}
+
+.content-item .post-content em {
+    font-style: italic;
+}
+
+.content-item .post-content code {
+    background: var(--bg-secondary);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--primary-color);
+}
+
+/* Preview styling for My Content posts */
+.content-item .post-content.preview {
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+}
+
+.content-item .post-content.preview::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(transparent, var(--bg-primary));
+    pointer-events: none;
+}
+
 .status-published {
     color: var(--success-color);
     font-weight: 600;
@@ -2950,7 +3055,7 @@ body {
 /* Responsive Design */
 @media (max-width: 1200px) {
     .dashboard-layout {
-        grid-template-columns: 300px 1fr 280px;
+        grid-template-columns: 400px 1fr 280px;
         gap: 20px;
     }
 }
@@ -3143,6 +3248,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize post creation functionality
     initializePostCreation();
+    
+    // Initialize image click handlers
+    initializeImageHandlers();
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -3978,6 +4086,61 @@ function addPostToFeed(post) {
     // This function would add the new post to the top of the feed
     // For now, we'll just reload the page to show the new post
     console.log('New post created:', post);
+}
+
+function initializeImageHandlers() {
+    // Add click handlers to all post images
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('post-image') || e.target.tagName === 'IMG') {
+            const img = e.target;
+            const src = img.src;
+            const alt = img.alt || 'Image';
+            
+            // Create modal for image viewing
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                cursor: pointer;
+            `;
+            
+            const imgElement = document.createElement('img');
+            imgElement.src = src;
+            imgElement.alt = alt;
+            imgElement.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                border-radius: 8px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            `;
+            
+            modal.appendChild(imgElement);
+            document.body.appendChild(modal);
+            
+            // Close modal on click
+            modal.addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            // Close modal on escape key
+            const escapeHandler = function(e) {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(modal);
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+    });
 }
 
 function showToast(message, type = 'info') {
