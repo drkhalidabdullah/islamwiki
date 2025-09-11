@@ -703,7 +703,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     max-height: calc(100vh - 90px) !important; /* Prevent overflow, account for newsbar + top position */
     overflow-y: auto !important; /* Allow scrolling if content is too tall */
     border: 1px solid #e9ecef;
-    z-index: 9999 !important; /* Lower than newsbar (10000) to go under it when needed */
+    z-index: 100 !important; /* Much lower than search popup (10002) and newsbar (10000) */
     will-change: transform !important; /* Optimize for positioning */
     transform: translateZ(0) !important; /* Force hardware acceleration */
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* Add shadow for better visibility */
@@ -836,7 +836,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     max-height: calc(100vh - 90px) !important; /* Prevent overflow, account for newsbar + top position */
     overflow-y: auto !important; /* Allow scrolling if content is too tall */
     border: 1px solid #e9ecef;
-    z-index: 9999 !important; /* Lower than newsbar (10000) to go under it when needed */
+    z-index: 100 !important; /* Much lower than search popup (10002) and newsbar (10000) */
     will-change: transform !important; /* Optimize for positioning */
     transform: translateZ(0) !important; /* Force hardware acceleration */
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* Add shadow for better visibility */
@@ -1040,7 +1040,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
-    z-index: 1000;
+    z-index: 10002 !important; /* Higher than sidebars (9999) and newsbar (10000) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1501,6 +1501,15 @@ function showReportModal(contentId, contentType) {
     
     document.body.appendChild(modal);
     
+    // Add ESC key listener to close modal
+    const escKeyHandler = function(e) {
+        if (e.key === 'Escape') {
+            closeReportModal();
+            document.removeEventListener('keydown', escKeyHandler);
+        }
+    };
+    document.addEventListener('keydown', escKeyHandler);
+    
     // Handle form submission
     document.getElementById('reportForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -1674,6 +1683,8 @@ function citePage() {
         
         const citation = `${articleTitle}. (${currentDate.getFullYear()}, ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}). In *Islamic Wiki*. Retrieved ${currentDate.toLocaleDateString('en-US', { month: 'long' })} ${currentDate.getDate()}, ${currentDate.getFullYear()}, from ${currentUrl}`;
         
+        // Keep sidebars visible but ensure modal appears above them
+
         // Create modal for citation
         const modal = document.createElement('div');
         modal.className = 'citation-modal';
@@ -1710,6 +1721,15 @@ function citePage() {
         
         document.body.appendChild(modal);
         modal.style.display = 'flex';
+        
+        // Add ESC key listener to close modal
+        const escKeyHandler = function(e) {
+            if (e.key === 'Escape') {
+                closeCitationModal();
+                document.removeEventListener('keydown', escKeyHandler);
+            }
+        };
+        document.addEventListener('keydown', escKeyHandler);
     } catch (error) {
         console.error('Error in citePage:', error);
         showToast('Error: ' + error.message, 'error');
@@ -1926,14 +1946,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Force sticky positioning
             toc.style.position = 'sticky';
             toc.style.top = '70px';
-            toc.style.zIndex = '9999';
+            toc.style.zIndex = '100';
         }
         
         if (tools) {
             // Force sticky positioning
             tools.style.position = 'sticky';
             tools.style.top = '70px';
-            tools.style.zIndex = '9999';
+            tools.style.zIndex = '100';
             
             // Check if tools sidebar is at the bottom and should go under newsbar
             if (newsbar) {
@@ -1944,7 +1964,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (toolsRect.bottom >= newsbarRect.bottom - 10) {
                     tools.style.zIndex = '9998'; // Go under newsbar
                 } else {
-                    tools.style.zIndex = '9999'; // Stay above other content
+                    tools.style.zIndex = '100'; // Stay above other content
                 }
             }
         }

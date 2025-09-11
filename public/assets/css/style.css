@@ -5231,19 +5231,26 @@ body {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    z-index: 10000 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.7) !important; /* Darker backdrop for better coverage */
+    z-index: 10002 !important; /* Same as citation modal - higher than sidebars (9999) and newsbar (10000) */
     display: none !important;
     align-items: center !important;
     justify-content: center !important;
     padding: 2rem !important;
+    /* Force above all other elements */
+    isolation: isolate !important;
+    contain: layout style !important;
+    /* Ensure complete coverage */
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
 }
 
 .sidebar .search-popup.show {
     display: flex !important;
 }
+
 
 .sidebar .search-popup-content {
     background: white !important;

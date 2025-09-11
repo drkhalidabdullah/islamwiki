@@ -606,6 +606,17 @@ document.addEventListener("DOMContentLoaded", function() {
         popup.classList.toggle('show');
         
         if (popup.classList.contains('show')) {
+            // Keep sidebars visible but ensure search popup appears above them (like citation modal)
+            
+            // Add ESC key listener to close popup
+            const escKeyHandler = function(e) {
+                if (e.key === 'Escape') {
+                    closeSearchPopup();
+                    document.removeEventListener('keydown', escKeyHandler);
+                }
+            };
+            document.addEventListener('keydown', escKeyHandler);
+            
             // Focus on search input when popup opens
             setTimeout(() => {
                 document.getElementById('searchInput').focus();
