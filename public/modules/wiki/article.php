@@ -694,8 +694,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     border-radius: 8px;
     padding: 1rem;
     height: fit-content;
-    position: sticky;
-    top: 2rem;
+    position: static;
     border: 1px solid #e9ecef;
 }
 
@@ -808,8 +807,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     border-radius: 8px;
     padding: 1rem;
     height: fit-content;
-    position: sticky;
-    top: 2rem;
+    position: static;
     border: 1px solid #e9ecef;
     min-width: 0;
     overflow-wrap: break-word;
