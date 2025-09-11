@@ -350,6 +350,9 @@ include "../../includes/header.php";
                         <!-- Simple input (shown by default) -->
                         <textarea id="postContentSimple" placeholder="What's on your mind, <?php echo htmlspecialchars($_SESSION['display_name'] ?: $_SESSION['username']); ?>?" class="post-input post-input-simple" rows="3"></textarea>
                         
+                        <!-- Image preview area for simple mode -->
+                        <div id="simpleImagePreview" class="simple-image-preview" style="display: none;"></div>
+                        
                         <div class="post-input-footer">
                             <div class="post-options">
                                 <button type="button" class="formatting-btn" id="toggleFormatting" title="Show formatting tools">
@@ -708,7 +711,7 @@ include "../../includes/header.php";
                                 echo $parser->parse($post['content']);
                             ?></div>
                             <p class="item-meta"><?php echo format_date($post['created_at']); ?></p>
-                        </div>
+            </div>
             <?php endforeach; ?>
         </div>
                     <?php else: ?>
@@ -1767,9 +1770,9 @@ body {
 @media (max-width: 1200px) {
     .create-post-card.fullscreen .post-editor-container {
         flex-direction: column;
-        gap: 1rem;
-    }
-    
+    gap: 1rem;
+}
+
     .create-post-card.fullscreen .create-post-header,
     .create-post-card.fullscreen .post-editor-container,
     .create-post-card.fullscreen .create-post-actions {
@@ -2306,6 +2309,51 @@ body {
 .post-input-simple {
     border-radius: var(--radius-lg);
     border-top: 1px solid var(--border-light);
+}
+
+/* Simple image preview area */
+.simple-image-preview {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.simple-image-preview .image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+}
+
+.simple-image-preview .preview-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.simple-image-preview .remove-image-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 /* Help Modal */
@@ -3156,6 +3204,92 @@ html {
 
 <script>
 // Tab functionality
+// Global variable for storing uploaded images
+let uploadedImages = [];
+
+// Global functions for markdown parsing and preview
+function updatePreview() {
+    const postInput = document.getElementById('postContent');
+    const content = postInput.value.trim();
+    const previewContent = document.getElementById('postPreviewContent');
+    
+    if (!content) {
+        previewContent.innerHTML = '<p style="color: #999; font-style: italic;">No content to preview</p>';
+        return;
+    }
+    
+    try {
+        // Use the same MarkdownParser as the server
+        const html = parseMarkdown(content);
+        previewContent.innerHTML = html;
+    } catch (error) {
+        console.error('Preview error:', error);
+        previewContent.innerHTML = '<p style="color: #dc3545;">Error generating preview</p>';
+    }
+}
+
+// Markdown parser (client-side)
+function parseMarkdown(text) {
+    if (!text) return '';
+    
+    let html = text;
+    
+    // Code blocks (must be processed first to avoid conflicts)
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Blockquotes
+    html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    
+    // Lists - process unordered lists
+    html = html.replace(/^(\*|\-)\s+(.*$)/gim, '<li>$2</li>');
+    
+    // Lists - process ordered lists
+    html = html.replace(/^(\d+)\.\s+(.*$)/gim, '<li>$2</li>');
+    
+    // Wrap consecutive list items in ul/ol tags
+    html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/g, function(match) {
+        const isOrdered = /^\d+\./.test(text.split('\n').find(line => line.trim().match(/^\d+\./)));
+        const tag = isOrdered ? 'ol' : 'ul';
+        return `<${tag}>${match}</${tag}>`;
+    });
+    
+    // Inline formatting (must be processed after block elements)
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
+    html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // Links and images
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
+    
+    // Convert line breaks to paragraphs for better structure
+    html = html.split('\n\n').map(paragraph => {
+        paragraph = paragraph.trim();
+        if (!paragraph) return '';
+        
+        // Skip if it's already a block element
+        if (paragraph.match(/^<(h[1-6]|pre|blockquote|ul|ol|li)/)) {
+            return paragraph;
+        }
+        
+        // Convert single line breaks to <br> within paragraphs
+        paragraph = paragraph.replace(/\n/g, '<br>');
+        return `<p>${paragraph}</p>`;
+    }).join('\n');
+    
+    // Clean up empty paragraphs
+    html = html.replace(/<p><br><\/p>/g, '');
+    html = html.replace(/<p><\/p>/g, '');
+    
+    return html;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -3876,86 +4010,6 @@ function initializePostCreation() {
         }
     }
     
-    function updatePreview() {
-        const content = postInput.value.trim();
-        const previewContent = document.getElementById('postPreviewContent');
-        
-        if (!content) {
-            previewContent.innerHTML = '<p style="color: #999; font-style: italic;">No content to preview</p>';
-            return;
-        }
-        
-        try {
-            // Use the same MarkdownParser as the server
-            const html = parseMarkdown(content);
-            previewContent.innerHTML = html;
-        } catch (error) {
-            console.error('Preview error:', error);
-            previewContent.innerHTML = '<p style="color: #dc3545;">Error generating preview</p>';
-        }
-    }
-    
-    // Markdown parser (client-side)
-    function parseMarkdown(text) {
-        if (!text) return '';
-        
-        let html = text;
-        
-        // Code blocks (must be processed first to avoid conflicts)
-        html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-        
-        // Headers
-        html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-        html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-        html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-        
-        // Blockquotes
-        html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
-        
-        // Lists - process unordered lists
-        html = html.replace(/^(\*|\-)\s+(.*$)/gim, '<li>$2</li>');
-        
-        // Lists - process ordered lists
-        html = html.replace(/^(\d+)\.\s+(.*$)/gim, '<li>$2</li>');
-        
-        // Wrap consecutive list items in ul/ol tags
-        html = html.replace(/(<li>.*<\/li>)(\s*<li>.*<\/li>)*/g, function(match) {
-            const isOrdered = /^\d+\./.test(text.split('\n').find(line => line.trim().match(/^\d+\./)));
-            const tag = isOrdered ? 'ol' : 'ul';
-            return `<${tag}>${match}</${tag}>`;
-        });
-        
-        // Inline formatting (must be processed after block elements)
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
-        html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-        
-        // Links and images
-        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
-        
-        // Convert line breaks to paragraphs for better structure
-        html = html.split('\n\n').map(paragraph => {
-            paragraph = paragraph.trim();
-            if (!paragraph) return '';
-            
-            // Skip if it's already a block element
-            if (paragraph.match(/^<(h[1-6]|pre|blockquote|ul|ol|li)/)) {
-                return paragraph;
-            }
-            
-            // Convert single line breaks to <br> within paragraphs
-            paragraph = paragraph.replace(/\n/g, '<br>');
-            return `<p>${paragraph}</p>`;
-        }).join('\n');
-        
-        // Clean up empty paragraphs
-        html = html.replace(/<p><br><\/p>/g, '');
-        html = html.replace(/<p><\/p>/g, '');
-        
-        return html;
-    }
     
     // Initialize input handlers
     updateInputHandlers();
@@ -3989,8 +4043,10 @@ function initializePostCreation() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Clear input
+                // Clear input and images
                 currentInput.value = '';
+                uploadedImages = []; // Clear uploaded images
+                clearImagePreviews(); // Clear image previews
                 submitBtn.disabled = true;
                 cancelBtn.style.display = 'none';
                 
@@ -4022,6 +4078,8 @@ function initializePostCreation() {
     // Handle cancel button
     cancelBtn.addEventListener('click', function() {
         currentInput.value = '';
+        uploadedImages = []; // Clear uploaded images
+        clearImagePreviews(); // Clear image previews
         submitBtn.disabled = true;
         this.style.display = 'none';
     });
@@ -4353,38 +4411,19 @@ function insertImagePreview(imageContainer, imageUrl) {
         // Insert after the textarea
         editor.parentNode.insertBefore(tempDiv, editor.nextSibling);
         
-        // Add a placeholder in the textarea with server URL
-        const placeholder = `[IMAGE:${imageUrl}]`;
-        const text = editor.value;
-        const cursorPos = editor.selectionStart;
-        const newText = text.substring(0, cursorPos) + placeholder + text.substring(cursorPos);
-        editor.value = newText;
-        editor.focus();
-        editor.setSelectionRange(cursorPos + placeholder.length, cursorPos + placeholder.length);
+        // Store the image URL for later use
+        uploadedImages.push(imageUrl);
         
-        // Store the placeholder in the image container for later reference
-        imageContainer.setAttribute('data-placeholder', placeholder);
+        // Update preview
+        updatePreview();
     } else {
-        // For simple mode, show image above the input
-        const inputContainer = currentInput.parentNode;
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'simple-image-preview';
-        imageDiv.appendChild(imageContainer);
+        // For simple mode, add to the simple image preview area (no textarea modification)
+        const simplePreview = document.getElementById('simpleImagePreview');
+        simplePreview.appendChild(imageContainer);
+        simplePreview.style.display = 'flex';
         
-        // Insert before the input
-        inputContainer.insertBefore(imageDiv, currentInput);
-        
-        // Add placeholder text with server URL
-        const placeholder = `[IMAGE:${imageUrl}]`;
-        const text = currentInput.value;
-        const cursorPos = currentInput.selectionStart;
-        const newText = text.substring(0, cursorPos) + placeholder + text.substring(cursorPos);
-        currentInput.value = newText;
-        currentInput.focus();
-        currentInput.setSelectionRange(cursorPos + placeholder.length, cursorPos + placeholder.length);
-        
-        // Store the placeholder in the image container for later reference
-        imageContainer.setAttribute('data-placeholder', placeholder);
+        // Store the image URL for later use
+        uploadedImages.push(imageUrl);
     }
     
     // Trigger input change for validation
@@ -4410,30 +4449,32 @@ function removeImagePreview(button) {
 }
 
 function convertImagePlaceholdersToMarkdown(content) {
-    // Find all image previews and convert them to Markdown
-    const imageContainers = document.querySelectorAll('.image-preview-container');
+    // Add uploaded images to the content
     let processedContent = content;
     
-    imageContainers.forEach((container) => {
-        const img = container.querySelector('.preview-image');
-        const placeholder = container.getAttribute('data-placeholder');
-        
-        if (img && placeholder) {
-            const src = img.src;
-            const alt = img.alt;
-            const markdown = `![${alt}](${src})`;
-            
-            // Replace placeholder with actual Markdown
-            processedContent = processedContent.replace(placeholder, markdown);
-        }
-    });
-    
-    // Also handle any remaining [IMAGE:url] placeholders that might not have containers
-    processedContent = processedContent.replace(/\[IMAGE:([^\]]+)\]/g, (match, url) => {
-        return `![Image](${url})`;
-    });
+    // Add all uploaded images at the end of the content
+    if (uploadedImages.length > 0) {
+        const imageMarkdown = uploadedImages.map(url => `![Image](${url})`).join('\n\n');
+        processedContent = processedContent + (processedContent ? '\n\n' : '') + imageMarkdown;
+    }
     
     return processedContent;
+}
+
+function clearImagePreviews() {
+    // Clear simple image preview
+    const simplePreview = document.getElementById('simpleImagePreview');
+    if (simplePreview) {
+        simplePreview.innerHTML = '';
+        simplePreview.style.display = 'none';
+    }
+    
+    // Clear formatting mode image previews
+    const tempHolders = document.querySelectorAll('.temp-image-holder');
+    tempHolders.forEach(holder => holder.remove());
+    
+    // Clear the global uploaded images array
+    uploadedImages = [];
 }
 
 function handleVideoUpload(file) {
