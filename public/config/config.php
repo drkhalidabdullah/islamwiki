@@ -2,7 +2,7 @@
 // Site configuration
 define('SITE_NAME', 'IslamWiki');
 define('SITE_URL', 'http://localhost');
-define('SITE_VERSION', '0.0.0.9');
+define('SITE_VERSION', '0.0.0.11');
 
 // Security settings
 define('SESSION_TIMEOUT', 3600); // 1 hour

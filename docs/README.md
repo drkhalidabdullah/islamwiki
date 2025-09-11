@@ -2,11 +2,11 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.10
+## 🎯 Current Version: 0.0.0.11
 
-**Latest Release:** September 9, 2025  
+**Latest Release:** September 11, 2025  
 **Status:** Production Ready ✅  
-**Type:** Critical Bug Fixes & Feature Enhancement Release
+**Type:** Major Feature Release - News Feed Dashboard
 
 ## 🚀 What's New in v0.0.0.10
 

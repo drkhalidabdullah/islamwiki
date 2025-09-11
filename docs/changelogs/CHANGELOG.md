@@ -1,5 +1,113 @@
 # Changelog
 
+## [0.0.0.11] - 2025-09-11
+
+### 🎨 **Revolutionary News Feed Dashboard**
+
+#### Major Feature Release - Social Media-Style Dashboard
+- **3-Column Responsive Layout**: Modern social media-style dashboard with left sidebar, main feed, and right sidebar
+- **Unified Content Feed**: Single feed displaying posts and articles with smart filtering (All, Posts, Articles, Following)
+- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
+- **Image Upload System**: Copy/paste image support with automatic scaling and preview
+- **Social Engagement**: Like, comment, and share functionality for posts
+- **Content Management**: Personal content sections (My Content, Watchlist, Following)
+
+#### Enhanced User Experience
+- **Real-time Interactions**: AJAX-powered likes, comments, and social features
+- **Smart Content Filtering**: Filter buttons with state persistence using localStorage
+- **Visual Trending Section**: Interactive trending topics with visual indicators and gradient bars
+- **Quick Actions Panel**: Streamlined access to common actions (New Article, New Post, etc.)
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Toast Notifications**: Real-time feedback for user actions with smooth animations
+
+#### Technical Improvements
+- **Markdown Parser Enhancement**: Server-side and client-side markdown processing
+- **Image Processing**: Automatic image scaling and optimization for uploads (max 2MB)
+- **Database Optimization**: Enhanced queries with proper joins and indexing for social interactions
+- **JavaScript Architecture**: Modular, maintainable frontend code structure
+- **API Endpoints**: RESTful APIs for all social interactions (likes, comments, posts)
+- **Error Handling**: Comprehensive error handling and user feedback
+
+#### Bug Fixes & Stability
+- **Image Upload Fixes**: Resolved persistent image upload failures with proper session handling
+- **JavaScript Scope Issues**: Fixed variable scope problems in complex functions (uploadedImages, updatePreview)
+- **Markdown Rendering**: Fixed markdown display in content previews and My Content section
+- **UI Layout Fixes**: Resolved button truncation and hover effects extending outside containers
+- **Content Filtering**: Fixed Following filter to show only followed users' content (excludes own posts)
+- **Quick Actions Layout**: Fixed button truncation with optimized sidebar width and font sizing
+
+#### New Database Features
+- **Post Interactions**: Like, comment, and share tracking with real-time counts
+- **User Following System**: Enhanced following system with proper content filtering
+- **Image Upload System**: Username-based directory structure for organized file management
+- **Content Statistics**: Real-time engagement metrics and user activity tracking
+
+#### Frontend Enhancements
+- **Markdown Editor**: Full-featured markdown editor with toolbar and live preview
+- **Image Preview System**: Clean image preview area separate from editor textarea
+- **Filter State Management**: Persistent filter state across page reloads
+- **Social Interaction UI**: Heart animations, comment modals, and engagement counters
+- **Responsive Grid Layout**: CSS Grid-based responsive layout for optimal viewing
+
+#### API Improvements
+- **Image Upload API**: Robust image upload with scaling and error handling
+- **Post Creation API**: Enhanced post creation with markdown support and image integration
+- **Social Interaction APIs**: Like, comment, and follow/unfollow endpoints
+- **Content Retrieval APIs**: Optimized content fetching with engagement metrics
+
+### 🔧 **Technical Architecture**
+
+#### New Files Added
+- `public/pages/user/dashboard.php` - Complete news feed dashboard implementation
+- `public/api/ajax/upload_image.php` - Image upload API with scaling
+- `public/api/ajax/create_post.php` - Post creation API
+- `public/api/ajax/like_post.php` - Post liking API
+- `public/api/ajax/add_comment.php` - Comment creation API
+- `public/api/ajax/get_comments.php` - Comment retrieval API
+- `public/api/ajax/get_liked_posts.php` - Liked posts API
+
+#### Enhanced Files
+- `public/includes/markdown/MarkdownParser.php` - Enhanced with image parsing
+- `public/includes/functions.php` - Added social interaction functions
+- `public/.htaccess` - Added API routing rules
+
+#### Database Schema Updates
+- Enhanced `user_posts` table with engagement tracking
+- Optimized `post_interactions` table for likes and shares
+- Improved `post_comments` table for comment system
+- Enhanced `user_follows` table for following system
+
+### 🎯 **User Experience Improvements**
+
+#### Dashboard Features
+- **Profile Card**: User avatar, stats, and quick access to profile
+- **Quick Actions**: Streamlined buttons for common tasks
+- **Trending Topics**: Visual trending section with engagement metrics
+- **My Content**: Personal content management with tabs (Articles/Posts)
+- **Watchlist**: Article watchlist with unwatch functionality
+- **Following**: User following list with unfollow functionality
+
+#### Social Features
+- **Post Creation**: Inline post creation with markdown editor
+- **Image Sharing**: Copy/paste image support with preview
+- **Social Interactions**: Like, comment, and share posts
+- **Content Discovery**: Smart filtering and content recommendations
+- **Real-time Updates**: Live engagement counters and notifications
+
+### 🚀 **Performance & Security**
+
+#### Performance Optimizations
+- **Efficient Queries**: Optimized database queries with proper joins
+- **Image Optimization**: Automatic image scaling and compression
+- **Responsive Design**: Mobile-first approach with CSS Grid
+- **AJAX Integration**: Seamless interactions without page reloads
+
+#### Security Enhancements
+- **Input Validation**: Comprehensive input sanitization
+- **File Upload Security**: Secure image upload with type validation
+- **Session Management**: Proper session handling for uploads
+- **XSS Protection**: Output escaping and content security
+
 ## [0.0.0.10] - 2025-01-08
 
 ### 🔒 **Security & Analytics Enhancement**

@@ -1,8 +1,18 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
 header('Content-Type: application/json');
+
+// Check if user is logged in
+if (!is_logged_in()) {
+    error_log("Upload failed: User not logged in");
+    echo json_encode(['success' => false, 'message' => 'Authentication required']);
+    exit();
+}
+
+error_log("Upload request received from user: " . $_SESSION['username']);
 
 
 /**

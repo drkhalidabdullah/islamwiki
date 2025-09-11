@@ -1,17 +1,50 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.10-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.11-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
 
-## 🎯 Current Version: 0.0.0.10
+## 🎯 Current Version: 0.0.0.11
 
-**Latest Release:** September 9, 2025  
+**Latest Release:** September 11, 2025  
 **Status:** Production Ready ✅  
-**Type:** Critical Bug Fixes & Feature Enhancement Release
+**Type:** Major Feature Release - News Feed Dashboard
+
+## 🚀 What's New in v0.0.0.11
+
+### 🎨 **Revolutionary News Feed Dashboard**
+- **3-Column Responsive Layout**: Modern social media-style dashboard with left sidebar, main feed, and right sidebar
+- **Unified Content Feed**: Single feed displaying posts and articles with smart filtering
+- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
+- **Image Upload System**: Copy/paste image support with automatic scaling and preview
+- **Social Engagement**: Like, comment, and share functionality for posts
+- **Content Management**: Personal content sections (My Content, Watchlist, Following)
+
+### 📱 **Enhanced User Experience**
+- **Real-time Interactions**: AJAX-powered likes, comments, and social features
+- **Smart Content Filtering**: All, Posts, Articles, and Following filters with state persistence
+- **Visual Trending Section**: Interactive trending topics with visual indicators
+- **Quick Actions Panel**: Streamlined access to common actions (New Article, New Post, etc.)
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Toast Notifications**: Real-time feedback for user actions
+
+### 🔧 **Technical Improvements**
+- **Markdown Parser Enhancement**: Server-side and client-side markdown processing
+- **Image Processing**: Automatic image scaling and optimization for uploads
+- **Database Optimization**: Enhanced queries with proper joins and indexing
+- **JavaScript Architecture**: Modular, maintainable frontend code structure
+- **API Endpoints**: RESTful APIs for all social interactions
+- **Error Handling**: Comprehensive error handling and user feedback
+
+### 🐛 **Bug Fixes & Stability**
+- **Image Upload Fixes**: Resolved persistent image upload failures
+- **JavaScript Scope Issues**: Fixed variable scope problems in complex functions
+- **Markdown Rendering**: Fixed markdown display in content previews
+- **UI Layout Fixes**: Resolved button truncation and hover effects
+- **Content Filtering**: Fixed Following filter to show only followed users' content
 
 ## 🚀 What's New in v0.0.0.10
 
@@ -107,6 +140,10 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Clean URLs**: SEO-friendly URLs like `/wiki/Islam` instead of `/wiki/article.php?slug=islam`
 
 ### 👥 **Social Networking Features**
+- **News Feed Dashboard**: Modern 3-column social media-style dashboard
+- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
+- **Image Upload System**: Copy/paste image support with automatic scaling and preview
+- **Social Engagement**: Like, comment, and share functionality for posts
 - **Real-Time Messaging**: Instant messaging with live updates
 - **Friends System**: Add friends, send requests, and manage connections
 - **Friend Suggestions**: AI-powered friend recommendations
@@ -115,6 +152,7 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Community Events**: Organize and attend online, offline, and hybrid events
 - **Notifications**: Real-time notifications for messages, friend requests, and interactions
 - **User Profiles**: Comprehensive user profiles with bio, interests, and activity
+- **Content Management**: Personal content sections (My Content, Watchlist, Following)
 
 ### 🎨 **Modern User Interface**
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
