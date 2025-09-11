@@ -2,11 +2,51 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.11
+## 🎯 Current Version: 0.0.0.12
 
 **Latest Release:** September 11, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - News Feed Dashboard
+**Type:** Major Feature Release - Enhanced Wiki Experience & Search System
+
+## 🚀 What's New in v0.0.0.12
+
+### 🎨 **Revolutionary Wiki Experience**
+- **Three-Column Wiki Layout**: Contents sidebar (left), main content (center), and Tools sidebar (right)
+- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
+- **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
+- **Comprehensive Tools Panel**: What links here, Page information, Cite this page, and Download as PDF
+- **Full-Width Design**: Removed constraining containers for true full-width wiki experience
+
+### 🔍 **Enhanced Search & Navigation**
+- **Search Overlay System**: Full-screen search with proper z-index layering and backdrop effects
+- **Keyboard Shortcuts**: Press `/` to quickly open search overlay from anywhere on the page
+- **ESC Key Support**: All modals (search, citation, report) can be closed with ESC key
+- **Smart Z-Index Management**: Dynamic z-index control ensures search overlay appears above all content
+
+### 📚 **Wikipedia-Style Special Pages**
+- **"What Links Here" Page**: Comprehensive page showing all articles that link to a specific page
+  - Advanced filtering options (hide transclusions, links, redirects)
+  - Namespace filtering and sorting options
+  - Professional pagination system
+- **"Page Information" Page**: Detailed metadata and statistics about wiki articles
+  - Creator information and edit history
+  - Page protection status and properties
+  - Word count, character count, and reading time
+
+### 📖 **Citation System Enhancement**
+- **Multiple Citation Formats**: Support for MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE
+- **APA 7th Edition Default**: Updated to current academic standards
+- **Professional Modal**: Clean interface with format selection and copy functionality
+
+## 🚀 What's New in v0.0.0.11
+
+### 🎨 **Revolutionary News Feed Dashboard**
+- **3-Column Responsive Layout**: Modern social media-style dashboard with left sidebar, main feed, and right sidebar
+- **Unified Content Feed**: Single feed displaying posts and articles with smart filtering
+- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
+- **Image Upload System**: Copy/paste image support with automatic scaling and preview
+- **Social Engagement**: Like, comment, and share functionality for posts
+- **Content Management**: Personal content sections (My Content, Watchlist, Following)
 
 ## 🚀 What's New in v0.0.0.10
 
@@ -102,7 +142,13 @@ Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowl
 
 ### 📝 [Changelogs](changelogs/)
 - **CHANGELOG.md**: Complete version history
-- **v0.0.0.6.md**: Latest release notes (Major Restructuring)
+- **v0.0.0.12.md**: Latest release notes (Enhanced Wiki Experience & Search System)
+- **v0.0.0.11.md**: Previous release notes (News Feed Dashboard)
+- **v0.0.0.10.md**: Previous release notes (Bug Fixes & Enhancements)
+- **v0.0.0.9.md**: Previous release notes (UI/UX Improvements)
+- **v0.0.0.8.md**: Previous release notes (Community Groups & Events)
+- **v0.0.0.7.md**: Previous release notes (Search System)
+- **v0.0.0.6.md**: Previous release notes (Major Restructuring)
 - **v0.0.0.5.md**: Previous release notes (Real-Time Messaging)
 - **v0.0.0.4.md**: Previous release notes
 - **v0.0.0.3.md**: Previous release notes
@@ -193,7 +239,53 @@ html/
 
 ## 📊 Version History
 
-### v0.0.0.6 (Current) - Major Restructuring
+### v0.0.0.12 (Current) - Enhanced Wiki Experience & Search System
+- Three-column wiki layout with sticky sidebars
+- Table of contents with smooth scrolling and active highlighting
+- Wikipedia-style special pages (What Links Here, Page Information)
+- Enhanced search overlay with keyboard shortcuts
+- Multiple citation formats with APA 7th edition default
+- Smart z-index management for proper UI layering
+- ESC key support for all modals
+- Full-width design for optimal reading experience
+
+### v0.0.0.11 - News Feed Dashboard
+- Revolutionary 3-column social media-style dashboard
+- Unified content feed with smart filtering
+- Interactive post creation with markdown editor
+- Image upload system with copy/paste support
+- Social engagement features (like, comment, share)
+- Content management sections (My Content, Watchlist, Following)
+
+### v0.0.0.10 - Bug Fixes & Enhancements
+- Fixed critical 500 errors in post and article creation
+- Side-by-side live preview for markdown editing
+- User watchlist system for tracking article changes
+- Enhanced error handling and user feedback
+- Improved database functions and markdown parsing
+
+### v0.0.0.9 - UI/UX Improvements
+- Enhanced sidebar navigation with visual separators
+- Search popup integration with real-time suggestions
+- Article page redesign with transparent containers
+- Fixed dropdown positioning and search results layout
+- Improved mobile responsiveness and error handling
+
+### v0.0.0.8 - Community Groups & Events
+- Community groups with public/private/restricted access
+- Group management with admin/moderator/member roles
+- Community events (online/offline/hybrid) with attendance tracking
+- Enhanced search engine with multi-content support
+- Advanced filtering and search analytics
+
+### v0.0.0.7 - Search System
+- Comprehensive search system with multi-content search
+- Advanced filtering by content type, category, and author
+- Real-time search suggestions with AJAX
+- Search analytics and history tracking
+- Professional search interface with responsive design
+
+### v0.0.0.6 - Major Restructuring
 - Complete file system reorganization
 - Clean URL implementation
 - Enhanced navigation and user experience
@@ -260,8 +352,8 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ---
 
-**IslamWiki v0.0.0.9** - A modern Islamic knowledge platform with enhanced UI/UX and improved functionality.
+**IslamWiki v0.0.0.12** - A modern Islamic knowledge platform with enhanced wiki experience and advanced search capabilities.
 
-**Last Updated:** January 8, 2025  
-**Documentation Version:** 0.0.0.9  
+**Last Updated:** September 11, 2025  
+**Documentation Version:** 0.0.0.12  
 **Status:** Production Ready ✅

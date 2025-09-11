@@ -1,17 +1,47 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.11-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.12-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
 
-## 🎯 Current Version: 0.0.0.11
+## 🎯 Current Version: 0.0.0.12
 
 **Latest Release:** September 11, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - News Feed Dashboard
+**Type:** Major Feature Release - Enhanced Wiki Experience & Search System
+
+## 🚀 What's New in v0.0.0.12
+
+### 🎨 **Revolutionary Wiki Experience**
+- **Three-Column Wiki Layout**: Contents sidebar (left), main content (center), and Tools sidebar (right)
+- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
+- **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
+- **Comprehensive Tools Panel**: What links here, Page information, Cite this page, and Download as PDF
+- **Full-Width Design**: Removed constraining containers for true full-width wiki experience
+
+### 🔍 **Enhanced Search & Navigation**
+- **Search Overlay System**: Full-screen search with proper z-index layering and backdrop effects
+- **Keyboard Shortcuts**: Press `/` to quickly open search overlay from anywhere on the page
+- **ESC Key Support**: All modals (search, citation, report) can be closed with ESC key
+- **Smart Z-Index Management**: Dynamic z-index control ensures search overlay appears above all content
+
+### 📚 **Wikipedia-Style Special Pages**
+- **"What Links Here" Page**: Comprehensive page showing all articles that link to a specific page
+  - Advanced filtering options (hide transclusions, links, redirects)
+  - Namespace filtering and sorting options
+  - Professional pagination system
+- **"Page Information" Page**: Detailed metadata and statistics about wiki articles
+  - Creator information and edit history
+  - Page protection status and properties
+  - Word count, character count, and reading time
+
+### 📖 **Citation System Enhancement**
+- **Multiple Citation Formats**: Support for MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE
+- **APA 7th Edition Default**: Updated to current academic standards
+- **Professional Modal**: Clean interface with format selection and copy functionality
 
 ## 🚀 What's New in v0.0.0.11
 
@@ -124,6 +154,9 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 
 ### 🔍 **Advanced Search System**
 - **Universal Search**: Search across articles, users, messages, and all content types
+- **Search Overlay**: Full-screen search with proper z-index layering and backdrop effects
+- **Keyboard Shortcuts**: Press `/` to quickly open search overlay from anywhere on the page
+- **ESC Key Support**: Close search overlay and all modals with ESC key
 - **Smart Filtering**: Filter by content type, category, date range, author, and popularity
 - **Real-time Suggestions**: Auto-complete search suggestions as you type
 - **Search History**: Track and display recent searches for logged-in users
@@ -132,6 +165,11 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Search Analytics**: Track popular searches and optimize content discovery
 
 ### 📚 **Advanced Wiki System**
+- **Three-Column Layout**: Contents sidebar, main content, and Tools sidebar for enhanced navigation
+- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
+- **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
+- **Wikipedia-Style Special Pages**: "What Links Here" and "Page Information" pages with advanced filtering
+- **Multiple Citation Formats**: MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE citation support
 - **Markdown-First Editing**: Rich text editor with comprehensive toolbar
 - **Wiki-Style Linking**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
 - **Live Preview**: Real-time markdown rendering

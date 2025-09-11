@@ -641,6 +641,18 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
+    // Add / key to open search popup
+    document.addEventListener('keydown', function(e) {
+        // Only trigger if not typing in an input field
+        if (e.key === '/' && !e.target.matches('input, textarea, [contenteditable]')) {
+            e.preventDefault();
+            const searchTrigger = document.querySelector('.search-trigger');
+            if (searchTrigger) {
+                searchTrigger.click();
+            }
+        }
+    });
+    
     // Load search suggestions as user types
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');

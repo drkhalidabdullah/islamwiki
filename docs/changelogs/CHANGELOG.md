@@ -1,5 +1,117 @@
 # Changelog
 
+## [0.0.0.12] - 2025-09-11
+
+### 🎨 **Enhanced Wiki Experience & Search System**
+
+#### Major Wiki Layout Improvements
+- **Three-Column Wiki Layout**: Revolutionary wiki article layout with Contents sidebar (left), main content (center), and Tools sidebar (right)
+- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport for easy navigation
+- **Table of Contents (TOC)**: Auto-generated table of contents with smooth scrolling to sections and active highlighting
+- **Comprehensive Tools Panel**: What links here, Page information, Cite this page, and Download as PDF functionality
+- **Full-Width Design**: Removed constraining containers for true full-width wiki experience
+
+#### Enhanced Search & Navigation
+- **Search Overlay System**: Full-screen search overlay with proper z-index layering and backdrop effects
+- **Keyboard Shortcuts**: Added `/` key to quickly open search overlay from anywhere on the page
+- **Smart Z-Index Management**: Dynamic z-index control to ensure search overlay appears above all content
+- **ESC Key Support**: All modals (search, citation, report) can be closed with ESC key
+- **Improved Search UX**: Search popup with blur effects and proper content layering
+
+#### Wikipedia-Style Special Pages
+- **"What Links Here" Page**: Comprehensive page showing all articles that link to a specific page
+  - Advanced filtering options (hide transclusions, links, redirects)
+  - Namespace filtering and sorting options
+  - Pagination with customizable results per page
+  - Professional Wikipedia-style interface
+- **"Page Information" Page**: Detailed metadata and statistics about wiki articles
+  - Basic information (creator, creation date, latest editor, edit count)
+  - Page protection status and edit history
+  - Page properties (word count, character count, reading time)
+  - Lint errors section and external tools
+  - Comprehensive Wikipedia-style layout
+
+#### Citation System Enhancement
+- **Multiple Citation Formats**: Support for MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE formats
+- **APA 7th Edition Default**: Updated to use current APA 7th edition standards
+- **Citation Modal**: Professional modal with format selection and copy functionality
+- **Proper Citation Rules**: Verified citation formats against official style guides
+
+#### Technical Improvements
+- **Z-Index Architecture**: Comprehensive z-index system for proper layering
+  - Sidebars: 100 (lowest)
+  - Newsbar: 10000
+  - Search popup: 10002
+  - Citation modal: 10002
+- **Sticky Positioning**: Enhanced sticky sidebar behavior with JavaScript enforcement
+- **Rate Limiting Adjustments**: Increased wiki view limits and added development mode
+- **CSS Grid Layout**: Modern three-column layout using CSS Grid for optimal responsiveness
+
+#### User Experience Enhancements
+- **Smooth Scrolling**: TOC links provide smooth scrolling to article sections
+- **Active Section Highlighting**: TOC automatically highlights current section while reading
+- **Modal Consistency**: All modals (search, citation, report) have consistent behavior and styling
+- **Responsive Design**: Three-column layout adapts properly to different screen sizes
+- **Visual Polish**: Enhanced shadows, borders, and spacing for professional appearance
+
+#### Bug Fixes & Stability
+- **Sidebar Overlay Issues**: Fixed sidebars appearing behind search overlay
+- **Z-Index Conflicts**: Resolved stacking context issues between different UI elements
+- **Sticky Positioning**: Fixed sidebars not sticking properly during scroll
+- **Modal Layering**: Ensured proper layering of all overlay elements
+- **Layout Preservation**: Maintained page layout integrity when overlays are active
+
+### 🔧 **Technical Architecture**
+
+#### New Files Added
+- `public/modules/wiki/special/what-links-here.php` - What links here special page
+- `public/modules/wiki/special/page-info.php` - Page information special page
+- Enhanced `public/modules/wiki/article.php` - Three-column layout and TOC system
+
+#### Enhanced Files
+- `public/includes/header.php` - Search overlay and keyboard shortcuts
+- `public/assets/css/style.css` - Z-index management and search overlay styling
+- `public/config/config.php` - Development mode and rate limiting controls
+
+#### Database Schema Updates
+- Enhanced wiki article queries for linking analysis
+- Added page statistics and metadata tracking
+- Optimized queries for special pages functionality
+
+### 🎯 **User Experience Improvements**
+
+#### Wiki Navigation
+- **Contents Sidebar**: Auto-generated table of contents with section links
+- **Tools Sidebar**: Quick access to page tools and information
+- **Sticky Behavior**: Sidebars remain accessible while scrolling through long articles
+- **Active Highlighting**: Current section highlighted in table of contents
+
+#### Search Experience
+- **Quick Access**: Press `/` to instantly open search from anywhere
+- **Clean Overlay**: Search popup properly covers all content without interference
+- **ESC to Close**: Consistent keyboard shortcut across all modals
+- **Visual Effects**: Blur backdrop and smooth animations
+
+#### Special Pages
+- **Wikipedia-Style Interface**: Professional special pages matching Wikipedia's design
+- **Advanced Filtering**: Comprehensive filtering and sorting options
+- **Pagination**: Efficient handling of large result sets
+- **External Tools**: Links to various analysis and editing tools
+
+### 🚀 **Performance & Security**
+
+#### Performance Optimizations
+- **Efficient Z-Index Management**: Optimized layering system for better performance
+- **Sticky Positioning**: Hardware-accelerated sticky positioning with vendor prefixes
+- **Responsive Design**: Mobile-first approach with CSS Grid
+- **JavaScript Optimization**: Efficient event handling and DOM manipulation
+
+#### Security Enhancements
+- **Input Validation**: Enhanced input sanitization for special pages
+- **Rate Limiting**: Improved rate limiting with development mode support
+- **XSS Protection**: Output escaping and content security
+- **Modal Security**: Secure modal handling and event management
+
 ## [0.0.0.11] - 2025-09-11
 
 ### 🎨 **Revolutionary News Feed Dashboard**
