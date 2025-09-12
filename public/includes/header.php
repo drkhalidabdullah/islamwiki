@@ -19,7 +19,7 @@ if ($message) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title . ' - ' . SITE_NAME : SITE_NAME; ?></title>
+    <title><?php echo isset($page_title) ? $page_title . ' - ' . get_site_name() : get_site_name(); ?></title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -557,7 +557,7 @@ if ($message) {
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
         <!-- Logo at top -->
-        <a href="/" class="sidebar-item" title="IslamWiki Home">
+        <a href="/" class="sidebar-item" title="<?php echo get_site_name(); ?> Home">
             <i class="fas fa-book-open"></i>
         </a>
         
@@ -574,7 +574,7 @@ if ($message) {
             <div class="search-popup" id="searchPopup">
                 <div class="search-popup-content">
                     <div class="search-popup-header">
-                        <h3>Search IslamWiki</h3>
+                        <h3>Search <?php echo get_site_name(); ?></h3>
                         <button class="search-popup-close" onclick="closeSearchPopup()">
                             <i class="fas fa-times"></i>
                         </button>

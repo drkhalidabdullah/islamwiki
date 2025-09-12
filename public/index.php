@@ -176,7 +176,7 @@ include 'includes/header.php';
             <!-- Hero Section -->
             <div class="hero-section">
                 <div class="hero-content">
-                    <h1>Welcome to <?php echo SITE_NAME; ?></h1>
+                    <h1>Welcome to <?php echo get_site_name(); ?></h1>
                     <p>Your comprehensive source for Islamic knowledge, community discussions, and educational resources.</p>
                     <?php if (!is_logged_in()): ?>
                         <div class="hero-actions">

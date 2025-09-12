@@ -65,7 +65,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?> - <?php echo SITE_NAME; ?></title>
+    <title><?php echo $page_title; ?> - <?php echo get_site_name(); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -407,7 +407,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
             
             <div class="maintenance-footer">
                 <p>Thank you for your patience. We'll be back online soon!</p>
-                <p><strong><?php echo SITE_NAME; ?></strong> - Islamic Knowledge Platform</p>
+                <p><strong><?php echo get_site_name(); ?></strong> - Islamic Knowledge Platform</p>
             </div>
         </div>
         

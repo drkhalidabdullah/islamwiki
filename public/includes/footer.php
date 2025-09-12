@@ -3,7 +3,7 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-text">
-                <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
+                <p><?php echo get_copyright_text(); ?></p>
                 <p>Version <?php echo SITE_VERSION; ?></p>
             </div>
             <a href="/" class="footer-powered">Powered by IslamWiki</a>

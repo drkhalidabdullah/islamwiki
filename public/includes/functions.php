@@ -301,6 +301,52 @@ function get_system_setting($key, $default = null) {
     }
 }
 
+/**
+ * Get the dynamic site name from settings or fall back to SITE_NAME constant
+ * @return string The site name
+ */
+function get_site_name() {
+    return get_system_setting('site_name', SITE_NAME);
+}
+
+/**
+ * Get the copyright text from settings or generate default with site name
+ * @return string The copyright text
+ */
+function get_copyright_text() {
+    $custom_copyright = get_system_setting('copyright_text', '');
+    if (!empty($custom_copyright)) {
+        return $custom_copyright;
+    }
+    
+    // Default copyright with dynamic site name
+    return '© ' . date('Y') . ' ' . get_site_name() . '. All rights reserved.';
+}
+
+/**
+ * Get the first user's email (the person who set up the site)
+ * @return string The first user's email or default admin email
+ */
+function get_first_user_email() {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("SELECT email FROM users ORDER BY created_at ASC LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        
+        if ($result && !empty($result['email'])) {
+            return $result['email'];
+        }
+    } catch (Exception $e) {
+        // If there's an error, fall back to default
+        error_log("Error getting first user email: " . $e->getMessage());
+    }
+    
+    // Fallback to default admin email
+    return 'admin@islamwiki.org';
+}
+
 function set_system_setting($key, $value, $type = 'string', $description = '') {
     global $pdo;
     

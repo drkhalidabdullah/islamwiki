@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'estimated_downtime' => sanitize_input($_POST['estimated_downtime'] ?? '2-4 hours'),
             'enable_analytics' => isset($_POST['enable_analytics']) ? 1 : 0,
             'enable_notifications' => isset($_POST['enable_notifications']) ? 1 : 0,
+            'copyright_text' => sanitize_input($_POST['copyright_text'] ?? ''),
         ];
         
         $updated = 0;
@@ -170,8 +171,8 @@ $current_settings = [
     'site_name' => get_system_setting('site_name', SITE_NAME),
     'site_description' => get_system_setting('site_description', 'A comprehensive Islamic knowledge platform'),
     'site_keywords' => get_system_setting('site_keywords', 'Islam, Islamic, knowledge, wiki'),
-    'admin_email' => get_system_setting('admin_email', 'admin@islamwiki.org'),
-    'contact_email' => get_system_setting('contact_email', 'contact@islamwiki.org'),
+    'admin_email' => get_system_setting('admin_email', '') ?: get_first_user_email(),
+    'contact_email' => get_system_setting('contact_email', '') ?: get_first_user_email(),
     'posts_per_page' => get_system_setting('posts_per_page', 10),
     'articles_per_page' => get_system_setting('articles_per_page', 10),
     'allow_registration' => get_system_setting('allow_registration', true),
@@ -184,6 +185,7 @@ $current_settings = [
     'estimated_downtime' => get_system_setting('estimated_downtime', '2-4 hours'),
     'enable_analytics' => get_system_setting('enable_analytics', true),
     'enable_notifications' => get_system_setting('enable_notifications', true),
+    'copyright_text' => get_system_setting('copyright_text', ''),
     
     // Security Settings
     'password_min_length' => get_system_setting('password_min_length', 8),
@@ -201,7 +203,7 @@ $current_settings = [
     'smtp_username' => get_system_setting('smtp_username', ''),
     'smtp_password' => get_system_setting('smtp_password', ''),
     'smtp_encryption' => get_system_setting('smtp_encryption', 'tls'),
-    'email_from_name' => get_system_setting('email_from_name', 'IslamWiki'),
+    'email_from_name' => get_system_setting('email_from_name', get_site_name()),
     'email_from_address' => get_system_setting('email_from_address', 'noreply@islamwiki.org'),
     'enable_email_notifications' => get_system_setting('enable_email_notifications', true),
 ];
@@ -334,6 +336,7 @@ include "../../includes/header.php";
                                 <label for="admin_email">Admin Email *</label>
                                 <input type="email" id="admin_email" name="admin_email" 
                                        value="<?php echo htmlspecialchars($current_settings['admin_email']); ?>" required>
+                                <small class="form-help">Defaults to the first user's email (site setup person)</small>
                             </div>
                         </div>
                         
@@ -342,6 +345,7 @@ include "../../includes/header.php";
                                 <label for="contact_email">Contact Email</label>
                                 <input type="email" id="contact_email" name="contact_email" 
                                        value="<?php echo htmlspecialchars($current_settings['contact_email']); ?>">
+                                <small class="form-help">Defaults to the first user's email (site setup person)</small>
                             </div>
                             <div class="form-group">
                                 <label for="posts_per_page">Posts Per Page</label>
@@ -361,6 +365,13 @@ include "../../includes/header.php";
                             <input type="text" id="site_keywords" name="site_keywords" 
                                    value="<?php echo htmlspecialchars($current_settings['site_keywords']); ?>"
                                    placeholder="islam, quran, hadith, knowledge">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="copyright_text">Copyright Text (optional)</label>
+                            <textarea id="copyright_text" name="copyright_text" rows="2" 
+                                      placeholder="Leave empty to use default: © <?php echo date('Y'); ?> <?php echo get_site_name(); ?>. All rights reserved."><?php echo htmlspecialchars($current_settings['copyright_text']); ?></textarea>
+                            <small class="form-help">Custom copyright text. If left empty, will use default format with site name.</small>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
@@ -1187,6 +1198,14 @@ include "../../includes/header.php";
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    font-style: italic;
 }
 
 .feature-grid {
