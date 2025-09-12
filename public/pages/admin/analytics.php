@@ -31,6 +31,11 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
+        <div class="header-actions">
+            <a href="/admin" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Admin Panel
+            </a>
+        </div>
         <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
         <p>Monitor site performance, user behavior, and content engagement</p>
     </div>
@@ -283,6 +288,33 @@ function updateAnalytics() {
 .admin-header {
     margin-bottom: 2rem;
 }
+.header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.header-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.header-actions .btn:hover {
+    background: #5a6268;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+
 
 .admin-header h1 {
     color: #2c3e50;

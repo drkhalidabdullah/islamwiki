@@ -12,8 +12,6 @@ if (!is_admin()) {
     redirect_with_return_url();
 }
 
-$success = '';
-$error = '';
 
 // Handle user actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,14 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($action === 'delete_user' && $user_id) {
         if ($user_id == $_SESSION['user_id']) {
-            $error = 'You cannot delete your own account.';
+            show_message('You cannot delete your own account.', 'error');
         } else {
             $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
             if ($stmt->execute([$user_id])) {
-                $success = 'User deleted successfully.';
+                show_message('User deleted successfully.', 'success');
                 log_activity('user_deleted', "Deleted user ID: $user_id");
             } else {
-                $error = 'Failed to delete user.';
+                show_message('Failed to delete user.', 'error');
             }
         }
     } elseif ($action === 'update_role' && $user_id) {
@@ -47,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($role) {
                 $stmt = $pdo->prepare("INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)");
                 if ($stmt->execute([$user_id, $role['id']])) {
-                    $success = 'User role updated successfully.';
+                    show_message('User role updated successfully.', 'success');
                     log_activity('user_role_updated', "Updated user ID: $user_id to role: $new_role");
                 } else {
-                    $error = 'Failed to update user role.';
+                    show_message('Failed to update user role.', 'error');
                 }
             }
         }
@@ -60,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
             if ($stmt->execute([$password_hash, $user_id])) {
-                $success = 'Password reset successfully.';
+                show_message('Password reset successfully.', 'success');
                 log_activity('user_password_reset', "Reset password for user ID: $user_id");
             } else {
-                $error = 'Failed to reset password.';
+                show_message('Failed to reset password.', 'error');
             }
         } else {
-            $error = 'Password must be at least 6 characters long.';
+            show_message('Password must be at least 6 characters long.', 'error');
         }
     } elseif ($action === 'edit_user' && $user_id) {
         $username = sanitize_input($_POST['username'] ?? '');
@@ -124,13 +122,6 @@ include "../../includes/header.php";;
         <a href="/admin" class="btn">Back to Admin Panel</a>
     </div>
     
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    
-    <?php if ($success): ?>
-        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
     
     <div class="card">
         <h2>All Users</h2>

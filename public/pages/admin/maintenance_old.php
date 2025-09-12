@@ -70,49 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['optimize_database']))
     exit;
 }
 
-// Handle file cleanup
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cleanup_files'])) {
-    $cleanup_type = $_POST['cleanup_type'] ?? 'temp';
-    $cleaned = 0;
-    
-    switch ($cleanup_type) {
-        case 'temp':
-            $temp_dir = '/tmp/';
-            if (is_dir($temp_dir)) {
-                $files = glob($temp_dir . 'islamwiki_*');
-                foreach ($files as $file) {
-                    if (is_file($file) && filemtime($file) < (time() - 3600)) {
-                        unlink($file);
-                        $cleaned++;
-                    }
-                }
-            }
-            break;
-        case 'uploads':
-            $upload_dir = '/var/www/html/uploads/posts/';
-            if (is_dir($upload_dir)) {
-                $db_files = $pdo->query("SELECT file_path FROM wiki_files")->fetchAll(PDO::FETCH_COLUMN);
-                $db_files = array_map(function($path) {
-                    return basename($path);
-                }, $db_files);
-                
-                $files = glob($upload_dir . '*');
-                foreach ($files as $file) {
-                    if (is_file($file) && !in_array(basename($file), $db_files)) {
-                        unlink($file);
-                        $cleaned++;
-                    }
-                }
-            }
-            break;
-    }
-    
-    show_message("Cleaned up $cleaned files successfully.", 'success');
-    log_activity('file_cleanup', "Cleaned up $cleaned $cleanup_type files", $_SESSION['user_id']);
-    header('Location: /admin/maintenance');
-    exit;
-}
-
 // Get system information
 $system_info = [
     'php_version' => PHP_VERSION,
@@ -153,7 +110,7 @@ include "../../includes/header.php";
     <div class="maintenance-header">
         <div class="header-content">
             <h1><i class="fas fa-tools"></i> System Maintenance</h1>
-            <p>Primary maintenance control center and system diagnostics</p>
+            <p>Comprehensive maintenance tools and system diagnostics</p>
         </div>
         <div class="header-actions">
             <a href="/admin" class="btn btn-secondary">
@@ -162,48 +119,29 @@ include "../../includes/header.php";
         </div>
     </div>
 
-    <!-- Primary Maintenance Mode Control -->
-    <div class="maintenance-section primary-control">
-        <div class="section-header">
-            <h2><i class="fas fa-power-off"></i> Maintenance Mode Control</h2>
-            <div class="header-actions">
-                <a href="/admin/system_settings" class="btn btn-outline btn-sm">
-                    <i class="fas fa-cog"></i> Configure Settings
-                </a>
-            </div>
-        </div>
-        
+    <!-- Maintenance Mode Status -->
+    <div class="maintenance-section">
+        <h2><i class="fas fa-power-off"></i> Maintenance Mode</h2>
         <div class="maintenance-mode-card">
             <?php if (is_maintenance_mode()): ?>
                 <div class="maintenance-active">
                     <div class="status-indicator">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span>Maintenance Mode Active</span>
-                        <div class="status-badge">ONLINE</div>
                     </div>
                     <div class="maintenance-details">
-                        <div class="detail-item">
-                            <strong>Message:</strong> 
-                            <span><?php echo htmlspecialchars(get_system_setting('maintenance_message', 'Site is under maintenance')); ?></span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Estimated Time:</strong> 
-                            <span><?php echo htmlspecialchars(get_system_setting('estimated_downtime', 'Unknown')); ?></span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Status:</strong> 
-                            <span class="status-text">Site is inaccessible to regular users</span>
-                        </div>
+                        <p><strong>Message:</strong> <?php echo htmlspecialchars(get_system_setting('maintenance_message', 'Site is under maintenance')); ?></p>
+                        <p><strong>Estimated Time:</strong> <?php echo htmlspecialchars(get_system_setting('estimated_downtime', 'Unknown')); ?></p>
                     </div>
                     <div class="maintenance-actions">
+                        <a href="/admin/system_settings" class="btn btn-warning">
+                            <i class="fas fa-cog"></i> Configure
+                        </a>
                         <form method="POST" style="display: inline;">
-                            <button type="submit" name="toggle_maintenance" class="btn btn-success btn-lg">
-                                <i class="fas fa-power-off"></i> Disable Maintenance Mode
+                            <button type="submit" name="toggle_maintenance" class="btn btn-success">
+                                <i class="fas fa-power-off"></i> Disable
                             </button>
                         </form>
-                        <a href="/admin/system_settings" class="btn btn-warning">
-                            <i class="fas fa-edit"></i> Edit Message & Settings
-                        </a>
                     </div>
                 </div>
             <?php else: ?>
@@ -211,102 +149,23 @@ include "../../includes/header.php";
                     <div class="status-indicator">
                         <i class="fas fa-check-circle"></i>
                         <span>Site is Online</span>
-                        <div class="status-badge online">LIVE</div>
                     </div>
                     <div class="maintenance-details">
-                        <div class="detail-item">
-                            <strong>Status:</strong> 
-                            <span class="status-text">All systems operational and accessible to users</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Last Maintenance:</strong> 
-                            <span><?php echo date('Y-m-d H:i:s'); ?></span>
-                        </div>
+                        <p>All systems are operational and accessible to users.</p>
                     </div>
                     <div class="maintenance-actions">
+                        <a href="/admin/system_settings" class="btn btn-primary">
+                            <i class="fas fa-cog"></i> Configure
+                        </a>
                         <form method="POST" style="display: inline;">
-                            <button type="submit" name="toggle_maintenance" class="btn btn-warning btn-lg" 
-                                    onclick="return confirm('⚠️ WARNING: This will make the site inaccessible to regular users.\n\nAre you sure you want to enable maintenance mode?')">
-                                <i class="fas fa-tools"></i> Enable Maintenance Mode
+                            <button type="submit" name="toggle_maintenance" class="btn btn-warning" 
+                                    onclick="return confirm('Are you sure you want to enable maintenance mode? This will make the site inaccessible to regular users.')">
+                                <i class="fas fa-tools"></i> Enable
                             </button>
                         </form>
-                        <a href="/admin/system_settings" class="btn btn-primary">
-                            <i class="fas fa-cog"></i> Configure Settings
-                        </a>
                     </div>
                 </div>
             <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Quick Maintenance Actions -->
-    <div class="maintenance-section">
-        <h2><i class="fas fa-bolt"></i> Quick Maintenance Actions</h2>
-        <div class="quick-actions-grid">
-            <div class="quick-action-card">
-                <div class="action-icon">
-                    <i class="fas fa-broom"></i>
-                </div>
-                <div class="action-content">
-                    <h3>Clear All Caches</h3>
-                    <p>Remove all cached data to improve performance</p>
-                    <form method="POST" style="display: inline;">
-                        <input type="hidden" name="cache_type" value="all">
-                        <button type="submit" name="clear_cache" class="btn btn-primary" 
-                                onclick="return confirm('Clear all caches? This will improve performance.')">
-                            <i class="fas fa-trash"></i> Clear All
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="quick-action-card">
-                <div class="action-icon">
-                    <i class="fas fa-database"></i>
-                </div>
-                <div class="action-content">
-                    <h3>Optimize Database</h3>
-                    <p>Optimize all database tables for better performance</p>
-                    <form method="POST" style="display: inline;">
-                        <button type="submit" name="optimize_database" class="btn btn-success" 
-                                onclick="return confirm('Optimize all database tables? This may take a moment.')">
-                            <i class="fas fa-magic"></i> Optimize
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="quick-action-card">
-                <div class="action-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="action-content">
-                    <h3>Clean Sessions</h3>
-                    <p>Remove expired user sessions</p>
-                    <form method="POST" style="display: inline;">
-                        <input type="hidden" name="cache_type" value="sessions">
-                        <button type="submit" name="clear_cache" class="btn btn-info">
-                            <i class="fas fa-user-times"></i> Clean
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="quick-action-card">
-                <div class="action-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <div class="action-content">
-                    <h3>Clean Old Logs</h3>
-                    <p>Remove activity logs older than 30 days</p>
-                    <form method="POST" style="display: inline;">
-                        <input type="hidden" name="cache_type" value="logs">
-                        <button type="submit" name="clear_cache" class="btn btn-warning">
-                            <i class="fas fa-history"></i> Clean
-                        </button>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -363,14 +222,14 @@ include "../../includes/header.php";
         </div>
     </div>
 
-    <!-- Advanced Maintenance Tools -->
+    <!-- Maintenance Tools -->
     <div class="maintenance-section">
-        <h2><i class="fas fa-wrench"></i> Advanced Maintenance Tools</h2>
+        <h2><i class="fas fa-wrench"></i> Maintenance Tools</h2>
         <div class="tools-grid">
             <!-- Cache Management -->
             <div class="tool-card">
                 <h3><i class="fas fa-broom"></i> Cache Management</h3>
-                <p>Clear specific types of cached data</p>
+                <p>Clear various types of cached data to improve performance</p>
                 <div class="tool-actions">
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="system">
@@ -390,25 +249,25 @@ include "../../includes/header.php";
                             <i class="fas fa-file-alt"></i> Old Logs
                         </button>
                     </form>
+                    <form method="POST" style="display: inline;">
+                        <input type="hidden" name="cache_type" value="all">
+                        <button type="submit" name="clear_cache" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('Are you sure you want to clear all caches?')">
+                            <i class="fas fa-trash"></i> All Caches
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            <!-- File Cleanup -->
+            <!-- Database Optimization -->
             <div class="tool-card">
-                <h3><i class="fas fa-folder-open"></i> File Cleanup</h3>
-                <p>Clean up temporary and orphaned files</p>
+                <h3><i class="fas fa-database"></i> Database Optimization</h3>
+                <p>Optimize database tables to improve performance and reduce fragmentation</p>
                 <div class="tool-actions">
                     <form method="POST" style="display: inline;">
-                        <input type="hidden" name="cleanup_type" value="temp">
-                        <button type="submit" name="cleanup_files" class="btn btn-info">
-                            <i class="fas fa-clock"></i> Temp Files
-                        </button>
-                    </form>
-                    <form method="POST" style="display: inline;">
-                        <input type="hidden" name="cleanup_type" value="uploads">
-                        <button type="submit" name="cleanup_files" class="btn btn-warning" 
-                                onclick="return confirm('This will delete orphaned upload files. Continue?')">
-                            <i class="fas fa-upload"></i> Orphaned Files
+                        <button type="submit" name="optimize_database" class="btn btn-success" 
+                                onclick="return confirm('This will optimize all database tables. Continue?')">
+                            <i class="fas fa-magic"></i> Optimize Database
                         </button>
                     </form>
                 </div>
@@ -451,7 +310,7 @@ include "../../includes/header.php";
 </div>
 
 <style>
-/* Enhanced Maintenance Page Styles */
+/* Maintenance Page Styles */
 .maintenance-page {
     max-width: 1400px;
     margin: 0 auto;
@@ -492,20 +351,8 @@ include "../../includes/header.php";
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-.maintenance-section.primary-control {
-    border: 2px solid #3498db;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.section-header h2 {
-    margin: 0;
+.maintenance-section h2 {
+    margin: 0 0 1.5rem 0;
     color: #2c3e50;
     font-size: 1.5rem;
     font-weight: 600;
@@ -514,7 +361,7 @@ include "../../includes/header.php";
     gap: 0.5rem;
 }
 
-/* Primary Maintenance Mode Control */
+/* Maintenance Mode Card */
 .maintenance-mode-card {
     border-radius: 8px;
     overflow: hidden;
@@ -522,133 +369,42 @@ include "../../includes/header.php";
 
 .maintenance-active {
     background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-    border: 2px solid #ffc107;
-    padding: 2rem;
+    border: 1px solid #ffeaa7;
+    padding: 1.5rem;
 }
 
 .maintenance-inactive {
     background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border: 2px solid #28a745;
-    padding: 2rem;
+    border: 1px solid #c3e6cb;
+    padding: 1.5rem;
 }
 
 .status-indicator {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     font-weight: 600;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
-    position: relative;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
 }
 
 .status-indicator i {
-    font-size: 1.5rem;
-}
-
-.status-badge {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: #ffc107;
-    color: #212529;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-badge.online {
-    background: #28a745;
-    color: white;
+    font-size: 1.2rem;
 }
 
 .maintenance-details {
-    margin-bottom: 2rem;
-    display: grid;
-    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.detail-item strong {
+.maintenance-details p {
+    margin: 0.5rem 0;
     color: #495057;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.detail-item span {
-    color: #2c3e50;
-    font-size: 1rem;
-}
-
-.status-text {
-    color: #28a745 !important;
-    font-weight: 500;
 }
 
 .maintenance-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    align-items: center;
-}
-
-/* Quick Actions Grid */
-.quick-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-
-.quick-action-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.quick-action-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    border-color: #3498db;
-}
-
-.action-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #3498db;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.action-content h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-    font-size: 1.2rem;
-}
-
-.action-content p {
-    margin: 0 0 1rem 0;
-    color: #6c757d;
-    font-size: 0.9rem;
 }
 
 /* Health Grid */
@@ -816,11 +572,6 @@ include "../../includes/header.php";
     transition: all 0.3s ease;
 }
 
-.btn-lg {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-}
-
 .btn-sm {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
@@ -844,17 +595,6 @@ include "../../includes/header.php";
 .btn-info { background: #17a2b8; color: white; }
 .btn-info:hover { background: #138496; transform: translateY(-1px); }
 
-.btn-outline {
-    background: transparent;
-    color: #3498db;
-    border: 1px solid #3498db;
-}
-
-.btn-outline:hover {
-    background: #3498db;
-    color: white;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .maintenance-page {
@@ -867,16 +607,9 @@ include "../../includes/header.php";
         gap: 1rem;
     }
     
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
     .health-grid,
     .tools-grid,
-    .stats-grid,
-    .quick-actions-grid {
+    .stats-grid {
         grid-template-columns: 1fr;
     }
     
@@ -887,17 +620,6 @@ include "../../includes/header.php";
     
     .btn {
         justify-content: center;
-    }
-    
-    .status-indicator {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .status-badge {
-        position: static;
-        margin-top: 0.5rem;
     }
 }
 </style>

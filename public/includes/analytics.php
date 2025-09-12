@@ -342,7 +342,11 @@ function auto_track_performance() {
 
 // Auto-track on page load
 if (!defined('DISABLE_ANALYTICS')) {
-    register_shutdown_function('auto_track_performance');
-    auto_track_page_view();
+    // Check if analytics is enabled in system settings
+    $enable_analytics = get_system_setting('enable_analytics', true);
+    if ($enable_analytics) {
+        register_shutdown_function('auto_track_performance');
+        auto_track_page_view();
+    }
 }
 ?>

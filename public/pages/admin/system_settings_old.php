@@ -17,55 +17,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'update_general') {
-        $form_section = $_POST['form_section'] ?? 'unknown';
-        $settings = [];
-        
-        // Process based on which form section was submitted
-        if ($form_section === 'site_info') {
-            // Site information settings
-            if (isset($_POST['site_name'])) {
-                $settings['site_name'] = sanitize_input($_POST['site_name']);
-            }
-            if (isset($_POST['site_description'])) {
-                $settings['site_description'] = sanitize_input($_POST['site_description']);
-            }
-            if (isset($_POST['site_keywords'])) {
-                $settings['site_keywords'] = sanitize_input($_POST['site_keywords']);
-            }
-            if (isset($_POST['admin_email'])) {
-                $settings['admin_email'] = sanitize_input($_POST['admin_email']);
-            }
-            if (isset($_POST['contact_email'])) {
-                $settings['contact_email'] = sanitize_input($_POST['contact_email']);
-            }
-            if (isset($_POST['posts_per_page'])) {
-                $settings['posts_per_page'] = (int)$_POST['posts_per_page'];
-            }
-            if (isset($_POST['articles_per_page'])) {
-                $settings['articles_per_page'] = (int)$_POST['articles_per_page'];
-            }
-            if (isset($_POST['copyright_text'])) {
-                $settings['copyright_text'] = sanitize_input($_POST['copyright_text']);
-            }
-        } elseif ($form_section === 'features') {
-            // Feature toggles - process all feature settings
-            $settings['allow_registration'] = isset($_POST['allow_registration']) ? 1 : 0;
-            $settings['require_email_verification'] = isset($_POST['require_email_verification']) ? 1 : 0;
-            $settings['enable_comments'] = isset($_POST['enable_comments']) ? 1 : 0;
-            $settings['enable_wiki'] = isset($_POST['enable_wiki']) ? 1 : 0;
-            $settings['enable_social'] = isset($_POST['enable_social']) ? 1 : 0;
-            $settings['enable_analytics'] = isset($_POST['enable_analytics']) ? 1 : 0;
-            $settings['enable_notifications'] = isset($_POST['enable_notifications']) ? 1 : 0;
-        } elseif ($form_section === 'maintenance') {
-            // Maintenance settings
-            $settings['maintenance_mode'] = isset($_POST['maintenance_mode']) ? true : false;
-            if (isset($_POST['maintenance_message'])) {
-                $settings['maintenance_message'] = sanitize_input($_POST['maintenance_message']);
-            }
-            if (isset($_POST['estimated_downtime'])) {
-                $settings['estimated_downtime'] = sanitize_input($_POST['estimated_downtime']);
-            }
-        }
+        $settings = [
+            'site_name' => sanitize_input($_POST['site_name'] ?? ''),
+            'site_description' => sanitize_input($_POST['site_description'] ?? ''),
+            'site_keywords' => sanitize_input($_POST['site_keywords'] ?? ''),
+            'admin_email' => sanitize_input($_POST['admin_email'] ?? ''),
+            'contact_email' => sanitize_input($_POST['contact_email'] ?? ''),
+            'posts_per_page' => (int)($_POST['posts_per_page'] ?? 10),
+            'articles_per_page' => (int)($_POST['articles_per_page'] ?? 10),
+            'allow_registration' => isset($_POST['allow_registration']) ? 1 : 0,
+            'require_email_verification' => isset($_POST['require_email_verification']) ? 1 : 0,
+            'enable_comments' => isset($_POST['enable_comments']) ? 1 : 0,
+            'enable_wiki' => isset($_POST['enable_wiki']) ? 1 : 0,
+            'enable_social' => isset($_POST['enable_social']) ? 1 : 0,
+            'maintenance_mode' => isset($_POST['maintenance_mode']) ? 1 : 0,
+            'maintenance_message' => sanitize_input($_POST['maintenance_message'] ?? 'We are currently performing scheduled maintenance. Please check back later.'),
+            'estimated_downtime' => sanitize_input($_POST['estimated_downtime'] ?? '2-4 hours'),
+            'enable_analytics' => isset($_POST['enable_analytics']) ? 1 : 0,
+            'enable_notifications' => isset($_POST['enable_notifications']) ? 1 : 0,
+            'copyright_text' => sanitize_input($_POST['copyright_text'] ?? ''),
+        ];
         
         $updated = 0;
         foreach ($settings as $key => $value) {
@@ -339,7 +310,6 @@ include "../../includes/header.php";
                     <h2><i class="fas fa-globe"></i> Site Information</h2>
                     <form method="POST">
                         <input type="hidden" name="action" value="update_general">
-                        <input type="hidden" name="form_section" value="site_info">
                         
                         <div class="form-row">
                             <div class="form-group">
@@ -402,7 +372,6 @@ include "../../includes/header.php";
                     <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
                     <form method="POST">
                         <input type="hidden" name="action" value="update_general">
-                        <input type="hidden" name="form_section" value="maintenance">
                         
                         <div class="maintenance-toggle-section">
                             <div class="feature-toggle maintenance-toggle">
@@ -455,7 +424,6 @@ include "../../includes/header.php";
                     <h2><i class="fas fa-toggle-on"></i> Feature Toggles</h2>
                 <form method="POST">
                     <input type="hidden" name="action" value="update_general">
-                    <input type="hidden" name="form_section" value="features">
                     
                     <div class="feature-grid">
                         <div class="feature-toggle">

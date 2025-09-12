@@ -9,6 +9,13 @@ if (!is_logged_in()) {
     exit;
 }
 
+// Check if notifications are enabled
+$enable_notifications = get_system_setting('enable_notifications', true);
+if (!$enable_notifications) {
+    echo json_encode(['error' => 'Notifications are currently disabled']);
+    exit;
+}
+
 $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
 
 try {

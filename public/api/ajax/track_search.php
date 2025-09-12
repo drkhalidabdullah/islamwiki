@@ -5,6 +5,13 @@ require_once '../../includes/analytics.php';
 
 header('Content-Type: application/json');
 
+// Check if analytics is enabled
+$enable_analytics = get_system_setting('enable_analytics', true);
+if (!$enable_analytics) {
+    echo json_encode(['success' => false, 'message' => 'Analytics is currently disabled']);
+    exit;
+}
+
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 

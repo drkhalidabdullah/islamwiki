@@ -7,6 +7,13 @@ $page_title = 'Create Article';
 check_maintenance_mode();
 require_login();
 
+// Check if wiki is enabled
+$enable_wiki = get_system_setting('enable_wiki', true);
+if (!$enable_wiki) {
+    show_message('Wiki system is currently disabled.', 'error');
+    redirect('/dashboard');
+}
+
 // Check if user can create articles
 if (!is_editor()) {
     show_message('You do not have permission to create articles.', 'error');
@@ -113,7 +120,7 @@ include "../../includes/header.php";;
     <div class="editor-header">
         <h1>Create New Article</h1>
         <div class="editor-actions">
-            <a href="wiki/" class="btn btn-secondary">Back to Wiki</a>
+            <a href="/wiki" class="btn btn-secondary">Back to Wiki</a>
         </div>
     </div>
     

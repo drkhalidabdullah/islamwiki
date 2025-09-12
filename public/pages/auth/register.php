@@ -7,6 +7,9 @@ check_maintenance_mode();
 
 $page_title = 'Register';
 
+// Check if registration is enabled
+$allow_registration = get_system_setting('allow_registration', true);
+
 // Get return URL from query parameter or session
 $return_url = $_GET['return'] ?? $_SESSION['return_url'] ?? '/dashboard';
 
@@ -82,11 +85,18 @@ include "../../includes/header.php";;
 <div class="form-container">
     <h2>Register</h2>
     
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    
-    <form method="POST">
+    <?php if (!$allow_registration): ?>
+        <div class="alert alert-error">
+            <h3><i class="fas fa-lock"></i> Registration Currently Closed</h3>
+            <p>New user registration is currently disabled. If you need access to this platform, please contact an administrator.</p>
+            <p><a href="/login" class="btn btn-primary">Go to Login Page</a></p>
+        </div>
+    <?php else: ?>
+        <?php if ($error): ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        
+        <form method="POST">
         <div class="form-row">
             <div class="form-group">
                 <label for="first_name">First Name:</label>
@@ -124,11 +134,12 @@ include "../../includes/header.php";;
         </div>
         
         <button type="submit" class="btn">Register</button>
-    </form>
-    
-    <p style="text-align: center; margin-top: 1rem;">
-        Already have an account? <a href="/login<?php echo $return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''; ?>">Login here</a>
-    </p>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1rem;">
+            Already have an account? <a href="/login<?php echo $return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''; ?>">Login here</a>
+        </p>
+    <?php endif; ?>
 </div>
 
 <style>
@@ -142,6 +153,26 @@ include "../../includes/header.php";;
     .form-row {
         grid-template-columns: 1fr;
     }
+}
+
+.alert h3 {
+    margin: 0 0 10px 0;
+    color: #d32f2f;
+    font-size: 1.2rem;
+}
+
+.alert h3 i {
+    margin-right: 8px;
+}
+
+.alert p {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.alert .btn {
+    margin-top: 15px;
+    display: inline-block;
 }
 </style>
 

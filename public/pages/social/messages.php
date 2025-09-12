@@ -6,6 +6,13 @@ $page_title = 'Messages';
 check_maintenance_mode();
 require_login();
 
+// Check if social features are enabled
+$enable_social = get_system_setting('enable_social', true);
+if (!$enable_social) {
+    show_message('Social features are currently disabled.', 'error');
+    redirect('/dashboard');
+}
+
 $current_user = get_user($_SESSION['user_id']);
 
 // Get user's conversations

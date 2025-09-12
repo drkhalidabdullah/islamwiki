@@ -6,6 +6,13 @@ $page_title = 'Create Post';
 check_maintenance_mode();
 require_login();
 
+// Check if social features are enabled
+$enable_social = get_system_setting('enable_social', true);
+if (!$enable_social) {
+    show_message('Social features are currently disabled.', 'error');
+    redirect('/dashboard');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = trim($_POST['content'] ?? '');
     $post_type = $_POST['post_type'] ?? 'text';

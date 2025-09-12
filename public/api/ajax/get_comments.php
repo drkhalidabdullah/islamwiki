@@ -4,6 +4,13 @@ require_once '../../includes/functions.php';
 
 header('Content-Type: application/json');
 
+// Check if comments are enabled
+$enable_comments = get_system_setting('enable_comments', true);
+if (!$enable_comments) {
+    echo json_encode(['success' => false, 'message' => 'Comments are currently disabled']);
+    exit();
+}
+
 $post_id = $_GET['post_id'] ?? null;
 $limit = (int)($_GET['limit'] ?? 20);
 $offset = (int)($_GET['offset'] ?? 0);

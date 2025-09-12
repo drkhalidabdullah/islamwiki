@@ -9,6 +9,13 @@ if (!is_logged_in()) {
     exit();
 }
 
+// Check if notifications are enabled
+$enable_notifications = get_system_setting('enable_notifications', true);
+if (!$enable_notifications) {
+    echo json_encode(['success' => false, 'message' => 'Notifications are currently disabled']);
+    exit();
+}
+
 $input = json_decode(file_get_contents('php://input'), true);
 $notification_id = $input['notification_id'] ?? null;
 $user_id = $_SESSION['user_id'];

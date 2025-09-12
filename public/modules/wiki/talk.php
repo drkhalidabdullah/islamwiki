@@ -7,6 +7,13 @@ require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 // Check maintenance mode
 check_maintenance_mode();
 
+// Check if wiki is enabled
+$enable_wiki = get_system_setting('enable_wiki', true);
+if (!$enable_wiki) {
+    show_message('Wiki system is currently disabled.', 'error');
+    redirect('/dashboard');
+}
+
 $page_title = 'Talk Page';
 
 $slug = $_GET['slug'] ?? '';

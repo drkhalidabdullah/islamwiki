@@ -9,6 +9,13 @@ if (!is_logged_in()) {
     exit();
 }
 
+// Check if comments are enabled
+$enable_comments = get_system_setting('enable_comments', true);
+if (!$enable_comments) {
+    echo json_encode(['success' => false, 'message' => 'Comments are currently disabled']);
+    exit();
+}
+
 $input = json_decode(file_get_contents('php://input'), true);
 $post_id = $input['post_id'] ?? null;
 $content = trim($input['content'] ?? '');

@@ -40,8 +40,15 @@ function redirect_with_return_url($default_url = '/dashboard') {
 }
 
 function show_message($message, $type = 'info') {
-    $_SESSION['message'] = $message;
-    $_SESSION['message_type'] = $type;
+    // Check if notifications are enabled
+    $enable_notifications = get_system_setting('enable_notifications', true);
+    if (!$enable_notifications) {
+        return;
+    }
+    
+    // Store message for toast notification
+    $_SESSION['toast_message'] = $message;
+    $_SESSION['toast_type'] = $type;
 }
 
 function format_file_size($bytes) {
@@ -171,6 +178,13 @@ function is_admin($user_id = null) {
     return $user_id && has_role($user_id, 'admin');
 }
 
+function require_admin() {
+    if (!is_admin()) {
+        show_message('Access denied. Admin privileges required.', 'error');
+        redirect('/dashboard');
+    }
+}
+
 /**
  * Check if site is in maintenance mode
  * @return bool True if maintenance mode is enabled
@@ -178,10 +192,22 @@ function is_admin($user_id = null) {
 function is_maintenance_mode() {
     global $pdo;
     try {
-        $stmt = $pdo->prepare("SELECT value FROM system_settings WHERE `key` = 'maintenance_mode' AND (type = 'boolean' OR type = 'integer')");
+        $stmt = $pdo->prepare("SELECT value, type FROM system_settings WHERE `key` = 'maintenance_mode' AND (type = 'boolean' OR type = 'integer' OR type = 'string')");
         $stmt->execute();
         $result = $stmt->fetch();
-        return $result && $result['value'] == '1';
+        if (!$result) {
+            return false;
+        }
+        
+        // Handle different types
+        if ($result['type'] === 'boolean') {
+            return (bool) $result['value'];
+        } elseif ($result['type'] === 'integer') {
+            return (int) $result['value'] === 1;
+        } else {
+            // string type
+            return $result['value'] === '1';
+        }
     } catch (Exception $e) {
         return false;
     }
@@ -297,7 +323,7 @@ function get_system_setting($key, $default = null) {
         case 'json':
             return json_decode($result['value'], true);
         default:
-            return $result['value'];
+            return empty($result['value']) && $default !== null ? $default : $result['value'];
     }
 }
 
@@ -477,6 +503,13 @@ function decline_friend_request($follower_id, $following_id) {
 // Notification functions
 function create_notification($user_id, $type, $title, $message, $data = null) {
     global $pdo;
+    
+    // Check if notifications are enabled
+    $enable_notifications = get_system_setting('enable_notifications', true);
+    if (!$enable_notifications) {
+        return false;
+    }
+    
     $stmt = $pdo->prepare("
         INSERT INTO notifications (user_id, type, title, message, data) 
         VALUES (?, ?, ?, ?, ?)

@@ -356,26 +356,79 @@ include "../../includes/header.php";
 
         <!-- Right Column -->
         <div class="dashboard-right">
-            <!-- Quick Actions -->
+            <!-- Admin Actions -->
             <div class="dashboard-section">
-                <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-                <div class="quick-actions-grid">
-                    <a href="/pages/wiki/create_article.php" class="quick-action">
-                        <i class="fas fa-plus"></i>
-                        <span>Create Article</span>
-                    </a>
-                    <a href="/admin/manage_users" class="quick-action">
-                        <i class="fas fa-users"></i>
-                        <span>Manage Users</span>
-                    </a>
-                    <a href="/admin/analytics" class="quick-action">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </a>
-                    <a href="/admin/system_settings" class="quick-action">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
+                <h2><i class="fas fa-cogs"></i> Admin Actions</h2>
+                
+                <!-- Most Common Actions -->
+                <div class="action-category">
+                    <h3><i class="fas fa-star"></i> Most Used</h3>
+                    <div class="action-grid">
+                        <a href="/pages/wiki/create_article.php" class="action-item primary">
+                            <i class="fas fa-plus"></i>
+                            <span>Create Article</span>
+                            <small>New wiki content</small>
+                        </a>
+                        <a href="/admin/manage_users" class="action-item primary">
+                            <i class="fas fa-users"></i>
+                            <span>Manage Users</span>
+                            <small>User accounts</small>
+                        </a>
+                        <a href="/admin/analytics" class="action-item primary">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analytics</span>
+                            <small>Site statistics</small>
+                        </a>
+                        <a href="/admin/system_settings" class="action-item primary">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                            <small>System config</small>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- System Management -->
+                <div class="action-category">
+                    <h3><i class="fas fa-tools"></i> System Management</h3>
+                    <div class="action-grid">
+                        <a href="/admin/maintenance" class="action-item secondary">
+                            <i class="fas fa-wrench"></i>
+                            <span>Maintenance</span>
+                            <small>System maintenance</small>
+                        </a>
+                        <a href="/admin/manage_files" class="action-item secondary">
+                            <i class="fas fa-folder-open"></i>
+                            <span>File Manager</span>
+                            <small>Uploaded files</small>
+                        </a>
+                        <a href="/admin/manage_categories" class="action-item secondary">
+                            <i class="fas fa-tags"></i>
+                            <span>Categories</span>
+                            <small>Content organization</small>
+                        </a>
+                        <a href="/admin/content_moderation" class="action-item secondary">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Moderation</span>
+                            <small>Content review</small>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Advanced Tools -->
+                <div class="action-category">
+                    <h3><i class="fas fa-cog"></i> Advanced Tools</h3>
+                    <div class="action-grid">
+                        <a href="/admin/manage_redirects" class="action-item tertiary">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Redirects</span>
+                            <small>URL redirects</small>
+                        </a>
+                        <a href="/admin/manage_permissions" class="action-item tertiary">
+                            <i class="fas fa-key"></i>
+                            <span>Permissions</span>
+                            <small>Access control</small>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -426,36 +479,6 @@ include "../../includes/header.php";
                 </div>
             </div>
 
-            <!-- Admin Tools -->
-            <div class="dashboard-section">
-                <h2><i class="fas fa-tools"></i> Admin Tools</h2>
-                <div class="admin-tools">
-                    <a href="/admin/manage_redirects" class="tool-link">
-                        <i class="fas fa-exchange-alt"></i>
-                        <span>Manage Redirects</span>
-                    </a>
-                    <a href="/admin/manage_files" class="tool-link">
-                        <i class="fas fa-folder-open"></i>
-                        <span>File Manager</span>
-                    </a>
-                    <a href="/admin/manage_categories" class="tool-link">
-                        <i class="fas fa-tags"></i>
-                        <span>Categories</span>
-                    </a>
-                    <a href="/admin/content_moderation" class="tool-link">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Moderation</span>
-                    </a>
-                    <a href="/admin/maintenance" class="tool-link">
-                        <i class="fas fa-wrench"></i>
-                        <span>Maintenance</span>
-                    </a>
-                    <a href="/admin/manage_permissions" class="tool-link">
-                        <i class="fas fa-key"></i>
-                        <span>Permissions</span>
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -1107,7 +1130,167 @@ include "../../includes/header.php";
         flex-direction: column;
     }
 }
-</style>
+
+/* Improved Admin Actions Styles */
+.action-category {
+    margin-bottom: 2rem;
+}
+
+.action-category:last-child {
+    margin-bottom: 0;
+}
+
+.action-category h3 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+}
+
+.action-item:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #2c3e50;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.action-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.action-item span {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+    line-height: 1.2;
+}
+
+.action-item small {
+    color: #6c757d;
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+/* Primary Actions (Most Used) */
+.action-item.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.action-item.primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    color: white;
+}
+
+.action-item.primary i {
+    color: white;
+}
+
+.action-item.primary small {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Secondary Actions (System Management) */
+.action-item.secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-color: #f093fb;
+}
+
+.action-item.secondary:hover {
+    background: linear-gradient(135deg, #ee82f9 0%, #f4455a 100%);
+    color: white;
+}
+
+.action-item.secondary i {
+    color: white;
+}
+
+.action-item.secondary small {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Tertiary Actions (Advanced Tools) */
+.action-item.tertiary {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border-color: #4facfe;
+}
+
+.action-item.tertiary:hover {
+    background: linear-gradient(135deg, #3d9bfc 0%, #00e6fe 100%);
+    color: white;
+}
+
+.action-item.tertiary i {
+    color: white;
+}
+
+.action-item.tertiary small {
+    color: rgba(255,255,255,0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .action-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .action-item {
+        padding: 0.75rem 0.5rem;
+        min-height: 70px;
+    }
+    
+    .action-item i {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .action-item span {
+        font-size: 0.8rem;
+    }
+    
+    .action-item small {
+        font-size: 0.65rem;
+    }
+}</style>
 
 <script>
 function toggleMaintenanceMode() {
@@ -1115,7 +1298,7 @@ function toggleMaintenanceMode() {
         // Create a form to submit the toggle request
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/admin/system_settings';
+        form.action = '/admin';
         
         const input = document.createElement('input');
         input.type = 'hidden';

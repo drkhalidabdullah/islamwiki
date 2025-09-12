@@ -9,6 +9,13 @@ if (!is_logged_in()) {
     exit;
 }
 
+// Check if social features are enabled
+$enable_social = get_system_setting('enable_social', true);
+if (!$enable_social) {
+    echo json_encode(['success' => false, 'message' => 'Social features are currently disabled']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
     exit;

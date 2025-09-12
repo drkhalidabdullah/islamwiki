@@ -6,10 +6,17 @@ if (is_logged_in()) {
     $user_roles = get_user_roles($_SESSION['user_id']);
 }
 
-// Get any flash messages
-$message = $_SESSION['flash_message'] ?? null;
-if ($message) {
-    unset($_SESSION['flash_message']);
+// Get feature settings
+$enable_wiki = get_system_setting('enable_wiki', true);
+$enable_social = get_system_setting('enable_social', true);
+$enable_comments = get_system_setting('enable_comments', true);
+$enable_notifications = get_system_setting('enable_notifications', true);
+
+// Get any toast messages
+$toast_message = $_SESSION['toast_message'] ?? null;
+$toast_type = $_SESSION['toast_type'] ?? 'info';
+if ($toast_message) {
+    unset($_SESSION['toast_message'], $_SESSION['toast_type']);
 }
 
 // Check if we're on the search page to conditionally hide header search
@@ -601,9 +608,11 @@ if ($message) {
             <i class="fas fa-home"></i>
         </a>
         
+        <?php if ($enable_wiki): ?>
         <a href="/wiki" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/wiki') === 0) ? 'active' : ''; ?>" title="Wiki">
             <i class="fas fa-book"></i>
         </a>
+        <?php endif; ?>
         
         <?php if (is_logged_in()): ?>
         <!-- Separator -->
@@ -619,6 +628,7 @@ if ($message) {
                     <i class="fas fa-edit"></i>
                     <span>Create Post</span>
                 </a>
+                <?php if ($enable_wiki): ?>
                 <a href="/pages/wiki/create_article.php" class="dropdown-item">
                     <i class="fas fa-file-alt"></i>
                     <span>Create Article</span>
@@ -627,12 +637,14 @@ if ($message) {
                     <i class="fas fa-upload"></i>
                     <span>Upload File</span>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
         
         <!-- Separator -->
         <div class="sidebar-separator"></div>
         
+        <?php if ($enable_social): ?>
         <!-- Messages Dropdown -->
         <div class="sidebar-dropdown">
             <a href="#" class="sidebar-item dropdown-trigger" title="Messages" data-target="messagesMenu">
@@ -649,6 +661,7 @@ if ($message) {
         <a href="/friends" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0) ? 'active' : ''; ?>" title="Friends">
             <i class="fas fa-users"></i>
         </a>
+        <?php endif; ?>
         
         <a href="/pages/user/watchlist.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/watchlist') !== false) ? 'active' : ''; ?>" title="My Watchlist">
             <i class="fas fa-eye"></i>
@@ -769,11 +782,6 @@ if ($message) {
     <?php endif; ?>
 
     <main class="main-content<?php echo (is_maintenance_mode() && !is_logged_in()) ? ' maintenance-mode' : ''; ?>">
-        <?php if ($message): ?>
-        <div class="alert alert-<?php echo $message['type']; ?>">
-            <?php echo htmlspecialchars($message['message']); ?>
-        </div>
-        <?php endif; ?>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -1130,5 +1138,133 @@ document.addEventListener("DOMContentLoaded", function() {
     window.toggleNewsbar = toggleNewsbar;
     window.closeNewsbar = closeNewsbar;
     window.closeMaintenanceBanner = closeMaintenanceBanner;
+    
+    // Toast notification system
+    <?php if ($toast_message): ?>
+    showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; ?>');
+    <?php endif; ?>
 });
+
+// Global toast notification function
+function showToast(message, type = 'info') {
+    // Check if notifications are enabled
+    <?php if (!$enable_notifications): ?>
+    return;
+    <?php endif; ?>
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="toast-icon fas fa-${getToastIcon(type)}"></i>
+            <span class="toast-message">${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Style the toast
+    Object.assign(toast.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '16px 20px',
+        borderRadius: '8px',
+        color: 'white',
+        fontWeight: '500',
+        zIndex: '10000',
+        transform: 'translateX(100%)',
+        transition: 'all 0.3s ease',
+        maxWidth: '400px',
+        minWidth: '300px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px'
+    });
+    
+    // Set background color based on type
+    const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6'
+    };
+    toast.style.backgroundColor = colors[type] || colors.info;
+    
+    // Add toast content styles
+    const toastContent = toast.querySelector('.toast-content');
+    Object.assign(toastContent.style, {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        flex: '1'
+    });
+    
+    const toastIcon = toast.querySelector('.toast-icon');
+    Object.assign(toastIcon.style, {
+        fontSize: '16px',
+        opacity: '0.9'
+    });
+    
+    const toastMessage = toast.querySelector('.toast-message');
+    Object.assign(toastMessage.style, {
+        flex: '1',
+        wordWrap: 'break-word'
+    });
+    
+    const toastClose = toast.querySelector('.toast-close');
+    Object.assign(toastClose.style, {
+        background: 'none',
+        border: 'none',
+        color: 'white',
+        cursor: 'pointer',
+        padding: '4px',
+        borderRadius: '4px',
+        opacity: '0.7',
+        transition: 'opacity 0.2s ease'
+    });
+    
+    toastClose.addEventListener('mouseenter', () => {
+        toastClose.style.opacity = '1';
+    });
+    
+    toastClose.addEventListener('mouseleave', () => {
+        toastClose.style.opacity = '0.7';
+    });
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 5000);
+}
+
+function getToastIcon(type) {
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-circle',
+        warning: 'exclamation-triangle',
+        info: 'info-circle'
+    };
+    return icons[type] || icons.info;
+}
+
+// Make showToast globally available
+window.showToast = showToast;
 </script>

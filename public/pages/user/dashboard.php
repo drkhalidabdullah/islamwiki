@@ -10,6 +10,9 @@ require_login();
 
 $current_user = get_user($_SESSION['user_id']);
 
+// Check if comments are enabled
+$enable_comments = get_system_setting('enable_comments', true);
+
 // Get user's following list for personalized feed
 $stmt = $pdo->prepare("
     SELECT uf.following_id, u.username, u.display_name, u.avatar
@@ -571,7 +574,9 @@ include "../../includes/header.php";
                                     <?php if ($item['content_type'] === 'post'): ?>
                                     <div class="post-actions">
                                         <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-heart"></i></button>
+                                        <?php if ($enable_comments): ?>
                                         <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-comment"></i></button>
+                                        <?php endif; ?>
                                         <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-share"></i></button>
                                     </div>
                     <?php endif; ?>
@@ -654,7 +659,9 @@ include "../../includes/header.php";
                                     <?php if ($item['content_type'] === 'post'): ?>
                                     <div class="post-actions">
                                         <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-heart"></i></button>
+                                        <?php if ($enable_comments): ?>
                                         <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-comment"></i></button>
+                                        <?php endif; ?>
                                         <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-share"></i></button>
                                     </div>
                                     <?php endif; ?>
@@ -3665,7 +3672,7 @@ function loadComments(postId) {
             if (data.success) {
                 displayComments(data.comments);
             } else {
-                commentsList.innerHTML = '<div class="error">Failed to load comments</div>';
+                commentsList.innerHTML = `<div class="error">${data.message || 'Failed to load comments'}</div>`;
             }
         })
         .catch(error => {

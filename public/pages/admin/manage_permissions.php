@@ -8,8 +8,7 @@ require_admin();
 
 $current_user = get_user($_SESSION['user_id']);
 
-$errors = [];
-$success = '';
+// Remove old error/success variables - using show_message() now
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $permissions = $_POST['permissions'] ?? [];
         
         if (empty($name) || empty($display_name)) {
-            $errors[] = 'Role name and display name are required.';
+            show_message('Role name and display name are required.', 'error');
         } else {
             try {
                 $stmt = $pdo->prepare("
@@ -30,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, ?, ?, ?)
                 ");
                 $stmt->execute([$name, $display_name, $description, json_encode($permissions)]);
-                $success = 'Role created successfully.';
+                show_message('Role created successfully.', 'success');
             } catch (Exception $e) {
-                $errors[] = 'Error creating role: ' . $e->getMessage();
+                show_message('Error creating role: ' . $e->getMessage(), 'error');
             }
         }
     } elseif ($action === 'update_role') {
@@ -43,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("UPDATE roles SET permissions = ? WHERE id = ?");
                 $stmt->execute([json_encode($permissions), $role_id]);
-                $success = 'Role permissions updated successfully.';
+                show_message('Role permissions updated successfully.', 'success');
             } catch (Exception $e) {
-                $errors[] = 'Error updating role: ' . $e->getMessage();
+                show_message('Error updating role: ' . $e->getMessage(), 'error');
             }
         }
     } elseif ($action === 'assign_role') {
@@ -59,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, ?, ?)
                 ");
                 $stmt->execute([$user_id, $role_id, $_SESSION['user_id']]);
-                $success = 'Role assigned successfully.';
+                show_message('Role assigned successfully.', 'success');
             } catch (Exception $e) {
-                $errors[] = 'Error assigning role: ' . $e->getMessage();
+                show_message('Error assigning role: ' . $e->getMessage(), 'error');
             }
         }
     } elseif ($action === 'remove_role') {
@@ -72,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("DELETE FROM user_roles WHERE user_id = ? AND role_id = ?");
                 $stmt->execute([$user_id, $role_id]);
-                $success = 'Role removed successfully.';
+                show_message('Role removed successfully.', 'success');
             } catch (Exception $e) {
-                $errors[] = 'Error removing role: ' . $e->getMessage();
+                show_message('Error removing role: ' . $e->getMessage(), 'error');
             }
         }
     }
@@ -140,21 +139,7 @@ include '../../includes/header.php';
         </div>
     </div>
 
-    <?php if ($errors): ?>
-        <div class="alert alert-error">
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?php echo htmlspecialchars($error); ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($success): ?>
-        <div class="alert alert-success">
-            <?php echo htmlspecialchars($success); ?>
-        </div>
-    <?php endif; ?>
+    <!-- Error and success messages are now handled by toast notifications -->
 
     <!-- Create New Role -->
     <div class="card">
@@ -183,8 +168,8 @@ include '../../includes/header.php';
                           placeholder="Describe the role's purpose..."></textarea>
             </div>
             
-            <div class="form-group">
-                <label>Permissions:</label>
+            <div class="form-group permissions-section">
+                <label class="permissions-label">Permissions:</label>
                 <div class="permissions-grid">
                     <?php foreach ($available_permissions as $category => $perms): ?>
                         <div class="permission-category">
@@ -213,7 +198,7 @@ include '../../includes/header.php';
         <?php else: ?>
             <div class="roles-grid">
                 <?php foreach ($roles as $role): ?>
-                    <div class="role-card">
+                    <div class="role-card" data-role-id="<?php echo $role['id']; ?>" data-permissions='<?php echo htmlspecialchars($role['permissions']); ?>'>
                         <div class="role-header">
                             <h3><?php echo htmlspecialchars($role['display_name']); ?></h3>
                             <span class="role-name"><?php echo htmlspecialchars($role['name']); ?></span>
@@ -356,9 +341,35 @@ include '../../includes/header.php';
 
 <script>
 function editRole(roleId) {
-    // Get role data via AJAX or from a data attribute
-    // For now, we'll show the modal and let the user select permissions
+    // Get role data from the role card
+    const roleCard = document.querySelector(`[data-role-id="${roleId}"]`);
+    const permissionsJson = roleCard.getAttribute('data-permissions');
+    
+    // Set the role ID
     document.getElementById('edit_role_id').value = roleId;
+    
+    // Clear all checkboxes first
+    const checkboxes = document.querySelectorAll('.edit-permission');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Parse the permissions and check the appropriate checkboxes
+    if (permissionsJson) {
+        try {
+            const permissions = JSON.parse(permissionsJson);
+            permissions.forEach(permission => {
+                const checkbox = document.querySelector(`input[data-perm="${permission}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        } catch (e) {
+            console.error('Error parsing permissions:', e);
+        }
+    }
+    
+    // Show the modal
     document.getElementById('editRoleModal').style.display = 'block';
 }
 
@@ -450,33 +461,93 @@ window.onclick = function(event) {
 
 .permissions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     margin-top: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #ffffff;
+    align-items: start;
 }
 
 .permission-category {
     border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 1rem;
+    border-radius: 8px;
+    padding: 1.25rem;
+    background: #fafbfc;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.permission-category:hover {
+    border-color: #d1d5db;
+    background: #ffffff;
 }
 
 .permission-category h4 {
     margin: 0 0 1rem 0;
     color: #2c3e50;
     font-size: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
 }
 
 .permission-item {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
     cursor: pointer;
+    padding: 0.25rem 0;
+    line-height: 1.4;
+    min-height: 1.5rem;
 }
 
 .permission-item input[type="checkbox"] {
     margin: 0;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    order: 2;
+    width: 16px;
+    height: 16px;
+}
+
+.permission-item span {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #495057;
+    transition: color 0.2s ease;
+    order: 1;
+    margin-right: 0.75rem;
+}
+
+.permission-item:hover span {
+    color: #2c3e50;
+}
+
+.permission-item:hover {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    margin: 0.25rem -0.5rem;
+}
+
+.permissions-section {
+    margin-top: 1.5rem;
+}
+
+.permissions-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    display: block;
+    font-size: 1rem;
 }
 
 .roles-grid {
@@ -732,6 +803,12 @@ window.onclick = function(event) {
     padding-left: 1.5rem;
 }
 
+@media (max-width: 1024px) {
+    .permissions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
@@ -739,6 +816,31 @@ window.onclick = function(event) {
     
     .permissions-grid {
         grid-template-columns: 1fr;
+        max-height: 300px;
+    }
+    
+    .permission-item {
+        justify-content: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .permission-item input[type="checkbox"] {
+        order: 1;
+        margin-right: 0.75rem;
+    }
+    
+    .permission-item span {
+        order: 2;
+        margin-right: 0;
+    }
+    
+    .permission-category {
+        padding: 1rem;
+    }
+    
+    .permission-item {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
     }
     
     .roles-grid {

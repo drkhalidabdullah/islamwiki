@@ -9,6 +9,13 @@ if (!is_logged_in()) {
     exit;
 }
 
+// Check if social features are enabled
+$enable_social = get_system_setting('enable_social', true);
+if (!$enable_social) {
+    echo json_encode(['error' => 'Social features are currently disabled']);
+    exit;
+}
+
 $count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
 
 try {
