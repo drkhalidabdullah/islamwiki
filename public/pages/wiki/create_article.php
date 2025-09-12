@@ -14,11 +14,8 @@ if (!$enable_wiki) {
     redirect('/dashboard');
 }
 
-// Check if user can create articles
-if (!is_editor()) {
-    show_message('You do not have permission to create articles.', 'error');
-    redirect_with_return_url();
-}
+// All logged-in users can create articles, but they need approval
+// No permission check needed - all users can create articles
 
 $errors = [];
 $success = false;
@@ -28,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'] ?? '';
     $excerpt = sanitize_input($_POST['excerpt'] ?? '');
     $category_id = (int)($_POST['category_id'] ?? 0);
-    $status = sanitize_input($_POST['status'] ?? 'draft');
+    // Set status based on user role
+    $status = is_editor() ? sanitize_input($_POST['status'] ?? 'draft') : 'pending_approval';
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     
     // Validation
@@ -98,10 +96,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($status === 'published') {
                 $stmt = $pdo->prepare("UPDATE wiki_articles SET published_at = NOW() WHERE id = ?");
                 $stmt->execute([$article_id]);
+            } elseif ($status === 'pending_approval') {
+                // Add to approval queue
+                $stmt = $pdo->prepare("
+                    INSERT INTO article_approval_queue (article_id, submitted_by, submitted_at, priority) 
+                    VALUES (?, ?, NOW(), 'normal')
+                ");
+                $stmt->execute([$article_id, $_SESSION['user_id']]);
             }
             
-            show_message('Article created successfully!', 'success');
-            redirect("/wiki/" . urlencode($slug));
+            if ($status === 'pending_approval') {
+                show_message('Article submitted for approval! It will be reviewed by moderators before being published.', 'success');
+                redirect("/dashboard");
+            } else {
+                show_message('Article created successfully!', 'success');
+                redirect("/wiki/" . urlencode($slug));
+            }
             
         } catch (Exception $e) {
             $errors[] = 'Error creating article: ' . $e->getMessage();
@@ -176,6 +186,7 @@ include "../../includes/header.php";;
             </div>
         </div>
         
+        <?php if (is_editor()): ?>
         <div class="form-row">
             <div class="form-group">
                 <label for="status">Status</label>
@@ -184,6 +195,15 @@ include "../../includes/header.php";;
                     <option value="published" <?php echo (($_POST['status'] ?? '') === 'published') ? 'selected' : ''; ?>>Published</option>
                 </select>
             </div>
+        <?php else: ?>
+        <div class="form-row">
+            <div class="form-group">
+                <div class="info-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Your article will be submitted for approval by moderators before being published.</span>
+                </div>
+            </div>
+        <?php endif; ?>
             
             <div class="form-group">
                 <label class="checkbox-label">

@@ -1,3 +1,97 @@
+/* Import layout consistency CSS */
+@import url('layout-consistency.css');
+
+/* ========================================
+   FULL WIDTH OVERRIDES - ENSURES ALL PAGES ARE FULL WIDTH
+   ======================================== */
+
+/* Force full width on all main content areas - accounting for sidebar */
+.main-content,
+.page-wrapper,
+body > main {
+    width: calc(100% - 60px) !important;
+    max-width: none !important;
+    margin-left: 60px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Force full width on all page containers */
+.homepage-container,
+.search-page-container,
+.wiki-page-container,
+.article-page,
+.page-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+/* Force full width on all layout containers */
+.homepage-layout,
+.search-layout,
+.wiki-layout,
+.article-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+/* Ensure content sections use full available width */
+.content-section,
+.sidebar-section,
+.card {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Override any max-width constraints */
+.container,
+.container-wide {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+/* Ensure grid layouts use full width */
+.grid-2,
+.grid-3,
+.grid-4,
+.grid-auto {
+    width: 100% !important;
+}
+
+/* Mobile full width overrides - accounting for sidebar */
+@media (max-width: 768px) {
+    .main-content {
+        width: calc(100% - 50px) !important;
+        margin-left: 50px !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .homepage-layout,
+    .search-layout,
+    .wiki-layout {
+        width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        width: calc(100% - 45px) !important;
+        margin-left: 45px !important;
+    }
+}
+
+/* When sidebar is hidden (maintenance mode) */
+.main-content.maintenance-mode {
+    width: 100% !important;
+    margin-left: 0 !important;
+}
+
 /* Reset and base styles */
 * {
     margin: 0;
@@ -165,9 +259,7 @@ body {
 .main-content {
     padding: 0;
     margin: 0;
-    
-    margin: 5px auto;
-    padding: 0 5px;
+    width: 100%;
     min-height: calc(100vh - 200px);
 }
 
@@ -307,10 +399,9 @@ body {
     }
     
     .main-content {
-    padding: 0;
-    margin: 0;
-        margin: 1rem auto;
-        padding: 0 0.5rem;
+        padding: 0;
+        margin: 0;
+        width: 100%;
     }
 }
 
@@ -1816,20 +1907,21 @@ body {
 
 /* Add top padding to main content to account for fixed header */
 .main-content {
-    margin-top: 5px;
+    margin-top: 0;
     padding: 0;
+    width: 100%;
 }
 
 
 /* Homepage Styles */
 .homepage-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     padding: 20px;
 }
 
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
     padding: 60px 40px;
     border-radius: 12px;
@@ -5108,6 +5200,7 @@ body {
 .main-content {
     margin-left: 60px;
     padding-top: 0;
+    width: calc(100% - 60px);
 }
 
 /* Responsive design */
@@ -5118,6 +5211,7 @@ body {
     
     .main-content {
         margin-left: 50px;
+        width: calc(100% - 50px);
     }
     
     .sidebar-item::after {
@@ -5132,6 +5226,7 @@ body {
     
     .main-content {
         margin-left: 45px;
+        width: calc(100% - 45px);
     }
     
     .sidebar-item::after {

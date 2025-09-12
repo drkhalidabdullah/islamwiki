@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Allow direct access to PHP files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^.*$ - [L]
+
+# Handle API routes
+RewriteRule ^search/suggestions$ search/suggestions.php [L]
+RewriteRule ^search/initial-suggestions$ search/initial-suggestions.php [L]
+RewriteRule ^search/history$ search/history.php [L]
+RewriteRule ^search/saved$ search/saved.php [L]
+
+# Default to 404 for unknown routes
+RewriteRule ^.*$ - [R=404,L]

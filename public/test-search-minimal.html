@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Search Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        .test-btn { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .enhanced-search-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; display: none; opacity: 0; background: rgba(0,0,0,0.7); }
+        .enhanced-search-overlay.show { display: flex; opacity: 1; }
+        .search-overlay-content { background: white; margin: auto; padding: 20px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Minimal Search Test</h1>
+    <button class="search-trigger test-btn">Test Search</button>
+    
+    <script>
+        class SimpleSearch {
+            constructor() {
+                this.createOverlay();
+                this.bindEvents();
+            }
+            
+            createOverlay() {
+                const overlay = document.createElement('div');
+                overlay.className = 'enhanced-search-overlay';
+                overlay.innerHTML = `
+                    <div class="search-overlay-content">
+                        <h2>Search Overlay</h2>
+                        <p>This is a test overlay</p>
+                        <button onclick="this.close()">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                this.overlay = overlay;
+            }
+            
+            bindEvents() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.search-trigger')) {
+                        e.preventDefault();
+                        this.open();
+                    }
+                });
+            }
+            
+            open() {
+                console.log('Opening overlay...');
+                this.overlay.classList.add('show');
+            }
+            
+            close() {
+                this.overlay.classList.remove('show');
+            }
+        }
+        
+        new SimpleSearch();
+    </script>
+</body>
+</html>

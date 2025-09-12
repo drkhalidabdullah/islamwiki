@@ -138,7 +138,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
         </header>
         
         <!-- Three-column layout: 15% | 70% | 15% -->
-        <div class="wiki-layout">
+        <div class="article-page">
+            <div class="article-container">
+                <div class="wiki-layout">
             <!-- Left Sidebar: Table of Contents -->
             <aside class="wiki-toc">
                 <div class="toc-header">
@@ -353,6 +355,8 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     </ul>
                 </div>
             </aside>
+                </div>
+            </div>
         </div>
         
         <!-- Article Actions and Engagement -->

@@ -28,7 +28,7 @@
 /* Main Article Page Container */
 .article-page {
     min-height: calc(100vh - 200px);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     padding: 2rem 0;
 }
 

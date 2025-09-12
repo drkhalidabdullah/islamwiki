@@ -34,6 +34,7 @@
         margin-left: 0;
         padding: 1rem;
         padding-top: 4rem;
+        width: 100%;
     }
     
     /* Mobile overlay for sidebar */
@@ -502,6 +503,7 @@
     
     .main-content {
         margin-left: 60px;
+        width: calc(100% - 60px);
     }
     
     .action-grid {
@@ -522,6 +524,7 @@
     .main-content {
         padding: 0.5rem;
         padding-top: 3.5rem;
+        width: 100%;
     }
     
     .sidebar-toggle {
@@ -559,6 +562,7 @@
     
     .main-content {
         margin-left: 200px;
+        width: calc(100% - 200px);
     }
     
     .sidebar-toggle {
@@ -586,6 +590,7 @@
     .main-content {
         margin-left: 0 !important;
         padding: 0 !important;
+        width: 100% !important;
     }
     
     .article-content {
