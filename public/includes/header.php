@@ -59,6 +59,7 @@ if ($message) {
         max-width: calc(100vw - 60px);
         box-sizing: border-box;
         margin-top: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     .newsbar-content {
@@ -185,7 +186,58 @@ if ($message) {
     }
 
     .newsbar.hidden {
+        background: none;
+        box-shadow: none;
+    }
+    
+    .newsbar.hidden .newsbar-content {
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .newsbar-floating-controls {
         display: none;
+        position: fixed;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 10001;
+        background: none;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .newsbar.hidden .newsbar-floating-controls {
+        display: block;
+    }
+    
+    .newsbar-floating-controls .newsbar-close {
+        background: rgba(0,0,0,0.7);
+        border: 2px solid rgba(255,255,255,0.8);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 2.5rem;
+        height: 2.5rem;
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+        max-width: 2.5rem;
+        max-height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    .newsbar-floating-controls .newsbar-close:hover {
+        background: rgba(0,0,0,0.9);
+        border-color: white;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
 
     @keyframes newsbar-scroll {
@@ -211,6 +263,12 @@ if ($message) {
             left: 0;
             width: 100vw;
             max-width: 100vw;
+        }
+        
+        .newsbar-floating-controls {
+            right: 0;
+            left: auto;
+            border-radius: 0 0 0 8px;
         }
         
         .newsbar-content {
@@ -496,6 +554,12 @@ if ($message) {
                     </button>
                 </div>
             </div>
+        </div>
+        <!-- Floating controls when hidden -->
+        <div class="newsbar-floating-controls">
+            <button class="newsbar-close" onclick="closeNewsbar()" title="Show Newsbar">
+                <i class="fas fa-eye"></i>
+            </button>
         </div>
     </div>
 
@@ -802,18 +866,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function closeNewsbar() {
         const newsbar = document.querySelector('.newsbar');
-        newsbar.classList.add('hidden');
+        const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
+        const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-close i');
         
-        // Store preference in localStorage
-        localStorage.setItem('newsbar-hidden', 'true');
+        newsbar.classList.toggle('hidden');
+        
+        // Update button icon and title
+        if (newsbar.classList.contains('hidden')) {
+            closeBtn.className = 'fas fa-eye';
+            closeBtn.parentElement.title = 'Show Newsbar';
+            floatingCloseBtn.className = 'fas fa-eye';
+            floatingCloseBtn.parentElement.title = 'Show Newsbar';
+            localStorage.setItem('newsbar-hidden', 'true');
+        } else {
+            closeBtn.className = 'fas fa-times';
+            closeBtn.parentElement.title = 'Hide Newsbar';
+            floatingCloseBtn.className = 'fas fa-eye';
+            floatingCloseBtn.parentElement.title = 'Show Newsbar';
+            localStorage.setItem('newsbar-hidden', 'false');
+        }
     }
 
     // Check if newsbar should be hidden on page load
     const newsbarHidden = localStorage.getItem('newsbar-hidden');
     if (newsbarHidden === 'true') {
         const newsbar = document.querySelector('.newsbar');
+        const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
+        const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-close i');
         if (newsbar) {
             newsbar.classList.add('hidden');
+            // Update button icon and title
+            closeBtn.className = 'fas fa-eye';
+            closeBtn.parentElement.title = 'Show Newsbar';
+            floatingCloseBtn.className = 'fas fa-eye';
+            floatingCloseBtn.parentElement.title = 'Show Newsbar';
         }
     }
     
