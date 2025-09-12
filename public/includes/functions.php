@@ -171,6 +171,64 @@ function is_admin($user_id = null) {
     return $user_id && has_role($user_id, 'admin');
 }
 
+/**
+ * Check if site is in maintenance mode
+ * @return bool True if maintenance mode is enabled
+ */
+function is_maintenance_mode() {
+    global $pdo;
+    try {
+        $stmt = $pdo->prepare("SELECT value FROM system_settings WHERE `key` = 'maintenance_mode' AND (type = 'boolean' OR type = 'integer')");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result && $result['value'] == '1';
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/**
+ * Check if current user can bypass maintenance mode
+ * @return bool True if user can bypass maintenance mode
+ */
+function can_bypass_maintenance() {
+    return is_admin();
+}
+
+/**
+ * Handle maintenance mode - redirect to maintenance page if enabled and user can't bypass
+ */
+function check_maintenance_mode() {
+    if (is_maintenance_mode() && !can_bypass_maintenance()) {
+        // Don't redirect if already on maintenance page to avoid infinite redirects
+        $current_page = $_SERVER['REQUEST_URI'] ?? '';
+        
+        // Allow access to maintenance page during maintenance
+        $allowed_pages = ['/maintenance'];
+        $is_allowed_page = false;
+        
+        foreach ($allowed_pages as $allowed_page) {
+            if (strpos($current_page, $allowed_page) !== false) {
+                $is_allowed_page = true;
+                break;
+            }
+        }
+        
+        if (!$is_allowed_page) {
+            // Redirect to maintenance page
+            header('Location: /maintenance');
+            exit;
+        }
+    }
+}
+
+/**
+ * Check if maintenance mode banner should be shown (for admins)
+ */
+function should_show_maintenance_banner() {
+    return is_maintenance_mode() && can_bypass_maintenance();
+}
+
 function is_moderator($user_id = null) {
     if ($user_id === null) {
         $user_id = $_SESSION['user_id'] ?? null;

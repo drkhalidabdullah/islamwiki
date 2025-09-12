@@ -2,6 +2,9 @@
 require_once "../config/config.php";
 require_once "../includes/functions.php";
 
+// Check maintenance mode
+check_maintenance_mode();
+
 // Enforce rate limiting for search queries
 enforce_rate_limit('search_queries');
 

@@ -2,6 +2,9 @@
 require_once 'config/config.php';
 require_once 'includes/functions.php';
 
+// Check maintenance mode
+check_maintenance_mode();
+
 $page_title = 'Home';
 
 // Get recent wiki articles

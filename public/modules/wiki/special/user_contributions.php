@@ -3,6 +3,9 @@ require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../../includes/functions.php';
 require_once __DIR__ . '/../../../includes/wiki_functions.php';
 
+// Check maintenance mode
+check_maintenance_mode();
+
 $page_title = 'User Contributions';
 
 // Get parameters

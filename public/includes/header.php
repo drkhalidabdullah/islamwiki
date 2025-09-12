@@ -36,10 +36,128 @@ if ($message) {
         padding: 0 !important;
     }
     
-    /* Add top padding to main content to account for fixed newsbar */
+    /* Add top padding to main content to account for fixed newsbar and maintenance banner */
     .main-content {
         padding-top: 60px !important;
         margin-top: 0 !important;
+    }
+    
+    /* When sidebar and newsbar are hidden during maintenance mode */
+    .main-content.maintenance-mode {
+        padding-top: 0 !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Maintenance Banner Styles */
+    .maintenance-banner {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 0.75rem 0;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        position: fixed;
+        top: 0;
+        left: 60px;
+        z-index: 10000;
+        width: calc(100vw - 60px);
+        max-width: calc(100vw - 60px);
+        box-sizing: border-box;
+        border-bottom: 2px solid #a93226;
+    }
+    
+    .maintenance-banner-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    
+    .maintenance-banner-left {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    
+    .maintenance-banner-center {
+        flex: 1;
+        margin: 0 1rem;
+        min-width: 0;
+        overflow: hidden;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .maintenance-banner-right {
+        flex-shrink: 0;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .maintenance-banner-link {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .maintenance-banner-link:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .maintenance-banner-close {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+    
+    .maintenance-banner-close:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
+    }
+    
+    /* Adjust newsbar position when maintenance banner is present */
+    .maintenance-banner + .newsbar {
+        top: 60px;
+    }
+    
+    .maintenance-banner + .newsbar + * .main-content {
+        padding-top: 120px !important;
     }
     
     /* Newsbar Styles - positioned at absolute top, accounting for sidebar */
@@ -249,6 +367,65 @@ if ($message) {
         }
     }
 
+    /* Responsive Maintenance Banner */
+    @media (max-width: 992px) {
+        .maintenance-banner {
+            left: 50px;
+            width: calc(100vw - 50px);
+            max-width: calc(100vw - 50px);
+        }
+        
+        .maintenance-banner + .newsbar {
+            left: 50px;
+            width: calc(100vw - 50px);
+            max-width: calc(100vw - 50px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .maintenance-banner {
+            left: 0;
+            width: 100vw;
+            max-width: 100vw;
+        }
+        
+        .maintenance-banner-content {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: stretch;
+            padding: 0.5rem;
+        }
+        
+        .maintenance-banner-left,
+        .maintenance-banner-center,
+        .maintenance-banner-right {
+            flex: none;
+            margin: 0;
+            justify-content: center;
+        }
+        
+        .maintenance-banner-left {
+            order: 1;
+            text-align: center;
+        }
+        
+        .maintenance-banner-center {
+            order: 2;
+            font-size: 0.8rem;
+        }
+        
+        .maintenance-banner-right {
+            order: 3;
+            text-align: center;
+        }
+        
+        .maintenance-banner + .newsbar {
+            left: 0;
+            width: 100vw;
+            max-width: 100vw;
+        }
+    }
+
     /* Responsive Newsbar */
     @media (max-width: 992px) {
         .newsbar {
@@ -368,6 +545,7 @@ if ($message) {
     <?php endif; ?>
 </head>
 <body>
+    <?php if (!is_maintenance_mode() || is_logged_in()): ?>
     <!-- Mobile Sidebar Toggle -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
@@ -512,7 +690,33 @@ if ($message) {
         </div>
         <?php endif; ?>
     </nav>
+    <?php endif; ?>
     
+    <!-- Maintenance Mode Banner (for admins) -->
+    <?php if (should_show_maintenance_banner()): ?>
+    <div class="maintenance-banner">
+        <div class="maintenance-banner-content">
+            <div class="maintenance-banner-left">
+                <i class="fas fa-tools"></i>
+                <span>Maintenance Mode Active</span>
+            </div>
+            <div class="maintenance-banner-center">
+                <span>Site is in maintenance mode. Regular users are redirected to maintenance page.</span>
+            </div>
+            <div class="maintenance-banner-right">
+                <a href="/admin/system_settings" class="maintenance-banner-link">
+                    <i class="fas fa-cog"></i>
+                    Manage
+                </a>
+                <button class="maintenance-banner-close" onclick="closeMaintenanceBanner()" title="Hide Banner">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <?php if (!is_maintenance_mode() || is_logged_in()): ?>
     <!-- Newsbar -->
     <div class="newsbar">
         <div class="newsbar-content">
@@ -562,8 +766,9 @@ if ($message) {
             </button>
         </div>
     </div>
+    <?php endif; ?>
 
-    <main class="main-content">
+    <main class="main-content<?php echo (is_maintenance_mode() && !is_logged_in()) ? ' maintenance-mode' : ''; ?>">
         <?php if ($message): ?>
         <div class="alert alert-<?php echo $message['type']; ?>">
             <?php echo htmlspecialchars($message['message']); ?>
@@ -903,8 +1108,27 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
+    // Maintenance banner functionality
+    function closeMaintenanceBanner() {
+        const banner = document.querySelector('.maintenance-banner');
+        if (banner) {
+            banner.style.display = 'none';
+            // Adjust newsbar position
+            const newsbar = document.querySelector('.newsbar');
+            if (newsbar) {
+                newsbar.style.top = '0';
+            }
+            // Adjust main content padding
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.style.paddingTop = '60px';
+            }
+        }
+    }
+    
     // Make newsbar functions globally available
     window.toggleNewsbar = toggleNewsbar;
     window.closeNewsbar = closeNewsbar;
+    window.closeMaintenanceBanner = closeMaintenanceBanner;
 });
 </script>

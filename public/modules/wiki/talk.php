@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 
+// Check maintenance mode
+check_maintenance_mode();
+
 $page_title = 'Talk Page';
 
 $slug = $_GET['slug'] ?? '';

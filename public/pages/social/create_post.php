@@ -3,6 +3,7 @@ require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 
 $page_title = 'Create Post';
+check_maintenance_mode();
 require_login();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

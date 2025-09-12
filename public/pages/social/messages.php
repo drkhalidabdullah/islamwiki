@@ -3,6 +3,7 @@ require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 
 $page_title = 'Messages';
+check_maintenance_mode();
 require_login();
 
 $current_user = get_user($_SESSION['user_id']);

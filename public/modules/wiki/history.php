@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
+// Check maintenance mode
+check_maintenance_mode();
+
 $page_title = 'Article History';
 
 $slug = $_GET['slug'] ?? '';

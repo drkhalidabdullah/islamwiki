@@ -121,7 +121,7 @@ include "../../includes/header.php";;
 <div class="admin-container">
     <div class="admin-header">
         <h1>Manage Users</h1>
-        <a href="admin.php" class="btn">Back to Admin Panel</a>
+        <a href="/admin" class="btn">Back to Admin Panel</a>
     </div>
     
     <?php if ($error): ?>

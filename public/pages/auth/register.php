@@ -2,6 +2,9 @@
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 
+// Check maintenance mode (but allow registration if enabled)
+check_maintenance_mode();
+
 $page_title = 'Register';
 
 // Get return URL from query parameter or session

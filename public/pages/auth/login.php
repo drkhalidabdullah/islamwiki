@@ -2,13 +2,16 @@
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 
+// Check maintenance mode (but allow login for admins)
+check_maintenance_mode();
+
 $page_title = 'Login';
 
 // Get return URL from query parameter or session
 $return_url = $_GET['return'] ?? $_SESSION['return_url'] ?? '/dashboard';
 
-// Redirect if already logged in
-if (is_logged_in()) {
+// Redirect if already logged in (but not during maintenance mode)
+if (is_logged_in() && !is_maintenance_mode()) {
     redirect($return_url);
 }
 
@@ -149,6 +152,13 @@ include "../../includes/header.php";;
     
     <?php if ($error): ?>
         <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    
+    <?php if (is_maintenance_mode()): ?>
+        <div class="alert alert-info" style="background: #e8f4f8; border: 1px solid #b8daff; color: #004085; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
+            <strong>Maintenance Mode Active:</strong> The site is currently under maintenance. Only administrators can log in during this time.
+        </div>
     <?php endif; ?>
     
     <form method="POST">

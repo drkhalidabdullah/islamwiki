@@ -5,6 +5,7 @@ require_once '../../includes/analytics.php';
 require_once '../../includes/markdown/MarkdownParser.php';
 
 $page_title = 'Dashboard';
+check_maintenance_mode();
 require_login();
 
 $current_user = get_user($_SESSION['user_id']);

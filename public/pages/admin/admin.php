@@ -4,6 +4,7 @@ require_once '../../includes/functions.php';
 // require_once '../../includes/analytics.php';
 
 $page_title = 'Admin Dashboard';
+check_maintenance_mode();
 require_login();
 
 // Check if user is admin

@@ -4,6 +4,7 @@ require_once '../../includes/functions.php';
 require_once '../../config/database.php';
 
 $page_title = 'Create Article';
+check_maintenance_mode();
 require_login();
 
 // Check if user can create articles

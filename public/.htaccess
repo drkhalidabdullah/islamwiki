@@ -30,6 +30,9 @@ RewriteRule ^wiki/upload/?$ /pages/wiki/upload_file.php [L,QSA]
 RewriteRule ^wiki/manage/redirects/?$ /pages/wiki/manage_redirects.php [L,QSA]
 RewriteRule ^wiki/manage/files/?$ /pages/wiki/manage_files.php [L,QSA]
 
+# Maintenance page
+RewriteRule ^maintenance/?$ /maintenance.php [L,QSA]
+
 # Auth pages
 RewriteRule ^login/?$ /pages/auth/login.php [L,QSA]
 RewriteRule ^register/?$ /pages/auth/register.php [L,QSA]
@@ -59,6 +62,18 @@ RewriteRule ^messages/?$ /pages/social/messages.php [L,QSA]
 
 # Admin pages
 RewriteRule ^admin/?$ /pages/admin/admin.php [L,QSA]
+RewriteRule ^admin/analytics/?$ /pages/admin/analytics.php [L,QSA]
+RewriteRule ^admin/manage_users/?$ /pages/admin/manage_users.php [L,QSA]
+RewriteRule ^admin/system_settings/?$ /pages/admin/system_settings.php [L,QSA]
+RewriteRule ^admin/content_moderation/?$ /pages/admin/content_moderation.php [L,QSA]
+RewriteRule ^admin/maintenance/?$ /pages/admin/maintenance.php [L,QSA]
+RewriteRule ^admin/manage_permissions/?$ /pages/admin/manage_permissions.php [L,QSA]
+RewriteRule ^admin/manage_redirects/?$ /pages/admin/manage_redirects.php [L,QSA]
+RewriteRule ^admin/manage_files/?$ /pages/admin/manage_files.php [L,QSA]
+RewriteRule ^admin/manage_categories/?$ /pages/admin/manage_categories.php [L,QSA]
+RewriteRule ^admin/create_article/?$ /pages/admin/create_article.php [L,QSA]
+RewriteRule ^admin/edit_article/?$ /pages/admin/edit_article.php [L,QSA]
+RewriteRule ^admin/edit_user/?$ /pages/admin/edit_user.php [L,QSA]
 
 # Handle trailing slashes
 RewriteCond %{REQUEST_FILENAME} !-f
