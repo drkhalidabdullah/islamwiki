@@ -1,0 +1,402 @@
+# System Architecture Documentation
+
+## Overview
+
+IslamWiki is a modern, social Islamic knowledge platform built with PHP and MySQL. This document provides a comprehensive overview of the system architecture, including the admin system, feature toggle system, permission system, and overall platform design.
+
+## Table of Contents
+
+1. [System Overview](#system-overview)
+2. [Architecture Layers](#architecture-layers)
+3. [Admin System Architecture](#admin-system-architecture)
+4. [Feature Toggle System](#feature-toggle-system)
+5. [Permission System](#permission-system)
+6. [Database Architecture](#database-architecture)
+7. [API Architecture](#api-architecture)
+8. [Frontend Architecture](#frontend-architecture)
+9. [Security Architecture](#security-architecture)
+10. [Performance Considerations](#performance-considerations)
+
+## System Overview
+
+### Core Components
+- **Web Application**: PHP-based web application
+- **Database**: MySQL database for data persistence
+- **Frontend**: HTML, CSS, JavaScript with responsive design
+- **Admin System**: Comprehensive admin interface
+- **Feature Toggles**: Configurable feature system
+- **Permission System**: Role-based access control
+
+### Technology Stack
+- **Backend**: PHP 7.4+
+- **Database**: MySQL 5.7+
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Styling**: Custom CSS with responsive design
+- **Icons**: Font Awesome
+- **Charts**: Chart.js for analytics
+
+## Architecture Layers
+
+### Presentation Layer
+- **User Interface**: Responsive web interface
+- **Admin Interface**: Comprehensive admin dashboard
+- **Mobile Support**: Mobile-optimized design
+- **Accessibility**: WCAG compliant design
+
+### Application Layer
+- **Core Functions**: Utility and helper functions
+- **Feature Toggles**: Configurable feature system
+- **Permission System**: Role-based access control
+- **Admin Functions**: Admin-specific functionality
+
+### Data Layer
+- **Database**: MySQL database
+- **Caching**: Application-level caching
+- **File Storage**: File upload and management
+- **Session Management**: User session handling
+
+### Security Layer
+- **Authentication**: User authentication system
+- **Authorization**: Permission-based access control
+- **Input Validation**: Comprehensive input sanitization
+- **API Security**: Secure API endpoints
+
+## Admin System Architecture
+
+### Core Components
+
+#### Admin Dashboard
+- **Main Interface**: Unified admin dashboard
+- **System Statistics**: Real-time system metrics
+- **Health Monitoring**: System health indicators
+- **Quick Actions**: Common admin tasks
+
+#### System Settings
+- **Configuration Management**: System-wide settings
+- **Feature Toggles**: Enable/disable features
+- **Tab Persistence**: Maintains user context
+- **Form Processing**: Secure form handling
+
+#### User Management
+- **User Accounts**: User account management
+- **Role Assignment**: User role management
+- **Permission Control**: Granular permission management
+- **Activity Monitoring**: User activity tracking
+
+#### Maintenance Control
+- **Maintenance Mode**: System maintenance control
+- **Health Monitoring**: Real-time system health
+- **Cache Management**: System cache control
+- **Database Optimization**: Database maintenance
+
+### Data Flow
+
+```
+Admin Request → Authentication → Authorization → Processing → Response
+```
+
+### Security Model
+- **Admin Access**: Admin privilege verification
+- **Permission Checks**: Granular permission verification
+- **API Protection**: Secure API endpoints
+- **Input Validation**: Comprehensive input sanitization
+
+## Feature Toggle System
+
+### Architecture
+
+#### Database Layer
+- **Settings Storage**: Key-value pair storage
+- **Type System**: Boolean, string, integer, JSON types
+- **Default Values**: Sensible defaults for all features
+
+#### Application Layer
+- **Setting Retrieval**: `get_system_setting()` function
+- **Caching**: Settings cached for performance
+- **Type Conversion**: Proper type handling
+
+#### UI Layer
+- **Conditional Rendering**: UI elements show/hide based on settings
+- **Admin Interface**: Toggle switches for configuration
+- **User Feedback**: Clear messaging when features disabled
+
+### Available Features
+
+#### Core Features
+- **User Registration**: Configurable registration system
+- **Comments System**: Toggleable comment functionality
+- **Wiki System**: Configurable wiki access
+- **Social Features**: Toggleable social interactions
+- **Analytics**: Configurable analytics tracking
+- **Notifications**: Toggleable notification system
+
+#### Implementation Pattern
+```php
+$feature_enabled = get_system_setting('feature_name', true);
+if ($feature_enabled) {
+    // Feature functionality
+} else {
+    // Alternative behavior or message
+}
+```
+
+### API Integration
+- **Protection Pattern**: All APIs check relevant settings
+- **Error Handling**: Graceful degradation when features disabled
+- **User Experience**: Clear feedback when features unavailable
+
+## Permission System
+
+### Architecture
+
+#### Database Schema
+- **Roles Table**: User role definitions
+- **Permissions Table**: Available system permissions
+- **Role Permissions Table**: Role-permission mappings
+- **User Roles Table**: User-role assignments
+
+#### Core Functions
+- **has_role()**: Check user role membership
+- **has_permission()**: Check user permissions
+- **is_admin()**: Check admin privileges
+- **require_admin()**: Require admin access
+
+#### Permission Categories
+- **Admin Permissions**: System administration
+- **Wiki Permissions**: Wiki functionality
+- **Content Permissions**: Content management
+- **Social Permissions**: Social features
+
+### Role Hierarchy
+
+#### Administrator
+- **Access Level**: Full system access
+- **Permissions**: 20 comprehensive permissions
+- **Use Case**: System administrators
+
+#### Scholar
+- **Access Level**: Research and content creation
+- **Permissions**: 8 focused permissions
+- **Use Case**: Academic researchers
+
+#### Editor
+- **Access Level**: Content editing and management
+- **Permissions**: 7 content permissions
+- **Use Case**: Content editors
+
+#### Other Roles
+- **Content Reviewer**: Content moderation
+- **Moderator**: Community moderation
+- **Contributor**: Basic content contribution
+- **User**: Regular user functionality
+- **Guest**: Minimal access
+
+## Database Architecture
+
+### Core Tables
+
+#### User Management
+- **users**: User account information
+- **user_roles**: User-role assignments
+- **roles**: Role definitions
+- **role_permissions**: Role-permission mappings
+
+#### Content Management
+- **articles**: Wiki articles
+- **posts**: User posts
+- **comments**: User comments
+- **categories**: Content categories
+
+#### System Management
+- **system_settings**: System configuration
+- **sessions**: User sessions
+- **logs**: System logs
+- **analytics**: Analytics data
+
+### Relationships
+
+#### User-Role Relationship
+```
+users (1) ←→ (M) user_roles (M) ←→ (1) roles
+```
+
+#### Role-Permission Relationship
+```
+roles (1) ←→ (M) role_permissions (M) ←→ (1) permissions
+```
+
+#### Content Relationships
+```
+users (1) ←→ (M) articles
+users (1) ←→ (M) posts
+articles (1) ←→ (M) comments
+```
+
+### Indexing Strategy
+- **Primary Keys**: Auto-incrementing integers
+- **Foreign Keys**: Referential integrity
+- **Unique Constraints**: Prevent duplicates
+- **Composite Indexes**: Optimize queries
+
+## API Architecture
+
+### RESTful Design
+- **Resource-Based URLs**: Clear resource identification
+- **HTTP Methods**: Proper HTTP method usage
+- **Status Codes**: Appropriate HTTP status codes
+- **JSON Responses**: Consistent JSON format
+
+### Security Model
+- **Authentication**: Session-based authentication
+- **Authorization**: Permission-based access control
+- **Input Validation**: Comprehensive input sanitization
+- **Rate Limiting**: Protection against abuse
+
+### API Endpoints
+
+#### Admin APIs
+- **User Management**: `/admin/manage_users`
+- **Permission Management**: `/admin/manage_permissions`
+- **System Settings**: `/admin/system_settings`
+- **Analytics**: `/admin/analytics`
+
+#### Feature APIs
+- **Comments**: `/api/ajax/add_comment.php`
+- **Social**: `/api/ajax/send_message.php`
+- **Analytics**: `/api/ajax/track_search.php`
+- **Notifications**: `/api/ajax/get_notifications.php`
+
+### Error Handling
+- **Consistent Format**: Standardized error responses
+- **HTTP Status Codes**: Appropriate status codes
+- **Error Messages**: Clear error descriptions
+- **Logging**: Comprehensive error logging
+
+## Frontend Architecture
+
+### Responsive Design
+- **Mobile-First**: Mobile-optimized design
+- **Breakpoints**: Responsive breakpoints
+- **Flexible Layouts**: CSS Grid and Flexbox
+- **Touch-Friendly**: Touch-optimized interfaces
+
+### Component Structure
+- **Header**: Navigation and user controls
+- **Main Content**: Primary content area
+- **Sidebar**: Secondary content and tools
+- **Footer**: Site information and links
+
+### JavaScript Architecture
+- **Modular Design**: Modular JavaScript structure
+- **Event Handling**: Proper event management
+- **AJAX Integration**: Seamless AJAX functionality
+- **Error Handling**: Client-side error handling
+
+### CSS Architecture
+- **Component-Based**: Component-based CSS
+- **Utility Classes**: Reusable utility classes
+- **Responsive Design**: Mobile-responsive design
+- **Performance**: Optimized CSS delivery
+
+## Security Architecture
+
+### Authentication
+- **Session Management**: Secure session handling
+- **Password Security**: Secure password storage
+- **Login Protection**: Brute force protection
+- **Session Timeout**: Automatic session expiration
+
+### Authorization
+- **Role-Based Access**: Role-based access control
+- **Permission Checks**: Granular permission verification
+- **API Security**: Secure API endpoints
+- **Page Protection**: Page-level access control
+
+### Input Validation
+- **Server-Side**: Comprehensive server-side validation
+- **Client-Side**: Client-side validation
+- **Sanitization**: Input sanitization
+- **SQL Injection**: SQL injection prevention
+
+### Data Protection
+- **Encryption**: Sensitive data encryption
+- **Secure Storage**: Secure data storage
+- **Access Logging**: Comprehensive access logging
+- **Audit Trail**: Complete audit trail
+
+## Performance Considerations
+
+### Database Optimization
+- **Query Optimization**: Optimized database queries
+- **Indexing Strategy**: Strategic database indexing
+- **Connection Pooling**: Efficient connection management
+- **Caching**: Database query caching
+
+### Application Performance
+- **Code Optimization**: Optimized PHP code
+- **Memory Management**: Efficient memory usage
+- **Caching**: Application-level caching
+- **Session Management**: Efficient session handling
+
+### Frontend Performance
+- **Asset Optimization**: Optimized CSS and JavaScript
+- **Image Optimization**: Optimized image delivery
+- **CDN Integration**: Content delivery network
+- **Caching Strategy**: Browser caching strategy
+
+### Scalability
+- **Horizontal Scaling**: Load balancing support
+- **Database Scaling**: Database scaling strategies
+- **Caching Layers**: Multiple caching layers
+- **Performance Monitoring**: Real-time performance monitoring
+
+## Deployment Architecture
+
+### Server Requirements
+- **PHP**: PHP 7.4 or higher
+- **MySQL**: MySQL 5.7 or higher
+- **Web Server**: Apache or Nginx
+- **SSL**: SSL certificate for HTTPS
+
+### File Structure
+```
+/var/www/html/
+├── public/                 # Web-accessible files
+│   ├── pages/             # Page templates
+│   ├── api/               # API endpoints
+│   ├── assets/            # Static assets
+│   └── includes/          # Include files
+├── database/              # Database migrations
+├── docs/                  # Documentation
+└── uploads/               # User uploads
+```
+
+### Configuration
+- **Environment Variables**: Environment-specific configuration
+- **Database Configuration**: Database connection settings
+- **Security Settings**: Security configuration
+- **Feature Flags**: Feature toggle configuration
+
+## Monitoring and Maintenance
+
+### System Monitoring
+- **Health Checks**: Real-time system health monitoring
+- **Performance Metrics**: Performance monitoring
+- **Error Tracking**: Error monitoring and logging
+- **User Activity**: User activity tracking
+
+### Maintenance Tasks
+- **Database Maintenance**: Regular database optimization
+- **Cache Management**: Cache clearing and optimization
+- **Log Management**: Log rotation and cleanup
+- **Security Updates**: Regular security updates
+
+### Backup Strategy
+- **Database Backups**: Regular database backups
+- **File Backups**: File system backups
+- **Configuration Backups**: Configuration backups
+- **Disaster Recovery**: Disaster recovery procedures
+
+---
+
+This architecture documentation provides a comprehensive overview of the IslamWiki system. For additional technical details or implementation questions, please refer to the specific component documentation or contact the development team.

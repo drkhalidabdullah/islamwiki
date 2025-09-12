@@ -90,6 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             show_message('Failed to update general settings.', 'error');
         }
+        
+        // Store the current tab for after redirect
+        $_SESSION['active_settings_tab'] = $form_section;
     } elseif ($action === 'update_security') {
         $settings = [
             'password_min_length' => (int)($_POST['password_min_length'] ?? 8),
@@ -125,6 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             show_message('Failed to update security settings.', 'error');
         }
+        
+        // Store the current tab for after redirect
+        $_SESSION['active_settings_tab'] = 'security';
     } elseif ($action === 'update_email') {
         $settings = [
             'smtp_host' => sanitize_input($_POST['smtp_host'] ?? ''),
@@ -160,6 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             show_message('Failed to update email settings.', 'error');
         }
+        
+        // Store the current tab for after redirect
+        $_SESSION['active_settings_tab'] = 'email';
     } elseif ($action === 'test_email') {
         $test_email = sanitize_input($_POST['test_email'] ?? '');
         if (filter_var($test_email, FILTER_VALIDATE_EMAIL)) {
@@ -169,6 +178,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             show_message('Invalid email address.', 'error');
         }
+        
+        // Store the current tab for after redirect
+        $_SESSION['active_settings_tab'] = 'email';
     } elseif ($action === 'clear_cache') {
         // Clear various caches
         $cleared = 0;
@@ -189,6 +201,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             show_message('No cache to clear.', 'info');
         }
+        
+        // Store the current tab for after redirect (cache clear can be from any tab)
+        $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'general';
     }
 }
 
@@ -1006,7 +1021,7 @@ include "../../includes/header.php";
             
             <div class="card">
                 <h2><i class="fas fa-heartbeat"></i> System Health</h2>
-                <div class="health-status">
+                <div class="health-container">
                     <div class="health-item">
                         <div class="health-label">Database</div>
                         <div class="health-status status-<?php echo $system_health['database']; ?>">
@@ -1424,11 +1439,12 @@ input:checked + .toggle-slider:hover {
 
 .stat-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: white !important;
     padding: 1.5rem;
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
 }
 
 .stat-card:hover {
@@ -1441,6 +1457,7 @@ input:checked + .toggle-slider:hover {
     font-weight: 800;
     margin-bottom: 0.5rem;
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: white !important;
 }
 
 .stat-label {
@@ -1449,11 +1466,15 @@ input:checked + .toggle-slider:hover {
     margin-bottom: 0.25rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .stat-detail {
     font-size: 0.9rem;
-    opacity: 0.9;
+    opacity: 0.95;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .storage-info {
@@ -1600,7 +1621,7 @@ input:checked + .toggle-slider:hover {
     font-size: 0.9rem;
 }
 
-.health-status {
+.health-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
@@ -1610,10 +1631,18 @@ input:checked + .toggle-slider:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem 1.25rem;
     background: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #3498db;
+    min-height: 60px;
+    transition: all 0.2s ease;
+}
+
+.health-item:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .health-label {
@@ -1626,6 +1655,14 @@ input:checked + .toggle-slider:hover {
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
+.health-status i {
+    font-size: 1rem;
+    width: 16px;
+    text-align: center;
 }
 
 .btn {
@@ -1720,6 +1757,16 @@ input:checked + .toggle-slider:hover {
         grid-template-columns: 1fr;
     }
     
+    .health-container {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .health-item {
+        padding: 0.75rem 1rem;
+        min-height: 50px;
+    }
+    
     .tool-form {
         flex-direction: column;
         align-items: stretch;
@@ -1749,6 +1796,38 @@ function showTab(tabName) {
 
 // Add confirmation for maintenance mode toggle and show/hide settings
 document.addEventListener('DOMContentLoaded', function() {
+    // Restore active tab from session
+    const activeTab = '<?php echo $_SESSION['active_settings_tab'] ?? 'general'; ?>';
+    if (activeTab && activeTab !== 'general') {
+        // Find the tab button and click it
+        const tabButton = document.querySelector(`[onclick="showTab('${activeTab}')"]`);
+        if (tabButton) {
+            tabButton.click();
+        }
+    }
+    
+    // Clear the session variable after use
+    <?php unset($_SESSION['active_settings_tab']); ?>
+    
+    // Add current tab tracking to clear cache form
+    const clearCacheForm = document.querySelector('form input[value="clear_cache"]').closest('form');
+    if (clearCacheForm) {
+        const currentTabInput = document.createElement('input');
+        currentTabInput.type = 'hidden';
+        currentTabInput.name = 'current_tab';
+        currentTabInput.value = 'general'; // Default to general
+        clearCacheForm.appendChild(currentTabInput);
+        
+        // Update current tab when switching tabs
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'\)/)[1];
+                currentTabInput.value = tabName;
+            });
+        });
+    }
+    
     const maintenanceToggle = document.querySelector('input[name="maintenance_mode"]');
     const maintenanceSettings = document.getElementById('maintenance-settings');
     

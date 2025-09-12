@@ -1,17 +1,39 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.12-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.13-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
-A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, and advanced search capabilities.
+A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.12
+## 🎯 Current Version: 0.0.0.13
 
-**Latest Release:** September 11, 2025  
+**Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - Enhanced Wiki Experience & Search System
+**Type:** Major Feature Release - Comprehensive Admin System Overhaul
+
+## 🚀 What's New in v0.0.0.13
+
+### 🚀 **Comprehensive Admin System Overhaul**
+- **Unified Admin Dashboard**: Merged Quick Actions and Admin Tools into organized, categorized sections
+- **Feature Toggle System**: Complete control over core system features (registration, comments, wiki, social, analytics, notifications)
+- **System Health Monitoring**: Real-time health indicators for database, storage, memory, and PHP version
+- **Permission Management**: Role-based access control with granular permission management
+- **Maintenance Control**: Primary operational control center with comprehensive system monitoring
+- **Modern UI**: Toast notifications, hover effects, and responsive design throughout admin interface
+
+### 🔧 **System Settings Enhancement**
+- **Tab Persistence**: Maintains current tab after saving changes instead of reverting to General
+- **Form Processing**: Fixed cross-form interference and improved form section identification
+- **Visual Improvements**: Perfect alignment of permission checkboxes and system health indicators
+- **Boolean Handling**: Proper maintenance mode boolean type handling and storage
+
+### 🎨 **User Experience Improvements**
+- **Toast Notifications**: Replaced all flash messages with modern toast notifications
+- **Better Navigation**: Back buttons and improved navigation flow
+- **Mobile Optimization**: Responsive design for all admin interfaces
+- **Accessibility**: Improved contrast, text visibility, and keyboard navigation
 
 ## 🚀 What's New in v0.0.0.12
 
