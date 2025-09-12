@@ -13,6 +13,21 @@ if (!is_admin()) {
     redirect_with_return_url();
 }
 
+// Handle maintenance mode toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_maintenance'])) {
+    $current_mode = is_maintenance_mode();
+    $new_mode = $current_mode ? 0 : 1;
+    
+    // Update maintenance mode setting
+    set_system_setting('maintenance_mode', $new_mode);
+    
+    // Log the action
+    log_activity('maintenance_toggle', 'Maintenance mode ' . ($new_mode ? 'enabled' : 'disabled'), $_SESSION['user_id']);
+    
+    // Redirect to refresh the page
+    header('Location: /admin');
+    exit;
+}
 
 // Get comprehensive statistics
 $stats = [];
@@ -149,6 +164,37 @@ include "../../includes/header.php";
         </div>
     </div>
 
+    <!-- System Health -->
+    <div class="dashboard-section system-health-section">
+        <h2><i class="fas fa-heartbeat"></i> System Health</h2>
+        <div class="health-status">
+            <div class="health-item">
+                <span class="health-label">Database</span>
+                <span class="health-status-indicator status-<?php echo $system_health['database']; ?>">
+                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['database']); ?>
+                </span>
+            </div>
+            <div class="health-item">
+                <span class="health-label">Storage</span>
+                <span class="health-status-indicator status-<?php echo $system_health['storage']; ?>">
+                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['storage']); ?>
+                </span>
+            </div>
+            <div class="health-item">
+                <span class="health-label">Memory</span>
+                <span class="health-status-indicator status-<?php echo $system_health['memory']; ?>">
+                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['memory']); ?>
+                </span>
+            </div>
+            <div class="health-item">
+                <span class="health-label">Uptime</span>
+                <span class="health-status-indicator status-<?php echo $system_health['uptime']; ?>">
+                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['uptime']); ?>
+                </span>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Statistics Grid -->
     <div class="stats-grid">
         <div class="stat-card stat-users">
@@ -233,26 +279,52 @@ include "../../includes/header.php";
     <div class="dashboard-grid">
         <!-- Left Column -->
         <div class="dashboard-left">
-            <!-- Quick Actions -->
-            <div class="dashboard-section">
-                <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-                <div class="quick-actions-grid">
-                    <a href="/pages/wiki/create_article.php" class="quick-action">
-                        <i class="fas fa-plus"></i>
-                        <span>Create Article</span>
-                    </a>
-                    <a href="/admin/manage_users" class="quick-action">
-                        <i class="fas fa-users"></i>
-                        <span>Manage Users</span>
-                    </a>
-                    <a href="/admin/analytics" class="quick-action">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </a>
-                    <a href="/admin/system_settings" class="quick-action">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
+            <!-- Maintenance Mode Status -->
+            <div class="dashboard-section maintenance-status-section">
+                <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
+                <div class="maintenance-status">
+                    <?php if (is_maintenance_mode()): ?>
+                        <div class="maintenance-active">
+                            <div class="maintenance-info">
+                                <div class="maintenance-status-indicator">
+                                    <i class="fas fa-circle status-warning"></i>
+                                    <span>Maintenance Mode Active</span>
+                                </div>
+                                <div class="maintenance-details">
+                                    <p><strong>Message:</strong> <?php echo htmlspecialchars(get_system_setting('maintenance_message', 'Site is under maintenance')); ?></p>
+                                    <p><strong>Estimated Time:</strong> <?php echo htmlspecialchars(get_system_setting('estimated_downtime', 'Unknown')); ?></p>
+                                </div>
+                            </div>
+                            <div class="maintenance-actions">
+                                <a href="/admin/system_settings" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-cog"></i> Manage
+                                </a>
+                                <button onclick="toggleMaintenanceMode()" class="btn btn-success btn-sm">
+                                    <i class="fas fa-power-off"></i> Disable
+                                </button>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="maintenance-inactive">
+                            <div class="maintenance-info">
+                                <div class="maintenance-status-indicator">
+                                    <i class="fas fa-circle status-healthy"></i>
+                                    <span>Site is Online</span>
+                                </div>
+                                <div class="maintenance-details">
+                                    <p>All systems are operational and accessible to users.</p>
+                                </div>
+                            </div>
+                            <div class="maintenance-actions">
+                                <a href="/admin/system_settings" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-cog"></i> Settings
+                                </a>
+                                <button onclick="toggleMaintenanceMode()" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-tools"></i> Enable
+                                </button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -280,40 +352,33 @@ include "../../includes/header.php";
                 </div>
             </div>
 
-            <!-- System Health -->
-            <div class="dashboard-section">
-                <h2><i class="fas fa-heartbeat"></i> System Health</h2>
-                <div class="health-status">
-                    <div class="health-item">
-                        <span class="health-label">Database</span>
-                        <span class="health-status status-<?php echo $system_health['database']; ?>">
-                            <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['database']); ?>
-                        </span>
-                    </div>
-                    <div class="health-item">
-                        <span class="health-label">Storage</span>
-                        <span class="health-status status-<?php echo $system_health['storage']; ?>">
-                            <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['storage']); ?>
-                        </span>
-                    </div>
-                    <div class="health-item">
-                        <span class="health-label">Memory</span>
-                        <span class="health-status status-<?php echo $system_health['memory']; ?>">
-                            <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['memory']); ?>
-                        </span>
-                    </div>
-                    <div class="health-item">
-                        <span class="health-label">Uptime</span>
-                        <span class="health-status status-<?php echo $system_health['uptime']; ?>">
-                            <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['uptime']); ?>
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Right Column -->
         <div class="dashboard-right">
+            <!-- Quick Actions -->
+            <div class="dashboard-section">
+                <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                <div class="quick-actions-grid">
+                    <a href="/pages/wiki/create_article.php" class="quick-action">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Article</span>
+                    </a>
+                    <a href="/admin/manage_users" class="quick-action">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Users</span>
+                    </a>
+                    <a href="/admin/analytics" class="quick-action">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="/admin/system_settings" class="quick-action">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Popular Articles -->
             <div class="dashboard-section">
                 <h2><i class="fas fa-fire"></i> Popular Articles</h2>
@@ -586,6 +651,17 @@ include "../../includes/header.php";
     gap: 0.5rem;
 }
 
+/* System Health Section - Full Width */
+.system-health-section {
+    margin-bottom: 2rem;
+}
+
+.system-health-section .health-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
 /* Quick Actions */
 .quick-actions-grid {
     display: grid;
@@ -688,6 +764,7 @@ include "../../includes/header.php";
     padding: 0.75rem;
     background: #f8f9fa;
     border-radius: 8px;
+    min-height: 2.5rem;
 }
 
 .health-label {
@@ -695,17 +772,118 @@ include "../../includes/header.php";
     color: #2c3e50;
 }
 
-.health-status {
+.health-status-indicator {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
     font-weight: 500;
+    white-space: nowrap;
+}
+
+.health-status-indicator i {
+    font-size: 0.7rem;
 }
 
 .status-healthy { color: #27ae60; }
 .status-warning { color: #f39c12; }
 .status-danger { color: #e74c3c; }
+
+/* Maintenance Status Section */
+.maintenance-status-section {
+    margin-bottom: 1.5rem;
+}
+
+.maintenance-status {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.maintenance-active {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.maintenance-inactive {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.maintenance-info {
+    margin-bottom: 1rem;
+}
+
+.maintenance-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.maintenance-status-indicator i {
+    font-size: 0.7rem;
+}
+
+.maintenance-details p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.maintenance-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
 
 /* Popular Articles */
 .popular-articles {
@@ -901,6 +1079,10 @@ include "../../includes/header.php";
         grid-template-columns: 1fr;
     }
     
+    .system-health-section .health-status {
+        grid-template-columns: 1fr;
+    }
+    
     .admin-tools {
         grid-template-columns: 1fr;
     }
@@ -926,5 +1108,25 @@ include "../../includes/header.php";
     }
 }
 </style>
+
+<script>
+function toggleMaintenanceMode() {
+    if (confirm('Are you sure you want to toggle maintenance mode? This will affect all users.')) {
+        // Create a form to submit the toggle request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/system_settings';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'toggle_maintenance';
+        input.value = '1';
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
 
 <?php include "../../includes/footer.php";; ?>
