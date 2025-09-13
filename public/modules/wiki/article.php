@@ -159,14 +159,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <!-- Main Content Area -->
             <main class="wiki-main-content">
                 <div class="article-content">
-                    <?php if ($article['slug'] === 'Main_Page'): ?>
-                        <!-- Main Page with COMPLETELY EDITABLE content - everything comes from database -->
-                        <div class="mp-editable-content">
-                            <?php echo $parsed_content; ?>
-                        </div>
-                    <?php else: ?>
-                        <?php echo $parsed_content; ?>
-                    <?php endif; ?>
+                    <?php echo $parsed_content; ?>
                 </div>
             </main>
             

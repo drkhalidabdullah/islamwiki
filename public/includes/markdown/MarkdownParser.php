@@ -107,6 +107,9 @@ class MarkdownParser {
         // Links
         $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $content);
         
+        // Horizontal rules
+        $content = preg_replace('/^---$/m', '<hr>', $content);
+        
         // Lists - handle both unordered and ordered lists
         $lines = explode("\n", $content);
         $in_list = false;

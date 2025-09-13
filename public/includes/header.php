@@ -62,7 +62,7 @@ if ($toast_message) {
     .article-content h2,
     .article-content h3,
     .article-content h4 {
-        margin-top: 4rem !important;
+        margin-top: 2rem !important;
         margin-bottom: 1.5rem !important;
     }
     
@@ -70,16 +70,16 @@ if ($toast_message) {
     .article-content h2:first-child,
     .article-content h3:first-child,
     .article-content h4:first-child {
-        margin-top: 2rem !important;
+        margin-top: 0.25rem !important;
     }
     
     /* Extra spacing for h2 headers specifically */
     .article-content h2 {
-        margin-top: 5rem !important;
+        margin-top: 2rem !important;
     }
     
     .article-content h2:first-child {
-        margin-top: 2.5rem !important;
+        margin-top: 0.5rem !important;
     }
     
     .featured-section .section-header::after,
@@ -97,103 +97,6 @@ if ($toast_message) {
         border-radius: 1px !important;
     }
     
-    /* Main Page Three-Column Layout - High Specificity */
-    .article-content .mp-topbanner {
-        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
-        color: white !important;
-        padding: 2rem !important;
-        border-radius: 8px !important;
-        margin-bottom: 2rem !important;
-        text-align: center !important;
-    }
-    
-    /* Main Page section headers spacing */
-    .article-content .mp-h2 {
-        margin-top: 2.5rem !important;
-        margin-bottom: 1rem !important;
-    }
-    
-    /* First section header in each column should have less top margin */
-    .article-content .mp-left .mp-h2:first-child,
-    .article-content .mp-right .mp-h2:first-child,
-    .article-content .mp-other-content .mp-h2:first-child,
-    .article-content .mp-sister-content .mp-h2:first-child,
-    .article-content .mp-lang .mp-h2:first-child {
-        margin-top: 0 !important;
-    }
-    
-    
-    /* Main Page editable content container - minimal styling */
-    .article-content .mp-editable-content {
-        background: white !important;
-        padding: 0.25rem 2rem 2rem 2rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 2rem !important;
-        margin-top: 0 !important;
-    }
-    
-    /* Ensure all content is left-aligned */
-    .article-content .mp-editable-content h2,
-    .article-content .mp-editable-content h3,
-    .article-content .mp-editable-content h4,
-    .article-content .mp-editable-content p,
-    .article-content .mp-editable-content ul,
-    .article-content .mp-editable-content ol,
-    .article-content .mp-editable-content li {
-        text-align: left !important;
-        margin-left: 0 !important;
-        padding-left: 0 !important;
-    }
-    
-    /* Fix list styling */
-    .article-content .mp-editable-content ul,
-    .article-content .mp-editable-content ol {
-        padding-left: 1.5rem !important;
-        margin-left: 0 !important;
-    }
-    
-    .article-content .mp-editable-content li {
-        display: list-item !important;
-        margin-left: 0 !important;
-        padding-left: 0 !important;
-    }
-    
-    .article-content .mp-left, 
-    .article-content .mp-right {
-        background: white !important;
-        padding: 1.5rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .article-content .mp-lower {
-        background: white !important;
-        padding: 1.5rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 2rem !important;
-    }
-    
-    .article-content .mp-other-content,
-    .article-content .mp-sister-content,
-    .article-content .mp-lang {
-        background: white !important;
-        padding: 1.5rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .article-content .mp-upper {
-            grid-template-columns: 1fr !important;
-        }
-        
-        .article-content .mp-bottom {
-            grid-template-columns: 1fr !important;
-        }
-    }
     
     .featured-section .section-header h1,
     .featured-section .section-header h2,
@@ -269,6 +172,14 @@ if ($toast_message) {
         color: white !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    /* Horizontal rule styling for proper section spacing */
+    .article-content hr {
+        border: none !important;
+        border-top: 2px solid #e5e7eb !important;
+        margin: 3rem 0 !important;
+        background: none !important;
     }
     </style>
     
