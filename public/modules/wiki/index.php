@@ -191,8 +191,25 @@ include "../../includes/header.php";
         <div class="wiki-main">
             <!-- Wiki Header -->
             <div class="wiki-header">
-                <h1>Islamic Knowledge Wiki</h1>
-                <p>Explore comprehensive articles about Islam, Islamic history, and Islamic teachings</p>
+                <div class="header-left">
+                    <h1>Islamic Knowledge Wiki</h1>
+                    <p>Explore comprehensive articles about Islam, Islamic history, and Islamic teachings</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button type="button" title="History">
+                            <i class="fas fa-history"></i>
+                        </button>
+                        <button type="button" title="Comments">
+                            <i class="fas fa-comments"></i>
+                        </button>
+                    </div>
+                    <div class="header-meta">
+                        <span><i class="fas fa-folder"></i> No category</span>
+                        <span><i class="fas fa-calendar"></i> <?php echo date('M j, Y'); ?></span>
+                        <span><i class="fas fa-eye"></i> <?php echo number_format($total_articles); ?> views</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Statistics Cards -->
@@ -229,9 +246,9 @@ include "../../includes/header.php";
             <!-- Featured Articles -->
             <?php if (!empty($featured_articles)): ?>
             <section class="featured-section">
-                <div class="section-header">
-                    <h2>Featured Articles</h2>
-                    <a href="/search?type=articles&featured=1" class="view-all-link">View All</a>
+                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; background: rgba(255, 0, 0, 0.1) !important;">
+                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">Featured Articles</h2>
+                    <a href="/search?type=articles&featured=1" class="view-all-link" style="color: #2563eb !important; text-decoration: none !important; font-weight: 500 !important; font-size: 0.875rem !important; padding: 0.5rem 1rem !important; border: 1px solid #2563eb !important; border-radius: 0.5rem !important; transition: all 0.2s ease !important; display: inline-flex !important; align-items: center !important; gap: 0.5rem !important;">View All</a>
                 </div>
                 <div class="articles-grid">
                     <?php foreach ($featured_articles as $article): ?>
@@ -270,9 +287,9 @@ include "../../includes/header.php";
             <!-- Recent Articles -->
             <?php if (!empty($recent_articles)): ?>
             <section class="recent-section">
-                <div class="section-header">
-                    <h2>Recent Articles</h2>
-                    <a href="/search?type=articles&sort=date" class="view-all-link">View All</a>
+                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; background: rgba(255, 0, 0, 0.1) !important;">
+                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">Recent Articles</h2>
+                    <a href="/search?type=articles&sort=date" class="view-all-link" style="color: #2563eb !important; text-decoration: none !important; font-weight: 500 !important; font-size: 0.875rem !important; padding: 0.5rem 1rem !important; border: 1px solid #2563eb !important; border-radius: 0.5rem !important; transition: all 0.2s ease !important; display: inline-flex !important; align-items: center !important; gap: 0.5rem !important;">View All</a>
                 </div>
                 <div class="recent-articles-list">
                     <?php foreach ($recent_articles as $article): ?>
@@ -301,9 +318,9 @@ include "../../includes/header.php";
             <!-- All Articles Section -->
             <?php if (!empty($all_articles)): ?>
             <section class="all-articles-section" id="all-articles">
-                <div class="section-header">
-                    <h2>All Wiki Articles</h2>
-                    <div class="articles-count"><?php echo count($all_articles); ?> articles</div>
+                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; background: rgba(255, 0, 0, 0.1) !important;">
+                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">All Wiki Articles</h2>
+                    <div class="articles-count" style="color: #6b7280 !important; font-size: 0.875rem !important; font-weight: 500 !important; background: #f3f4f6 !important; padding: 0.25rem 0.75rem !important; border-radius: 0.375rem !important;"><?php echo count($all_articles); ?> articles</div>
                 </div>
                 <div class="articles-alphabetical">
                     <?php 

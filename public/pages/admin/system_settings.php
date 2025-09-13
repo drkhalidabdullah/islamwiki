@@ -11,6 +11,12 @@ if (!is_admin()) {
     redirect('/dashboard');
 }
 
+// Initialize managers
+require_once '../../includes/extension_manager.php';
+require_once '../../skins/skins_manager.php';
+
+$extension_manager = new ExtensionManager();
+$skins_manager = new SkinsManager();
 
 // Handle settings update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -93,6 +99,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect
         $_SESSION['active_settings_tab'] = $form_section;
+        redirect('/admin/system_settings');
+        } elseif ($action === 'toggle_extension') {
+            // Toggle extension enabled/disabled
+            $extension_name = $_POST['extension_name'] ?? '';
+            if ($extension_name) {
+                $extension = $extension_manager->getExtension($extension_name);
+                if ($extension) {
+                    $current_status = $extension->enabled;
+                    $new_status = !$current_status;
+                    $setting_key = 'extension_' . $extension_name . '_enabled';
+                    
+                    if (set_system_setting($setting_key, $new_status, 'boolean')) {
+                        $status_text = $new_status ? 'enabled' : 'disabled';
+                        show_message("Extension '{$extension->name}' {$status_text} successfully.", 'success');
+                        log_activity('extension_toggled', "Extension '{$extension->name}' {$status_text}");
+                    } else {
+                        show_message('Failed to toggle extension.', 'error');
+                    }
+                } else {
+                    show_message('Extension not found.', 'error');
+                }
+            } else {
+                show_message('Invalid extension name.', 'error');
+            }
+            
+            // Store the current tab for after redirect
+            $_SESSION['active_settings_tab'] = 'extensions';
+            redirect('/admin/system_settings');
+        } elseif ($action === 'update_extension_settings') {
+            // Update extension settings
+            $extension_name = $_POST['extension_name'] ?? '';
+            if ($extension_name) {
+                $extension = $extension_manager->getExtension($extension_name);
+                if ($extension && method_exists($extension, 'saveSettings')) {
+                    if ($extension->saveSettings($_POST)) {
+                        show_message("Extension '{$extension->name}' settings updated successfully.", 'success');
+                        log_activity('extension_settings_updated', "Updated settings for extension '{$extension->name}'");
+                    } else {
+                        show_message('Failed to update extension settings.', 'error');
+                    }
+                } else {
+                    show_message('Extension not found or does not support settings.', 'error');
+                }
+            } else {
+                show_message('Invalid extension name.', 'error');
+            }
+            
+            // Store the current tab for after redirect
+            $_SESSION['active_settings_tab'] = 'extensions';
+            redirect('/admin/system_settings');
+        } elseif ($action === 'update_skin_settings') {
+            // Update skin settings
+            $settings = [];
+            
+            if (isset($_POST['default_skin'])) {
+                $settings['default_skin'] = sanitize_input($_POST['default_skin']);
+            }
+            $settings['allow_skin_selection'] = isset($_POST['allow_skin_selection']) ? 1 : 0;
+            
+            $updated = 0;
+            foreach ($settings as $key => $value) {
+                $type = is_bool($value) || $value === 0 || $value === 1 ? 'boolean' : 'string';
+                if (set_system_setting($key, $value, $type)) {
+                    $updated++;
+                }
+            }
+            
+            if ($updated > 0) {
+                show_message('Skin settings updated successfully.', 'success');
+                log_activity('skin_settings_updated', "Updated skin settings");
+            } else {
+                show_message('Failed to update skin settings.', 'error');
+            }
+            
+            // Store the current tab for after redirect
+            $_SESSION['active_settings_tab'] = 'skins';
+            redirect('/admin/system_settings');
+        } elseif ($action === 'activate_skin') {
+            // Activate a skin
+            $skin_name = $_POST['skin_name'] ?? '';
+            if ($skin_name) {
+                $skin = $skins_manager->getSkin($skin_name);
+                
+                if ($skin) {
+                    if (set_system_setting('default_skin', $skin_name, 'string')) {
+                        show_message("Skin '{$skin['display_name']}' activated successfully.", 'success');
+                        log_activity('skin_activated', "Activated skin '{$skin['display_name']}'");
+                    } else {
+                        show_message('Failed to activate skin.', 'error');
+                    }
+                } else {
+                    show_message('Skin not found.', 'error');
+                }
+            } else {
+                show_message('Invalid skin name.', 'error');
+            }
+            
+            // Store the current tab for after redirect
+            $_SESSION['active_settings_tab'] = 'skins';
+            redirect('/admin/system_settings');
     } elseif ($action === 'update_security') {
         $settings = [
             'password_min_length' => (int)($_POST['password_min_length'] ?? 8),
@@ -131,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect
         $_SESSION['active_settings_tab'] = 'security';
+            redirect('/admin/system_settings');
     } elseif ($action === 'update_email') {
         $settings = [
             'smtp_host' => sanitize_input($_POST['smtp_host'] ?? ''),
@@ -169,6 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect
         $_SESSION['active_settings_tab'] = 'email';
+            redirect('/admin/system_settings');
     } elseif ($action === 'test_email') {
         $test_email = sanitize_input($_POST['test_email'] ?? '');
         if (filter_var($test_email, FILTER_VALIDATE_EMAIL)) {
@@ -181,6 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect
         $_SESSION['active_settings_tab'] = 'email';
+            redirect('/admin/system_settings');
     } elseif ($action === 'clear_cache') {
         // Clear various caches
         $cleared = 0;
@@ -204,8 +313,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect (cache clear can be from any tab)
         $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'general';
+        redirect('/admin/system_settings');
+    } elseif ($action === 'toggle_module') {
+        // Toggle module enabled/disabled
+        $module_name = $_POST['module_name'] ?? '';
+        if ($module_name) {
+            $setting_key = 'enable_' . $module_name;
+            $current_status = get_system_setting($setting_key, true);
+            $new_status = !$current_status;
+            
+            if (set_system_setting($setting_key, $new_status, 'boolean')) {
+                $status_text = $new_status ? 'enabled' : 'disabled';
+                show_message("Module '{$module_name}' {$status_text} successfully.", 'success');
+                log_activity('module_toggled', "Module '{$module_name}' {$status_text}");
+            } else {
+                show_message("Failed to {$status_text} module '{$module_name}'.", 'error');
+            }
+        }
+        
+        // Store the current tab for after redirect
+        $_SESSION['active_settings_tab'] = 'modules';
+        redirect('/admin/system_settings');
     }
 }
+
+// Store active tab after all processing
+// Check URL parameter first, then session
+$active_tab = $_GET['tab'] ?? $_SESSION['active_settings_tab'] ?? 'general';
 
 // Get current settings
 $current_settings = [
@@ -306,8 +440,114 @@ $system_health = [
     'php' => version_compare(PHP_VERSION, '8.0.0', '>=') ? 'healthy' : 'warning',
 ];
 
+// Load admin CSS
+$admin_css = true;
 include "../../includes/header.php";
 ?>
+
+<script>
+// Define showTab function immediately after header load
+window.showTab = function(tabName, element) {
+    // Hide all tab contents
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Remove active class from all buttons
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab
+    const targetTab = document.getElementById(tabName + '-tab');
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+    
+    // Activate button
+    if (element) {
+        element.classList.add('active');
+    }
+    
+    // Store the active tab in URL for persistence
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tabName);
+    window.history.replaceState({}, '', url);
+};
+
+// Also define as global function for compatibility
+function showTab(tabName, element) {
+    return window.showTab(tabName, element);
+}
+
+// Tab persistence with proper DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    const activeTab = '<?php echo $active_tab; ?>';
+    
+    if (activeTab && activeTab !== 'general') {
+        // Check if the correct tab is already active (server-side rendering worked)
+        const activeButton = document.querySelector('.tab-button.active');
+        const activeContent = document.querySelector('.tab-content.active');
+        
+        if (activeButton && activeContent) {
+            const buttonText = activeButton.textContent.trim().toLowerCase();
+            const contentId = activeContent.id;
+            
+            // If the correct tab is already active, don't do anything
+            if (buttonText.includes(activeTab.toLowerCase()) && contentId === activeTab + '-tab') {
+                console.log('Tab already active from server-side rendering');
+                return;
+            }
+        }
+        
+        // Find the correct button and call showTab with it
+        const buttons = document.querySelectorAll('.tab-button');
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
+            const text = button.textContent.trim().toLowerCase();
+            if (text.includes(activeTab.toLowerCase())) {
+                // Call showTab with the button element
+                if (typeof window.showTab === 'function') {
+                    window.showTab(activeTab, button);
+                } else if (typeof showTab === 'function') {
+                    showTab(activeTab, button);
+                } else {
+                    // Fallback: click the button
+                    button.click();
+                }
+                break;
+            }
+        }
+    }
+});
+
+// Don't clear the session variable - keep it for persistence
+
+// Extension settings toggle functionality
+function toggleExtensionSettings(extensionName) {
+    const settingsDiv = document.getElementById('extension-settings-' + extensionName);
+    const toggleButton = document.querySelector(`[onclick="toggleExtensionSettings('${extensionName}')"]`);
+    const icon = toggleButton.querySelector('i');
+    
+    if (!settingsDiv || !toggleButton) {
+        console.error('Extension settings elements not found for:', extensionName);
+        return;
+    }
+    
+    const isHidden = settingsDiv.style.display === 'none' || 
+                    getComputedStyle(settingsDiv).display === 'none';
+    
+    if (isHidden) {
+        // Show settings
+        settingsDiv.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        toggleButton.title = 'Hide Settings';
+    } else {
+        // Hide settings
+        settingsDiv.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        toggleButton.title = 'Show Settings';
+    }
+}
+</script>
 
 <div class="admin-container">
     <div class="admin-header">
@@ -324,28 +564,37 @@ include "../../includes/header.php";
     
     
     <div class="settings-tabs">
-        <button class="tab-button active" onclick="showTab('general')">
+        <button class="tab-button <?php echo $active_tab === 'general' ? 'active' : ''; ?>" onclick="showTab('general', this)">
             <i class="fas fa-globe"></i> General
         </button>
-        <button class="tab-button" onclick="showTab('security')">
+        <button class="tab-button <?php echo $active_tab === 'security' ? 'active' : ''; ?>" onclick="showTab('security', this)">
             <i class="fas fa-shield-alt"></i> Security
         </button>
-        <button class="tab-button" onclick="showTab('email')">
+        <button class="tab-button <?php echo $active_tab === 'email' ? 'active' : ''; ?>" onclick="showTab('email', this)">
             <i class="fas fa-envelope"></i> Email
         </button>
-        <button class="tab-button" onclick="showTab('system')">
+        <button class="tab-button <?php echo $active_tab === 'system' ? 'active' : ''; ?>" onclick="showTab('system', this)">
             <i class="fas fa-server"></i> System Info
         </button>
-        <button class="tab-button" onclick="showTab('statistics')">
+        <button class="tab-button <?php echo $active_tab === 'statistics' ? 'active' : ''; ?>" onclick="showTab('statistics', this)">
             <i class="fas fa-chart-bar"></i> Statistics
         </button>
-        <button class="tab-button" onclick="showTab('tools')">
+        <button class="tab-button <?php echo $active_tab === 'tools' ? 'active' : ''; ?>" onclick="showTab('tools', this)">
             <i class="fas fa-tools"></i> Tools
+        </button>
+        <button class="tab-button <?php echo $active_tab === 'extensions' ? 'active' : ''; ?>" onclick="showTab('extensions', this)">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+        </button>
+        <button class="tab-button <?php echo $active_tab === 'modules' ? 'active' : ''; ?>" onclick="showTab('modules', this)">
+            <i class="fas fa-cubes"></i> Modules
+        </button>
+        <button class="tab-button <?php echo $active_tab === 'skins' ? 'active' : ''; ?>" onclick="showTab('skins', this)">
+            <i class="fas fa-palette"></i> Skins
         </button>
     </div>
     
     <!-- General Settings Tab -->
-    <div id="general-tab" class="tab-content active">
+    <div id="general-tab" class="tab-content <?php echo $active_tab === 'general' ? 'active' : ''; ?>">
         <!-- Two Column Layout -->
         <div class="settings-two-column">
             <!-- Column 1: Site Information -->
@@ -590,7 +839,7 @@ include "../../includes/header.php";
     </div>
     
     <!-- Security Settings Tab -->
-    <div id="security-tab" class="tab-content">
+    <div id="security-tab" class="tab-content <?php echo $active_tab === 'security' ? 'active' : ''; ?>">
         <div class="card">
             <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
             <form method="POST">
@@ -692,7 +941,7 @@ include "../../includes/header.php";
     </div>
     
     <!-- Email Settings Tab -->
-    <div id="email-tab" class="tab-content">
+    <div id="email-tab" class="tab-content <?php echo $active_tab === 'email' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
                 <h2><i class="fas fa-envelope"></i> SMTP Configuration</h2>
@@ -791,7 +1040,7 @@ include "../../includes/header.php";
     </div>
     
     <!-- System Information Tab -->
-    <div id="system-tab" class="tab-content">
+    <div id="system-tab" class="tab-content <?php echo $active_tab === 'system' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
                 <h2><i class="fas fa-server"></i> Server Information</h2>
@@ -862,7 +1111,7 @@ include "../../includes/header.php";
     </div>
     
     <!-- Statistics Tab -->
-    <div id="statistics-tab" class="tab-content">
+    <div id="statistics-tab" class="tab-content <?php echo $active_tab === 'statistics' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
                 <h2><i class="fas fa-chart-bar"></i> Content Statistics</h2>
@@ -959,7 +1208,7 @@ include "../../includes/header.php";
     </div>
     
     <!-- Tools Tab -->
-    <div id="tools-tab" class="tab-content">
+    <div id="tools-tab" class="tab-content <?php echo $active_tab === 'tools' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
                 <h2><i class="fas fa-tools"></i> System Tools</h2>
@@ -1048,6 +1297,267 @@ include "../../includes/header.php";
                         <div class="health-status status-<?php echo $system_health['php']; ?>">
                             <i class="fas fa-<?php echo $system_health['php'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
                             <?php echo ucfirst($system_health['php']); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Extensions Tab -->
+    <div id="extensions-tab" class="tab-content <?php echo $active_tab === 'extensions' ? 'active' : ''; ?>">
+        <div class="settings-grid">
+            <div class="card">
+                <h2><i class="fas fa-puzzle-piece"></i> Extensions Management</h2>
+                <p>Manage extensions that add additional functionality to your site.</p>
+                
+                <?php
+                // Get extension settings
+                $extension_settings = $extension_manager->getExtensionSettings();
+                ?>
+                
+                <div class="extensions-container">
+                    <?php foreach ($extension_settings as $name => $extension): ?>
+                    <div class="extension-card">
+                        <div class="extension-header">
+                            <div class="extension-info">
+                                <h3><?php echo htmlspecialchars($extension['name']); ?></h3>
+                                <p><?php echo htmlspecialchars($extension['description']); ?></p>
+                                <div class="extension-meta">
+                                    <span class="extension-version">v<?php echo htmlspecialchars($extension['version']); ?></span>
+                                    <span class="extension-status <?php echo $extension['enabled'] ? 'enabled' : 'disabled'; ?>">
+                                        <?php echo $extension['enabled'] ? 'Enabled' : 'Disabled'; ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="extension-actions">
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="action" value="toggle_extension">
+                                    <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
+                                    <button type="submit" class="btn <?php echo $extension['enabled'] ? 'btn-warning' : 'btn-success'; ?>">
+                                        <i class="fas fa-<?php echo $extension['enabled'] ? 'pause' : 'play'; ?>"></i>
+                                        <?php echo $extension['enabled'] ? 'Disable' : 'Enable'; ?>
+                                    </button>
+                                </form>
+                                <?php if ($extension['enabled'] && !empty($extension['settings_form'])): ?>
+                                <button type="button" class="btn btn-outline extension-settings-toggle" onclick="toggleExtensionSettings('<?php echo htmlspecialchars($name); ?>')" title="Toggle Settings">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <?php if ($extension['enabled'] && !empty($extension['settings_form'])): ?>
+                        <div class="extension-settings" id="extension-settings-<?php echo htmlspecialchars($name); ?>" style="display: none;">
+                            <h4>Settings</h4>
+                            <form method="POST">
+                                <input type="hidden" name="action" value="update_extension_settings">
+                                <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
+                                <?php echo $extension['settings_form']; ?>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Settings
+                                </button>
+                            </form>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modules Tab -->
+    <div id="modules-tab" class="tab-content <?php echo $active_tab === 'modules' ? 'active' : ''; ?>">
+        <div class="settings-grid">
+            <div class="card">
+                <h2><i class="fas fa-cubes"></i> Core Modules</h2>
+                <p>Manage core system modules and their settings.</p>
+                
+                <div class="modules-container">
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-info">
+                                <h3><i class="fas fa-book"></i> Wiki Module</h3>
+                                <p>Core wiki functionality for articles and content management</p>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="toggle_module">
+                                <input type="hidden" name="module_name" value="wiki">
+                                <button type="submit" class="btn <?php echo get_system_setting('enable_wiki', true) ? 'btn-warning' : 'btn-success'; ?>">
+                                    <i class="fas fa-<?php echo get_system_setting('enable_wiki', true) ? 'pause' : 'play'; ?>"></i>
+                                    <?php echo get_system_setting('enable_wiki', true) ? 'Disable' : 'Enable'; ?>
+                                </button>
+                            </form>
+                            <a href="/admin/manage_categories" class="btn btn-secondary">
+                                <i class="fas fa-tags"></i> Manage Categories
+                            </a>
+                            <a href="/admin/create_article" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Article
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-info">
+                                <h3><i class="fas fa-users"></i> Social Module</h3>
+                                <p>Social networking features including friends and messaging</p>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="toggle_module">
+                                <input type="hidden" name="module_name" value="social">
+                                <button type="submit" class="btn <?php echo get_system_setting('enable_social', true) ? 'btn-warning' : 'btn-success'; ?>">
+                                    <i class="fas fa-<?php echo get_system_setting('enable_social', true) ? 'pause' : 'play'; ?>"></i>
+                                    <?php echo get_system_setting('enable_social', true) ? 'Disable' : 'Enable'; ?>
+                                </button>
+                            </form>
+                            <a href="/admin/manage_users" class="btn btn-secondary">
+                                <i class="fas fa-users-cog"></i> Manage Users
+                            </a>
+                            <a href="/friends" class="btn btn-primary">
+                                <i class="fas fa-users"></i> View Friends
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-info">
+                                <h3><i class="fas fa-comments"></i> Comments Module</h3>
+                                <p>Commenting system for posts and articles</p>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="toggle_module">
+                                <input type="hidden" name="module_name" value="comments">
+                                <button type="submit" class="btn <?php echo get_system_setting('enable_comments', true) ? 'btn-warning' : 'btn-success'; ?>">
+                                    <i class="fas fa-<?php echo get_system_setting('enable_comments', true) ? 'pause' : 'play'; ?>"></i>
+                                    <?php echo get_system_setting('enable_comments', true) ? 'Disable' : 'Enable'; ?>
+                                </button>
+                            </form>
+                            <a href="/admin/content_moderation" class="btn btn-secondary">
+                                <i class="fas fa-shield-alt"></i> Moderation
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-info">
+                                <h3><i class="fas fa-chart-line"></i> Analytics Module</h3>
+                                <p>Analytics and tracking functionality</p>
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="toggle_module">
+                                <input type="hidden" name="module_name" value="analytics">
+                                <button type="submit" class="btn <?php echo get_system_setting('enable_analytics', true) ? 'btn-warning' : 'btn-success'; ?>">
+                                    <i class="fas fa-<?php echo get_system_setting('enable_analytics', true) ? 'pause' : 'play'; ?>"></i>
+                                    <?php echo get_system_setting('enable_analytics', true) ? 'Disable' : 'Enable'; ?>
+                                </button>
+                            </form>
+                            <a href="/admin/analytics" class="btn btn-primary">
+                                <i class="fas fa-chart-line"></i> View Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Skins Tab -->
+    <div id="skins-tab" class="tab-content <?php echo $active_tab === 'skins' ? 'active' : ''; ?>">
+        <div class="settings-grid">
+            <div class="card">
+                <h2><i class="fas fa-palette"></i> Skin Management</h2>
+                <p>Manage and configure site themes and visual appearance.</p>
+                
+                <?php
+                // Get skins data
+                $skins = $skins_manager->getAllSkins();
+                $current_skin = $skins_manager->getCurrentSkin();
+                ?>
+                
+                <div class="skins-container">
+                    <div class="skin-settings">
+                        <h3>Current Skin Settings</h3>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="update_skin_settings">
+                            <div class="form-group">
+                                <label for="default_skin">Default Skin:</label>
+                                <select name="default_skin" id="default_skin">
+                                    <?php foreach ($skins as $skin): ?>
+                                    <option value="<?php echo htmlspecialchars($skin['name']); ?>" 
+                                            <?php echo $skin['name'] === $current_skin ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($skin['display_name']); ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" name="allow_skin_selection" value="1" 
+                                           <?php echo get_system_setting('allow_skin_selection', true) ? 'checked' : ''; ?>>
+                                    Allow users to select their own skin
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Skin Settings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="available-skins">
+                        <h3>Available Skins</h3>
+                        <div class="skins-grid">
+                            <?php foreach ($skins as $skin): ?>
+                            <div class="skin-card <?php echo $skin['name'] === $current_skin ? 'active' : ''; ?>">
+                                <div class="skin-preview">
+                                    <?php 
+                                    $preview = $skins_manager->getSkinPreview($skin['name']);
+                                    if ($preview): 
+                                    ?>
+                                    <img src="<?php echo $preview; ?>" alt="<?php echo htmlspecialchars($skin['display_name']); ?> Preview">
+                                    <?php else: ?>
+                                    <div class="skin-preview-placeholder">
+                                        <i class="fas fa-palette"></i>
+                                        <span>No Preview</span>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="skin-info">
+                                    <h4><?php echo htmlspecialchars($skin['display_name']); ?></h4>
+                                    <p><?php echo htmlspecialchars($skin['description']); ?></p>
+                                    <div class="skin-meta">
+                                        <span class="skin-version">v<?php echo htmlspecialchars($skin['version']); ?></span>
+                                        <span class="skin-author">by <?php echo htmlspecialchars($skin['author']); ?></span>
+                                    </div>
+                                    <div class="skin-actions">
+                                        <?php if ($skin['name'] !== $current_skin): ?>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="action" value="activate_skin">
+                                            <input type="hidden" name="skin_name" value="<?php echo htmlspecialchars($skin['name']); ?>">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-check"></i> Activate
+                                            </button>
+                                        </form>
+                                        <?php else: ?>
+                                        <span class="btn btn-success btn-sm">
+                                            <i class="fas fa-check-circle"></i> Active
+                                        </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -1056,758 +1566,28 @@ include "../../includes/header.php";
     </div>
 </div>
 
-<style>
-/* Comprehensive System Settings Styles */
-.admin-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: #f8f9fa;
-    min-height: 100vh;
-}
-
-.admin-header {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-content h1 {
-    color: #2c3e50;
-    margin: 0 0 0.5rem 0;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.header-content p {
-    color: #7f8c8d;
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-.settings-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    background: white;
-    padding: 0.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    overflow-x: auto;
-}
-
-.tab-button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #7f8c8d;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.tab-button:hover {
-    background: #f8f9fa;
-    color: #2c3e50;
-}
-
-.tab-button.active {
-    background: #3498db;
-    color: white;
-    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.settings-two-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.column-1, .column-2 {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.maintenance-mode-card {
-    margin-bottom: 2rem;
-    border-left: 5px solid #e74c3c;
-}
-
-.maintenance-toggle-section .feature-toggle {
-    border: 2px solid #e74c3c;
-    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
-}
-
-.maintenance-toggle-section .feature-toggle:hover {
-    border-color: #c0392b;
-    background: linear-gradient(135deg, #fdf2f2 0%, #ffffff 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
-}
-
-.card {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-}
-
-.card h2 {
-    color: #2c3e50;
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.form-help {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-    font-style: italic;
-}
-
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-}
-
-.feature-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    background: white;
-    position: relative;
-}
-
-.feature-toggle:hover {
-    border-color: #3498db;
-    background: #f8f9fa;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* Toggle Switch Styles */
-.toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    margin-left: 1rem;
-}
-
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-input:checked + .toggle-slider {
-    background-color: #3498db;
-    box-shadow: inset 0 2px 4px rgba(52, 152, 219, 0.3);
-}
-
-input:checked + .toggle-slider:before {
-    transform: translateX(26px);
-}
-
-/* Hover effects for toggle */
-.toggle-switch:hover .toggle-slider {
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
-}
-
-input:checked + .toggle-slider:hover {
-    background-color: #2980b9;
-    box-shadow: inset 0 2px 4px rgba(41, 128, 185, 0.4);
-}
-
-/* Focus styles for accessibility */
-.toggle-switch input:focus + .toggle-slider {
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
-
-/* Maintenance mode special styling */
-.maintenance-toggle .toggle-slider {
-    background-color: #e74c3c;
-}
-
-.maintenance-toggle input:checked + .toggle-slider {
-    background-color: #c0392b;
-    box-shadow: inset 0 2px 4px rgba(192, 57, 43, 0.3);
-}
-
-.maintenance-toggle:hover .toggle-slider {
-    background-color: #c0392b;
-}
-
-.maintenance-toggle input:checked + .toggle-slider:hover {
-    background-color: #a93226;
-    box-shadow: inset 0 2px 4px rgba(169, 50, 38, 0.4);
-}
-
-.toggle-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.toggle-content i {
-    font-size: 1.5rem;
-    color: #3498db;
-    width: 24px;
-    text-align: center;
-}
-
-.toggle-content strong {
-    display: block;
-    color: #2c3e50;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.toggle-content small {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.maintenance-toggle {
-    border-color: #e74c3c !important;
-}
-
-.maintenance-toggle:hover {
-    border-color: #c0392b !important;
-    background: #fdf2f2 !important;
-}
-
-.security-features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.email-features {
-    margin-top: 1.5rem;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.info-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border-left: 4px solid #3498db;
-}
-
-.info-item strong {
-    color: #2c3e50;
-    font-weight: 600;
-}
-
-.status-healthy {
-    color: #27ae60;
-    font-weight: 600;
-}
-
-.status-warning {
-    color: #f39c12;
-    font-weight: 600;
-}
-
-.status-danger {
-    color: #e74c3c;
-    font-weight: 600;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white !important;
-    padding: 1.5rem;
-    border-radius: 12px;
-    text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    color: white !important;
-}
-
-.stat-label {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: white !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.stat-detail {
-    font-size: 0.9rem;
-    opacity: 0.95;
-    color: white !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.storage-info {
-    margin-top: 1rem;
-}
-
-.storage-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.storage-label {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.storage-value {
-    font-weight: 600;
-    color: #3498db;
-}
-
-.storage-progress {
-    margin-top: 1rem;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #3498db, #2ecc71);
-    transition: width 0.3s ease;
-}
-
-.progress-text {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #7f8c8d;
-    font-weight: 600;
-}
-
-.activity-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
-    transition: all 0.3s ease;
-}
-
-.activity-item:hover {
-    background: #f8f9fa;
-}
-
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #3498db;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    font-size: 1.2rem;
-}
-
-.activity-title {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 0.25rem;
-}
-
-.activity-meta {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.no-activity {
-    text-align: center;
-    color: #7f8c8d;
-    padding: 2rem;
-    font-style: italic;
-}
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-}
-
-.tool-form {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    background: white;
-    transition: all 0.3s ease;
-}
-
-.tool-form:hover {
-    border-color: #3498db;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.tool-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.tool-content i {
-    font-size: 1.5rem;
-    color: #3498db;
-    width: 24px;
-    text-align: center;
-}
-
-.tool-content strong {
-    display: block;
-    color: #2c3e50;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.tool-content small {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.health-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.health-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.25rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border-left: 4px solid #3498db;
-    min-height: 60px;
-    transition: all 0.2s ease;
-}
-
-.health-item:hover {
-    background: #e9ecef;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.health-label {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.health-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: capitalize;
-}
-
-.health-status i {
-    font-size: 1rem;
-    width: 16px;
-    text-align: center;
-}
-
-.btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.btn-primary {
-    background: #3498db;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #2980b9;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: #95a5a6;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #7f8c8d;
-}
-
-.btn-info {
-    background: #17a2b8;
-    color: white;
-}
-
-.btn-info:hover {
-    background: #138496;
-}
-
-.btn-warning {
-    background: #ffc107;
-    color: #212529;
-}
-
-.btn-warning:hover {
-    background: #e0a800;
-}
-
-.alert {
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 600;
-}
-
-
-@media (max-width: 768px) {
-    .admin-container {
-        padding: 1rem;
-    }
-    
-    .settings-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .settings-two-column {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .column-1, .column-2 {
-        gap: 1rem;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .feature-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .tools-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .health-container {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    .health-item {
-        padding: 0.75rem 1rem;
-        min-height: 50px;
-    }
-    
-    .tool-form {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-    
-    .settings-tabs {
-        flex-wrap: wrap;
-    }
-}
-</style>
 
 <script>
-function showTab(tabName) {
-    // Hide all tab contents
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    
-    // Remove active class from all buttons
-    const buttons = document.querySelectorAll('.tab-button');
-    buttons.forEach(button => button.classList.remove('active'));
-    
-    // Show selected tab and activate button
-    document.getElementById(tabName + '-tab').classList.add('active');
-    event.target.classList.add('active');
+
+// Extension management functions
+function addNewsItem() {
+    const container = document.getElementById('news-items-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'news-item-row';
+    newRow.innerHTML = `
+        <input type="text" name="news_item_time[]" placeholder="Time (e.g., 2 hours ago)" value="">
+        <input type="text" name="news_item_text[]" placeholder="News text" value="">
+        <button type="button" onclick="removeNewsItem(this)">Remove</button>
+    `;
+    container.appendChild(newRow);
+}
+
+function removeNewsItem(button) {
+    button.parentElement.remove();
 }
 
 // Add confirmation for maintenance mode toggle and show/hide settings
 document.addEventListener('DOMContentLoaded', function() {
-    // Restore active tab from session
-    const activeTab = '<?php echo $_SESSION['active_settings_tab'] ?? 'general'; ?>';
-    if (activeTab && activeTab !== 'general') {
-        // Find the tab button and click it
-        const tabButton = document.querySelector(`[onclick="showTab('${activeTab}')"]`);
-        if (tabButton) {
-            tabButton.click();
-        }
-    }
-    
-    // Clear the session variable after use
-    <?php unset($_SESSION['active_settings_tab']); ?>
     
     // Add current tab tracking to clear cache form
     const clearCacheForm = document.querySelector('form input[value="clear_cache"]').closest('form');
@@ -1822,7 +1602,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.addEventListener('click', function() {
-                const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'\)/)[1];
+                const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'/)[1];
                 currentTabInput.value = tabName;
             });
         });
@@ -1882,4 +1662,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include "../../includes/footer.php";; ?>
+<?php include "../../includes/footer.php"; ?>

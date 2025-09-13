@@ -127,6 +127,8 @@ $server_info = [
     'post_max_size' => ini_get('post_max_size')
 ];
 
+// Load admin CSS
+$admin_css = true;
 include "../../includes/header.php";
 ?>
 

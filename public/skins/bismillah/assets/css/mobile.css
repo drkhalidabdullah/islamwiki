@@ -1,4 +1,7 @@
-/* Mobile Optimization for IslamWiki */
+/* ========================================
+   MOBILE STYLES
+   Extends bismillah.css for mobile responsiveness
+   ======================================== */
 
 /* Base mobile styles */
 @media (max-width: 768px) {

@@ -1,0 +1,33 @@
+{
+    "name": "bismillah",
+    "display_name": "Bismillah",
+    "description": "The default Islamic theme with clean design and traditional colors",
+    "version": "0.0.1",
+    "author": "IslamWiki Team",
+    "preview_image": "preview.png",
+    "css_file": "bismillah.css",
+    "js_file": "bismillah.js",
+    "features": [
+        "Responsive design",
+        "Islamic color scheme",
+        "Clean typography",
+        "Full-width layout",
+        "Mobile optimized",
+        "Accessibility features"
+    ],
+    "color_scheme": {
+        "primary": "#2563eb",
+        "secondary": "#059669",
+        "accent": "#f59e0b",
+        "background": "#f9fafb",
+        "text": "#1f2937"
+    },
+    "supported_pages": [
+        "homepage",
+        "wiki",
+        "search",
+        "user",
+        "admin",
+        "social"
+    ]
+}

@@ -107,12 +107,56 @@ class MarkdownParser {
         // Links
         $content = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $content);
         
-        // Lists
-        $content = preg_replace('/^\* (.*$)/m', '<li>$1</li>', $content);
-        $content = preg_replace('/^(\d+)\. (.*$)/m', '<li>$2</li>', $content);
+        // Lists - handle both unordered and ordered lists
+        $lines = explode("\n", $content);
+        $in_list = false;
+        $list_type = '';
+        $result = [];
         
-        // Wrap consecutive list items in ul/ol
-        $content = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $content);
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            
+            // Check for unordered list item
+            if (preg_match('/^\* (.+)$/', $trimmed, $matches)) {
+                if (!$in_list || $list_type !== 'ul') {
+                    if ($in_list) {
+                        $result[] = '</' . $list_type . '>';
+                    }
+                    $result[] = '<ul>';
+                    $in_list = true;
+                    $list_type = 'ul';
+                }
+                $result[] = '<li>' . $matches[1] . '</li>';
+            }
+            // Check for ordered list item
+            elseif (preg_match('/^(\d+)\. (.+)$/', $trimmed, $matches)) {
+                if (!$in_list || $list_type !== 'ol') {
+                    if ($in_list) {
+                        $result[] = '</' . $list_type . '>';
+                    }
+                    $result[] = '<ol>';
+                    $in_list = true;
+                    $list_type = 'ol';
+                }
+                $result[] = '<li>' . $matches[2] . '</li>';
+            }
+            // Non-list line
+            else {
+                if ($in_list) {
+                    $result[] = '</' . $list_type . '>';
+                    $in_list = false;
+                    $list_type = '';
+                }
+                $result[] = $line;
+            }
+        }
+        
+        // Close any open list
+        if ($in_list) {
+            $result[] = '</' . $list_type . '>';
+        }
+        
+        $content = implode("\n", $result);
         
         // Line breaks - only convert double line breaks to paragraph breaks
         $content = preg_replace('/\n\n/', '</p><p>', $content);

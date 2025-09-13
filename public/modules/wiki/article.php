@@ -159,105 +159,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <!-- Main Content Area -->
             <main class="wiki-main-content">
                 <div class="article-content">
-                    <?php if (false): ?>
-                        <!-- Wikipedia-style Main Page Layout -->
-                        <div class="mp-topbanner">
-                            <div class="mp-welcomecount">
-                                <div class="mp-welcome">
-                                    <h1>Welcome to Islamic Wiki</h1>,
-                                </div>
-                                <div class="mp-free">the free encyclopedia that anyone can edit.</div>
-                                <div class="articlecount">
-                                    <ul>
-                                        <li><a href="/wiki/special/user_contributions">1,234</a> active editors</li>
-                                        <li><a href="/wiki/special/all_pages">567</a> articles in English</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mp-upper">
-                            <div class="mp-left">
-                                <h2 class="mp-h2">From today's featured article</h2>
-                                <div class="mp-tfa">
-                                    <?php echo $parsed_content; ?>
-                                </div>
-                            </div>
-                            <div class="mp-right">
-                                <h2 class="mp-h2">In the news</h2>
-                                <div class="mp-itn">
-                                    <ul>
-                                        <li>Recent developments in Islamic education and scholarship</li>
-                                        <li>New archaeological discoveries related to Islamic history</li>
-                                        <li>Contemporary Islamic art and cultural exhibitions</li>
-                                        <li>Interfaith dialogue initiatives around the world</li>
-                                    </ul>
-                                    <p><strong>Ongoing:</strong> Islamic education reforms, Preservation of Islamic heritage sites, Digital Islamic resources development</p>
-                                </div>
-                                
-                                <h2 class="mp-h2">On this day</h2>
-                                <div class="mp-otd">
-                                    <p><strong>September 9th in Islamic History</strong></p>
-                                    <ul>
-                                        <li><strong>622 CE</strong> - The Hijra (migration) of Prophet Muhammad and his companions from Mecca to Medina</li>
-                                        <li><strong>1187 CE</strong> - Saladin recaptures Jerusalem from the Crusaders</li>
-                                        <li><strong>1924 CE</strong> - The abolition of the Ottoman Caliphate</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mp-lower">
-                            <h2 class="mp-h2">Today's featured picture</h2>
-                            <div class="mp-tfp">
-                                <img src="https://via.placeholder.com/300x200/2E5266/FFFFFF?text=Islamic+Calligraphy" alt="Islamic Calligraphy">
-                                <p><strong>Islamic Calligraphy Art</strong><br>
-                                Islamic calligraphy is the artistic practice of handwriting and calligraphy, based upon the Arabic script. It is known in Arabic as khatt (خط), derived from the word 'line', 'design', or 'construction'.</p>
-                                <p><em>Photograph credit:</em> Islamic Art Collection</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mp-bottom">
-                            <h2 class="mp-h2">Other areas of Islamic Wiki</h2>
-                            <div class="mp-other-content">
-                                <ul>
-                                    <li><a href="/wiki/special/all_pages">Community portal</a> - The hub for editors, with resources, links, tasks, and announcements</li>
-                                    <li><a href="/wiki/special/recent_changes">Village pump</a> - For discussions about Islamic Wiki itself</li>
-                                    <li><a href="/wiki/special/new_pages">Site news</a> - Announcements, updates, articles, and press releases</li>
-                                    <li><a href="/search">Teahouse</a> - For new editors to become acclimated and ask questions</li>
-                                    <li><a href="/wiki/special/all_pages">Help desk</a> - Ask questions about using or editing Islamic Wiki</li>
-                                    <li><a href="/search">Reference desk</a> - Ask research questions about Islamic topics</li>
-                                    <li><a href="/wiki">Content portals</a> - Browse topics of interest</li>
-                                </ul>
-                            </div>
-                            
-                            <h2 class="mp-h2">Islamic Wiki's sister projects</h2>
-                            <div class="mp-sister-content">
-                                <ul>
-                                    <li><a href="#">Islamic Texts</a> - Digital library of Islamic texts and manuscripts</li>
-                                    <li><a href="#">Islamic Media</a> - Repository of Islamic images, videos, and audio</li>
-                                    <li><a href="#">Islamic Data</a> - Structured data about Islamic topics</li>
-                                    <li><a href="#">Islamic News</a> - News and current events from an Islamic perspective</li>
-                                    <li><a href="#">Islamic Quotes</a> - Collection of Islamic sayings and quotations</li>
-                                    <li><a href="#">Islamic Travel</a> - Travel guide for Islamic sites and destinations</li>
-                                </ul>
-                            </div>
-                            
-                            <h2 class="mp-h2">Islamic Wiki languages</h2>
-                            <div class="mp-lang">
-                                <ul>
-                                    <li><a href="#">العربية (Arabic)</a></li>
-                                    <li><a href="#">فارسی (Persian)</a></li>
-                                    <li><a href="#">اردو (Urdu)</a></li>
-                                    <li><a href="#">Türkçe (Turkish)</a></li>
-                                    <li><a href="#">Bahasa Indonesia (Indonesian)</a></li>
-                                    <li><a href="#">বাংলা (Bengali)</a></li>
-                                    <li><a href="#">हिन्दी (Hindi)</a></li>
-                                    <li><a href="#">Français (French)</a></li>
-                                    <li><a href="#">Español (Spanish)</a></li>
-                                    <li><a href="#">Deutsch (German)</a></li>
-                                </ul>
-                            </div>
+                    <?php if ($article['slug'] === 'Main_Page'): ?>
+                        <!-- Main Page with COMPLETELY EDITABLE content - everything comes from database -->
+                        <div class="mp-editable-content">
+                            <?php echo $parsed_content; ?>
                         </div>
                     <?php else: ?>
                         <?php echo $parsed_content; ?>
@@ -429,6 +334,288 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     <?php endif; ?>
 
 <style>
+/* Main Page Section Header Styling */
+.article-header-compact {
+    position: relative;
+}
+
+.article-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 2px solid #f3f4f6;
+    position: relative;
+}
+
+.article-header-top::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #3b82f6;
+    border-radius: 2px;
+}
+
+.article-title-compact {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.article-actions-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.article-header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0 1.5rem 0;
+}
+
+.article-meta-compact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.article-date-compact,
+.article-views-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.article-date-compact i,
+.article-views-compact i {
+    color: #9ca3af;
+}
+
+.no-category {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.btn-icon-compact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-compact:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-icon-compact.btn-danger:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* Main Page Three-Column Layout - High Specificity */
+.article-content .mp-topbanner {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+    color: white !important;
+    padding: 2rem !important;
+    border-radius: 8px !important;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
+}
+
+.mp-welcomecount {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mp-welcome h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: white;
+}
+
+.mp-free {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.articlecount ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.articlecount li {
+    font-size: 1rem;
+}
+
+.articlecount a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.articlecount a:hover {
+    text-decoration: underline;
+}
+
+.article-content .mp-upper {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.mp-left, .mp-right {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mp-lower {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.mp-tfp {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.mp-tfp img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.article-content .mp-bottom {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.mp-other-content,
+.mp-sister-content,
+.mp-lang {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mp-other-content ul,
+.mp-sister-content ul,
+.mp-lang ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mp-other-content li,
+.mp-sister-content li,
+.mp-lang li {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.mp-other-content li:last-child,
+.mp-sister-content li:last-child,
+.mp-lang li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.mp-other-content a,
+.mp-sister-content a,
+.mp-lang a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.mp-other-content a:hover,
+.mp-sister-content a:hover,
+.mp-lang a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .article-content .mp-upper {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .article-content .mp-bottom {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .article-content .mp-tfp {
+        flex-direction: column !important;
+    }
+    
+    .article-content .mp-tfp img {
+        width: 100% !important;
+        height: 200px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-content .mp-topbanner {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .article-content .mp-welcome h1 {
+        font-size: 2rem !important;
+    }
+    
+    .article-content .articlecount ul {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .article-content .mp-left, 
+    .article-content .mp-right,
+    .article-content .mp-lower,
+    .article-content .mp-other-content,
+    .article-content .mp-sister-content,
+    .article-content .mp-lang {
+        padding: 1rem !important;
+    }
+}
+
 .talk-indicator {
     position: absolute;
     top: -2px;
@@ -546,7 +733,13 @@ $is_main_page = ($article['slug'] === 'Main_Page');
 }
 
 .article-content h2 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    margin: 0 0 1rem 0 !important;
+    padding-bottom: 0.75rem !important;
+    border-bottom: 2px solid #f3f4f6 !important;
+    position: relative !important;
 }
 
 .article-content h3 {

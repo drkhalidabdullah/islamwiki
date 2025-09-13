@@ -1,42 +1,23 @@
-/* Homepage Redesign - Search Page Style */
-
-:root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-color: #64748b;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --danger-color: #ef4444;
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
-    --border-color: #e2e8f0;
-    --border-hover: #cbd5e1;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-}
+/* ========================================
+   HOMEPAGE STYLES
+   Extends bismillah.css for homepage functionality
+   ======================================== */
 
 /* Homepage Container */
 .homepage-container {
-    min-height: calc(100vh - 200px);
-    background: var(--bg-secondary);
-    padding: 2rem 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .homepage-layout {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
+    align-items: start;
 }
 
 /* Sidebar */
@@ -293,20 +274,8 @@
     box-shadow: var(--shadow-lg);
 }
 
-/* Section Headers */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.section-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-}
+/* Section Headers - Extended from main CSS */
+/* Section header styles are now handled by the inline CSS in header.php for better specificity */
 
 /* Featured Articles */
 .featured-section {
@@ -319,8 +288,28 @@
 
 .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
+}
+
+.recent-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.recent-article-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.recent-article-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .article-card {
@@ -589,15 +578,15 @@
         grid-template-columns: 1fr;
     }
     
+    .recent-articles-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .highlights-grid {
         grid-template-columns: 1fr;
     }
     
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
+    /* Section header mobile styles inherited from bismillah.css */
     
     .recent-meta {
         flex-direction: column;

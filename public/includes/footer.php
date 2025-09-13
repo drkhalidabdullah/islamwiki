@@ -10,6 +10,11 @@
         </div>
     </footer>
     
-    <script src="/assets/js/main.js"></script>
+    <script src="/skins/bismillah/assets/js/main.js"></script>
+    
+    <!-- Load extension scripts -->
+    <?php if (isset($extension_manager)): ?>
+        <?php $extension_manager->loadExtensionScripts(); ?>
+    <?php endif; ?>
 </body>
 </html>

@@ -16,6 +16,8 @@ class EnhancedSearchOverlay {
 
     init() {
         console.log('Enhanced Search Overlay initializing...');
+        console.log('Document ready state:', document.readyState);
+        console.log('Body element:', document.body);
         this.bindEvents();
         this.createSearchOverlay();
         console.log('Enhanced Search Overlay initialized');
@@ -48,9 +50,11 @@ class EnhancedSearchOverlay {
     }
 
     createSearchOverlay() {
+        console.log('Creating search overlay...');
         // Create the enhanced search overlay
         const overlay = document.createElement('div');
         overlay.className = 'enhanced-search-overlay';
+        console.log('Overlay element created:', overlay);
         overlay.innerHTML = `
             <div class="search-overlay-backdrop"></div>
             <div class="search-overlay-content">
@@ -80,10 +84,13 @@ class EnhancedSearchOverlay {
             </div>
         `;
 
+        console.log('About to append overlay to body...');
+        console.log('Body element exists:', !!document.body);
         document.body.appendChild(overlay);
         console.log('Search overlay created and added to DOM');
         console.log('Overlay element:', overlay);
         console.log('Overlay parent:', overlay.parentNode);
+        console.log('Overlay in DOM:', document.querySelector('.enhanced-search-overlay'));
         
         // Debug mode - make overlay visible for testing
         if (window.location.search.includes('debug=1')) {
@@ -357,11 +364,11 @@ class EnhancedSearchOverlay {
                         <div class="suggestion-category">
                             <h4>Popular Searches</h4>
                             <div class="suggestion-tags">
-                                <span class="suggestion-tag" onclick="this.searchFor('Allah')">Allah</span>
-                                <span class="suggestion-tag" onclick="this.searchFor('Quran')">Quran</span>
-                                <span class="suggestion-tag" onclick="this.searchFor('Muhammad')">Muhammad</span>
-                                <span class="suggestion-tag" onclick="this.searchFor('Islam')">Islam</span>
-                                <span class="suggestion-tag" onclick="this.searchFor('Prayer')">Prayer</span>
+                                <span class="suggestion-tag" onclick="window.searchOverlay.searchFor('Allah')">Allah</span>
+                                <span class="suggestion-tag" onclick="window.searchOverlay.searchFor('Quran')">Quran</span>
+                                <span class="suggestion-tag" onclick="window.searchOverlay.searchFor('Muhammad')">Muhammad</span>
+                                <span class="suggestion-tag" onclick="window.searchOverlay.searchFor('Islam')">Islam</span>
+                                <span class="suggestion-tag" onclick="window.searchOverlay.searchFor('Prayer')">Prayer</span>
                             </div>
                         </div>
                     </div>
@@ -422,14 +429,31 @@ class EnhancedSearchOverlay {
             console.error('Failed to load initial suggestions:', error);
         }
     }
+
+    searchFor(query) {
+        if (this.searchInput) {
+            this.searchInput.value = query;
+            this.handleSearchInput(query);
+        }
+    }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing EnhancedSearchOverlay...');
+    console.log('Body element ready:', !!document.body);
     window.searchOverlay = new EnhancedSearchOverlay();
     console.log('EnhancedSearchOverlay initialized:', window.searchOverlay);
 });
+
+// Also try immediate initialization if DOM is already loaded
+if (document.readyState === 'loading') {
+    console.log('DOM still loading, waiting for DOMContentLoaded...');
+} else {
+    console.log('DOM already loaded, initializing immediately...');
+    window.searchOverlay = new EnhancedSearchOverlay();
+    console.log('EnhancedSearchOverlay initialized immediately:', window.searchOverlay);
+}
 
 // Global test function
 window.testSearchOverlay = function() {

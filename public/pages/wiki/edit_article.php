@@ -369,7 +369,7 @@ include "../../includes/header.php";;
 }
 </style>
 
-<link rel="stylesheet" href="/assets/css/wiki-editor.css">
-<script src="/assets/js/wiki-editor.js"></script>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki.css">
+<script src="/skins/bismillah/assets/js/wiki-editor.js"></script>
 
 <?php include "../../includes/footer.php";; ?>

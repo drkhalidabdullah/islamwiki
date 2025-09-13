@@ -12,6 +12,13 @@ $enable_social = get_system_setting('enable_social', true);
 $enable_comments = get_system_setting('enable_comments', true);
 $enable_notifications = get_system_setting('enable_notifications', true);
 
+// Load extension manager
+require_once __DIR__ . '/extension_manager.php';
+$extension_manager = new ExtensionManager();
+
+// Load skins manager
+require_once __DIR__ . '/../skins/skins_manager.php';
+
 // Get any toast messages
 $toast_message = $_SESSION['toast_message'] ?? null;
 $toast_type = $_SESSION['toast_type'] ?? 'info';
@@ -27,10 +34,254 @@ if ($toast_message) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? $page_title . ' - ' . get_site_name() : get_site_name(); ?></title>
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/mobile.css">
-    <link rel="stylesheet" href="/assets/css/enhanced-search-overlay.css">
+    <!-- Load skin CSS -->
+    <?php $skins_manager->loadSkinAssets(); ?>
+    <style>
+    /* Force section header styles to override any conflicting styles */
+    .featured-section .section-header,
+    .recent-section .section-header,
+    .community-section .section-header,
+    div.section-header,
+    .section-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-top: 3rem !important;
+        margin-bottom: 1.5rem !important;
+        padding-bottom: 0.75rem !important;
+        border-bottom: 2px solid #f3f4f6 !important;
+        position: relative !important;
+    }
+    
+    /* First section header should have less top margin */
+    .homepage-main > section:first-child .section-header {
+        margin-top: 2rem !important;
+    }
+    
+    /* General content spacing for better readability */
+    .article-content h2,
+    .article-content h3,
+    .article-content h4 {
+        margin-top: 4rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* First heading in content should have less top margin */
+    .article-content h2:first-child,
+    .article-content h3:first-child,
+    .article-content h4:first-child {
+        margin-top: 2rem !important;
+    }
+    
+    /* Extra spacing for h2 headers specifically */
+    .article-content h2 {
+        margin-top: 5rem !important;
+    }
+    
+    .article-content h2:first-child {
+        margin-top: 2.5rem !important;
+    }
+    
+    .featured-section .section-header::after,
+    .recent-section .section-header::after,
+    .community-section .section-header::after,
+    div.section-header::after,
+    .section-header::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: -2px !important;
+        left: 0 !important;
+        width: 60px !important;
+        height: 2px !important;
+        background: #2563eb !important;
+        border-radius: 1px !important;
+    }
+    
+    /* Main Page Three-Column Layout - High Specificity */
+    .article-content .mp-topbanner {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+        color: white !important;
+        padding: 2rem !important;
+        border-radius: 8px !important;
+        margin-bottom: 2rem !important;
+        text-align: center !important;
+    }
+    
+    /* Main Page section headers spacing */
+    .article-content .mp-h2 {
+        margin-top: 2.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* First section header in each column should have less top margin */
+    .article-content .mp-left .mp-h2:first-child,
+    .article-content .mp-right .mp-h2:first-child,
+    .article-content .mp-other-content .mp-h2:first-child,
+    .article-content .mp-sister-content .mp-h2:first-child,
+    .article-content .mp-lang .mp-h2:first-child {
+        margin-top: 0 !important;
+    }
+    
+    
+    /* Main Page editable content container - minimal styling */
+    .article-content .mp-editable-content {
+        background: white !important;
+        padding: 0.25rem 2rem 2rem 2rem !important;
+        border-radius: 8px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        margin-bottom: 2rem !important;
+        margin-top: 0 !important;
+    }
+    
+    /* Ensure all content is left-aligned */
+    .article-content .mp-editable-content h2,
+    .article-content .mp-editable-content h3,
+    .article-content .mp-editable-content h4,
+    .article-content .mp-editable-content p,
+    .article-content .mp-editable-content ul,
+    .article-content .mp-editable-content ol,
+    .article-content .mp-editable-content li {
+        text-align: left !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    
+    /* Fix list styling */
+    .article-content .mp-editable-content ul,
+    .article-content .mp-editable-content ol {
+        padding-left: 1.5rem !important;
+        margin-left: 0 !important;
+    }
+    
+    .article-content .mp-editable-content li {
+        display: list-item !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    
+    .article-content .mp-left, 
+    .article-content .mp-right {
+        background: white !important;
+        padding: 1.5rem !important;
+        border-radius: 8px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .article-content .mp-lower {
+        background: white !important;
+        padding: 1.5rem !important;
+        border-radius: 8px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .article-content .mp-other-content,
+    .article-content .mp-sister-content,
+    .article-content .mp-lang {
+        background: white !important;
+        padding: 1.5rem !important;
+        border-radius: 8px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .article-content .mp-upper {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .article-content .mp-bottom {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    .featured-section .section-header h1,
+    .featured-section .section-header h2,
+    .featured-section .section-header h3,
+    .recent-section .section-header h1,
+    .recent-section .section-header h2,
+    .recent-section .section-header h3,
+    .community-section .section-header h1,
+    .community-section .section-header h2,
+    .community-section .section-header h3,
+    div.section-header h1,
+    div.section-header h2,
+    div.section-header h3,
+    .section-header h1,
+    .section-header h2,
+    .section-header h3 {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        color: #1f2937 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+    }
+    
+    .featured-section .section-header h1::before,
+    .featured-section .section-header h2::before,
+    .featured-section .section-header h3::before,
+    .recent-section .section-header h1::before,
+    .recent-section .section-header h2::before,
+    .recent-section .section-header h3::before,
+    .community-section .section-header h1::before,
+    .community-section .section-header h2::before,
+    .community-section .section-header h3::before,
+    div.section-header h1::before,
+    div.section-header h2::before,
+    div.section-header h3::before,
+    .section-header h1::before,
+    .section-header h2::before,
+    .section-header h3::before {
+        content: '' !important;
+        width: 4px !important;
+        height: 1.5rem !important;
+        background: #2563eb !important;
+        border-radius: 2px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .featured-section .section-header .view-all-link,
+    .recent-section .section-header .view-all-link,
+    .community-section .section-header .view-all-link,
+    div.section-header .view-all-link,
+    .section-header .view-all-link {
+        color: #2563eb !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
+        padding: 0.5rem 1rem !important;
+        border: 1px solid #2563eb !important;
+        border-radius: 0.5rem !important;
+        transition: all 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+    
+    .featured-section .section-header .view-all-link:hover,
+    .recent-section .section-header .view-all-link:hover,
+    .community-section .section-header .view-all-link:hover,
+    div.section-header .view-all-link:hover,
+    .section-header .view-all-link:hover {
+        background: #2563eb !important;
+        color: white !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    </style>
+    
+    <!-- Load additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Load admin CSS if needed -->
+    <?php if (isset($admin_css) && $admin_css): ?>
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/admin.css">
+    <?php endif; ?>
+    
+    <!-- Load extension assets -->
+    <?php $extension_manager->loadExtensionAssets(); ?>
     <style>
     /* Override body padding to ensure newsbar touches top */
     body {
@@ -159,221 +410,8 @@ if ($toast_message) {
         transform: scale(1.1);
     }
     
-    /* Adjust newsbar position when maintenance banner is present */
-    .maintenance-banner + .newsbar {
-        top: 60px;
-    }
     
-    .maintenance-banner + .newsbar + * .main-content {
-        padding-top: 120px !important;
-    }
-    
-    /* Newsbar Styles - positioned at absolute top, accounting for sidebar */
-    .newsbar {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 0.75rem 0;
-        margin: 0;
-        border-radius: 0;
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 60px;
-        z-index: 10000;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: calc(100vw - 60px);
-        max-width: calc(100vw - 60px);
-        box-sizing: border-box;
-        margin-top: 0;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    .newsbar-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-        width: 100%;
-        padding: 0 1rem;
-        max-width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-        min-width: 0;
-    }
-
-    .newsbar-left {
-        flex-shrink: 0;
-    }
-
-    .newsbar-center {
-        flex: 1;
-        margin: 0 1rem;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .newsbar-right {
-        flex-shrink: 0;
-        min-width: 0;
-    }
-
-    .newsbar-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(255,255,255,0.2);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        white-space: nowrap;
-    }
-
-    .newsbar-ticker {
-        overflow: hidden;
-        position: relative;
-        height: 2rem;
-        max-width: 100%;
-        flex: 1;
-        min-width: 0;
-    }
-
-    .newsbar-items {
-        display: flex;
-        animation: newsbar-scroll 30s linear infinite;
-        gap: 3rem;
-        align-items: center;
-        height: 100%;
-        width: 200%;
-        overflow: hidden;
-    }
-
-    .newsbar-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-        padding: 0 1rem;
-    }
-
-    .newsbar-time {
-        background: rgba(255,255,255,0.2);
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        flex-shrink: 0;
-    }
-
-    .newsbar-text {
-        font-size: 0.9rem;
-        font-weight: 400;
-        line-height: 1.4;
-    }
-
-    .newsbar-controls {
-        display: flex;
-        gap: 0.5rem;
-        flex-shrink: 0;
-        min-width: 0;
-        white-space: nowrap;
-    }
-
-    .newsbar-pause,
-    .newsbar-close {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: white;
-        padding: 0.5rem;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        width: 2rem;
-        height: 2rem;
-        min-width: 2rem;
-        min-height: 2rem;
-        max-width: 2rem;
-        max-height: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .newsbar-pause:hover,
-    .newsbar-close:hover {
-        background: rgba(255,255,255,0.3);
-        transform: scale(1.1);
-    }
-
-    .newsbar.paused .newsbar-items {
-        animation-play-state: paused;
-    }
-
-    .newsbar.hidden {
-        background: none;
-        box-shadow: none;
-    }
-    
-    .newsbar.hidden .newsbar-content {
-        transform: translateY(-100%);
-        opacity: 0;
-        pointer-events: none;
-    }
-    
-    .newsbar-floating-controls {
-        display: none;
-        position: fixed;
-        top: 0.75rem;
-        right: 0.75rem;
-        z-index: 10001;
-        background: none;
-        padding: 0;
-        border-radius: 0;
-        box-shadow: none;
-    }
-    
-    .newsbar.hidden .newsbar-floating-controls {
-        display: block;
-    }
-    
-    .newsbar-floating-controls .newsbar-close {
-        background: rgba(0,0,0,0.7);
-        border: 2px solid rgba(255,255,255,0.8);
-        color: white;
-        padding: 0.5rem;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        width: 2.5rem;
-        height: 2.5rem;
-        min-width: 2.5rem;
-        min-height: 2.5rem;
-        max-width: 2.5rem;
-        max-height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    
-    .newsbar-floating-controls .newsbar-close:hover {
-        background: rgba(0,0,0,0.9);
-        border-color: white;
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-
-    @keyframes newsbar-scroll {
-        0% {
-            transform: translateX(100%);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
-    }
+    /* Newsbar styles moved to extension */
 
     /* Responsive Maintenance Banner */
     @media (max-width: 992px) {
@@ -450,11 +488,6 @@ if ($toast_message) {
             max-width: 100vw;
         }
         
-        .newsbar-floating-controls {
-            right: 0;
-            left: auto;
-            border-radius: 0 0 0 8px;
-        }
         
         .newsbar-content {
             flex-direction: column;
@@ -540,16 +573,10 @@ if ($toast_message) {
     }
     </style>
     <?php if (isset($is_search_page) && $is_search_page): ?>
-    <link rel="stylesheet" href="/assets/css/search.css">
-    <?php endif; ?>
-    <?php if (strpos($_SERVER["REQUEST_URI"] ?? "", "/wiki/") === 0 && basename($_SERVER["REQUEST_URI"] ?? "") !== "wiki"): ?>
-    <link rel="stylesheet" href="/assets/css/wiki-article-styling.css">
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
     <?php endif; ?>
     <?php if ($_SERVER["REQUEST_URI"] === "/" || $_SERVER["REQUEST_URI"] === ""): ?>
-    <link rel="stylesheet" href="/assets/css/homepage-redesign.css">
-    <?php endif; ?>
-    <?php if (strpos($_SERVER["REQUEST_URI"] ?? "", "/wiki") === 0 && basename($_SERVER["REQUEST_URI"] ?? "") === "wiki"): ?>
-    <link rel="stylesheet" href="/assets/css/wiki-index-redesign.css">
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/homepage.css">
     <?php endif; ?>
 </head>
 <body>
@@ -564,33 +591,39 @@ if ($toast_message) {
     
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
-        <!-- Logo at top -->
-        <a href="/" class="sidebar-item" title="<?php echo get_site_name(); ?> Home">
-            <i class="fas fa-book-open"></i>
-        </a>
-        
-        <!-- Separator -->
-        <div class="sidebar-separator"></div>
-        
-        <!-- Main Navigation -->
-        <div class="search-container">
-            <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search">
-                <i class="fas fa-search"></i>
+        <!-- Top Section -->
+        <div class="sidebar-top">
+            <!-- Logo at top -->
+            <a href="/" class="sidebar-item" title="<?php echo get_site_name(); ?> Home">
+                <i class="fas fa-book-open"></i>
             </a>
+            
+            <!-- Separator -->
+            <div class="sidebar-separator"></div>
+            
+            <!-- Main Navigation -->
+            <div class="search-container">
+                <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="openSearch(); return false;">
+                    <i class="fas fa-search"></i>
+                </a>
+            </div>
+            
+            <!-- Separator -->
+            <div class="sidebar-separator"></div>
+            
+            <!-- Main Navigation -->
+            <div class="sidebar-main-nav">
+                <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                
+                <?php if ($enable_wiki): ?>
+                <a href="/wiki" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/wiki') === 0) ? 'active' : ''; ?>" title="Wiki">
+                    <i class="fas fa-book"></i>
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
-        
-        <!-- Separator -->
-        <div class="sidebar-separator"></div>
-        
-        <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
-            <i class="fas fa-home"></i>
-        </a>
-        
-        <?php if ($enable_wiki): ?>
-        <a href="/wiki" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/wiki') === 0) ? 'active' : ''; ?>" title="Wiki">
-            <i class="fas fa-book"></i>
-        </a>
-        <?php endif; ?>
         
         <?php if (is_logged_in()): ?>
         <!-- Separator -->
@@ -702,61 +735,824 @@ if ($toast_message) {
     <?php endif; ?>
     
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
-    <!-- Newsbar -->
-    <div class="newsbar">
-        <div class="newsbar-content">
-            <div class="newsbar-left">
-                <div class="newsbar-label">
-                    <i class="fas fa-bullhorn"></i>
-                    <span>Latest News</span>
-                </div>
-            </div>
-            <div class="newsbar-center">
-                <div class="newsbar-ticker">
-                    <div class="newsbar-items">
-                        <div class="newsbar-item">
-                            <span class="newsbar-time">2 hours ago</span>
-                            <span class="newsbar-text">New Islamic Wiki feature: Enhanced search with AI-powered suggestions</span>
-                        </div>
-                        <div class="newsbar-item">
-                            <span class="newsbar-time">5 hours ago</span>
-                            <span class="newsbar-text">Community milestone: 1,000+ articles published on Islamic topics</span>
-                        </div>
-                        <div class="newsbar-item">
-                            <span class="newsbar-time">1 day ago</span>
-                            <span class="newsbar-text">Ramadan 2024: Special collection of fasting and prayer articles now available</span>
-                        </div>
-                        <div class="newsbar-item">
-                            <span class="newsbar-time">2 days ago</span>
-                            <span class="newsbar-text">New editor tools: Improved article creation and editing experience</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="newsbar-right">
-                <div class="newsbar-controls">
-                    <button class="newsbar-pause" onclick="toggleNewsbar()" title="Pause/Resume">
-                        <i class="fas fa-pause"></i>
-                    </button>
-                    <button class="newsbar-close" onclick="closeNewsbar()" title="Close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Floating controls when hidden -->
-        <div class="newsbar-floating-controls">
-            <button class="newsbar-close" onclick="closeNewsbar()" title="Show Newsbar">
-                <i class="fas fa-eye"></i>
-            </button>
-        </div>
-    </div>
+    <!-- Extensions -->
+    <?php $extension_manager->renderExtensions(); ?>
     <?php endif; ?>
 
     <main class="main-content<?php echo (is_maintenance_mode() && !is_logged_in()) ? ' maintenance-mode' : ''; ?>">
 
-<!-- Enhanced Search Overlay Script -->
-<script src="/assets/js/enhanced-search-overlay.js"></script>
+<!-- Enhanced Search Overlay HTML -->
+<div id="searchOverlay" class="enhanced-search-overlay">
+    <div class="search-overlay-backdrop"></div>
+    <div class="search-overlay-content">
+        <div class="search-overlay-header">
+            <div class="search-input-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-overlay-input" placeholder="Search articles, users, content..." autocomplete="off">
+                <button class="search-clear-btn" id="searchClearBtn" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="search-overlay-body">
+            <div class="search-suggestions-container" id="searchSuggestionsContainer">
+                <div class="search-welcome">
+                    <div class="welcome-content">
+                        <h3>Welcome to MuslimWiki</h3>
+                        <p>Start typing to search for articles, users, and content</p>
+                        <div class="welcome-suggestions">
+                            <div class="suggestion-category">
+                                <h4>Popular Searches</h4>
+                                <div class="suggestion-tags">
+                                    <span class="suggestion-tag" onclick="searchFor('Allah')">Allah</span>
+                                    <span class="suggestion-tag" onclick="searchFor('Quran')">Quran</span>
+                                    <span class="suggestion-tag" onclick="searchFor('Muhammad')">Muhammad</span>
+                                    <span class="suggestion-tag" onclick="searchFor('Islam')">Islam</span>
+                                    <span class="suggestion-tag" onclick="searchFor('Prayer')">Prayer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Enhanced Search Overlay Styles */
+.enhanced-search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.enhanced-search-overlay.show {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.search-overlay-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.search-overlay-content {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 80vh;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.search-overlay-header {
+    padding: 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.search-input-container:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    color: #6b7280;
+    font-size: 1.1rem;
+    margin-right: 0.75rem;
+}
+
+.search-overlay-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    color: #1f2937;
+    background: transparent;
+}
+
+.search-overlay-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-clear-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color 0.2s ease;
+}
+
+.search-clear-btn:hover {
+    color: #374151;
+}
+
+.search-overlay-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.search-suggestions-container {
+    padding: 1.5rem;
+}
+
+.search-welcome {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.welcome-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-content p {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+.welcome-suggestions {
+    margin-top: 1.5rem;
+}
+
+.suggestion-category h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.suggestion-tag {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggestion-tag:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.search-results {
+    margin-top: 1rem;
+}
+
+.search-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
+}
+
+.search-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.search-tab.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+.search-tab:hover {
+    color: #374151;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.top-suggestions {
+    margin-bottom: 1.5rem;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.suggestion-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: #f3f4f6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: #6b7280;
+}
+
+.suggestion-content {
+    flex: 1;
+}
+
+.suggestion-title {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.suggestion-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.articles-list, .facts-list, .actions-list {
+    space-y: 0.5rem;
+}
+
+.article-item, .fact-item, .action-item {
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.article-item:hover, .action-item:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.article-icon {
+    width: 2rem;
+    height: 2rem;
+    background: #f3f4f6;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    color: #6b7280;
+}
+
+.article-content {
+    flex: 1;
+}
+
+.article-title {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.article-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.search-loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.search-no-results, .search-error {
+    text-align: center;
+    padding: 2rem;
+}
+
+.search-no-results i, .search-error i {
+    font-size: 3rem;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+}
+
+.search-no-results h3, .search-error h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.search-no-results p, .search-error p {
+    color: #6b7280;
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-overlay-content {
+        margin: 1rem;
+        max-height: 90vh;
+    }
+    
+    .search-overlay-header {
+        padding: 1rem;
+    }
+    
+    .search-suggestions-container {
+        padding: 1rem;
+    }
+    
+    .suggestion-item {
+        padding: 0.75rem;
+    }
+    
+    .suggestion-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+</style>
+
+<script>
+let searchTimeout = null;
+let currentQuery = '';
+
+function openSearch() {
+    console.log('Opening enhanced search overlay...');
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+        overlay.classList.add('show');
+        const input = document.getElementById('searchInput');
+        if (input) {
+            input.focus();
+        }
+        loadInitialSuggestions();
+    }
+}
+
+function closeSearch() {
+    console.log('Closing enhanced search overlay...');
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        const input = document.getElementById('searchInput');
+        if (input) {
+            input.value = '';
+        }
+        const clearBtn = document.getElementById('searchClearBtn');
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
+        showWelcome();
+    }
+}
+
+function searchFor(query) {
+    const input = document.getElementById('searchInput');
+    if (input) {
+        input.value = query;
+        handleSearchInput(query);
+    }
+}
+
+function handleSearchInput(query) {
+    currentQuery = query.trim();
+    const clearBtn = document.getElementById('searchClearBtn');
+    
+    // Show/hide clear button
+    if (clearBtn) {
+        clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+    }
+
+    // Clear previous timeout
+    if (searchTimeout) {
+        clearTimeout(searchTimeout);
+    }
+
+    if (query.length === 0) {
+        showWelcome();
+    } else if (query.length >= 2) {
+        // Debounce search
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    }
+}
+
+async function performSearch(query) {
+    try {
+        showLoading();
+        
+        // Fetch search suggestions
+        const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        displayResults(data);
+    } catch (error) {
+        console.error('Search error:', error);
+        showError('Failed to load search suggestions');
+    }
+}
+
+function displayResults(data) {
+    const container = document.getElementById('searchSuggestionsContainer');
+    
+    if (!data || (!data.topArticles && !data.newestArticles && !data.didYouKnow)) {
+        showNoResults();
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="search-results">
+            ${renderTopSuggestions(data.topSuggestions || [])}
+            <div class="search-tabs">
+                <button class="search-tab active" data-tab="top">Top Articles</button>
+                <button class="search-tab" data-tab="newest">Newest Articles</button>
+                <button class="search-tab" data-tab="facts">Did You Know?</button>
+                <button class="search-tab" data-tab="actions">Actions</button>
+            </div>
+            <div class="search-tab-content">
+                <div class="tab-pane active" id="top-articles">
+                    ${renderArticles(data.topArticles || [])}
+                </div>
+                <div class="tab-pane" id="newest-articles">
+                    ${renderArticles(data.newestArticles || [])}
+                </div>
+                <div class="tab-pane" id="did-you-know">
+                    ${renderFacts(data.didYouKnow || [])}
+                </div>
+                <div class="tab-pane" id="actions">
+                    ${renderActions()}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Bind tab events
+    bindTabEvents();
+}
+
+function renderTopSuggestions(suggestions) {
+    if (!suggestions.length) return '';
+
+    return `
+        <div class="top-suggestions">
+            ${suggestions.map(item => `
+                <div class="suggestion-item" onclick="window.location.href='${item.url}'">
+                    <div class="suggestion-icon">
+                        <i class="${item.icon || 'fas fa-file-alt'}"></i>
+                    </div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-title">${item.title}</div>
+                        <div class="suggestion-meta">${item.meta || ''}</div>
+                    </div>
+                    <div class="suggestion-actions">
+                        <button class="btn btn-sm btn-primary" onclick="window.location.href='${item.url}'">
+                            <i class="fas fa-external-link-alt"></i> ${item.action || 'View'}
+                        </button>
+                        ${item.editable ? `<button class="btn btn-sm btn-outline" onclick="window.location.href='${item.editUrl}'">
+                            <i class="fas fa-edit"></i>
+                        </button>` : ''}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderArticles(articles) {
+    if (!articles.length) {
+        return '<div class="no-results">No articles found</div>';
+    }
+
+    return `
+        <div class="articles-list">
+            ${articles.map(article => `
+                <div class="article-item" onclick="window.location.href='${article.url}'">
+                    <div class="article-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="article-content">
+                        <div class="article-title">${article.title}</div>
+                        <div class="article-meta">
+                            <span>${article.category || 'General'}</span> • 
+                            <span>${article.date || ''}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderFacts(facts) {
+    if (!facts.length) {
+        return '<div class="no-results">No facts available</div>';
+    }
+
+    return `
+        <div class="facts-list">
+            ${facts.map(fact => `
+                <div class="fact-item">
+                    <div class="fact-content">${fact.content}</div>
+                    ${fact.source ? `<div class="fact-source" style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Source: ${fact.source}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderActions() {
+    return `
+        <div class="actions-list">
+            <div class="action-item" onclick="window.location.href='/search?q=${encodeURIComponent(currentQuery)}'">
+                <i class="fas fa-search"></i>
+                <span>Search for "${currentQuery}"</span>
+            </div>
+            <div class="action-item" onclick="window.location.href='/wiki/create_article'">
+                <i class="fas fa-plus"></i>
+                <span>Create new article</span>
+            </div>
+            <div class="action-item" onclick="window.location.href='/wiki'">
+                <i class="fas fa-book"></i>
+                <span>Browse all articles</span>
+            </div>
+        </div>
+    `;
+}
+
+function bindTabEvents() {
+    const tabs = document.querySelectorAll('.search-tab');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.dataset.tab;
+            
+            // Update active tab
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Update active pane
+            panes.forEach(pane => pane.classList.remove('active'));
+            document.getElementById(`${targetTab}-articles`).classList.add('active');
+        });
+    });
+}
+
+function showWelcome() {
+    const container = document.getElementById('searchSuggestionsContainer');
+    container.innerHTML = `
+        <div class="search-welcome">
+            <div class="welcome-content">
+                <h3>Welcome to MuslimWiki</h3>
+                <p>Start typing to search for articles, users, and content</p>
+                <div class="welcome-suggestions">
+                    <div class="suggestion-category">
+                        <h4>Popular Searches</h4>
+                        <div class="suggestion-tags">
+                            <span class="suggestion-tag" onclick="searchFor('Allah')">Allah</span>
+                            <span class="suggestion-tag" onclick="searchFor('Quran')">Quran</span>
+                            <span class="suggestion-tag" onclick="searchFor('Muhammad')">Muhammad</span>
+                            <span class="suggestion-tag" onclick="searchFor('Islam')">Islam</span>
+                            <span class="suggestion-tag" onclick="searchFor('Prayer')">Prayer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showLoading() {
+    const container = document.getElementById('searchSuggestionsContainer');
+    container.innerHTML = `
+        <div class="search-loading">
+            <div class="loading-spinner"></div>
+            <p>Searching...</p>
+        </div>
+    `;
+}
+
+function showNoResults() {
+    const container = document.getElementById('searchSuggestionsContainer');
+    container.innerHTML = `
+        <div class="search-no-results">
+            <i class="fas fa-search"></i>
+            <h3>No results found</h3>
+            <p>Try different keywords or check your spelling</p>
+        </div>
+    `;
+}
+
+function showError(message) {
+    const container = document.getElementById('searchSuggestionsContainer');
+    container.innerHTML = `
+        <div class="search-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Search Error</h3>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+async function loadInitialSuggestions() {
+    try {
+        const response = await fetch('/api/search/initial-suggestions');
+        const data = await response.json();
+        
+        if (data.suggestions) {
+            displayResults(data);
+        }
+    } catch (error) {
+        console.error('Failed to load initial suggestions:', error);
+    }
+}
+
+// Add event listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    
+    if (input) {
+        input.addEventListener('input', function(e) {
+            handleSearchInput(e.target.value);
+        });
+    }
+    
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            input.value = '';
+            clearBtn.style.display = 'none';
+            showWelcome();
+        });
+    }
+    
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+    
+    // Open search on / key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && !e.target.matches('input, textarea, [contenteditable]')) {
+            e.preventDefault();
+            openSearch();
+        }
+    });
+    
+    // Close on backdrop click
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target.classList.contains('search-overlay-backdrop')) {
+                closeSearch();
+            }
+        });
+    }
+});
+
+// Make functions globally available
+window.openSearch = openSearch;
+window.closeSearch = closeSearch;
+window.searchFor = searchFor;
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -861,58 +1657,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Old search functions removed - using enhanced search overlay
     
-    // Newsbar functionality
-    function toggleNewsbar() {
-        const newsbar = document.querySelector('.newsbar');
-        const pauseBtn = document.querySelector('.newsbar-pause i');
-        
-        newsbar.classList.toggle('paused');
-        
-        if (newsbar.classList.contains('paused')) {
-            pauseBtn.className = 'fas fa-play';
-        } else {
-            pauseBtn.className = 'fas fa-pause';
-        }
-    }
-
-    function closeNewsbar() {
-        const newsbar = document.querySelector('.newsbar');
-        const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
-        const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-close i');
-        
-        newsbar.classList.toggle('hidden');
-        
-        // Update button icon and title
-        if (newsbar.classList.contains('hidden')) {
-            closeBtn.className = 'fas fa-eye';
-            closeBtn.parentElement.title = 'Show Newsbar';
-            floatingCloseBtn.className = 'fas fa-eye';
-            floatingCloseBtn.parentElement.title = 'Show Newsbar';
-            localStorage.setItem('newsbar-hidden', 'true');
-        } else {
-            closeBtn.className = 'fas fa-times';
-            closeBtn.parentElement.title = 'Hide Newsbar';
-            floatingCloseBtn.className = 'fas fa-eye';
-            floatingCloseBtn.parentElement.title = 'Show Newsbar';
-            localStorage.setItem('newsbar-hidden', 'false');
-        }
-    }
-
-    // Check if newsbar should be hidden on page load
-    const newsbarHidden = localStorage.getItem('newsbar-hidden');
-    if (newsbarHidden === 'true') {
-        const newsbar = document.querySelector('.newsbar');
-        const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
-        const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-close i');
-        if (newsbar) {
-            newsbar.classList.add('hidden');
-            // Update button icon and title
-            closeBtn.className = 'fas fa-eye';
-            closeBtn.parentElement.title = 'Show Newsbar';
-            floatingCloseBtn.className = 'fas fa-eye';
-            floatingCloseBtn.parentElement.title = 'Show Newsbar';
-        }
-    }
+    // Newsbar functionality moved to extension
     
     // Maintenance banner functionality
     function closeMaintenanceBanner() {
@@ -932,15 +1677,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
-    // Make newsbar functions globally available
-    window.toggleNewsbar = toggleNewsbar;
-    window.closeNewsbar = closeNewsbar;
+    // Make maintenance banner function globally available
     window.closeMaintenanceBanner = closeMaintenanceBanner;
-    
-    // Toast notification system
-    <?php if ($toast_message): ?>
-    showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; ?>');
-    <?php endif; ?>
 });
 
 // Global toast notification function
@@ -1065,5 +1803,10 @@ function getToastIcon(type) {
 
 // Make showToast globally available
 window.showToast = showToast;
+
+// Toast notification system
+<?php if ($toast_message): ?>
+showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; ?>');
+<?php endif; ?>
 </script>
 
