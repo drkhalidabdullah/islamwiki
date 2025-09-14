@@ -11,7 +11,7 @@
 let citationData = {
     title: '',
     author: '',
-    siteName: 'IslamWiki',
+    siteName: '',
     url: '',
     publishDate: '',
     accessDate: '',
@@ -29,6 +29,23 @@ function initializeCitationData() {
     // Get author information
     const authorElement = document.querySelector('.article-author, .author-name');
     citationData.author = authorElement ? authorElement.textContent.trim() : 'Unknown Author';
+    
+    // Get site name from meta tags first (most reliable)
+    const siteNameMeta = document.querySelector('meta[name="site-name"]');
+    if (siteNameMeta) {
+        citationData.siteName = siteNameMeta.getAttribute('content') || 'IslamWiki';
+    } else {
+        // Fallback: extract from page title
+        const siteNameElement = document.querySelector('title');
+        if (siteNameElement) {
+            const titleText = siteNameElement.textContent;
+            // Extract site name from title (e.g., "Article Title - Site Name")
+            const parts = titleText.split(' - ');
+            citationData.siteName = parts.length > 1 ? parts[parts.length - 1].trim() : 'IslamWiki';
+        } else {
+            citationData.siteName = 'IslamWiki'; // Final fallback
+        }
+    }
     
     // Get current URL
     citationData.url = window.location.href;

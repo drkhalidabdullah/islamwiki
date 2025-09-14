@@ -35,6 +35,7 @@ if ($toast_message) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="site-name" content="<?php echo htmlspecialchars(get_site_name()); ?>">
     <title><?php echo isset($page_title) ? $page_title . ' - ' . get_site_name() : get_site_name(); ?></title>
     <!-- Load skin CSS -->
     <?php $skins_manager->loadSkinAssets(); ?>
