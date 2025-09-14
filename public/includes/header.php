@@ -56,7 +56,7 @@ if ($toast_message) {
     <?php if (isset($is_search_page) && $is_search_page): ?>
     <link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
     <?php endif; ?>
-    <?php if ($_SERVER["REQUEST_URI"] === "/" || $_SERVER["REQUEST_URI"] === ""): ?>
+    <?php if (isset($_SERVER["REQUEST_URI"]) && ($_SERVER["REQUEST_URI"] === "/" || $_SERVER["REQUEST_URI"] === "")): ?>
     <link rel="stylesheet" href="/skins/bismillah/assets/css/homepage.css">
     <?php endif; ?>
 </head>
