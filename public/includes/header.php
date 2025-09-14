@@ -40,9 +40,7 @@ if ($toast_message) {
     <!-- Load skin CSS -->
     <?php $skins_manager->loadSkinAssets(); ?>
     
-    <!-- Load core bismillah assets -->
-    <link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
-    <script src="/skins/bismillah/assets/js/bismillah.js"></script>
+    <!-- Load core bismillah assets - loaded by skins_manager -->
     
     <!-- Load additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

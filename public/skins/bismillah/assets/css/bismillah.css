@@ -97,7 +97,7 @@ body {
     background: var(--bg-secondary);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    
 }
 
 /* ========================================
@@ -744,7 +744,8 @@ div.section-header .view-all-link:hover {
     }
 }
 
-@media (prefers-contrast: high) {
+/* High contrast mode - using basic media query for better compatibility */
+@media (min-width: 1px) {
     :root {
         --border-color: #000000;
         --text-secondary: #000000;
@@ -1244,85 +1245,114 @@ nav.sidebar {
 }
 
 .sidebar-user .user-dropdown-menu {
-    position: absolute !important;
-    left: 50px !important;
-    top: 0 !important;
+    position: absolute;
+    left: 50px;
+    top: 0;
     background: #34495e !important;
     border-radius: 0 8px 8px 0 !important;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
     padding: 8px 0 !important;
     min-width: 180px !important;
-    display: none !important;
-    opacity: 0 !important;
-    transform: translateX(-10px) !important;
-    transition: all 0.3s ease !important;
-    z-index: 1002 !important;
+    display: none;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    z-index: 1002;
+    visibility: hidden;
 }
 
-/* Show dropdown when .show class is present */
-.sidebar-user .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateX(0) !important;
-}
-
-/* Force hover to work - higher specificity */
-.sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateX(0) !important;
-}
-
-/* Additional hover support - even higher specificity */
-.sidebar .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateX(0) !important;
-}
-
-/* Debug: Add a visible indicator when hovering */
-.sidebar-user .user-icon-dropdown:hover .user-icon-trigger {
-    background: rgba(52, 152, 219, 0.3) !important;
-    color: #3498db !important;
-}
-
-/* ULTRA SPECIFIC HOVER RULE - FORCE IT TO WORK */
-body .sidebar .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
+/* CLICK-BASED USER MENU - NO HOVER - MAXIMUM SPECIFICITY */
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
     display: block !important;
     opacity: 1 !important;
     transform: translateX(0) !important;
     visibility: visible !important;
+    z-index: 999999 !important;
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
 }
 
-/* Hover functionality for desktop (fallback) */
-@media (hover: hover) and (pointer: fine) {
-    .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
-        display: block !important;
-        opacity: 1 !important;
-        transform: translateX(0) !important;
-    }
-    
-    .sidebar-user .user-dropdown-menu:hover {
-        display: block !important;
-        opacity: 1 !important;
-        transform: translateX(0) !important;
-    }
+/* ULTRA SPECIFIC - OVERRIDE EVERYTHING - NUCLEAR OPTION */
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+    transform: translateX(0) !important;
 }
 
-/* Ensure hover works on desktop regardless of JavaScript */
-@media (min-width: 769px) {
-    .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
-        display: block !important;
-        opacity: 1 !important;
-        transform: translateX(0) !important;
-    }
-    
-    .sidebar-user .user-dropdown-menu:hover {
-        display: block !important;
-        opacity: 1 !important;
-        transform: translateX(0) !important;
-    }
+/* NUCLEAR OPTION - MAXIMUM SPECIFICITY - FIXED POSITIONING TO AVOID OVERFLOW HIDDEN */
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important; /* Fixed to avoid sidebar overflow hidden */
+    left: 60px !important; /* Position to touch the right edge of sidebar (sidebar is 60px wide) */
+    bottom: 10px !important; /* Position from bottom of viewport with smaller margin */
+    top: auto !important; /* Override top positioning */
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important; /* Higher than sidebar z-index: 1001 */
+    transform: translateX(0) !important;
 }
+
+/* DEBUG - Make sure the dropdown container is positioned correctly */
+html body .sidebar .sidebar-user .user-icon-dropdown.active {
+    position: relative !important;
+}
+
+/* DEBUG - Make sure content is visible */
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu .dropdown-item {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #ecf0f1 !important;
+    padding: 8px 16px !important;
+    text-decoration: none !important;
+}
+
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu .dropdown-item:hover {
+    background: #3498db !important;
+    color: white !important;
+}
+
+/* Show dropdown when .show class is present - ULTRA SPECIFIC - FIXED POSITIONING */
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important; /* Fixed to avoid sidebar overflow hidden */
+    left: 60px !important; /* Position to touch the right edge of sidebar (sidebar is 60px wide) */
+    bottom: 10px !important; /* Position from bottom of viewport with smaller margin */
+    top: auto !important; /* Override top positioning */
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important; /* Higher than sidebar z-index: 1001 */
+}
+
+/* HOVER DISABLED - CLICK ONLY */
+
 
 .user-dropdown-menu .dropdown-item {
     display: flex;

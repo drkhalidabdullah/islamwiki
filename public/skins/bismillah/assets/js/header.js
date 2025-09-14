@@ -301,6 +301,9 @@ async function loadInitialSuggestions() {
 
 // Add event listeners when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Main DOMContentLoaded event fired");
+    
+    // Search functionality
     const input = document.getElementById('searchInput');
     const clearBtn = document.getElementById('searchClearBtn');
     
@@ -342,163 +345,80 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-
-// Make functions globally available
-window.openSearch = openSearch;
-window.closeSearch = closeSearch;
-window.searchFor = searchFor;
-
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("Dropdown script loaded");
     
-    // Get all dropdown triggers
-    const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
-    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+    // General dropdown functionality removed - using specific user icon dropdown only
     
-    console.log("Found dropdown triggers:", dropdownTriggers.length);
-    console.log("Found dropdown menus:", dropdownMenus.length);
+    // User icon dropdown functionality - Clean rewrite
+    console.log("Setting up user icon dropdown functionality");
     
-    // Close all dropdowns
-    function closeAllDropdowns() {
-        dropdownMenus.forEach(menu => {
-            menu.classList.remove('show');
-        });
-    }
+    const userIconDropdowns = document.querySelectorAll('.user-icon-dropdown');
+    console.log("Found user icon dropdowns:", userIconDropdowns.length);
     
-    // Add click event to each trigger
-    dropdownTriggers.forEach(trigger => {
+    userIconDropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.user-icon-trigger');
+        const menu = dropdown.querySelector('.user-dropdown-menu');
+        
+        if (!trigger || !menu) {
+            console.log("Missing trigger or menu, skipping dropdown");
+            return;
+        }
+        
+        // Click functionality for user menu
         trigger.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            const targetId = this.getAttribute('data-target');
-            const targetMenu = document.getElementById(targetId);
+            // Close all other dropdowns first
+            userIconDropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                    const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
+                    if (otherMenu) {
+                        otherMenu.classList.remove('show');
+                        otherDropdown.classList.remove('active');
+                    }
+                }
+            });
             
-            console.log("Clicked trigger:", this.title, "Target:", targetId);
-            
-            if (targetMenu) {
-                // Close all other dropdowns first
-                closeAllDropdowns();
-                
-                // Toggle this dropdown
-                targetMenu.classList.toggle('show');
-                console.log("Menu show state:", targetMenu.classList.contains('show'));
+            // Toggle current dropdown
+            const isOpen = menu.classList.contains('show');
+            if (isOpen) {
+                menu.classList.remove('show');
+                dropdown.classList.remove('active');
+                console.log('User menu closed');
+                console.log('Classes after close:', menu.className, dropdown.className);
+            } else {
+                menu.classList.add('show');
+                dropdown.classList.add('active');
+                console.log('User menu opened');
+                console.log('Classes after open:', menu.className, dropdown.className);
+                console.log('Menu element:', menu);
+                console.log('Dropdown element:', dropdown);
             }
         });
     });
     
-    // Close dropdowns when clicking outside
+    // Close all user dropdowns when clicking outside
     document.addEventListener('click', function(e) {
-        if (!e.target.closest('.sidebar-dropdown')) {
-            closeAllDropdowns();
-        }
-    });
-    
-    // Close dropdowns when clicking on dropdown items
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function() {
-            closeAllDropdowns();
-        });
-    });
-    
-    // User icon dropdown functionality - Enhanced approach
-    document.addEventListener('DOMContentLoaded', function() {
-        const userIconDropdowns = document.querySelectorAll('.user-icon-dropdown');
-        
-        userIconDropdowns.forEach(dropdown => {
-            const trigger = dropdown.querySelector('.user-icon-trigger');
-            const menu = dropdown.querySelector('.user-dropdown-menu');
-            
-            if (!trigger || !menu) return;
-            
-            let isOpen = false;
-            let hoverTimeout;
-            
-            // Click functionality for mobile and accessibility
-            trigger.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Close all other dropdowns first
-                userIconDropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
-                        if (otherMenu) {
-                            otherMenu.classList.remove('show');
-                        }
-                    }
-                });
-                
-                // Toggle current dropdown
-                isOpen = !isOpen;
-                if (isOpen) {
-                    menu.classList.add('show');
-                    dropdown.classList.add('active');
-                } else {
+        if (!e.target.closest('.user-icon-dropdown')) {
+            userIconDropdowns.forEach(dropdown => {
+                const menu = dropdown.querySelector('.user-dropdown-menu');
+                if (menu) {
                     menu.classList.remove('show');
                     dropdown.classList.remove('active');
                 }
             });
-            
-            // Hover functionality for desktop - let CSS handle it primarily
-            dropdown.addEventListener('mouseenter', function() {
-                clearTimeout(hoverTimeout);
-                if (window.innerWidth > 768) { // Only on desktop
-                    // Let CSS hover handle the display, just add active class for styling
-                    dropdown.classList.add('active');
+        }
+    });
+    
+    // Close dropdowns when clicking on dropdown items
+    document.querySelectorAll('.user-dropdown-menu .dropdown-item').forEach(item => {
+        item.addEventListener('click', function() {
+            userIconDropdowns.forEach(dropdown => {
+                const menu = dropdown.querySelector('.user-dropdown-menu');
+                if (menu) {
+                    menu.classList.remove('show');
+                    dropdown.classList.remove('active');
                 }
-            });
-            
-            dropdown.addEventListener('mouseleave', function() {
-                if (window.innerWidth > 768) { // Only on desktop
-                    hoverTimeout = setTimeout(() => {
-                        dropdown.classList.remove('active');
-                    }, 150); // Small delay to prevent flickering
-                }
-            });
-            
-            // Keep menu open when hovering over it - let CSS handle display
-            menu.addEventListener('mouseenter', function() {
-                clearTimeout(hoverTimeout);
-                // Let CSS handle the display, just ensure active class
-                if (window.innerWidth > 768) {
-                    dropdown.classList.add('active');
-                }
-            });
-            
-            menu.addEventListener('mouseleave', function() {
-                if (window.innerWidth > 768) { // Only on desktop
-                    hoverTimeout = setTimeout(() => {
-                        dropdown.classList.remove('active');
-                    }, 150);
-                }
-            });
-        });
-        
-        // Close all user dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-icon-dropdown')) {
-                userIconDropdowns.forEach(dropdown => {
-                    const menu = dropdown.querySelector('.user-dropdown-menu');
-                    if (menu) {
-                        menu.classList.remove('show');
-                        dropdown.classList.remove('active');
-                    }
-                });
-            }
-        });
-        
-        // Close dropdowns when clicking on dropdown items
-        document.querySelectorAll('.user-dropdown-menu .dropdown-item').forEach(item => {
-            item.addEventListener('click', function() {
-                userIconDropdowns.forEach(dropdown => {
-                    const menu = dropdown.querySelector('.user-dropdown-menu');
-                    if (menu) {
-                        menu.classList.remove('show');
-                        dropdown.classList.remove('active');
-                    }
-                });
             });
         });
     });
@@ -540,48 +460,48 @@ document.addEventListener("DOMContentLoaded", function() {
     window.toggleSidebar = toggleSidebar;
     window.closeSidebar = closeSidebar;
     
-    // Search popup functionality
-    // Enhanced search overlay is handled by enhanced-search-overlay.js
-    // Old search code removed - using enhanced search overlay
-    
-    // Old search functions removed - using enhanced search overlay
-    
-    // Old popup click handler removed - using enhanced search overlay
-    
-    // Old escape key handler removed - using enhanced search overlay
-    
-    // Old search functions removed - using enhanced search overlay
-    
-    // Newsbar functionality moved to extension
-    
-    // Maintenance banner functionality
-    function closeMaintenanceBanner() {
-        const banner = document.querySelector('.maintenance-banner');
-        if (banner) {
-            banner.style.display = 'none';
-            // Adjust newsbar position
-            const newsbar = document.querySelector('.newsbar');
-            if (newsbar) {
-                newsbar.style.top = '0';
-            }
-            // Adjust main content padding
-            const mainContent = document.querySelector('.main-content');
-            if (mainContent) {
-                mainContent.style.paddingTop = '60px';
-            }
+}); // End of main DOMContentLoaded function
+
+// Search popup functionality
+// Enhanced search overlay is handled by enhanced-search-overlay.js
+// Old search code removed - using enhanced search overlay
+
+// Old search functions removed - using enhanced search overlay
+
+// Old popup click handler removed - using enhanced search overlay
+
+// Old escape key handler removed - using enhanced search overlay
+
+// Old search functions removed - using enhanced search overlay
+
+// Newsbar functionality moved to extension
+
+// Maintenance banner functionality
+function closeMaintenanceBanner() {
+    const banner = document.querySelector('.maintenance-banner');
+    if (banner) {
+        banner.style.display = 'none';
+        // Adjust newsbar position
+        const newsbar = document.querySelector('.newsbar');
+        if (newsbar) {
+            newsbar.style.top = '0';
+        }
+        // Adjust main content padding
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.paddingTop = '60px';
         }
     }
-    
-    // Make maintenance banner function globally available
-    window.closeMaintenanceBanner = closeMaintenanceBanner;
-});
+}
+
+// Make maintenance banner function globally available
+window.closeMaintenanceBanner = closeMaintenanceBanner;
 
 // Global toast notification function
 function showToast(message, type = 'info') {
     // Check if notifications are enabled
     // For now, just log to console
     console.log(`Toast: ${type} - ${message}`);
-    return;
     
     // TODO: Implement proper toast notifications
     // Create toast element
@@ -699,7 +619,3 @@ function getToastIcon(type) {
 
 // Make showToast globally available
 window.showToast = showToast;
-
-// Toast notification system
-
-showToast('');
