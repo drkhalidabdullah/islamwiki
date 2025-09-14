@@ -75,6 +75,7 @@ include '../../includes/header.php';
 ?>
 <script src="/skins/bismillah/assets/js/bismillah.js"></script>
 <script src="/skins/bismillah/assets/js/wiki_article.js"></script>
+<script src="/skins/bismillah/assets/js/citation.js"></script>
 <?php
 
 ?>

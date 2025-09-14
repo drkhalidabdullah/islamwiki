@@ -987,28 +987,162 @@
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.citation-preview {
+    margin-bottom: 1.5rem;
+}
+
+.citation-preview label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.citation-text {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.citation-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.citation-actions .btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
     border-radius: 6px;
     font-size: 0.9rem;
-    margin-bottom: 1rem;
-    background: white;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.citation-actions .btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.citation-actions .btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.citation-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.citation-actions .btn-secondary:hover {
+    background: #545b62;
+    transform: translateY(-1px);
+}
+
+.citation-info {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.citation-info h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.citation-details p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.citation-details strong {
+    color: #2c3e50;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 1rem 1.5rem;
+    z-index: 10003;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    border-left: 4px solid #007bff;
+    min-width: 300px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast-success {
+    border-left-color: #28a745;
+}
+
+.toast-error {
+    border-left-color: #dc3545;
+}
+
+.toast-warning {
+    border-left-color: #ffc107;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.toast-content i {
+    font-size: 1.2rem;
+}
+
+.toast-success .toast-content i {
+    color: #28a745;
+}
+
+.toast-error .toast-content i {
+    color: #dc3545;
+}
+
+.toast-warning .toast-content i {
+    color: #ffc107;
+}
+
+.toast-content span {
+    font-weight: 500;
+    color: #2c3e50;
 }
 
 .citation-format select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.citation-format textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-family: 'Courier New', monospace;
-    resize: vertical;
-    min-height: 100px;
 }
 
 .citation-actions {
