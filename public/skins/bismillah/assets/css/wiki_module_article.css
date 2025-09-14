@@ -685,6 +685,25 @@
     padding: 1rem;
 }
 
+/* Nested TOC lists */
+.toc-sublist {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: 1rem !important;
+    border-left: 2px solid #e9ecef !important;
+    padding-left: 0.5rem !important;
+}
+
+.toc-sublist .toc-link {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
+}
+
+.toc-sublist .toc-item {
+    margin-bottom: 0.125rem !important;
+}
+
 /* Main Content Area */
 .wiki-main-content {
     background: white;

@@ -37,7 +37,10 @@ $stmt = $pdo->prepare("
         COUNT(DISTINCT u.id) as total_authors,
         AVG(wa.view_count) as avg_views,
         MAX(wa.created_at) as latest_article,
-        MIN(wa.created_at) as first_article
+        MIN(wa.created_at) as first_article,
+        SUM(wa.word_count) as total_words,
+        SUM(wa.char_count) as total_chars,
+        AVG(wa.word_count) as avg_words_per_article
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     WHERE wa.status = 'published'
@@ -52,6 +55,7 @@ $recent_edits = [];
 $page_creator = null;
 $latest_editor = null;
 
+// Get edit history for this article
 try {
     // Get total edit count
     $stmt = $pdo->prepare("
@@ -100,8 +104,8 @@ try {
     $latest_editor = $stmt->fetch();
 
 } catch (PDOException $e) {
-    // Tables don't exist, use fallback data
-    $total_edits = 1; // At least the creation counts as one edit
+    // Fallback to article data if edit history doesn't exist
+    $total_edits = $article['edit_count'] ?: 1;
     $page_creator = [
         'username' => $article['username'],
         'display_name' => $article['display_name'],
@@ -112,6 +116,7 @@ try {
         'display_name' => $article['display_name'],
         'created_at' => $article['updated_at']
     ];
+    $recent_edits = [];
 }
 
 // Get redirects to this page
@@ -119,16 +124,27 @@ $redirects_count = 0;
 try {
     $stmt = $pdo->prepare("
         SELECT COUNT(*) as redirect_count
-        FROM wiki_articles 
-        WHERE content LIKE ? 
-        AND status = 'published'
-        AND id != ?
+        FROM wiki_redirects 
+        WHERE to_article_id = ?
     ");
-    $search_term = '%[[' . $article['title'] . ']]%';
-    $stmt->execute([$search_term, $article['id']]);
+    $stmt->execute([$article['id']]);
     $redirects_count = $stmt->fetch()['redirect_count'] ?: 0;
 } catch (PDOException $e) {
-    $redirects_count = 0;
+    // Fallback: search for redirects in content
+    try {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as redirect_count
+            FROM wiki_articles 
+            WHERE content LIKE ? 
+            AND status = 'published'
+            AND id != ?
+        ");
+        $search_term = '%[[' . $article['title'] . ']]%';
+        $stmt->execute([$search_term, $article['id']]);
+        $redirects_count = $stmt->fetch()['redirect_count'] ?: 0;
+    } catch (PDOException $e2) {
+        $redirects_count = 0;
+    }
 }
 
 // Get page watchers (users who have this page in their watchlist)
@@ -157,20 +173,48 @@ try {
     $stmt->execute([$article['id']]);
     $recent_views = $stmt->fetch()['recent_views'] ?: 0;
 } catch (PDOException $e) {
-    $recent_views = $article['view_count']; // Fallback to total view count
+    // Fallback: estimate recent views as 30% of total views
+    $recent_views = max(1, round($article['view_count'] * 0.3));
 }
 
-// Calculate article metrics
-$word_count = str_word_count(strip_tags($article['content']));
-$char_count = strlen(strip_tags($article['content']));
-$byte_count = strlen($article['content']);
+// Calculate article metrics (use database values if available, otherwise calculate)
+$word_count = $article['word_count'] ?: str_word_count(strip_tags($article['content']));
+$char_count = $article['char_count'] ?: strlen(strip_tags($article['content']));
+$byte_count = $article['byte_count'] ?: strlen($article['content']);
 $reading_time = ceil($word_count / 200); // Assuming 200 words per minute
 
-// Get page protection status (simplified)
+// Get page protection status
 $page_protection = [
-    'edit' => 'No protection',
-    'move' => 'No protection'
+    'edit' => ucfirst($article['protection_level'] ?? 'none'),
+    'move' => ucfirst($article['protection_level'] ?? 'none')
 ];
+
+// Convert protection levels to readable format
+$protection_map = [
+    'none' => 'No protection',
+    'autoconfirmed' => 'Autoconfirmed users only',
+    'sysop' => 'Administrators only'
+];
+
+$page_protection['edit'] = $protection_map[$article['protection_level']] ?? 'No protection';
+$page_protection['move'] = $protection_map[$article['protection_level']] ?? 'No protection';
+
+// Get links to this page
+$links_to_page = 0;
+try {
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) as links_count
+        FROM wiki_articles 
+        WHERE content LIKE ? 
+        AND status = 'published'
+        AND id != ?
+    ");
+    $search_term = '%[[' . $article['title'] . ']]%';
+    $stmt->execute([$search_term, $article['id']]);
+    $links_to_page = $stmt->fetch()['links_count'] ?: 0;
+} catch (PDOException $e) {
+    $links_to_page = 0;
+}
 
 // Get lint errors (simplified)
 $lint_errors = [
@@ -180,7 +224,7 @@ $lint_errors = [
 
 // Get page properties
 $page_properties = [
-    'namespace_id' => 0,
+    'namespace_id' => $article['namespace_id'] ?? 0,
     'page_id' => $article['id'],
     'content_language' => 'en - English',
     'content_model' => 'wikitext',
@@ -262,6 +306,14 @@ include '../../../includes/header.php';
                 <td>
                     <a href="/wiki/special/what-links-here?slug=<?php echo urlencode($article['slug']); ?>&hidelinks=1&hidetrans=1">
                         <?php echo number_format($redirects_count); ?>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Number of links to this page</td>
+                <td>
+                    <a href="/wiki/special/what-links-here?slug=<?php echo urlencode($article['slug']); ?>">
+                        <?php echo number_format($links_to_page); ?>
                     </a>
                 </td>
             </tr>
@@ -394,6 +446,63 @@ include '../../../includes/header.php';
                 </td>
             </tr>
             <?php endif; ?>
+            <tr>
+                <td>Article quality score</td>
+                <td>
+                    <?php 
+                    $quality_score = 0;
+                    if ($word_count > 1000) $quality_score += 20;
+                    if ($word_count > 5000) $quality_score += 20;
+                    if ($total_edits > 5) $quality_score += 20;
+                    if ($total_edits > 20) $quality_score += 20;
+                    if ($links_to_page > 5) $quality_score += 10;
+                    if ($links_to_page > 20) $quality_score += 10;
+                    if ($article['view_count'] > 100) $quality_score += 10;
+                    if ($article['view_count'] > 1000) $quality_score += 10;
+                    if ($article['category_name']) $quality_score += 10;
+                    if ($article['excerpt']) $quality_score += 10;
+                    
+                    $quality_level = 'Poor';
+                    if ($quality_score >= 80) $quality_level = 'Excellent';
+                    elseif ($quality_score >= 60) $quality_level = 'Good';
+                    elseif ($quality_score >= 40) $quality_level = 'Fair';
+                    elseif ($quality_score >= 20) $quality_level = 'Basic';
+                    
+                    echo $quality_level . ' (' . $quality_score . '/100)';
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Article Statistics Section -->
+    <div class="page-info-section">
+        <h3>Article statistics</h3>
+        <table class="info-table">
+            <tr>
+                <td>Average words per article (site-wide)</td>
+                <td><?php echo number_format($stats['avg_words_per_article'] ?? 0); ?> words</td>
+            </tr>
+            <tr>
+                <td>Total words on site</td>
+                <td><?php echo number_format($stats['total_words'] ?? 0); ?> words</td>
+            </tr>
+            <tr>
+                <td>Total characters on site</td>
+                <td><?php echo number_format($stats['total_chars'] ?? 0); ?> characters</td>
+            </tr>
+            <tr>
+                <td>Average views per article</td>
+                <td><?php echo number_format($stats['avg_views'] ?? 0); ?> views</td>
+            </tr>
+            <tr>
+                <td>Total articles on site</td>
+                <td><?php echo number_format($stats['total_articles'] ?? 0); ?> articles</td>
+            </tr>
+            <tr>
+                <td>Total authors on site</td>
+                <td><?php echo number_format($stats['total_authors'] ?? 0); ?> authors</td>
+            </tr>
         </table>
     </div>
 
