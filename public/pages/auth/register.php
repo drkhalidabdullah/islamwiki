@@ -91,7 +91,7 @@ include "../../includes/header.php";;
 ?>
 
 <div class="form-container">
-    <h2>Register</h2>
+    <h2>Create Account</h2>
     
     <?php if (!$allow_registration): ?>
         <div class="alert alert-error">
@@ -141,7 +141,7 @@ include "../../includes/header.php";;
             <input type="password" id="confirm_password" name="confirm_password" required>
         </div>
         
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn">Create Account</button>
         </form>
         
         <p >

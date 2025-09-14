@@ -217,7 +217,7 @@ if ($toast_message) {
                     </a>
                     <a href="/register" class="dropdown-item">
                         <i class="fas fa-user-plus"></i>
-                        <span>Register</span>
+                        <span>Create Account</span>
                     </a>
                 </div>
             </div>
