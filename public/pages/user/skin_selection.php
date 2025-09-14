@@ -34,6 +34,13 @@ $skins = $skins_manager->getAllSkins();
 $current_skin = $skins_manager->getCurrentSkin();
 
 include "../../includes/header.php";
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/skin_selection.css">
+<?php
 ?>
 
 <div class="page-container">
@@ -103,171 +110,5 @@ include "../../includes/header.php";
     </div>
 </div>
 
-<style>
-.page-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.page-header h1 {
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-    font-size: 2.5rem;
-    font-weight: 700;
-}
-
-.page-header p {
-    color: #7f8c8d;
-    font-size: 1.1rem;
-}
-
-.skins-selection {
-    margin-bottom: 3rem;
-}
-
-.skins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-}
-
-.skin-option {
-    background: white;
-    border: 2px solid #e1e8ed;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.skin-option:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-.skin-option.selected {
-    border-color: #3498db;
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.2);
-}
-
-.skin-preview {
-    height: 250px;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.skin-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.skin-preview-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: #7f8c8d;
-}
-
-.skin-preview-placeholder i {
-    font-size: 4rem;
-}
-
-.skin-details {
-    padding: 2rem;
-}
-
-.skin-details h3 {
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-    font-size: 1.3rem;
-    font-weight: 600;
-}
-
-.skin-details p {
-    color: #7f8c8d;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.skin-meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.skin-version {
-    background: #f8f9fa;
-    color: #6c757d;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.skin-author {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
-.skin-actions {
-    display: flex;
-    justify-content: center;
-}
-
-.skin-info {
-    background: #f8f9fa;
-    padding: 2rem;
-    border-radius: 12px;
-    border-left: 4px solid #3498db;
-}
-
-.skin-info h3 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.skin-info p {
-    color: #7f8c8d;
-    margin-bottom: 1rem;
-    line-height: 1.6;
-}
-
-.skin-info ul {
-    color: #7f8c8d;
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.skin-info li {
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .page-container {
-        padding: 1rem;
-    }
-    
-    .skins-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .skin-preview {
-        height: 200px;
-    }
-}
-</style>
 
 <?php include "../../includes/footer.php"; ?>

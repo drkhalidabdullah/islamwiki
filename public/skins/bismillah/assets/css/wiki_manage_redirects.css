@@ -1,0 +1,66 @@
+.admin-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+
+
+.form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+
+
+
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+
+.table th,
+
+
+
+
+
+
+
+
+
+
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+

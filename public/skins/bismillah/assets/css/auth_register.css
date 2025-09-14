@@ -1,0 +1,21 @@
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+
+
+/* Inline Styles - Moved from pages/auth/register.php */
+.auth-footer-text {
+    text-align: center;
+    margin-top: 1rem;
+}

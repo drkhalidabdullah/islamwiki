@@ -38,6 +38,14 @@ $articles = $stmt->fetchAll();
 $page_title = $category['name'];
 
 include "../../includes/header.php";;
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_module_category.css">
+<?php
 ?>
 
 <div class="category-container">
@@ -76,54 +84,5 @@ include "../../includes/header.php";;
     </div>
 </div>
 
-<style>
-.category-container {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.category-header {
-    margin-bottom: 3rem;
-}
-
-.category-header .card {
-    text-align: center;
-}
-
-.category-header h1 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.category-description {
-    color: #666;
-    font-size: 1.1rem;
-}
-
-.articles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.article-meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-@media (max-width: 768px) {
-    .articles-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .article-meta {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-}
-</style>
 
 <?php include "../../includes/footer.php";; ?>

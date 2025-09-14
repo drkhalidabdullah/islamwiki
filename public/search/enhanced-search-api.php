@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -530,3 +531,4 @@ function logSearchQuery($query, $content_type, $user_id) {
     }
 }
 ?>
+<script src="/skins/bismillah/assets/js/search_index.js"></script>

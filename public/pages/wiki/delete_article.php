@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
 <?php
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
@@ -36,3 +37,4 @@ if ($stmt->execute([$article_id])) {
 
 redirect_with_return_url();
 ?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>

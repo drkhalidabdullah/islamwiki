@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
 <?php
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
@@ -22,3 +23,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<p>Invalid request method.</p>';
 }
 ?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>

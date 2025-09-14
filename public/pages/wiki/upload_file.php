@@ -92,6 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 include '../../includes/header.php';
+
+?>
+<script src="/skins/bismillah/assets/js/wiki_upload_file.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_upload_file.css">
+<?php
 ?>
 
 <div class="upload-page">
@@ -174,7 +182,7 @@ include '../../includes/header.php';
                             <?php if (strpos($file['mime_type'], 'image/') === 0): ?>
                                 <img src="/uploads/<?php echo htmlspecialchars($file['filename']); ?>" 
                                      alt="<?php echo htmlspecialchars($file['original_name']); ?>"
-                                     style="max-width: 100%; max-height: 150px; object-fit: cover;">
+                                     >
                             <?php else: ?>
                                 <div class="file-icon">
                                     <?php
@@ -215,229 +223,6 @@ include '../../includes/header.php';
     </div>
 </div>
 
-<script>
-function copyWikiLink(filename) {
-    const wikiLink = `[[File:${filename}]]`;
-    navigator.clipboard.writeText(wikiLink).then(() => {
-        alert('Wiki link copied to clipboard: ' + wikiLink);
-    }).catch(() => {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = wikiLink;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Wiki link copied to clipboard: ' + wikiLink);
-    });
-}
-</script>
 
-<style>
-.upload-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.page-header h1 {
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-}
-
-.page-header p {
-    color: #666;
-    font-size: 1.1rem;
-}
-
-.upload-form-container {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
-    margin-bottom: 3rem;
-}
-
-.upload-form {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-family: inherit;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.form-group small {
-    margin-top: 0.25rem;
-    color: #6c757d;
-    font-size: 0.875rem;
-}
-
-.file-management {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 2rem;
-}
-
-.file-management h2 {
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-    padding-bottom: 0.5rem;
-}
-
-.files-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.file-card {
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.file-card:hover {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.file-preview {
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.file-icon {
-    font-size: 3rem;
-    color: #6c757d;
-}
-
-.file-info {
-    padding: 1rem;
-}
-
-.file-info h4 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-    font-size: 1rem;
-    word-break: break-word;
-}
-
-.file-meta {
-    margin: 0 0 0.5rem 0;
-    color: #6c757d;
-    font-size: 0.875rem;
-}
-
-.file-description {
-    margin: 0 0 0.5rem 0;
-    color: #495057;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.file-license {
-    margin: 0 0 1rem 0;
-    color: #6c757d;
-    font-size: 0.875rem;
-    font-style: italic;
-}
-
-.file-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-}
-
-.btn-primary {
-    background: #007bff;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #0056b3;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #545b62;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1.5rem;
-}
-
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert ul {
-    margin: 0;
-    padding-left: 1.5rem;
-}
-</style>
 
 <?php include '../../includes/footer.php'; ?>

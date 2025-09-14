@@ -90,6 +90,14 @@ $stmt = $pdo->query("SELECT id, name FROM content_categories ORDER BY name");
 $categories = $stmt->fetchAll();
 
 include "../../includes/header.php";
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/edit_article.css">
+<?php
 ?>
 
 <div class="admin-container">
@@ -177,147 +185,5 @@ include "../../includes/header.php";
     </div>
 </div>
 
-<style>
-.admin-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.admin-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.admin-header h1 {
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-}
-
-.admin-header p {
-    color: #666;
-    font-size: 1.1rem;
-}
-
-.article-form {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.form-group textarea {
-    font-family: 'Courier New', monospace;
-    resize: vertical;
-}
-
-.form-help {
-    color: #666;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-}
-
-.article-meta {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    margin: 1.5rem 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.meta-item {
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: #3498db;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #2980b9;
-}
-
-.btn-info {
-    background: #17a2b8;
-    color: white;
-}
-
-.btn-info:hover {
-    background: #138496;
-}
-
-.btn-secondary {
-    background: #95a5a6;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #7f8c8d;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .article-meta {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
 
 <?php include "../../includes/footer.php"; ?>

@@ -134,6 +134,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Article data is already fetched above
 
 include "../../includes/header.php";;
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_edit_article.css">
+<?php
 ?>
 
 <div class="article-editor">
@@ -231,143 +235,6 @@ include "../../includes/header.php";;
     </form>
 </div>
 
-<style>
-.article-editor {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.editor-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.editor-header h1 {
-    color: #2c3e50;
-    margin: 0;
-}
-
-.editor-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.article-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #2c3e50;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-}
-
-.wiki-editor-container {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.wiki-editor-main textarea {
-    border: none;
-    border-radius: 0;
-    min-height: 400px;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-#preview-container {
-    border-top: 1px solid #ddd;
-    padding: 1rem;
-    background: #f8f9fa;
-}
-
-#preview-content {
-    max-width: none;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .editor-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-}
-</style>
 
 <link rel="stylesheet" href="/skins/bismillah/assets/css/wiki.css">
 <script src="/skins/bismillah/assets/js/wiki-editor.js"></script>

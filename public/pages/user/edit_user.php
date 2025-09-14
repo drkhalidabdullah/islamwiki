@@ -64,7 +64,14 @@ if (!$user) {
     redirect_with_return_url('/admin');
 }
 
-include "../../includes/header.php";;
+include "../../includes/header.php";
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/edit_user.css">
+<?php
 ?>
 
 <div class="admin-container">
@@ -127,72 +134,5 @@ include "../../includes/header.php";;
     </div>
 </div>
 
-<style>
-.admin-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.admin-header h1 {
-    color: #2c3e50;
-    margin: 0;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #2c3e50;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .admin-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-}
-</style>
 
 <?php include "../../includes/footer.php";; ?>

@@ -80,6 +80,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 include "../../includes/header.php";;
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/auth_register.css">
+<?php
 ?>
 
 <div class="form-container">
@@ -136,44 +144,11 @@ include "../../includes/header.php";;
         <button type="submit" class="btn">Register</button>
         </form>
         
-        <p style="text-align: center; margin-top: 1rem;">
+        <p >
             Already have an account? <a href="/login<?php echo $return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''; ?>">Login here</a>
         </p>
     <?php endif; ?>
 </div>
 
-<style>
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
-
-.alert h3 {
-    margin: 0 0 10px 0;
-    color: #d32f2f;
-    font-size: 1.2rem;
-}
-
-.alert h3 i {
-    margin-right: 8px;
-}
-
-.alert p {
-    margin: 8px 0;
-    line-height: 1.5;
-}
-
-.alert .btn {
-    margin-top: 15px;
-    display: inline-block;
-}
-</style>
 
 <?php include "../../includes/footer.php";; ?>

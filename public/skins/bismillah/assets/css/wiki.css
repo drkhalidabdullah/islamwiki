@@ -594,28 +594,8 @@
     justify-content: center;
 }
 
-.modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-}
 
-.modal-content .close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #6c757d;
-}
 
-.modal-content .close:hover {
-    color: #000;
-}
 
 .markdown-help h4 {
     color: #2c3e50;

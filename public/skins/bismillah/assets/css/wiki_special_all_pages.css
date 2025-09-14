@@ -1,0 +1,251 @@
+.special-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.special-page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.special-page-header h1 {
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.special-filters {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    min-width: 150px;
+}
+
+.special-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.alphabet-navigation {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.alphabet-navigation h3 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+}
+
+.alphabet-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.alphabet-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+.alphabet-link:hover,
+.alphabet-link.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.all-pages-list {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.pages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.pages-header h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.pages-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.pages-grid {
+    padding: 1.5rem;
+}
+
+.letter-section {
+    margin-bottom: 2rem;
+}
+
+.letter-section:last-child {
+    margin-bottom: 0;
+}
+
+.letter-header {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #007bff;
+    font-size: 1.5rem;
+}
+
+.letter-pages {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.page-item {
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.page-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+}
+
+
+
+.namespace {
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.page-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.page-author,
+.page-date,
+.page-views {
+    display: inline-block;
+}
+
+.redirect-indicator {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+
+
+
+.page-info {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.special-navigation {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+
+
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .letter-pages {
+        grid-template-columns: 1fr;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .nav-links {
+        justify-content: center;
+    }
+}

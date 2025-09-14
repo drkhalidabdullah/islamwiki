@@ -19,6 +19,14 @@ $stmt->execute([$_SESSION['user_id']]);
 $friends = $stmt->fetchAll();
 
 include "../../includes/header.php";;
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
+<?php
+
+?>
+<script src="/skins/bismillah/assets/js/friends_all.js"></script>
+<?php
 ?>
 
 <div class="friends-page">
@@ -102,33 +110,5 @@ include "../../includes/header.php";;
     </div>
 </div>
 
-<script>
-function unfriend(userId) {
-    if (confirm('Are you sure you want to unfriend this person?')) {
-        fetch('/ajax/follow_user.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user_id: userId,
-                action: 'unfollow'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while unfriending');
-        });
-    }
-}
-</script>
 
 <?php include "../../includes/footer.php";; ?>

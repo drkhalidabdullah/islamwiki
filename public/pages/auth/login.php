@@ -1,6 +1,6 @@
 <?php
-require_once '../../config/config.php';
-require_once '../../includes/functions.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../includes/functions.php';
 
 // Check maintenance mode (but allow login for admins)
 check_maintenance_mode();
@@ -144,7 +144,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include "../../includes/header.php";;
+include __DIR__ . "/../../includes/header.php";
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
+<?php
 ?>
 
 <div class="form-container">
@@ -155,7 +163,7 @@ include "../../includes/header.php";;
     <?php endif; ?>
     
     <?php if (is_maintenance_mode()): ?>
-        <div class="alert alert-info" style="background: #e8f4f8; border: 1px solid #b8daff; color: #004085; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+        <div class="alert alert-info" >
             <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
             <strong>Maintenance Mode Active:</strong> The site is currently under maintenance. Only administrators can log in during this time.
         </div>
@@ -176,9 +184,9 @@ include "../../includes/header.php";;
         <button type="submit" class="btn">Login</button>
     </form>
     
-    <p style="text-align: center; margin-top: 1rem;">
+    <p >
         Don't have an account? <a href="/register<?php echo $return_url !== '/dashboard' ? '?return=' . urlencode($return_url) : ''; ?>">Register here</a>
     </p>
 </div>
 
-<?php include "../../includes/footer.php";; ?>
+<?php include __DIR__ . "/../../includes/footer.php"; ?>

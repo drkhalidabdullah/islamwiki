@@ -14,6 +14,14 @@ if (empty($requested_title) && !empty($requested_slug)) {
 }
 
 include "../../includes/header.php";;
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_module_not_found.css">
+<?php
 ?>
 
 <div class="not-found-container">
@@ -118,134 +126,5 @@ include "../../includes/header.php";;
     </div>
 </div>
 
-<style>
-.not-found-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.not-found-content {
-    text-align: center;
-}
-
-.not-found-content h1 {
-    color: #e74c3c;
-    margin-bottom: 1rem;
-}
-
-.not-found-message {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 2rem;
-}
-
-.suggestions {
-    margin: 2rem 0;
-}
-
-.suggestions h3 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    margin: 1.5rem 0;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: #3498db;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #2980b9;
-}
-
-.btn-secondary {
-    background: #95a5a6;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #7f8c8d;
-}
-
-.btn-outline {
-    background: transparent;
-    color: #3498db;
-    border: 2px solid #3498db;
-}
-
-.btn-outline:hover {
-    background: #3498db;
-    color: white;
-}
-
-.related-articles {
-    margin-top: 3rem;
-    text-align: left;
-}
-
-.related-articles h3 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.suggestions-list {
-    list-style: none;
-    padding: 0;
-}
-
-.suggestions-list li {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 4px;
-    border-left: 4px solid #3498db;
-}
-
-.suggestions-list a {
-    color: #2c3e50;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.suggestions-list a:hover {
-    color: #3498db;
-}
-
-.article-meta {
-    display: block;
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 0.25rem;
-}
-
-@media (max-width: 768px) {
-    .action-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .btn {
-        width: 100%;
-        max-width: 300px;
-    }
-}
-</style>
 
 <?php include "../../includes/footer.php";; ?>

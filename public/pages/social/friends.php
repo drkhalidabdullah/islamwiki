@@ -36,6 +36,14 @@ $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id']
 $suggested_friends = $stmt->fetchAll();
 
 include "../../includes/header.php";;
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
+<?php
+
+?>
+<script src="/skins/bismillah/assets/js/social_friends.js"></script>
+<?php
 ?>
 
 <div class="friends-page">
@@ -115,59 +123,5 @@ include "../../includes/header.php";;
     </div>
 </div>
 
-<script>
-function addFriend(userId) {
-    // AJAX call to add friend
-    fetch('/ajax/follow_user.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            user_id: userId,
-            action: 'follow'
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remove the card or update it
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while adding friend');
-    });
-}
-
-function removeSuggestion(userId) {
-    // AJAX call to remove suggestion
-    fetch('/ajax/remove_suggestion.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            user_id: userId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Remove the card
-            location.reload();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while removing suggestion');
-    });
-}
-</script>
 
 <?php include "../../includes/footer.php";; ?>

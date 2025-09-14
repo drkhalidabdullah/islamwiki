@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -207,3 +208,4 @@ try {
     echo json_encode(['suggestions' => [], 'total' => 0, 'error' => 'Search temporarily unavailable']);
 }
 ?>
+<script src="/skins/bismillah/assets/js/search_index.js"></script>

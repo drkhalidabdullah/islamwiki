@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -382,3 +383,4 @@ function getSearchTrends($query) {
     return $stmt->fetchAll();
 }
 ?>
+<script src="/skins/bismillah/assets/js/search_index.js"></script>

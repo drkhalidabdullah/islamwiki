@@ -1,0 +1,275 @@
+.talk-page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.talk-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.talk-navigation {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.talk-header h1 {
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.talk-description {
+    color: #6c757d;
+    margin: 0;
+}
+
+.talk-description a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.talk-description a:hover {
+    text-decoration: underline;
+}
+
+.talk-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.talk-page-content {
+    padding: 2rem;
+}
+
+.talk-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.talk-author a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.talk-author a:hover {
+    text-decoration: underline;
+}
+
+.talk-text {
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.talk-text h1, .talk-text h2, .talk-text h3, .talk-text h4, .talk-text h5, .talk-text h6 {
+    color: #2c3e50;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.talk-text p {
+    margin-bottom: 1rem;
+}
+
+.talk-text ul, .talk-text ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.talk-text blockquote {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.talk-text code {
+    background: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.talk-text pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.no-talk-content {
+    padding: 3rem;
+    text-align: center;
+}
+
+.empty-state {
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.empty-state p {
+    margin: 0;
+}
+
+.talk-editor {
+    padding: 2rem;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.talk-editor h3 {
+    color: #2c3e50;
+    margin: 0 0 1.5rem 0;
+}
+
+.talk-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+
+
+
+
+.form-help {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.form-help a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.form-help a:hover {
+    text-decoration: underline;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+#preview-container {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#preview-container h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+}
+
+#preview-content {
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.login-prompt {
+    padding: 3rem;
+    text-align: center;
+    background: #f8f9fa;
+}
+
+.prompt-content {
+    color: #6c757d;
+}
+
+.prompt-content i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+.prompt-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.prompt-content p {
+    margin: 0 0 1.5rem 0;
+}
+
+.discussion-guidelines {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.discussion-guidelines h3 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+}
+
+.discussion-guidelines ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.discussion-guidelines li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.discussion-guidelines code {
+    background: #e9ecef;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+
+@media (max-width: 768px) {
+    .talk-navigation {
+        flex-direction: column;
+    }
+    
+    .talk-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}

@@ -196,9 +196,9 @@ include 'includes/header.php';
             <!-- Featured Articles -->
             <?php if (!empty($featured_articles)): ?>
             <section class="featured-section">
-                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; ">
-                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">Featured Articles</h2>
-                    <a href="/wiki" class="view-all-link" style="color: #2563eb !important; text-decoration: none !important; font-weight: 500 !important; font-size: 0.875rem !important; padding: 0.5rem 1rem !important; border: 1px solid #2563eb !important; border-radius: 0.5rem !important; transition: all 0.2s ease !important; display: inline-flex !important; align-items: center !important; gap: 0.5rem !important;">View All</a>
+                <div class="section-header" >
+                    <h2 >Featured Articles</h2>
+                    <a href="/wiki" class="view-all-link" >View All</a>
                 </div>
                 <div class="articles-grid">
                     <?php foreach ($featured_articles as $article): ?>
@@ -234,9 +234,9 @@ include 'includes/header.php';
             <!-- Recent Articles -->
             <?php if (!empty($recent_articles)): ?>
             <section class="recent-section">
-                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; ">
-                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">Recent Articles</h2>
-                    <a href="/wiki" class="view-all-link" style="color: #2563eb !important; text-decoration: none !important; font-weight: 500 !important; font-size: 0.875rem !important; padding: 0.5rem 1rem !important; border: 1px solid #2563eb !important; border-radius: 0.5rem !important; transition: all 0.2s ease !important; display: inline-flex !important; align-items: center !important; gap: 0.5rem !important;">View All</a>
+                <div class="section-header" >
+                    <h2 >Recent Articles</h2>
+                    <a href="/wiki" class="view-all-link" >View All</a>
                 </div>
                 <div class="recent-articles-grid">
                     <?php foreach ($recent_articles as $article): ?>
@@ -261,8 +261,8 @@ include 'includes/header.php';
 
             <!-- Community Highlights -->
             <section class="community-section">
-                <div class="section-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 1.5rem !important; padding-bottom: 0.75rem !important; border-bottom: 2px solid #f3f4f6 !important; position: relative !important; ">
-                    <h2 style="font-size: 1.5rem !important; font-weight: 700 !important; color: #1f2937 !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 0.75rem !important;">Community Highlights</h2>
+                <div class="section-header" >
+                    <h2 >Community Highlights</h2>
                 </div>
                 <div class="highlights-grid">
                     <div class="highlight-card">

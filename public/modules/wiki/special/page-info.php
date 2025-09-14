@@ -191,158 +191,24 @@ $page_properties = [
 ];
 
 include '../../../includes/header.php';
+
+?>
+<script src="/skins/bismillah/assets/js/bismillah.js"></script>
+<?php
+
+?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_special_page-info.css">
+<?php
 ?>
 
-<style>
-.page-info-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.page-info-header {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.page-info-section {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.page-info-section h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    color: #495057;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
-}
-
-.info-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.info-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #f1f3f4;
-    vertical-align: top;
-}
-
-.info-table td:first-child {
-    font-weight: 600;
-    color: #495057;
-    width: 200px;
-    background: #f8f9fa;
-}
-
-.info-table td:last-child {
-    color: #212529;
-}
-
-.info-table a {
-    color: #0d6efd;
-    text-decoration: none;
-}
-
-.info-table a:hover {
-    text-decoration: underline;
-}
-
-.protection-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    background: #28a745;
-    color: white;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.lint-error-count {
-    color: #dc3545;
-    font-weight: 600;
-}
-
-.external-tools {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.external-tools h4 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    color: #495057;
-}
-
-.external-tools a {
-    color: #0d6efd;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s ease;
-}
-
-.external-tools a:hover {
-    color: #0a58ca;
-    text-decoration: underline;
-}
-
-.breadcrumb-nav {
-    margin-top: 20px;
-    padding: 12px 0;
-    border-top: 1px solid #e9ecef;
-    font-size: 14px;
-    color: #6c757d;
-}
-
-.breadcrumb-nav a {
-    color: #0d6efd;
-    text-decoration: none;
-}
-
-.breadcrumb-nav a:hover {
-    text-decoration: underline;
-}
-
-.breadcrumb-nav span {
-    margin: 0 8px;
-    color: #adb5bd;
-}
-
-@media (max-width: 768px) {
-    .page-info-container {
-        padding: 10px;
-    }
-    
-    .page-info-section {
-        padding: 16px;
-    }
-    
-    .info-table td:first-child {
-        width: 150px;
-    }
-}
-</style>
 
 <div class="page-info-container">
     <!-- Header Section -->
     <div class="page-info-header">
-        <h1 style="margin: 0 0 10px 0; font-size: 24px;">
+        <h1 >
             <i class="fas fa-info-circle"></i> Information for "<?php echo htmlspecialchars($article['title']); ?>"
         </h1>
-        <p style="margin: 0; color: #6c757d;">
+        <p >
             Comprehensive page information and statistics
         </p>
     </div>
@@ -553,7 +419,7 @@ include '../../../includes/header.php';
     <!-- External Tools Section -->
     <div class="external-tools">
         <h4>External tools</h4>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+        <div >
             <a href="#">Revision history search</a>
             <span style="color: #6c757d;">•</span>
             <a href="#">Revision history statistics</a>
@@ -576,10 +442,10 @@ include '../../../includes/header.php';
     </div>
 
     <!-- Navigation -->
-    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e9ecef;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div >
+        <div >
             <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" 
-               style="padding: 8px 16px; background: #f8f9fa; color: #0d6efd; text-decoration: none; border: 1px solid #dee2e6; border-radius: 4px;">
+               >
                 ← <?php echo htmlspecialchars($article['title']); ?>
             </a>
             <small style="color: #6c757d;">
