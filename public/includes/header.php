@@ -293,7 +293,7 @@ if ($toast_message) {
     </div>
 </div>
 
-
+<script>
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Dropdown script loaded");
     
