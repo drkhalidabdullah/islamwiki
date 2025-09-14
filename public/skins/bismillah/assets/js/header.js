@@ -342,7 +342,6 @@ document.addEventListener('DOMContentLoaded', function() {
 window.openSearch = openSearch;
 window.closeSearch = closeSearch;
 window.searchFor = searchFor;
-</script>
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Dropdown script loaded");
@@ -626,5 +625,3 @@ window.showToast = showToast;
 // Toast notification system
 
 showToast('');
-
-</script>
