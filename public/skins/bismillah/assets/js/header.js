@@ -4,13 +4,19 @@ let currentQuery = '';
 function openSearch() {
     console.log('Opening enhanced search overlay...');
     const overlay = document.getElementById('searchOverlay');
+    console.log('Overlay found:', overlay);
     if (overlay) {
+        console.log('Adding show class...');
         overlay.classList.add('show');
+        console.log('Overlay classes after adding show:', overlay.className);
         const input = document.getElementById('searchInput');
         if (input) {
             input.focus();
         }
-        loadInitialSuggestions();
+        // Temporarily comment out loadInitialSuggestions to test
+        // loadInitialSuggestions();
+    } else {
+        console.error('Search overlay element not found!');
     }
 }
 

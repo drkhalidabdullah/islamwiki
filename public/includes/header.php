@@ -59,6 +59,9 @@ if ($toast_message) {
     <?php if (isset($_SERVER["REQUEST_URI"]) && ($_SERVER["REQUEST_URI"] === "/" || $_SERVER["REQUEST_URI"] === "")): ?>
     <link rel="stylesheet" href="/skins/bismillah/assets/css/homepage.css">
     <?php endif; ?>
+    
+    <!-- Load search overlay CSS for all pages -->
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
 </head>
 <body>
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
