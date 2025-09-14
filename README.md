@@ -1,19 +1,28 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.13-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.14-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.13
+## 🎯 Current Version: 0.0.0.14
 
 **Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - Comprehensive Admin System Overhaul
+**Type:** User Experience Enhancement - UI/UX Improvements
 
-## 🚀 What's New in v0.0.0.13
+## 🚀 What's New in v0.0.0.14
+
+### 🎨 **Enhanced User Interface & Authentication Experience**
+- **Modern Login/Register Pages**: Professional, clean design with gradient accents and improved typography
+- **Enhanced User Menu**: Better hover effects, improved accessibility, and updated text ("Create Account")
+- **Improved Visual Design**: Consistent branding, better spacing, and enhanced typography
+- **Better Responsive Design**: Works seamlessly on all devices and screen sizes
+- **Centralized Styling**: Reduced code duplication and improved maintainability
+
+## 🚀 Previous Release: v0.0.0.13
 
 ### 🚀 **Comprehensive Admin System Overhaul**
 - **Unified Admin Dashboard**: Merged Quick Actions and Admin Tools into organized, categorized sections

@@ -22,14 +22,21 @@ Welcome to IslamWiki, a modern social Islamic knowledge platform that combines t
 ### Creating an Account
 
 #### Registration Process
-1. **Visit Registration Page**: Go to `/register` or click "Register" in the header
+1. **Visit Registration Page**: Go to `/register` or click "Create Account" in the user menu
 2. **Fill Required Information**:
+   - First Name and Last Name
    - Username (unique identifier)
    - Email address (for account verification)
    - Password (secure password required)
    - Confirm password
 3. **Complete Registration**: Click "Create Account" to register
 4. **Account Verification**: Check your email for verification link
+
+#### Enhanced Registration Experience
+- **Modern Visual Design**: Clean, professional interface with gradient accents
+- **Improved Form Layout**: Better spacing and visual hierarchy
+- **Enhanced Input Fields**: Smooth focus states and hover effects
+- **Responsive Design**: Works seamlessly on all devices
 
 #### Registration Status
 - **Open Registration**: When registration is enabled, you can create new accounts
@@ -38,14 +45,34 @@ Welcome to IslamWiki, a modern social Islamic knowledge platform that combines t
 ### Logging In
 
 #### Login Process
-1. **Visit Login Page**: Go to `/login` or click "Login" in the header
+1. **Visit Login Page**: Go to `/login` or click "Login" in the user menu
 2. **Enter Credentials**: Username/email and password
 3. **Access Dashboard**: Upon successful login, you'll be redirected to your dashboard
+
+#### Enhanced Login Experience
+- **Modern Visual Design**: Clean, professional interface with gradient accents
+- **Improved Form Layout**: Better spacing and visual hierarchy
+- **Enhanced Input Fields**: Smooth focus states and hover effects
+- **Responsive Design**: Works seamlessly on all devices
 
 #### Account Security
 - **Strong Passwords**: Use strong, unique passwords
 - **Session Management**: Logout when finished
 - **Account Recovery**: Use email for password recovery
+
+### User Menu Interface
+
+#### Enhanced User Menu
+- **Modern Design**: Clean, professional dropdown menu with improved styling
+- **Better Accessibility**: Clear visual feedback and hover states
+- **Improved Navigation**: Easy access to login, create account, and user features
+- **Responsive Design**: Works seamlessly on all devices
+
+#### User Menu Features
+- **Login/Create Account**: Quick access to authentication pages
+- **User Profile**: Access to profile and settings when logged in
+- **Visual Feedback**: Smooth hover effects and clear icon visibility
+- **Consistent Branding**: Matches the overall site design
 
 ## User Account Management
 
