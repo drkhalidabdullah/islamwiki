@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.0.14] - 2025-01-XX
+## [0.0.0.14] - 2025-09-14
 
 ### 🎨 **Enhanced User Interface & Authentication Experience**
 
@@ -27,7 +27,7 @@
 - **Automated Version Updates**: Added script for easy version management
 - **Version API**: JSON endpoint for version information access
 
-## [0.0.0.13] - 2025-01-XX
+## [0.0.0.13] - 2025-09-01
 
 ### 🚀 **Comprehensive Admin System Overhaul**
 
