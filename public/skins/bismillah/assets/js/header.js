@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
     
-    // User icon dropdown functionality - Simplified approach
+    // User icon dropdown functionality - Enhanced approach
     document.addEventListener('DOMContentLoaded', function() {
         const userIconDropdowns = document.querySelectorAll('.user-icon-dropdown');
         
@@ -412,22 +412,93 @@ document.addEventListener("DOMContentLoaded", function() {
             
             if (!trigger || !menu) return;
             
-            // Prevent default link behavior
-            trigger.addEventListener('click', function(e) {
-                e.preventDefault();
-            });
-            
-            // Use CSS-only hover approach with JavaScript fallback
-            // The CSS should handle the hover, but we'll add a small delay for better UX
+            let isOpen = false;
             let hoverTimeout;
             
+            // Click functionality for mobile and accessibility
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Close all other dropdowns first
+                userIconDropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
+                        if (otherMenu) {
+                            otherMenu.classList.remove('show');
+                        }
+                    }
+                });
+                
+                // Toggle current dropdown
+                isOpen = !isOpen;
+                if (isOpen) {
+                    menu.classList.add('show');
+                    dropdown.classList.add('active');
+                } else {
+                    menu.classList.remove('show');
+                    dropdown.classList.remove('active');
+                }
+            });
+            
+            // Hover functionality for desktop - let CSS handle it primarily
             dropdown.addEventListener('mouseenter', function() {
                 clearTimeout(hoverTimeout);
-                // Let CSS handle the display
+                if (window.innerWidth > 768) { // Only on desktop
+                    // Let CSS hover handle the display, just add active class for styling
+                    dropdown.classList.add('active');
+                }
             });
             
             dropdown.addEventListener('mouseleave', function() {
-                // Let CSS handle the hiding
+                if (window.innerWidth > 768) { // Only on desktop
+                    hoverTimeout = setTimeout(() => {
+                        dropdown.classList.remove('active');
+                    }, 150); // Small delay to prevent flickering
+                }
+            });
+            
+            // Keep menu open when hovering over it - let CSS handle display
+            menu.addEventListener('mouseenter', function() {
+                clearTimeout(hoverTimeout);
+                // Let CSS handle the display, just ensure active class
+                if (window.innerWidth > 768) {
+                    dropdown.classList.add('active');
+                }
+            });
+            
+            menu.addEventListener('mouseleave', function() {
+                if (window.innerWidth > 768) { // Only on desktop
+                    hoverTimeout = setTimeout(() => {
+                        dropdown.classList.remove('active');
+                    }, 150);
+                }
+            });
+        });
+        
+        // Close all user dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-icon-dropdown')) {
+                userIconDropdowns.forEach(dropdown => {
+                    const menu = dropdown.querySelector('.user-dropdown-menu');
+                    if (menu) {
+                        menu.classList.remove('show');
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+        
+        // Close dropdowns when clicking on dropdown items
+        document.querySelectorAll('.user-dropdown-menu .dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                userIconDropdowns.forEach(dropdown => {
+                    const menu = dropdown.querySelector('.user-dropdown-menu');
+                    if (menu) {
+                        menu.classList.remove('show');
+                        dropdown.classList.remove('active');
+                    }
+                });
             });
         });
     });
@@ -508,10 +579,11 @@ document.addEventListener("DOMContentLoaded", function() {
 // Global toast notification function
 function showToast(message, type = 'info') {
     // Check if notifications are enabled
-    
+    // For now, just log to console
+    console.log(`Toast: ${type} - ${message}`);
     return;
     
-    
+    // TODO: Implement proper toast notifications
     // Create toast element
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;

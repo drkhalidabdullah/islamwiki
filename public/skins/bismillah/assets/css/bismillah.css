@@ -1219,11 +1219,28 @@ nav.sidebar {
     justify-content: center !important;
     width: 100% !important;
     height: 100% !important;
+    outline: none !important;
+    border-radius: 50% !important;
 }
 
 .sidebar-user .user-icon-trigger:hover {
     background: rgba(255, 255, 255, 0.1) !important;
     transform: scale(1.05) !important;
+}
+
+.sidebar-user .user-icon-trigger:focus {
+    background: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5) !important;
+}
+
+.sidebar-user .user-icon-trigger:active {
+    transform: scale(0.95) !important;
+}
+
+/* Active state when dropdown is open */
+.sidebar-user .user-icon-dropdown.active .user-icon-trigger {
+    background: rgba(52, 152, 219, 0.3) !important;
+    color: #3498db !important;
 }
 
 .sidebar-user .user-dropdown-menu {
@@ -1242,16 +1259,69 @@ nav.sidebar {
     z-index: 1002 !important;
 }
 
+/* Show dropdown when .show class is present */
+.sidebar-user .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Force hover to work - higher specificity */
 .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
     display: block !important;
     opacity: 1 !important;
     transform: translateX(0) !important;
 }
 
-.sidebar-user .user-dropdown-menu:hover {
+/* Additional hover support - even higher specificity */
+.sidebar .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
     display: block !important;
     opacity: 1 !important;
     transform: translateX(0) !important;
+}
+
+/* Debug: Add a visible indicator when hovering */
+.sidebar-user .user-icon-dropdown:hover .user-icon-trigger {
+    background: rgba(52, 152, 219, 0.3) !important;
+    color: #3498db !important;
+}
+
+/* ULTRA SPECIFIC HOVER RULE - FORCE IT TO WORK */
+body .sidebar .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+}
+
+/* Hover functionality for desktop (fallback) */
+@media (hover: hover) and (pointer: fine) {
+    .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
+        display: block !important;
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
+    
+    .sidebar-user .user-dropdown-menu:hover {
+        display: block !important;
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
+}
+
+/* Ensure hover works on desktop regardless of JavaScript */
+@media (min-width: 769px) {
+    .sidebar-user .user-icon-dropdown:hover .user-dropdown-menu {
+        display: block !important;
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
+    
+    .sidebar-user .user-dropdown-menu:hover {
+        display: block !important;
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+    }
 }
 
 .user-dropdown-menu .dropdown-item {
