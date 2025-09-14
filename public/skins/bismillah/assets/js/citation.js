@@ -3,7 +3,7 @@
  * Handles citation generation and modal functionality for wiki articles
  * 
  * @author Khalid Abdullah
- * @version 0.0.0.12
+ * @version 0.0.0.14
  * @license AGPL-3.0
  */
 

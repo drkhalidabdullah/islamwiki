@@ -4,7 +4,7 @@
  * Provides Wikipedia-style functionality including namespaces, templates, and more
  * 
  * @author Khalid Abdullah
- * @version 0.0.0.9
+ * @version 0.0.0.14
  * @license AGPL-3.0
  */
 

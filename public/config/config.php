@@ -2,7 +2,9 @@
 // Site configuration
 define('SITE_NAME', 'IslamWiki');
 define('SITE_URL', 'http://localhost');
-define('SITE_VERSION', '0.0.0.11');
+
+// Load centralized version management
+require_once __DIR__ . '/version.php';
 
 // Development mode (disables rate limiting for easier testing)
 define('DEVELOPMENT_MODE', true);
