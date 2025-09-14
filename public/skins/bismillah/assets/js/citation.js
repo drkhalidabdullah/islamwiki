@@ -281,9 +281,257 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+/**
+ * Download article as PDF
+ */
+function downloadPDF() {
+    // Get article data
+    const articleTitle = document.querySelector('h1')?.textContent?.trim() || 'Untitled Article';
+    const articleContent = document.querySelector('.article-content');
+    
+    if (!articleContent) {
+        showToast('Article content not found', 'error');
+        return;
+    }
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Get the current site name
+    const siteNameMeta = document.querySelector('meta[name="site-name"]');
+    const siteName = siteNameMeta ? siteNameMeta.getAttribute('content') : 'IslamWiki';
+    
+    // Get article metadata
+    const authorElement = document.querySelector('.article-author, .author-name');
+    const author = authorElement ? authorElement.textContent.trim() : 'Unknown Author';
+    
+    const publishElement = document.querySelector('.publish-date, .created-date');
+    const publishDate = publishElement ? publishElement.textContent.trim() : new Date().toLocaleDateString();
+    
+    const url = window.location.href;
+    const accessDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    // Create PDF content
+    const pdfContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${articleTitle} - ${siteName}</title>
+    <style>
+        @page {
+            margin: 1in;
+            size: A4;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .pdf-header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pdf-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .pdf-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pdf-meta strong {
+            color: #495057;
+        }
+        
+        .pdf-content {
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .pdf-content h1 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        
+        .pdf-content h2 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+        
+        .pdf-content h3 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            margin: 1.25rem 0 0.5rem 0;
+        }
+        
+        .pdf-content h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin: 1rem 0 0.5rem 0;
+        }
+        
+        .pdf-content p {
+            margin: 0 0 1rem 0;
+            text-align: justify;
+        }
+        
+        .pdf-content ul, .pdf-content ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+        
+        .pdf-content li {
+            margin: 0.25rem 0;
+        }
+        
+        .pdf-content blockquote {
+            border-left: 4px solid #007bff;
+            margin: 1rem 0;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            font-style: italic;
+        }
+        
+        .pdf-content code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .pdf-content pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .pdf-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .pdf-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .pdf-content th, .pdf-content td {
+            border: 1px solid #dee2e6;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .pdf-content th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .pdf-footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .pdf-url {
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+        
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .pdf-content a {
+                color: #007bff !important;
+                text-decoration: none;
+            }
+            
+            .pdf-content a:after {
+                content: " (" attr(href) ")";
+                font-size: 0.8rem;
+                color: #6c757d;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-header">
+        <h1 class="pdf-title">${articleTitle}</h1>
+        <div class="pdf-meta">
+            <strong>Author:</strong> ${author}<br>
+            <strong>Published:</strong> ${publishDate}<br>
+            <strong>Source:</strong> ${siteName}<br>
+            <strong>URL:</strong> <span class="pdf-url">${url}</span><br>
+            <strong>Downloaded:</strong> ${accessDate}
+        </div>
+    </div>
+    
+    <div class="pdf-content">
+        ${articleContent.innerHTML}
+    </div>
+    
+    <div class="pdf-footer">
+        <p>This document was generated from ${siteName} on ${accessDate}</p>
+        <p>Original URL: ${url}</p>
+        <p>&copy; ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
+    </div>
+</body>
+</html>`;
+    
+    // Write content to new window
+    printWindow.document.write(pdfContent);
+    printWindow.document.close();
+    
+    // Wait for content to load, then trigger print dialog
+    printWindow.onload = function() {
+        setTimeout(() => {
+            printWindow.print();
+            showToast('PDF download initiated. Use your browser\'s print dialog to save as PDF.', 'success');
+        }, 500);
+    };
+    
+    // Close the print window after a delay
+    setTimeout(() => {
+        if (printWindow && !printWindow.closed) {
+            printWindow.close();
+        }
+    }, 10000); // Close after 10 seconds
+}
+
 // Make functions globally available
 window.citePage = citePage;
 window.closeCitationModal = closeCitationModal;
 window.updateCitation = updateCitation;
 window.copyCitation = copyCitation;
 window.downloadCitation = downloadCitation;
+window.downloadPDF = downloadPDF;
