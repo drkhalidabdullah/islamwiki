@@ -21,6 +21,7 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Improved Visual Design**: Consistent branding, better spacing, and enhanced typography
 - **Better Responsive Design**: Works seamlessly on all devices and screen sizes
 - **Centralized Styling**: Reduced code duplication and improved maintainability
+- **Version Management System**: Centralized version control with automated updates
 
 ## 🚀 Previous Release: v0.0.0.13
 
