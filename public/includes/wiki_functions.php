@@ -531,6 +531,7 @@ function log_special_action($log_type, $page_title, $page_id, $user_id, $action,
 
 /**
  * Enhanced markdown parser with wiki features
+ * @deprecated Use AdvancedWikiParser instead
  */
 class EnhancedMarkdownParser extends MarkdownParser {
     

@@ -76,8 +76,10 @@ class MarkdownParser {
         if (!$pdo) return false;
         
         try {
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_articles WHERE slug = ? AND status = 'published'");
-            $stmt->execute([$slug]);
+            // Check for both hyphen and underscore versions
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_articles WHERE (slug = ? OR slug = ?) AND status = 'published'");
+            $underscore_slug = str_replace('-', '_', $slug);
+            $stmt->execute([$slug, $underscore_slug]);
             return $stmt->fetchColumn() > 0;
         } catch (Exception $e) {
             return false;

@@ -3,6 +3,16 @@ require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../includes/functions.php';
 
+// Ensure createSlug function is available
+if (!function_exists('createSlug')) {
+    function createSlug($text) {
+        $text = strtolower($text);
+        $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
+        $text = preg_replace('/[\s-]+/', '-', $text);
+        return trim($text, '-');
+    }
+}
+
 $page_title = 'Edit Article';
 require_login();
 
@@ -14,13 +24,31 @@ if (!is_editor()) {
 
 $article_id = (int)($_GET['id'] ?? 0);
 $slug = $_GET['slug'] ?? '';
+$title = $_GET['title'] ?? '';
 
-// Handle both ID and slug parameters
+// Handle ID, slug, or title parameters
 if ($article_id) {
     // Get article by ID
     $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE id = ?");
     $stmt->execute([$article_id]);
     $article = $stmt->fetch();
+} elseif ($title) {
+    // Handle namespace titles (e.g., Template:Colored_box)
+    require_once '../../includes/wiki_functions.php';
+    $parsed_title = parse_wiki_title($title);
+    $namespace = $parsed_title['namespace'];
+    $article_title = $parsed_title['title'];
+    
+    // Create slug from namespace and title (preserve case for namespace)
+    $slug = $namespace['name'] . ':' . createSlug($article_title);
+    
+    // Get article by slug
+    $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE slug = ?");
+    $stmt->execute([$slug]);
+    $article = $stmt->fetch();
+    if ($article) {
+        $article_id = $article['id'];
+    }
 } elseif ($slug) {
     // Get article by slug
     $stmt = $pdo->prepare("SELECT * FROM wiki_articles WHERE slug = ?");
@@ -30,7 +58,7 @@ if ($article_id) {
         $article_id = $article['id'];
     }
 } else {
-    show_message('Invalid article ID or slug.', 'error');
+    show_message('Invalid article ID, slug, or title.', 'error');
     redirect_with_return_url('/admin');
 }
 

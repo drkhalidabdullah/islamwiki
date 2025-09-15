@@ -560,24 +560,27 @@
 
 /* Wiki Link Styles */
 .wiki-link {
-    color: #007bff;
-    text-decoration: none;
-    border-bottom: 1px dotted #007bff;
+    color: #007bff !important;
+    text-decoration: none !important;
+    border-bottom: none !important;
     padding: 0 2px;
+    transition: all 0.2s ease;
 }
 
 .wiki-link:hover {
     background: #e3f2fd;
-    text-decoration: none;
+    text-decoration: none !important;
+    border-bottom: 1px dotted #007bff !important;
 }
 
 .wiki-link.missing {
-    color: #dc3545;
-    border-bottom-color: #dc3545;
+    color: #dc3545 !important;
+    border-bottom: none !important;
 }
 
 .wiki-link.missing:hover {
     background: #f8d7da;
+    border-bottom: 1px dotted #dc3545 !important;
 }
 
 /* Help Modal */

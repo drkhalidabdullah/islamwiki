@@ -2,7 +2,7 @@
 <?php
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
-require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
+require_once __DIR__ . '/../../includes/markdown/SecureWikiParser.php';
 
 // Check maintenance mode
 check_maintenance_mode();
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'] ?? '';
     
     if (!empty($content)) {
-        $parser = new MarkdownParser('');
+        $parser = new SecureWikiParser('');
         $html = $parser->parse($content);
         echo $html;
     } else {

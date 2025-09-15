@@ -3,6 +3,18 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
+require_once __DIR__ . '/../../includes/markdown/AdvancedWikiParser.php';
+require_once __DIR__ . '/../../includes/markdown/SecureWikiParser.php';
+
+// Ensure createSlug function is available
+if (!function_exists('createSlug')) {
+    function createSlug($text) {
+        $text = strtolower($text);
+        $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
+        $text = preg_replace('/[\s-]+/', '-', $text);
+        return trim($text, '-');
+    }
+}
 
 // Check maintenance mode
 check_maintenance_mode();
@@ -22,8 +34,17 @@ if (!defined('DEVELOPMENT_MODE') || !DEVELOPMENT_MODE) {
 $page_title = 'Article';
 
 $slug = $_GET['slug'] ?? '';
+$title = $_GET['title'] ?? '';
 
-if (!$slug) {
+// Handle namespace titles (e.g., Template:Colored_box)
+if ($title) {
+    $parsed_title = parse_wiki_title($title);
+    $namespace = $parsed_title['namespace'];
+    $article_title = $parsed_title['title'];
+    
+    // Create slug from namespace and title (preserve case for namespace)
+    $slug = $namespace['name'] . ':' . createSlug($article_title);
+} elseif (!$slug) {
     redirect('index.php');
 }
 
@@ -35,12 +56,14 @@ if ($redirect) {
     exit;
 }
 
-// Get article
+// Get article (handle both regular articles and namespace articles)
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, cc.name as category_name, cc.slug as category_slug 
+    SELECT wa.*, u.username, u.display_name, cc.name as category_name, cc.slug as category_slug,
+           wn.name as namespace_name, wn.display_name as namespace_display_name
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     LEFT JOIN content_categories cc ON wa.category_id = cc.id 
+    LEFT JOIN wiki_namespaces wn ON wa.namespace_id = wn.id
     WHERE (wa.slug = ? OR wa.slug = ?) 
     AND (wa.status = 'published' OR (wa.status = 'draft' AND (wa.author_id = ? OR ?)))
 ");
@@ -48,6 +71,12 @@ $stmt->execute([$slug, ucfirst($slug), $_SESSION['user_id'] ?? 0, is_editor() ? 
 $article = $stmt->fetch();
 
 if (!$article) {
+    // Check if this is a template namespace request
+    if ($title && strpos($title, 'Template:') === 0) {
+        $template_name = substr($title, 9); // Remove "Template:" prefix
+        redirect("/pages/wiki/create_template.php?name=" . urlencode($template_name));
+    }
+    
     redirect("not_found.php?slug=" . urlencode($slug) . "&title=" . urlencode(ucfirst(str_replace('-', ' ', $slug))));
 }
 
@@ -58,8 +87,12 @@ $stmt->execute([$article['id']]);
 $page_title = $article['title'];
 
 // Parse markdown content with enhanced wiki features
-$parser = new EnhancedMarkdownParser('');
+$parser = new SecureWikiParser('');
 $parsed_content = $parser->parse($article['content']);
+
+// Set global variables for magic words
+$GLOBALS['current_page_name'] = $article['title'];
+$GLOBALS['site_name'] = get_site_name();
 
 // Get talk page status
 $talk_page = get_talk_page($article['id']);

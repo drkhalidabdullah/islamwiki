@@ -3,7 +3,15 @@ RewriteEngine On
 # Wiki preview (must come before article rules)
 RewriteRule ^wiki/preview/?$ /modules/wiki/preview.php [L,QSA]
 
-# Wiki pretty URLs
+# Template pages - must come before general namespace rule
+# /wiki/Template:Title -> /modules/wiki/template.php?title=Template:Title
+# /wiki/Template:Title%20with%20spaces -> /modules/wiki/template.php?title=Template:Title with spaces
+RewriteRule ^wiki/Template:([a-zA-Z0-9\-_\s%20]+)/?$ /modules/wiki/template.php?title=Template:$1 [L,QSA,B]
+
+# Wiki pretty URLs with namespace support
+# /wiki/Namespace:Title -> /modules/wiki/article.php?title=Namespace:Title
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+):([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?title=$1:$2 [L,QSA]
+
 # /wiki/article-name -> /modules/wiki/article.php?slug=article-name
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
 
@@ -15,6 +23,13 @@ RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/talk/?$ /modules/wiki/talk.php?slug=$1 [L,QS
 
 # /wiki/article-name/edit -> /pages/wiki/edit_article.php?slug=article-name
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/edit/?$ /pages/wiki/edit_article.php?slug=$1 [L,QSA]
+
+# /wiki/Template:Title/edit -> /pages/wiki/edit_template.php?title=Template:Title
+# /wiki/Template:Title%20with%20spaces/edit -> /pages/wiki/edit_template.php?title=Template:Title with spaces
+RewriteRule ^wiki/Template:([a-zA-Z0-9\-_\s%20]+)/edit/?$ /pages/wiki/edit_template.php?title=Template:$1 [L,QSA,B]
+
+# /wiki/Namespace:Title/edit -> /pages/wiki/edit_article.php?title=Namespace:Title
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+):([a-zA-Z0-9\-_]+)/edit/?$ /pages/wiki/edit_article.php?title=$1:$2 [L,QSA]
 
 # Special pages
 RewriteRule ^wiki/special/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/special/$1.php [L,QSA]
@@ -29,6 +44,7 @@ RewriteRule ^wiki/?$ /wiki/Main_Page [R=301,L]
 RewriteRule ^wiki/upload/?$ /pages/wiki/upload_file.php [L,QSA]
 RewriteRule ^wiki/manage/redirects/?$ /pages/wiki/manage_redirects.php [L,QSA]
 RewriteRule ^wiki/manage/files/?$ /pages/wiki/manage_files.php [L,QSA]
+RewriteRule ^wiki/manage/templates/?$ /pages/wiki/manage_templates.php [L,QSA]
 
 # Maintenance page
 RewriteRule ^maintenance/?$ /maintenance.php [L,QSA]

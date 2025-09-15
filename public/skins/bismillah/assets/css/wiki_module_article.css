@@ -501,25 +501,28 @@
 
 .article-content a.missing-link,
 .article-content a.wiki-link.missing {
-    color: #dc3545;
-    border-bottom: 1px dashed #dc3545;
+    color: #dc3545 !important;
+    border-bottom: none !important;
+    transition: all 0.2s ease;
 }
 
 .article-content a.missing-link:hover,
 .article-content a.wiki-link.missing:hover {
-    color: #a71e2a;
-    border-bottom-color: #a71e2a;
+    color: #a71e2a !important;
+    border-bottom: 1px dotted #dc3545 !important;
+    background: #f8d7da;
 }
 
 .article-content a.wiki-link {
-    color: #007bff;
-    border-bottom: 1px solid transparent;
-    transition: all 0.3s;
+    color: #007bff !important;
+    border-bottom: none !important;
+    transition: all 0.2s ease;
 }
 
 .article-content a.wiki-link:hover {
-    color: #0056b3;
-    border-bottom-color: #0056b3;
+    color: #0056b3 !important;
+    border-bottom: 1px dotted #007bff !important;
+    background: #e3f2fd;
 }
 
 /* Category styling */

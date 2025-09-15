@@ -19,7 +19,7 @@ function is_logged_in() {
 function require_login() {
     if (!is_logged_in()) {
         // Store current URL as return URL
-        $current_url = $_SERVER['REQUEST_URI'];
+        $current_url = $_SERVER['REQUEST_URI'] ?? '/';
         $_SESSION['return_url'] = $current_url;
         
         header("Location: /login");

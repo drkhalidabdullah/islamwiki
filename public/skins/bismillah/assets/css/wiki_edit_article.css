@@ -1,7 +1,25 @@
-.article-editor {
-    max-width: 1200px;
-    margin: 0 auto;
+/* Ensure full width for edit article */
+.main-content .article-editor {
+    max-width: 100% !important;
+    margin: 0 !important;
     padding: 2rem;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.article-editor {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Override any container constraints */
+body .main-content .article-editor {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
 }
 
 .editor-header {
@@ -28,6 +46,8 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 100%;
 }
 
 .form-row {
