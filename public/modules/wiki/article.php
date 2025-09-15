@@ -421,6 +421,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     <?php endif; ?>
     <?php endif; ?>
 
+    <!-- Footer -->
+    <?php include_once '/var/www/html/public/includes/footer.php'; ?>
+
 <script>
 // Dropdown functionality
 function toggleDropdown(button, event) {
