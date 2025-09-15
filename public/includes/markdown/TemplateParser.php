@@ -3,10 +3,10 @@
 require_once __DIR__ . '/../wiki_functions.php';
 
 /**
- * Advanced Template Parser with MediaWiki-style features
+ * Template Parser with MediaWiki-style features
  * Supports named parameters, conditional logic, and template inheritance
  */
-class AdvancedTemplateParser {
+class TemplateParser {
     
     private $pdo;
     private $template_cache = [];
@@ -29,6 +29,12 @@ class AdvancedTemplateParser {
         $this->recursion_depth++;
         
         try {
+            // Handle special TOC limit template
+            if (strtolower($template_name) === 'toc limit') {
+                $limit = isset($parameters['limit']) ? (int)$parameters['limit'] : 0;
+                return '<!-- TOC_LIMIT:' . $limit . ' -->';
+            }
+            
             $template = $this->getTemplate($template_name);
             if (!$template) {
                 return "{{Template not found: $template_name}}";

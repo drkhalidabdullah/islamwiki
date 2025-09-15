@@ -3,8 +3,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
-require_once __DIR__ . '/../../includes/markdown/AdvancedWikiParser.php';
-require_once __DIR__ . '/../../includes/markdown/SecureWikiParser.php';
+require_once __DIR__ . '/../../includes/markdown/WikiParser.php';
 
 // Ensure createSlug function is available
 if (!function_exists('createSlug')) {
@@ -131,7 +130,7 @@ include '../../includes/header.php';
                 <?php if ($template['documentation']): ?>
                     <div class="template-doc-content">
                         <?php
-                        $parser = new SecureWikiParser('');
+                        $parser = new WikiParser('');
                         echo $parser->parse($template['documentation']);
                         ?>
                     </div>

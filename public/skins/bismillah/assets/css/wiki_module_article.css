@@ -5,11 +5,15 @@
 
 .article-header-top {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 0.75rem 0;
     border-bottom: 2px solid #f3f4f6;
     position: relative;
+}
+
+.article-header-top.with-title {
+    justify-content: space-between;
 }
 
 .article-header-top::after {
@@ -486,15 +490,15 @@
     background: #f8f9fa;
 }
 
-/* Wiki link styling */
-.article-content a {
+/* Wiki link styling - exclude wiki links from general styling */
+.article-content a:not(.wiki-link) {
     color: #007bff;
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: all 0.3s;
 }
 
-.article-content a:hover {
+.article-content a:not(.wiki-link):hover {
     color: #0056b3;
     border-bottom-color: #0056b3;
 }
@@ -563,6 +567,18 @@
     min-width: 900px;
     position: static !important; /* Don't create stacking context that interferes with sticky */
     overflow: visible !important; /* Allow sticky elements to work properly */
+}
+
+/* Two-column layout when no TOC: 1fr | 250px */
+.wiki-layout:has(.wiki-main-content.no-toc) {
+    grid-template-columns: 1fr 250px !important;
+    min-width: 600px !important;
+}
+
+/* Fallback for browsers that don't support :has() */
+.wiki-layout.no-toc {
+    grid-template-columns: 1fr 250px !important;
+    min-width: 600px !important;
 }
 
 /* Left Sidebar: Table of Contents */
@@ -853,12 +869,20 @@
         grid-template-columns: 220px 1fr 220px;
         gap: 1.5rem;
     }
+    
+    .wiki-layout.no-toc {
+        grid-template-columns: 1fr 220px;
+    }
 }
 
 @media (max-width: 992px) {
     .wiki-layout {
         grid-template-columns: 200px 1fr 200px;
         gap: 1rem;
+    }
+    
+    .wiki-layout.no-toc {
+        grid-template-columns: 1fr 200px;
     }
     
     .wiki-toc,
@@ -1153,4 +1177,5 @@
     gap: 1rem;
     justify-content: flex-end;
 }
+
 

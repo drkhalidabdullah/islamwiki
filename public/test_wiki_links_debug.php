@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/markdown/AdvancedTemplateParser.php';
+require_once __DIR__ . '/includes/markdown/TemplateParser.php';
 
 // Test the parseWikiLinks method directly
 $content = "* [[The Foundations of Islam (Wahhaab)|The Foundations of Islam]]";

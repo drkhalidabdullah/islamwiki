@@ -15,7 +15,7 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
-    max-width: 1400px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 2rem;
     min-height: calc(100vh - 60px);
@@ -583,6 +583,365 @@
     border-bottom: 1px dotted #dc3545 !important;
 }
 
+/* Checkbox items - standalone elements with indentation support */
+.article-content .checkbox-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0.5rem 0 !important;
+    padding: 0 !important;
+}
+
+/* Nested checkbox indentation levels */
+.article-content .checkbox-level-2 {
+    margin-left: 1.5rem !important;
+}
+
+.article-content .checkbox-level-3 {
+    margin-left: 3rem !important;
+}
+
+.article-content .checkbox-level-4 {
+    margin-left: 4.5rem !important;
+}
+
+.article-content .checkbox-level-5 {
+    margin-left: 6rem !important;
+}
+
+/* Numbered lists - decimal numbers at all levels */
+.article-content ol:not(.letter-list) {
+    list-style-type: decimal;
+}
+
+.article-content ol:not(.letter-list) ol {
+    list-style-type: decimal;
+}
+
+.article-content ol:not(.letter-list) ol ol {
+    list-style-type: decimal;
+}
+
+.article-content ol:not(.letter-list) ol ol ol {
+    list-style-type: decimal;
+}
+
+/* Letter lists - start with lowercase letters */
+.article-content ol.letter-list {
+    list-style-type: lower-alpha;
+}
+
+.article-content ol.letter-list ol {
+    list-style-type: lower-roman;
+}
+
+.article-content ol.letter-list ol ol {
+    list-style-type: decimal;
+}
+
+.article-content ol.letter-list ol ol ol {
+    list-style-type: lower-alpha;
+}
+
+/* Article Actions Dropdown */
+.article-actions-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #8e8e93;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+}
+
+.dropdown-toggle:hover {
+    color: #1d1d1f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-toggle:hover::before {
+    opacity: 1;
+}
+
+.dropdown-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-toggle .three-dots {
+    font-size: 16px;
+    font-weight: 600;
+    color: #8e8e93;
+    line-height: 1;
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.dropdown-toggle:hover .three-dots {
+    color: #1d1d1f;
+    transform: scale(1.15) rotate(90deg);
+}
+
+.dropdown-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.article-actions-dropdown .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 12px !important;
+    background: white !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    min-width: 240px !important;
+    z-index: 9999 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-8px) scale(0.95) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    margin-top: 6px !important;
+    display: block !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    overflow: hidden !important;
+}
+
+/* Force the right positioning with maximum specificity */
+#articleDropdown {
+    right: 12px !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    transform: translateY(-8px) scale(0.95) !important;
+    width: 240px !important;
+}
+
+#articleDropdown.show {
+    transform: translateY(0) scale(1) !important;
+}
+
+.article-actions-dropdown .dropdown-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+.dropdown-section {
+    padding: 8px 0;
+}
+
+.dropdown-section:not(:last-child) {
+    border-bottom: 1px solid #f1f3f4;
+    margin-bottom: 8px;
+}
+
+.dropdown-section-title {
+    padding: 8px 20px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 36px 16px 24px;
+    color: #1d1d1f;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 10px;
+    margin: 4px 12px 4px 12px;
+    position: relative;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1976d2;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+    text-decoration: none;
+    border-left: 3px solid #1976d2;
+}
+
+.dropdown-item.danger {
+    color: #dc2626;
+}
+
+.dropdown-item.danger:hover {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #d32f2f;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.15);
+    border-left: 3px solid #d32f2f;
+}
+
+/* Ensure danger items don't have button styling */
+.dropdown-item.danger {
+    border: none !important;
+    background: none !important;
+    padding: 16px 36px 16px 24px !important;
+    margin: 4px 12px 4px 12px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: left !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.dropdown-item i {
+    margin-right: 14px;
+    width: 18px;
+    text-align: center;
+    font-size: 15px;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover i {
+    opacity: 1;
+    transform: scale(1.15);
+    color: inherit;
+}
+
+
+/* Table of Contents */
+.wiki-toc {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    float: right;
+    width: 300px;
+    max-width: 100%;
+    font-size: 0.9rem;
+}
+
+.toc-header h2 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.toc-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-list ul {
+    list-style: none;
+    padding-left: 1rem;
+    margin: 0;
+}
+
+.toc-list li {
+    margin: 0.25rem 0;
+    line-height: 1.4;
+}
+
+.toc-list a {
+    color: #007bff;
+    text-decoration: none;
+    display: block;
+    padding: 0.125rem 0;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.toc-list a:hover {
+    background: #e3f2fd;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.toc-level-1 a {
+    font-weight: 600;
+}
+
+.toc-level-2 a {
+    font-weight: 500;
+    padding-left: 0.5rem;
+}
+
+.toc-level-3 a {
+    padding-left: 1rem;
+}
+
+.toc-level-4 a {
+    padding-left: 1.5rem;
+}
+
+.toc-level-5 a {
+    padding-left: 2rem;
+}
+
+.toc-level-6 a {
+    padding-left: 2.5rem;
+}
+
+/* Clear float after TOC */
+.wiki-toc::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 /* Help Modal */
 .help-modal {
     position: fixed;
@@ -683,7 +1042,7 @@
 
 /* Wiki Main Page Styles */
 .wiki-main-page {
-    max-width: 1200px;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 0 1rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Liberation Sans', sans-serif;

@@ -23,7 +23,7 @@ class MarkdownParser {
     /**
      * Parse wiki links in the format [[Page Name]] or [[Page Name|Display Text]]
      */
-    private function parseWikiLinks($content) {
+    protected function parseWikiLinks($content) {
         // Pattern to match [[Page Name]] or [[Page Name|Display Text]]
         $pattern = '/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/';
         
@@ -51,7 +51,7 @@ class MarkdownParser {
     /**
      * Create URL-friendly slug from page name
      */
-    private function createSlug($text) {
+    protected function createSlug($text) {
         // Capitalize first letter for consistency
         $text = strtolower($text);
         $text = ucfirst(trim($text));
@@ -70,7 +70,7 @@ class MarkdownParser {
     /**
      * Check if a wiki page exists (simplified version)
      */
-    private function pageExists($slug) {
+    protected function pageExists($slug) {
         global $pdo;
         
         if (!$pdo) return false;
@@ -90,10 +90,13 @@ class MarkdownParser {
      * Parse standard markdown syntax
      */
     private function parseMarkdown($content) {
-        // Headers (skip H1 since it's already in the page header)
-        $content = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $content);
-        $content = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $content);
-        $content = preg_replace('/^# (.*$)/m', '<h2>$1</h2>', $content); // Convert H1 to H2
+        // Headers (skip H1 since it's already in the page header) - allow characters immediately after #
+        $content = preg_replace('/^###(\s*)(.*$)/m', '<h3>$2</h3>', $content);
+        $content = preg_replace('/^##(\s*)(.*$)/m', '<h2>$2</h2>', $content);
+        $content = preg_replace('/^#(\s*)(.*$)/m', '<h2>$2</h2>', $content); // Convert H1 to H2
+        
+        // Lists - handle nested unordered and ordered lists (must be before bold/italic)
+        $content = $this->parseLists($content);
         
         // Bold and italic
         $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
@@ -111,57 +114,6 @@ class MarkdownParser {
         
         // Horizontal rules
         $content = preg_replace('/^---$/m', '<hr>', $content);
-        
-        // Lists - handle both unordered and ordered lists
-        $lines = explode("\n", $content);
-        $in_list = false;
-        $list_type = '';
-        $result = [];
-        
-        foreach ($lines as $line) {
-            $trimmed = trim($line);
-            
-            // Check for unordered list item
-            if (preg_match('/^\* (.+)$/', $trimmed, $matches)) {
-                if (!$in_list || $list_type !== 'ul') {
-                    if ($in_list) {
-                        $result[] = '</' . $list_type . '>';
-                    }
-                    $result[] = '<ul>';
-                    $in_list = true;
-                    $list_type = 'ul';
-                }
-                $result[] = '<li>' . $matches[1] . '</li>';
-            }
-            // Check for ordered list item
-            elseif (preg_match('/^(\d+)\. (.+)$/', $trimmed, $matches)) {
-                if (!$in_list || $list_type !== 'ol') {
-                    if ($in_list) {
-                        $result[] = '</' . $list_type . '>';
-                    }
-                    $result[] = '<ol>';
-                    $in_list = true;
-                    $list_type = 'ol';
-                }
-                $result[] = '<li>' . $matches[2] . '</li>';
-            }
-            // Non-list line
-            else {
-                if ($in_list) {
-                    $result[] = '</' . $list_type . '>';
-                    $in_list = false;
-                    $list_type = '';
-                }
-                $result[] = $line;
-            }
-        }
-        
-        // Close any open list
-        if ($in_list) {
-            $result[] = '</' . $list_type . '>';
-        }
-        
-        $content = implode("\n", $result);
         
         // Line breaks - only convert double line breaks to paragraph breaks
         $content = preg_replace('/\n\n/', '</p><p>', $content);
@@ -184,6 +136,122 @@ class MarkdownParser {
         $content = preg_replace('/<\/(h[1-6])>\s*<\/p>/', '</$1>', $content);
         
         return $content;
+    }
+    
+    /**
+     * Parse nested lists with support for multiple levels
+     */
+    private function parseLists($content) {
+        $lines = explode("\n", $content);
+        $result = [];
+        $list_stack = []; // Stack to track nested lists
+        $current_level = 0;
+        
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            
+            // Check for unordered list item (allow characters immediately after *)
+            if (preg_match('/^(\*+)(\s*)(.+)$/', $trimmed, $matches) && !preg_match('/^-\s*\[/', $trimmed)) {
+                $level = strlen($matches[1]); // Count the number of *
+                $content_text = $matches[3];
+                
+                // Adjust list stack to match current level
+                $this->adjustListStack($list_stack, $level, 'ul', $result);
+                
+                // Add the list item
+                $result[] = str_repeat('  ', $level - 1) . '<li>' . $content_text . '</li>';
+                $current_level = $level;
+            }
+            // Check for checkbox list item: - [ ] or - [x] (with optional indentation)
+            elseif (preg_match('/^(\s*)-\s*\[\s*([xX]?)\s*\]\s*(.+)$/', $line, $matches)) {
+                $indent = $matches[1];
+                $is_checked = !empty($matches[2]);
+                $content_text = $matches[3];
+                
+                // Calculate level based on indentation (4 spaces = 1 level)
+                $level = strlen($indent) / 4 + 1;
+                
+                // Close any open lists before adding checkbox
+                while (!empty($list_stack)) {
+                    $list_info = array_pop($list_stack);
+                    $result[] = str_repeat('  ', $list_info['level'] - 1) . '</' . $list_info['type'] . '>';
+                }
+                
+                // Add the checkbox as a standalone element with indentation
+                $checkbox = $is_checked ? '<input type="checkbox" checked disabled>' : '<input type="checkbox" disabled>';
+                $indent_spaces = str_repeat('  ', $level - 1);
+                $result[] = $indent_spaces . '<div class="checkbox-item checkbox-level-' . $level . '">' . $checkbox . ' ' . $content_text . '</div>';
+                $current_level = 0;
+            }
+            // Check for ordered list item (with optional indentation)
+            elseif (preg_match('/^(\s*)(\d+)\. (.+)$/', $line, $matches)) {
+                $indent = $matches[1];
+                $number = $matches[2];
+                $content_text = $matches[3];
+                
+                // Calculate level based on indentation (4 spaces = 1 level)
+                $level = strlen($indent) / 4 + 1;
+                
+                // Adjust list stack to match current level
+                $this->adjustListStack($list_stack, $level, 'ol', $result);
+                
+                // Add the list item
+                $result[] = str_repeat('  ', $level - 1) . '<li>' . $content_text . '</li>';
+                $current_level = $level;
+            }
+            // Check for letter list item (a., b., c., i., ii., etc.) (with optional indentation)
+            elseif (preg_match('/^(\s*)([a-z]+)\. (.+)$/', $line, $matches)) {
+                $indent = $matches[1];
+                $letter = $matches[2];
+                $content_text = $matches[3];
+                
+                // Calculate level based on indentation (4 spaces = 1 level)
+                $level = strlen($indent) / 4 + 1;
+                
+                // Adjust list stack to match current level with letter list type
+                $this->adjustListStack($list_stack, $level, 'ol', $result, 'letter-list');
+                
+                // Add the list item
+                $result[] = str_repeat('  ', $level - 1) . '<li>' . $content_text . '</li>';
+                $current_level = $level;
+            }
+            // Non-list line
+            else {
+                // Close all open lists
+                while (!empty($list_stack)) {
+                    $list_info = array_pop($list_stack);
+                    $result[] = str_repeat('  ', $list_info['level'] - 1) . '</' . $list_info['type'] . '>';
+                }
+                $current_level = 0;
+                $result[] = $line;
+            }
+        }
+        
+        // Close any remaining open lists
+        while (!empty($list_stack)) {
+            $list_info = array_pop($list_stack);
+            $result[] = str_repeat('  ', $list_info['level'] - 1) . '</' . $list_info['type'] . '>';
+        }
+        
+        return implode("\n", $result);
+    }
+    
+    /**
+     * Adjust the list stack to match the required level and type
+     */
+    private function adjustListStack(&$list_stack, $level, $type, &$result, $class = '') {
+        // Close lists that are deeper than current level
+        while (!empty($list_stack) && $list_stack[count($list_stack) - 1]['level'] > $level) {
+            $list_info = array_pop($list_stack);
+            $result[] = str_repeat('  ', $list_info['level'] - 1) . '</' . $list_info['type'] . '>';
+        }
+        
+        // If we need to go deeper, open new lists
+        if (empty($list_stack) || $list_stack[count($list_stack) - 1]['level'] < $level) {
+            $list_stack[] = ['level' => $level, 'type' => $type, 'class' => $class];
+            $class_attr = $class ? ' class="' . $class . '"' : '';
+            $result[] = str_repeat('  ', $level - 1) . '<' . $type . $class_attr . '>';
+        }
     }
     
     /**

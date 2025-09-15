@@ -2,7 +2,7 @@
 require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once '../../includes/functions.php';
-require_once '../../includes/markdown/AdvancedTemplateParser.php';
+require_once '../../includes/markdown/TemplateParser.php';
 
 $page_title = 'Create Template';
 require_login();
@@ -13,7 +13,7 @@ if (!is_editor()) {
     redirect_with_return_url();
 }
 
-$template_parser = new AdvancedTemplateParser($pdo);
+$template_parser = new TemplateParser($pdo);
 $errors = [];
 $success = '';
 

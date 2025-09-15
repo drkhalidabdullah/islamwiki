@@ -5,9 +5,8 @@
  */
 
 require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/includes/markdown/AdvancedWikiParser.php';
-require_once __DIR__ . '/includes/markdown/SecureWikiParser.php';
-require_once __DIR__ . '/includes/markdown/AdvancedTemplateParser.php';
+require_once __DIR__ . '/includes/markdown/WikiParser.php';
+require_once __DIR__ . '/includes/markdown/TemplateParser.php';
 
 // Test content with various wiki features
 $test_content = '
@@ -102,7 +101,7 @@ echo "<h1>Advanced Wiki Parser Test</h1>";
 echo "<div class='test-section'>";
 echo "<h2 class='test-title'>Test 1: Advanced Wiki Parser</h2>";
 
-$parser = new AdvancedWikiParser();
+$parser = new WikiParser();
 $GLOBALS['current_page_name'] = 'Test Article';
 $GLOBALS['site_name'] = 'IslamWiki Test';
 
@@ -136,7 +135,7 @@ echo "</div>";
 echo "<div class='test-section'>";
 echo "<h2 class='test-title'>Test 2: Secure Wiki Parser</h2>";
 
-$secure_parser = new SecureWikiParser();
+$secure_parser = new WikiParser();
 $secure_content = $secure_parser->parse($test_content);
 
 echo "<h3>Secure Parsed Content:</h3>";
@@ -154,7 +153,7 @@ if (isset($pdo)) {
     echo "<h2 class='test-title'>Test 3: Template Parser</h2>";
     
     try {
-        $template_parser = new AdvancedTemplateParser($pdo);
+        $template_parser = new TemplateParser($pdo);
         
         // Test template parsing
         $template_content = 'Hello {{name|World}}! Today is {{CURRENTYEAR}}.';

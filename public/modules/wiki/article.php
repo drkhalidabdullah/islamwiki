@@ -3,8 +3,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
-require_once __DIR__ . '/../../includes/markdown/AdvancedWikiParser.php';
-require_once __DIR__ . '/../../includes/markdown/SecureWikiParser.php';
+require_once __DIR__ . '/../../includes/markdown/WikiParser.php';
 
 // Ensure createSlug function is available
 if (!function_exists('createSlug')) {
@@ -87,8 +86,11 @@ $stmt->execute([$article['id']]);
 $page_title = $article['title'];
 
 // Parse markdown content with enhanced wiki features
-$parser = new SecureWikiParser('');
+$parser = new WikiParser('');
 $parsed_content = $parser->parse($article['content']);
+
+// Check if NOTITLE is enabled
+$notitle_enabled = $parser->isNotitleEnabled();
 
 // Set global variables for magic words
 $GLOBALS['current_page_name'] = $article['title'];
@@ -112,6 +114,7 @@ include '../../includes/header.php';
 
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_module_article.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki.css">
 <?php
 
 // Check if this is the Main_Page (for potential future use)
@@ -123,8 +126,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <!-- Compact Header Layout -->
             <div class="article-header-compact">
                 <!-- Top Row: Title on left, Tools on right -->
-                <div class="article-header-top">
-                    <h1 class="article-title-compact"><?php echo htmlspecialchars($article['title']); ?></h1>
+                <div class="article-header-top<?php echo !$notitle_enabled ? ' with-title' : ''; ?>">
+                    <?php if (!$notitle_enabled): ?>
+                        <h1 class="article-title-compact"><?php echo htmlspecialchars($article['title']); ?></h1>
+                    <?php endif; ?>
                     <div class="article-actions-compact">
                         <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
                             <i class="fas fa-history"></i>
@@ -146,10 +151,56 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="btn-icon-compact" title="Edit Article">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="../delete_article.php?id=<?php echo $article['id']; ?>" class="btn-icon-compact btn-danger" title="Delete Article" onclick="return confirm('Are you sure you want to delete this article?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
                         <?php endif; ?>
+                        
+                        <!-- Dropdown for testing - show for all users temporarily -->
+                        <div class="article-actions-dropdown">
+                            <button class="dropdown-toggle" onclick="toggleDropdown(this, event)" title="More actions" onmouseover="this.querySelector('.three-dots').textContent='⋮'" onmouseout="this.querySelector('.three-dots').textContent='⋯'">
+                                <span class="three-dots">⋯</span>
+                            </button>
+                                <div class="dropdown-menu" id="articleDropdown">
+                                <div class="dropdown-section">
+                                    <div class="dropdown-section-title">More</div>
+                                    <?php if (is_logged_in() && is_editor()): ?>
+                                        <a href="#" class="dropdown-item danger" onclick="deleteArticle(<?php echo $article['id']; ?>)" title="Delete article (Alt + Shift + D)">
+                                            <i class="fas fa-trash"></i>
+                                            Delete
+                                        </a>
+                                        <a href="#" class="dropdown-item" onclick="moveArticle()" title="Move article (Alt + Shift + M)">
+                                            <i class="fas fa-arrows-alt"></i>
+                                            Move
+                                        </a>
+                                        <a href="#" class="dropdown-item" onclick="changeProtection()" title="Change protection (Alt + Shift + =)">
+                                            <i class="fas fa-lock-open"></i>
+                                            Change protection
+                                        </a>
+                                    <?php endif; ?>
+                                    <a href="#" class="dropdown-item" onclick="unwatchArticle()" title="Unwatch (Alt + Shift + U)">
+                                        <i class="fas fa-star"></i>
+                                        Unwatch
+                                    </a>
+                                    <a href="#" class="dropdown-item" onclick="purgeCache()" title="Purge cache (Alt + Shift + P)">
+                                        <i class="fas fa-sync-alt"></i>
+                                        Purge cache
+                                    </a>
+                                </div>
+                                <div class="dropdown-section">
+                                    <div class="dropdown-section-title">Tools</div>
+                                    <a href="/wiki/special/what-links-here?target=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="What links here (Alt + Shift + J)">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        What links here
+                                    </a>
+                                    <a href="/wiki/special/recent-changes?target=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="Related changes (Alt + Shift + K)">
+                                        <i class="fas fa-history"></i>
+                                        Related changes
+                                    </a>
+                                    <a href="/wiki/special/page-info?title=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="Page information (Alt + Shift + I)">
+                                        <i class="fas fa-info-circle"></i>
+                                        Page information
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -182,8 +233,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
         <!-- Three-column layout: 15% | 70% | 15% -->
         <div class="article-page">
             <div class="article-container">
-                <div class="wiki-layout">
+                <div class="wiki-layout<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 4 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
             <!-- Left Sidebar: Table of Contents -->
+            <?php if ($parser->isTocEnabled() && (count($parser->getHeadings()) >= 4 || $parser->isTocForced())): ?>
             <aside class="wiki-toc">
                 <div class="toc-header">
                     <h3>Contents</h3>
@@ -197,9 +249,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     </div>
                 </div>
             </aside>
+            <?php endif; ?>
             
             <!-- Main Content Area -->
-            <main class="wiki-main-content">
+            <main class="wiki-main-content<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 4 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
                 <div class="article-content">
                     <?php echo $parsed_content; ?>
                 </div>
@@ -367,4 +420,195 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     </div>
     <?php endif; ?>
     <?php endif; ?>
+
+<script>
+// Dropdown functionality
+function toggleDropdown(button, event) {
+    // Prevent event propagation to avoid immediate closing
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    console.log('Dropdown button clicked!');
+    const dropdown = button.nextElementSibling;
+    const isOpen = dropdown.classList.contains('show');
+    
+    console.log('Dropdown element:', dropdown);
+    console.log('Is open:', isOpen);
+    console.log('Dropdown classes before:', dropdown.className);
+    
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+        if (menu !== dropdown) {
+            menu.classList.remove('show');
+            menu.style.opacity = '0';
+            menu.style.visibility = 'hidden';
+            menu.style.transform = 'translateY(-8px) scale(0.95)';
+        }
+    });
+    
+    // Toggle current dropdown
+    if (isOpen) {
+        dropdown.classList.remove('show');
+        dropdown.style.opacity = '0';
+        dropdown.style.visibility = 'hidden';
+        dropdown.style.transform = 'translateY(-8px) scale(0.95)';
+        console.log('Closing dropdown');
+    } else {
+        dropdown.classList.add('show');
+        dropdown.style.opacity = '1';
+        dropdown.style.visibility = 'visible';
+        dropdown.style.transform = 'translateY(0) scale(1)';
+        console.log('Opening dropdown');
+    }
+    
+    console.log('Dropdown classes after:', dropdown.className);
+    console.log('Dropdown computed style:', window.getComputedStyle(dropdown).opacity);
+}
+
+// Close dropdown when clicking outside or pressing ESC
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+        menu.classList.remove('show');
+        menu.style.opacity = '0';
+        menu.style.visibility = 'hidden';
+        menu.style.transform = 'translateY(-8px) scale(0.95)';
+    });
+}
+
+// Click outside to close
+document.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.article-actions-dropdown');
+    const isOpen = dropdown && dropdown.querySelector('.dropdown-menu.show');
+    
+    console.log('Click detected on:', event.target);
+    console.log('Dropdown element:', dropdown);
+    console.log('Is dropdown open:', !!isOpen);
+    console.log('Dropdown contains target:', dropdown && dropdown.contains(event.target));
+    
+    if (dropdown && isOpen && !dropdown.contains(event.target)) {
+        console.log('Closing dropdown - clicked outside');
+        closeAllDropdowns();
+    }
+});
+
+// Delete article function
+function deleteArticle(articleId) {
+    if (confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
+        window.location.href = '../delete_article.php?id=' + articleId;
+    }
+}
+
+// Placeholder functions for other actions
+function moveArticle() {
+    alert('Move article functionality coming soon!');
+}
+
+function changeProtection() {
+    alert('Change protection functionality coming soon!');
+}
+
+function unwatchArticle() {
+    alert('Unwatch functionality coming soon!');
+}
+
+function purgeCache() {
+    alert('Purge cache functionality coming soon!');
+}
+
+// Combined keyboard shortcuts and ESC key handler
+document.addEventListener('keydown', function(event) {
+    // ESC key to close dropdown
+    if (event.key === 'Escape') {
+        console.log('ESC key pressed - closing dropdown');
+        closeAllDropdowns();
+        return;
+    }
+    
+    // Only trigger shortcuts if no input/textarea is focused
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') {
+        return;
+    }
+    
+    // Debug: Log key combinations
+    if (event.altKey && event.shiftKey) {
+        console.log('Alt + Shift + ' + event.code + ' pressed');
+    }
+    
+    // Alt + Shift + D for delete
+    if (event.altKey && event.shiftKey && event.code === 'KeyD') {
+        event.preventDefault();
+        console.log('Delete shortcut triggered');
+        const deleteButton = document.querySelector('.dropdown-item.danger');
+        if (deleteButton) {
+            deleteButton.click();
+        } else {
+            console.log('Delete button not found');
+        }
+    }
+    
+    // Alt + Shift + M for move
+    if (event.altKey && event.shiftKey && event.code === 'KeyM') {
+        event.preventDefault();
+        const moveButton = document.querySelector('.dropdown-item[onclick="moveArticle()"]');
+        if (moveButton) {
+            moveButton.click();
+        }
+    }
+    
+    // Alt + Shift + = for change protection
+    if (event.altKey && event.shiftKey && event.code === 'Equal') {
+        event.preventDefault();
+        const protectionButton = document.querySelector('.dropdown-item[onclick="changeProtection()"]');
+        if (protectionButton) {
+            protectionButton.click();
+        }
+    }
+    
+    // Alt + Shift + U for unwatch
+    if (event.altKey && event.shiftKey && event.code === 'KeyU') {
+        event.preventDefault();
+        const unwatchButton = document.querySelector('.dropdown-item[onclick="unwatchArticle()"]');
+        if (unwatchButton) {
+            unwatchButton.click();
+        }
+    }
+    
+    // Alt + Shift + P for purge cache
+    if (event.altKey && event.shiftKey && event.code === 'KeyP') {
+        event.preventDefault();
+        const purgeButton = document.querySelector('.dropdown-item[onclick="purgeCache()"]');
+        if (purgeButton) {
+            purgeButton.click();
+        }
+    }
+    
+    // Alt + Shift + J for what links here
+    if (event.altKey && event.shiftKey && event.code === 'KeyJ') {
+        event.preventDefault();
+        const whatLinksButton = document.querySelector('a[href*="what-links-here"]');
+        if (whatLinksButton) {
+            whatLinksButton.click();
+        }
+    }
+    
+    // Alt + Shift + K for related changes
+    if (event.altKey && event.shiftKey && event.code === 'KeyK') {
+        event.preventDefault();
+        const relatedChangesButton = document.querySelector('a[href*="recent-changes"]');
+        if (relatedChangesButton) {
+            relatedChangesButton.click();
+        }
+    }
+    
+    // Alt + Shift + I for page information
+    if (event.altKey && event.shiftKey && event.code === 'KeyI') {
+        event.preventDefault();
+        const pageInfoButton = document.querySelector('a[href*="page-info"]');
+        if (pageInfoButton) {
+            pageInfoButton.click();
+        }
+    }
+});
+</script>
 
