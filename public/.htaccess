@@ -66,6 +66,8 @@ RewriteRule ^search/advanced/?$ /search/advanced.php [L,QSA]
 # API endpoints
 RewriteRule ^api/ajax/search_suggestions/?$ /api/ajax/search_suggestions.php [L,QSA]
 RewriteRule ^api/ajax/upload_image/?$ /api/ajax/upload_image.php [L,QSA]
+RewriteRule ^api/ajax/send_message/?$ /api/ajax/send_message.php [L,QSA]
+RewriteRule ^api/ajax/get_messages/?$ /api/ajax/get_messages.php [L,QSA]
 
 # Social pages
 RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]
@@ -75,6 +77,8 @@ RewriteRule ^friends/lists/?$ /modules/friends/lists.php [L,QSA]
 RewriteRule ^friends/all/?$ /modules/friends/all.php [L,QSA]
 RewriteRule ^create_post/?$ /pages/social/create_post.php [L,QSA]
 RewriteRule ^messages/?$ /pages/social/messages.php [L,QSA]
+RewriteRule ^messages/sent/?$ /modules/messages/sent.php [L,QSA]
+RewriteRule ^messages/compose/?$ /modules/messages/compose.php [L,QSA]
 
 # Admin pages
 RewriteRule ^admin/?$ /pages/admin/admin.php [L,QSA]
