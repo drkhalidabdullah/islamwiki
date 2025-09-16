@@ -52,7 +52,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id']]);
 $recent_conversations = $stmt->fetchAll();
 
-// Handle form submission
+// Handle form submission (fallback for non-JS users)
 if ($_POST) {
     $recipient_id = $_POST['recipient_id'] ?? null;
     $message = trim($_POST['message'] ?? '');
@@ -85,6 +85,11 @@ include "../../includes/header.php";
 
 ?>
 <script src="/skins/bismillah/assets/js/social_messages.js"></script>
+<script src="/skins/bismillah/assets/js/messaging.js"></script>
+<script>
+// Set current user ID for messaging system
+window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
+</script>
 <?php
 ?>
 
@@ -178,7 +183,7 @@ include "../../includes/header.php";
                     </div>
                 </div>
 
-                <form method="POST" class="compose-form" id="composeForm">
+                <form method="POST" class="compose-form" id="composeForm" onsubmit="return false;">
                     <div class="compose-recipient">
                         <label for="recipient_id">To:</label>
                         <div class="recipient-selector">
@@ -428,15 +433,64 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Form submission
     composeForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
         if (!recipientId.value) {
-            e.preventDefault();
             alert('Please select a recipient.');
             return;
         }
         
-        // Clear draft on successful send
-        localStorage.removeItem('message_draft');
+        if (!messageTextarea.value.trim()) {
+            alert('Please enter a message.');
+            return;
+        }
+        
+        // Send message via AJAX
+        sendComposeMessage();
     });
+    
+    // Send compose message function
+    async function sendComposeMessage() {
+        const recipientId = document.getElementById('recipient_id').value;
+        const message = document.getElementById('message').value.trim();
+        const subject = document.getElementById('subject').value.trim();
+        
+        try {
+            const response = await fetch('/api/ajax/send_message.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    recipient_id: recipientId,
+                    message: message,
+                    subject: subject
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Clear form
+                composeForm.reset();
+                selectedRecipient.innerHTML = '<span class="placeholder">Select a recipient...</span>';
+                document.querySelectorAll('.recipient-item').forEach(item => item.classList.remove('selected'));
+                charCount.textContent = '0';
+                localStorage.removeItem('message_draft');
+                
+                // Show success message
+                alert('Message sent successfully!');
+                
+                // Redirect to sent messages
+                window.location.href = '/messages/sent';
+            } else {
+                alert('Failed to send message: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message');
+        }
+    }
 });
 </script>
 

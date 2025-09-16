@@ -1,0 +1,41 @@
+RewriteEngine On
+
+# Handle messages routing
+RewriteRule ^messages/sent$ /public/modules/messages/sent.php [L]
+RewriteRule ^messages/compose$ /public/modules/messages/compose.php [L]
+
+# Handle friends routing
+RewriteRule ^friends$ /public/pages/social/friends.php [L]
+RewriteRule ^friends/all$ /public/modules/friends/all.php [L]
+RewriteRule ^friends/requests$ /public/modules/friends/requests.php [L]
+RewriteRule ^friends/suggestions$ /public/modules/friends/suggestions.php [L]
+RewriteRule ^friends/lists$ /public/modules/friends/lists.php [L]
+
+# Handle other social pages
+RewriteRule ^messages$ /public/pages/social/messages.php [L]
+RewriteRule ^create_post$ /public/pages/social/create_post.php [L]
+
+# Handle user pages
+RewriteRule ^user/([^/]+)$ /public/pages/user/profile.php?username=$1 [L]
+RewriteRule ^user/([^/]+)/([^/]+)$ /public/pages/user/$2.php?username=$1 [L]
+
+# Handle wiki pages
+RewriteRule ^wiki$ /public/pages/wiki/index.php [L]
+RewriteRule ^wiki/([^/]+)$ /public/modules/wiki/article.php?title=$1 [L]
+
+# Handle admin pages
+RewriteRule ^admin$ /public/pages/admin/dashboard.php [L]
+RewriteRule ^admin/([^/]+)$ /public/pages/admin/$1.php [L]
+
+# Handle auth pages
+RewriteRule ^login$ /public/pages/auth/login.php [L]
+RewriteRule ^register$ /public/pages/auth/register.php [L]
+RewriteRule ^logout$ /public/logout.php [L]
+
+# Handle search
+RewriteRule ^search$ /public/search/index.php [L]
+
+# Default routing - serve from public directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/$1 [L]

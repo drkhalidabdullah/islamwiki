@@ -4,44 +4,60 @@ require_once '../../includes/functions.php';
 
 header('Content-Type: application/json');
 
+// Check if user is logged in
 if (!is_logged_in()) {
-    echo json_encode(['error' => 'Not logged in']);
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
     exit;
 }
 
 // Check if social features are enabled
 $enable_social = get_system_setting('enable_social', true);
 if (!$enable_social) {
-    echo json_encode(['error' => 'Social features are currently disabled']);
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Social features are disabled']);
     exit;
 }
 
-$count_only = isset($_GET['count_only']) && $_GET['count_only'] == '1';
+$conversation_id = $_GET['conversation_id'] ?? null;
+$last_message_id = $_GET['last_message_id'] ?? 0;
+
+if (!$conversation_id) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Conversation ID is required']);
+    exit;
+}
 
 try {
-    if ($count_only) {
-        // Get unread message count
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM messages WHERE recipient_id = ? AND is_read = 0");
-        $stmt->execute([$_SESSION['user_id']]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        echo json_encode(['count' => (int)$result['count']]);
-    } else {
-        // Get recent messages
-        $stmt = $pdo->prepare("
-            SELECT m.*, u.username, u.display_name 
-            FROM messages m 
-            LEFT JOIN users u ON m.sender_id = u.id 
-            WHERE m.recipient_id = ? 
-            ORDER BY m.created_at DESC 
-            LIMIT 10
-        ");
-        $stmt->execute([$_SESSION['user_id']]);
-        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        echo json_encode(['messages' => $messages]);
-    }
-} catch (Exception $e) {
-    echo json_encode(['error' => 'Database error']);
+    // Get messages for the conversation
+    $stmt = $pdo->prepare("
+        SELECT m.*, u.username, u.display_name, u.avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE ((m.sender_id = ? AND m.recipient_id = ?) 
+               OR (m.sender_id = ? AND m.recipient_id = ?))
+        AND m.id > ?
+        ORDER BY m.created_at ASC
+    ");
+    $stmt->execute([$_SESSION['user_id'], $conversation_id, $conversation_id, $_SESSION['user_id'], $last_message_id]);
+    $messages = $stmt->fetchAll();
+    
+    // Mark messages as read
+    $stmt = $pdo->prepare("
+        UPDATE messages 
+        SET is_read = 1 
+        WHERE sender_id = ? AND recipient_id = ? AND is_read = 0
+    ");
+    $stmt->execute([$conversation_id, $_SESSION['user_id']]);
+    
+    echo json_encode([
+        'success' => true,
+        'messages' => $messages
+    ]);
+    
+} catch (PDOException $e) {
+    error_log("Get messages error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Failed to get messages']);
 }
 ?>

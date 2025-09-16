@@ -67,6 +67,11 @@ include "../../includes/header.php";
 
 ?>
 <script src="/skins/bismillah/assets/js/social_messages.js"></script>
+<script src="/skins/bismillah/assets/js/messaging.js"></script>
+<script>
+// Set current user ID for messaging system
+window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
+</script>
 <?php
 ?>
 
