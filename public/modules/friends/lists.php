@@ -20,6 +20,7 @@ include "../../includes/header.php";;
 
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/social.css">
 <?php
 
 ?>
