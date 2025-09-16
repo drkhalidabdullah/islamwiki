@@ -8,6 +8,40 @@ if (is_logged_in()) {
     $user_roles = get_user_roles($_SESSION['user_id']);
 }
 
+// Function to create sidebar dropdown menus
+function createSidebarDropdown($id, $title, $icon, $items, $isActive = false, $customTrigger = null) {
+    $activeClass = $isActive ? 'active' : '';
+    $specificClass = "sidebar-{$id}";
+    
+    echo "<div class=\"sidebar-dropdown {$specificClass}\">";
+    echo "<div class=\"user-icon-dropdown\">";
+    echo "<a href=\"#\" class=\"sidebar-item user-icon-trigger {$activeClass}\" title=\"{$title}\">";
+    
+    if ($customTrigger) {
+        echo $customTrigger;
+    } else {
+        echo "<i class=\"{$icon}\"></i>";
+    }
+    
+    echo "</a>";
+    echo "<div class=\"user-dropdown-menu\">";
+    
+    foreach ($items as $item) {
+        if (isset($item['divider']) && $item['divider']) {
+            echo "<hr class=\"dropdown-divider\">";
+        } else {
+            echo "<a href=\"{$item['url']}\" class=\"dropdown-item\">";
+            echo "<i class=\"{$item['icon']}\"></i>";
+            echo "<span>{$item['text']}</span>";
+            echo "</a>";
+        }
+    }
+    
+    echo "</div>";
+    echo "</div>";
+    echo "</div>";
+}
+
 // Get feature settings
 $enable_wiki = get_system_setting('enable_wiki', true);
 $enable_social = get_system_setting('enable_social', true);
@@ -139,89 +173,63 @@ if ($toast_message) {
         <div class="sidebar-separator"></div>
         
         <?php if ($enable_social): ?>
-        <!-- Messages Link -->
-        <div class="sidebar-item">
-            <a href="/messages" class="sidebar-item" title="Messages">
-                <i class="fas fa-comments"></i>
-            </a>
-        </div>
+        <!-- Messages Dropdown -->
+        <?php
+        $messagesItems = [
+            ['url' => '/messages', 'icon' => 'fas fa-inbox', 'text' => 'Inbox'],
+            ['url' => '/messages/sent', 'icon' => 'fas fa-paper-plane', 'text' => 'Sent'],
+            ['url' => '/messages/compose', 'icon' => 'fas fa-edit', 'text' => 'Compose']
+        ];
+        $isMessagesActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/messages') === 0;
+        createSidebarDropdown('messages', 'Messages', 'fas fa-comments', $messagesItems, $isMessagesActive);
+        ?>
         
-        <a href="/friends" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0) ? 'active' : ''; ?>" title="Friends">
-            <i class="fas fa-users"></i>
-        </a>
+        <!-- Friends Dropdown -->
+        <?php
+        $friendsItems = [
+            ['url' => '/friends', 'icon' => 'fas fa-users', 'text' => 'All Friends'],
+            ['url' => '/friends/requests', 'icon' => 'fas fa-user-plus', 'text' => 'Friend Requests'],
+            ['url' => '/friends/suggestions', 'icon' => 'fas fa-user-friends', 'text' => 'Suggestions'],
+            ['url' => '/friends/find', 'icon' => 'fas fa-search', 'text' => 'Find Friends']
+        ];
+        $isFriendsActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0;
+        createSidebarDropdown('friends', 'Friends', 'fas fa-users', $friendsItems, $isFriendsActive);
+        ?>
         <?php endif; ?>
         
         <a href="/pages/user/watchlist.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/watchlist') !== false) ? 'active' : ''; ?>" title="My Watchlist">
-            <i class="fas fa-eye"></i>
+<i class="fas fa-eye"></i>
         </a>
-        
-        <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
-            <i class="fas fa-tachometer-alt"></i>
-        </a>
-        
-        <a href="/settings" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/settings') === 0) ? 'active' : ''; ?>" title="Settings">
-            <i class="fas fa-cog"></i>
-        </a>
-        
-        <?php if (is_admin()): ?>
-        <a href="/admin" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin') === 0) ? 'active' : ''; ?>" title="Admin Panel">
-            <i class="fas fa-shield-alt"></i>
-        </a>
-        <?php endif; ?>
         
         <!-- User section at bottom -->
-        <div class="sidebar-user">
-            <div class="user-icon-dropdown">
-                <a href="#" class="sidebar-item user-icon-trigger" title="User Menu">
-                    <img src="/assets/images/default-avatar.png" alt="Profile" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
-                </a>
-                <div class="user-dropdown-menu">
-                    <a href="/user/<?php echo $current_user['username']; ?>" class="dropdown-item">
-                        <i class="fas fa-user"></i>
-                        <span>Profile</span>
-                    </a>
-                    <a href="/dashboard" class="dropdown-item">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="/settings" class="dropdown-item">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                    <?php if (is_admin()): ?>
-                    <a href="/admin" class="dropdown-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Admin Panel</span>
-                    </a>
-                    <?php endif; ?>
-                    <hr class="dropdown-divider">
-                    <a href="/logout" class="dropdown-item">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
-            </div>
-        </div>
+        <?php
+        $userItems = [
+            ['url' => '/user/' . $current_user['username'], 'icon' => 'fas fa-user', 'text' => 'Profile'],
+            ['url' => '/dashboard', 'icon' => 'fas fa-tachometer-alt', 'text' => 'Dashboard'],
+            ['url' => '/settings', 'icon' => 'fas fa-cog', 'text' => 'Settings']
+        ];
+        
+        if (is_admin()) {
+            $userItems[] = ['url' => '/admin', 'icon' => 'fas fa-shield-alt', 'text' => 'Admin Panel'];
+        }
+        
+        $userItems[] = ['divider' => true];
+        $userItems[] = ['url' => '/logout', 'icon' => 'fas fa-sign-out-alt', 'text' => 'Logout'];
+        
+        $userAvatar = '<img src="/assets/images/default-avatar.png" alt="Profile" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K\';">';
+        
+        createSidebarDropdown('user', 'User Menu', 'fas fa-user', $userItems, false, $userAvatar);
+        ?>
         
         <?php else: ?>
         <!-- Guest navigation -->
-        <div class="sidebar-user">
-            <div class="user-icon-dropdown">
-                <a href="#" class="sidebar-item user-icon-trigger" title="User Menu">
-                    <i class="fas fa-user"></i>
-                </a>
-                <div class="user-dropdown-menu">
-                    <a href="/login" class="dropdown-item">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Login</span>
-                    </a>
-                    <a href="/register" class="dropdown-item">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Create Account</span>
-                    </a>
-                </div>
-            </div>
-        </div>
+        <?php
+        $guestItems = [
+            ['url' => '/login', 'icon' => 'fas fa-sign-in-alt', 'text' => 'Login'],
+            ['url' => '/register', 'icon' => 'fas fa-user-plus', 'text' => 'Create Account']
+        ];
+        createSidebarDropdown('guest', 'User Menu', 'fas fa-user', $guestItems, false);
+        ?>
         <?php endif; ?>
     </nav>
     <?php endif; ?>

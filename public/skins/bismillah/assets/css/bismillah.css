@@ -1148,8 +1148,18 @@ nav.sidebar {
     margin: 10px 0;
 }
 
-/* User profile section at bottom */
-.sidebar-user {
+/* Legacy sidebar-user styles - now handled by sidebar-dropdown */
+.sidebar-user .sidebar-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Core Sidebar Dropdown Styles */
+.sidebar-dropdown {
+    position: relative;
+    display: block;
     padding: 20px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     width: 100%;
@@ -1159,25 +1169,51 @@ nav.sidebar {
     gap: 15px;
 }
 
-.sidebar-user .sidebar-item {
+.sidebar-dropdown .sidebar-item {
     width: 36px;
     height: 36px;
 }
 
-.sidebar-user .sidebar-item img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* Sidebar Dropdown Styles */
-.sidebar-dropdown {
+.sidebar-dropdown .user-icon-dropdown {
     position: relative;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.sidebar-dropdown .dropdown-menu {
+.sidebar-dropdown .user-icon-trigger {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    color: #bdc3c7;
+    text-decoration: none;
+}
+
+.sidebar-dropdown .user-icon-trigger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+.sidebar-dropdown .user-icon-trigger:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5);
+}
+
+.sidebar-dropdown .user-icon-trigger:active {
+    transform: scale(0.95);
+}
+
+.sidebar-dropdown .user-icon-dropdown.active .user-icon-trigger {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+
+.sidebar-dropdown .user-dropdown-menu {
     position: absolute;
     left: 50px;
     top: 0;
@@ -1193,12 +1229,170 @@ nav.sidebar {
     z-index: 1002;
 }
 
-.sidebar-dropdown .dropdown-menu.show {
+.sidebar-dropdown .user-dropdown-menu.show {
     display: block;
     opacity: 1;
     transform: translateX(0);
 }
 
+/* Specific dropdown positioning - More specific to override old rules */
+.sidebar-dropdown.sidebar-messages .user-dropdown-menu {
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    display: none !important;
+    opacity: 0 !important;
+    transform: translateX(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important;
+}
+
+.sidebar-dropdown.sidebar-friends .user-dropdown-menu {
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    display: none !important;
+    opacity: 0 !important;
+    transform: translateX(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important;
+}
+
+.sidebar-dropdown.sidebar-user .user-dropdown-menu {
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    display: none !important;
+    opacity: 0 !important;
+    transform: translateX(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important;
+}
+
+.sidebar-dropdown.sidebar-guest .user-dropdown-menu {
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    display: none !important;
+    opacity: 0 !important;
+    transform: translateX(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important;
+}
+
+/* Show states for all dropdowns */
+.sidebar-dropdown.sidebar-messages .user-dropdown-menu.show,
+.sidebar-dropdown.sidebar-friends .user-dropdown-menu.show,
+.sidebar-dropdown.sidebar-user .user-dropdown-menu.show,
+.sidebar-dropdown.sidebar-guest .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Specific rules for messages dropdown - positioned relative to button */
+html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+    transform: translateX(0) !important;
+}
+
+/* Allow JavaScript to override positioning */
+html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+}
+
+/* JavaScript positioning override - highest specificity */
+html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu[style*="top"] {
+    top: var(--menu-top, auto) !important;
+}
+
+/* Specific rules for friends dropdown - positioned relative to button */
+html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+    transform: translateX(0) !important;
+}
+
+/* Allow JavaScript to override positioning */
+html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+}
+
+/* JavaScript positioning override - highest specificity */
+html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu[style*="top"] {
+    top: var(--menu-top, auto) !important;
+}
+
+/* Dropdown menu items */
 .sidebar-dropdown .dropdown-item {
     display: flex;
     align-items: center;
@@ -1207,26 +1401,49 @@ nav.sidebar {
     color: #ecf0f1;
     text-decoration: none;
     transition: all 0.3s ease;
-    border-radius: 0;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .sidebar-dropdown .dropdown-item:hover {
-    background: rgba(52, 152, 219, 0.3);
-    color: #ffffff;
-    transform: translateX(5px);
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    transform: translateX(4px);
+}
+
+.sidebar-dropdown .dropdown-item:hover i {
+    color: #3498db;
+    transform: scale(1.1);
 }
 
 .sidebar-dropdown .dropdown-item i {
-    width: 18px;
-    text-align: center;
-    font-size: 14px;
-    color: #3498db;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bdc3c7;
+    transition: all 0.3s ease;
 }
 
 .sidebar-dropdown .dropdown-item span {
-    font-weight: 500;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+.sidebar-dropdown .dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+    border: none;
+}
+
 
 .dropdown-trigger {
     cursor: pointer;
@@ -1528,56 +1745,8 @@ nav.sidebar {
     color: #3498db !important;
 }
 
-.sidebar-user .user-dropdown-menu {
-    position: absolute;
-    left: 50px;
-    top: 0;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    display: none;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: all 0.3s ease;
-    z-index: 1002;
-    visibility: hidden;
-}
 
-/* CLICK-BASED USER MENU - NO HOVER - MAXIMUM SPECIFICITY */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateX(0) !important;
-    visibility: visible !important;
-    z-index: 999999 !important;
-    position: absolute !important;
-    left: 50px !important;
-    top: 0 !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-}
 
-/* ULTRA SPECIFIC - OVERRIDE EVERYTHING - NUCLEAR OPTION */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: absolute !important;
-    left: 50px !important;
-    top: 0 !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important;
-    transform: translateX(0) !important;
-}
 
 /* NUCLEAR OPTION - MAXIMUM SPECIFICITY - FIXED POSITIONING TO AVOID OVERFLOW HIDDEN */
 html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {

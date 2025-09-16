@@ -71,10 +71,6 @@ include 'includes/header.php';
                             <i class="fas fa-edit"></i>
                             <span>Write Article</span>
                         </a>
-                        <a href="/dashboard" class="action-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Dashboard</span>
-                        </a>
                         <a href="/messages" class="action-item">
                             <i class="fas fa-envelope"></i>
                             <span>Messages</span>

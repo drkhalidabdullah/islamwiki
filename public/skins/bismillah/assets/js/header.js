@@ -348,6 +348,46 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // General dropdown functionality removed - using specific user icon dropdown only
     
+    // Function to position dropdown menu relative to trigger button
+    function positionDropdownMenu(trigger, menu) {
+        const triggerRect = trigger.getBoundingClientRect();
+        
+        // First, make the menu visible temporarily to get its actual height
+        menu.style.visibility = 'hidden';
+        menu.style.display = 'block';
+        menu.style.opacity = '0';
+        menu.style.position = 'fixed';
+        menu.style.left = '60px';
+        menu.style.top = '0px';
+        menu.style.bottom = 'auto';
+        
+        // Force a reflow to get accurate height
+        menu.offsetHeight;
+        
+        const menuHeight = menu.offsetHeight;
+        
+        // Position menu so its bottom aligns with the trigger's bottom
+        // Use bottom positioning to align the bottom of the menu with the bottom of the trigger
+        const viewportHeight = window.innerHeight;
+        const bottomPosition = viewportHeight - triggerRect.bottom - 5; // Add 5px offset to make it a little lower
+        
+        // Set the position with !important to override CSS
+        menu.style.setProperty('top', 'auto', 'important');
+        menu.style.setProperty('bottom', bottomPosition + 'px', 'important');
+        menu.style.visibility = 'visible';
+        menu.style.opacity = '1';
+        
+        console.log('Positioning dropdown:', {
+            triggerTop: triggerRect.top,
+            triggerBottom: triggerRect.bottom,
+            triggerHeight: triggerRect.height,
+            menuHeight: menuHeight,
+            viewportHeight: viewportHeight,
+            bottomPosition: bottomPosition,
+            windowHeight: window.innerHeight
+        });
+    }
+
     // User icon dropdown functionality - Clean rewrite
     console.log("Setting up user icon dropdown functionality");
     
@@ -387,6 +427,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('User menu closed');
                 console.log('Classes after close:', menu.className, dropdown.className);
             } else {
+                // Position the dropdown menu relative to the trigger button
+                positionDropdownMenu(trigger, menu);
+                
                 menu.classList.add('show');
                 dropdown.classList.add('active');
                 console.log('User menu opened');
