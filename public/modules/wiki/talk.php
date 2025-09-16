@@ -79,10 +79,10 @@ include '../../includes/header.php';
     <div class="talk-header">
         <div class="talk-navigation">
             <a href="/wiki/<?php echo $article['slug']; ?>" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Article
+                <i class="iw iw-arrow-left"></i> Back to Article
             </a>
             <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn btn-secondary">
-                <i class="fas fa-history"></i> Article History
+                <i class="iw iw-history"></i> Article History
             </a>
         </div>
         
@@ -132,7 +132,7 @@ include '../../includes/header.php';
         <?php else: ?>
             <div class="no-talk-content">
                 <div class="empty-state">
-                    <i class="fas fa-comments"></i>
+                    <i class="iw iw-comments"></i>
                     <h3>No discussion yet</h3>
                     <p>This article doesn't have a talk page yet. Be the first to start a discussion!</p>
                 </div>
@@ -155,10 +155,10 @@ include '../../includes/header.php';
                     
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> <?php echo $talk_page ? 'Update Discussion' : 'Start Discussion'; ?>
+                            <i class="iw iw-save"></i> <?php echo $talk_page ? 'Update Discussion' : 'Start Discussion'; ?>
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="previewContent()">
-                            <i class="fas fa-eye"></i> Preview
+                            <i class="iw iw-eye"></i> Preview
                         </button>
                     </div>
                 </form>
@@ -171,7 +171,7 @@ include '../../includes/header.php';
         <?php else: ?>
             <div class="login-prompt">
                 <div class="prompt-content">
-                    <i class="fas fa-sign-in-alt"></i>
+                    <i class="iw iw-sign-in-alt"></i>
                     <h3>Sign in to participate</h3>
                     <p>You need to be logged in to contribute to discussions.</p>
                     <a href="/pages/auth/login.php" class="btn btn-primary">Sign In</a>

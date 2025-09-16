@@ -1,4 +1,4 @@
-<?php
+                                                                                                                                <?php
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/wiki_functions.php';
@@ -132,10 +132,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     <?php endif; ?>
                     <div class="article-actions-compact">
                         <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
-                            <i class="fas fa-history"></i>
+                            <i class="iw iw-history"></i>
                         </a>
                         <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon-compact" title="Discussion">
-                            <i class="fas fa-comments"></i>
+                            <i class="iw iw-comments"></i>
                             <?php if ($talk_page): ?>
                                 <span class="talk-indicator" title="Has discussion"></span>
                             <?php endif; ?>
@@ -144,12 +144,12 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <a href="#" class="btn-icon-compact watchlist-btn <?php echo $is_watched ? 'watched' : ''; ?>" 
                                title="<?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?>"
                                onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
-                                <i class="fas fa-eye"></i>
+                                <i class="iw iw-eye"></i>
                             </a>
                         <?php endif; ?>
                         <?php if (is_logged_in() && is_editor()): ?>
                             <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="btn-icon-compact" title="Edit Article">
-                                <i class="fas fa-edit"></i>
+                                <i class="iw iw-edit"></i>
                             </a>
                         <?php endif; ?>
                         
@@ -163,39 +163,39 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                                     <div class="dropdown-section-title">More</div>
                                     <?php if (is_logged_in() && is_editor()): ?>
                                         <a href="#" class="dropdown-item danger" onclick="deleteArticle(<?php echo $article['id']; ?>)" title="Delete article (Alt + Shift + D)">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="iw iw-trash"></i>
                                             Delete
                                         </a>
                                         <a href="#" class="dropdown-item" onclick="moveArticle()" title="Move article (Alt + Shift + M)">
-                                            <i class="fas fa-arrows-alt"></i>
+                                            <i class="iw iw-arrows-alt"></i>
                                             Move
                                         </a>
                                         <a href="#" class="dropdown-item" onclick="changeProtection()" title="Change protection (Alt + Shift + =)">
-                                            <i class="fas fa-lock-open"></i>
+                                            <i class="iw iw-lock-open"></i>
                                             Change protection
                                         </a>
                                     <?php endif; ?>
                                     <a href="#" class="dropdown-item" onclick="unwatchArticle()" title="Unwatch (Alt + Shift + U)">
-                                        <i class="fas fa-star"></i>
+                                        <i class="iw iw-star"></i>
                                         Unwatch
                                     </a>
                                     <a href="#" class="dropdown-item" onclick="purgeCache()" title="Purge cache (Alt + Shift + P)">
-                                        <i class="fas fa-sync-alt"></i>
+                                        <i class="iw iw-sync-alt"></i>
                                         Purge cache
                                     </a>
                                 </div>
                                 <div class="dropdown-section">
                                     <div class="dropdown-section-title">Tools</div>
                                     <a href="/wiki/special/what-links-here?target=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="What links here (Alt + Shift + J)">
-                                        <i class="fas fa-external-link-alt"></i>
+                                        <i class="iw iw-external-link-alt"></i>
                                         What links here
                                     </a>
                                     <a href="/wiki/special/recent-changes?target=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="Related changes (Alt + Shift + K)">
-                                        <i class="fas fa-history"></i>
+                                        <i class="iw iw-history"></i>
                                         Related changes
                                     </a>
                                     <a href="/wiki/special/page-info?title=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="Page information (Alt + Shift + I)">
-                                        <i class="fas fa-info-circle"></i>
+                                        <i class="iw iw-info-circle"></i>
                                         Page information
                                     </a>
                                 </div>
@@ -209,7 +209,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     <div class="article-category-compact">
                         <?php if ($article['category_name']): ?>
                             <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag-compact">
-                                <i class="fas fa-folder"></i>
+                                <i class="iw iw-folder"></i>
                                 <?php echo htmlspecialchars($article['category_name']); ?>
                             </a>
                         <?php else: ?>
@@ -218,11 +218,11 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     </div>
                     <div class="article-meta-compact">
                         <span class="article-date-compact">
-                            <i class="fas fa-calendar"></i>
+                            <i class="iw iw-calendar"></i>
                             <?php echo format_date($article['published_at']); ?>
                         </span>
                         <span class="article-views-compact">
-                            <i class="fas fa-eye"></i>
+                            <i class="iw iw-eye"></i>
                             <?php echo number_format($article['view_count']); ?> views
                         </span>
                     </div>
@@ -240,12 +240,12 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                 <div class="toc-header">
                     <h3>Contents</h3>
                     <button class="toc-toggle" onclick="toggleTOC()">
-                        <i class="fas fa-chevron-down"></i>
+                        <i class="iw iw-chevron-down"></i>
                     </button>
                 </div>
                 <div class="toc-content" id="toc-content">
                     <div class="toc-loading">
-                        <i class="fas fa-spinner fa-spin"></i> Generating table of contents...
+                        <i class="iw iw-spinner iw-spin"></i> Generating table of contents...
                     </div>
                 </div>
             </aside>
@@ -265,25 +265,25 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     <ul class="tools-list">
                         <li>
                             <a href="/wiki/special/what-links-here?slug=<?php echo urlencode($article['slug']); ?>" class="tool-link">
-                                <i class="fas fa-link"></i>
+                                <i class="iw iw-link"></i>
                                 <span>What links here</span>
                             </a>
                         </li>
                         <li>
                             <a href="/wiki/special/page-info?slug=<?php echo urlencode($article['slug']); ?>" class="tool-link">
-                                <i class="fas fa-info-circle"></i>
+                                <i class="iw iw-info-circle"></i>
                                 <span>Page information</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" class="tool-link" onclick="citePage()">
-                                <i class="fas fa-quote-left"></i>
+                                <i class="iw iw-quote-left"></i>
                                 <span>Cite this page</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" class="tool-link" onclick="downloadPDF()">
-                                <i class="fas fa-download"></i>
+                                <i class="iw iw-download"></i>
                                 <span>Download as PDF</span>
                             </a>
                         </li>
@@ -294,20 +294,20 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     <h3>Page Statistics</h3>
                     <div class="stats-list">
                         <div class="stat-item">
-                            <i class="fas fa-eye"></i>
+                            <i class="iw iw-eye"></i>
                             <span><?php echo number_format($article['view_count']); ?> views</span>
                         </div>
                         <div class="stat-item">
-                            <i class="fas fa-calendar"></i>
+                            <i class="iw iw-calendar"></i>
                             <span>Created <?php echo date('M j, Y', strtotime($article['created_at'])); ?></span>
                         </div>
                         <div class="stat-item">
-                            <i class="fas fa-edit"></i>
+                            <i class="iw iw-edit"></i>
                             <span>Last edited <?php echo date('M j, Y', strtotime($article['updated_at'])); ?></span>
                         </div>
                         <?php if ($article['category_name']): ?>
                         <div class="stat-item">
-                            <i class="fas fa-folder"></i>
+                            <i class="iw iw-folder"></i>
                             <span>Category: <?php echo htmlspecialchars($article['category_name']); ?></span>
                         </div>
                         <?php endif; ?>
@@ -320,27 +320,27 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                         <?php if (is_logged_in() && is_editor()): ?>
                         <li>
                             <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="tool-link">
-                                <i class="fas fa-edit"></i>
+                                <i class="iw iw-edit"></i>
                                 <span>Edit this page</span>
                             </a>
                         </li>
                         <?php endif; ?>
                         <li>
                             <a href="/wiki/<?php echo $article['slug']; ?>/history" class="tool-link">
-                                <i class="fas fa-history"></i>
+                                <i class="iw iw-history"></i>
                                 <span>View history</span>
                             </a>
                         </li>
                         <li>
                             <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="tool-link">
-                                <i class="fas fa-comments"></i>
+                                <i class="iw iw-comments"></i>
                                 <span>Discussion</span>
                             </a>
                         </li>
                         <?php if (is_logged_in()): ?>
                         <li>
                             <a href="#" class="tool-link" onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
-                                <i class="fas fa-eye"></i>
+                                <i class="iw iw-eye"></i>
                                 <span><?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?></span>
                             </a>
                         </li>
@@ -357,7 +357,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <!-- Report Button -->
             <div class="article-report">
                 <button class="btn btn-outline btn-sm" onclick="showReportModal(<?php echo $article['id']; ?>, 'wiki_article')">
-                    <i class="fas fa-flag"></i> Report Content
+                    <i class="iw iw-flag"></i> Report Content
                 </button>
             </div>
             
@@ -366,7 +366,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <div class="guest-engagement-banner">
                 <div class="banner-content">
                     <div class="banner-icon">
-                        <i class="fas fa-users"></i>
+                        <i class="iw iw-users"></i>
                     </div>
                     <div class="banner-text">
                         <h4>Join the Community</h4>
@@ -374,10 +374,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     </div>
                     <div class="banner-actions">
                         <a href="/register" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i> Get Started
+                            <i class="iw iw-user-plus"></i> Get Started
                         </a>
                         <a href="/login" class="btn btn-outline">
-                            <i class="fas fa-sign-in-alt"></i> Login
+                            <i class="iw iw-sign-in-alt"></i> Login
                         </a>
                     </div>
                 </div>

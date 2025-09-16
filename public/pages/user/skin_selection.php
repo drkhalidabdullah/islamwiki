@@ -45,7 +45,7 @@ include "../../includes/header.php";
 
 <div class="page-container">
     <div class="page-header">
-        <h1><i class="fas fa-palette"></i> Choose Your Skin</h1>
+        <h1><i class="iw iw-palette"></i> Choose Your Skin</h1>
         <p>Select a theme that matches your personal style and preferences.</p>
     </div>
     
@@ -61,7 +61,7 @@ include "../../includes/header.php";
                     <img src="<?php echo $preview; ?>" alt="<?php echo htmlspecialchars($skin['display_name']); ?> Preview">
                     <?php else: ?>
                     <div class="skin-preview-placeholder">
-                        <i class="fas fa-palette"></i>
+                        <i class="iw iw-palette"></i>
                         <span>No Preview</span>
                     </div>
                     <?php endif; ?>
@@ -79,14 +79,14 @@ include "../../includes/header.php";
                     <div class="skin-actions">
                         <?php if ($skin['name'] === $current_skin): ?>
                         <span class="btn btn-success">
-                            <i class="fas fa-check-circle"></i> Current Skin
+                            <i class="iw iw-check-circle"></i> Current Skin
                         </span>
                         <?php else: ?>
                         <form method="POST" style="display: inline;">
                             <input type="hidden" name="action" value="select_skin">
                             <input type="hidden" name="skin_name" value="<?php echo htmlspecialchars($skin['name']); ?>">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-check"></i> Select This Skin
+                                <i class="iw iw-check"></i> Select This Skin
                             </button>
                         </form>
                         <?php endif; ?>

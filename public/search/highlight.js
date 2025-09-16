@@ -192,12 +192,12 @@ class SearchAutocomplete {
     
     getSuggestionIcon(type) {
         const icons = {
-            'article': 'fas fa-book',
-            'user': 'fas fa-user',
-            'category': 'fas fa-folder',
-            'popular': 'fas fa-fire'
+            'article': 'iw iw-book',
+            'user': 'iw iw-user',
+            'category': 'iw iw-folder',
+            'popular': 'iw iw-fire'
         };
-        return icons[type] || 'fas fa-search';
+        return icons[type] || 'iw iw-search';
     }
     
     highlightText(text, query) {

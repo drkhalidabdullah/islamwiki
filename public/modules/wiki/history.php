@@ -112,14 +112,14 @@ include "../../includes/header.php";;
                 </div>
                 <div class="version-actions">
                     <a href="/wiki/<?php echo $article['slug']; ?>" class="btn-icon" title="View Current">
-                        <i class="fas fa-eye"></i>
+                        <i class="iw iw-eye"></i>
                     </a>
                     <?php if (is_logged_in() && (is_admin() || $version['created_by'] == $_SESSION['user_id'])): ?>
                         <a href="../restore_version.php?id=<?php echo $version['id']; ?>" 
                            class="btn-icon btn-warning"
                            title="Restore Version"
                            onclick="return confirm('Are you sure you want to restore this version?')">
-                            <i class="fas fa-undo"></i>
+                            <i class="iw iw-undo"></i>
                         </a>
                     <?php endif; ?>
                 </div>

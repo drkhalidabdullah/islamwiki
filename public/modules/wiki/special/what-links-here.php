@@ -126,7 +126,7 @@ include '../../../includes/header.php';
     <!-- Header Section -->
     <div class="what-links-here-header">
         <h1 >
-            <i class="fas fa-link"></i> What links here
+            <i class="iw iw-link"></i> What links here
         </h1>
         <p >
             Pages that link to: 
@@ -210,7 +210,7 @@ include '../../../includes/header.php';
     <div class="what-links-here-results">
         <?php if (empty($linking_articles)): ?>
             <div >
-                <i class="fas fa-unlink" ></i>
+                <i class="iw iw-unlink" ></i>
                 <h3 >No pages link here</h3>
                 <p >
                     No other pages currently link to 
@@ -246,7 +246,7 @@ include '../../../includes/header.php';
                             • Last edited <?php echo date('M j, Y', strtotime($linking_article['updated_at'])); ?>
                         </div>
                         <div class="result-stats">
-                            <i class="fas fa-eye"></i> 
+                            <i class="iw iw-eye"></i> 
                             <?php echo number_format($linking_article['view_count']); ?> views
                         </div>
                     </div>

@@ -187,7 +187,7 @@ class EnhancedSearchInterface {
             data.semantic_suggestions.forEach(suggestion => {
                 html += `
                     <div class="semantic-suggestion" onclick="window.location.href='${suggestion.url}'">
-                        <i class="${suggestion.icon || 'fas fa-search'}"></i>
+                        <i class="${suggestion.icon || 'iw iw-search'}"></i>
                         <div class="suggestion-content">
                             <div class="suggestion-title">${suggestion.title}</div>
                             <div class="suggestion-excerpt">${suggestion.excerpt}</div>
@@ -207,7 +207,7 @@ class EnhancedSearchInterface {
             data.related_topics.forEach(topic => {
                 html += `
                     <div class="related-topic" onclick="window.location.href='${topic.url}'">
-                        <i class="${topic.icon || 'fas fa-folder'}"></i>
+                        <i class="${topic.icon || 'iw iw-folder'}"></i>
                         <div class="topic-content">
                             <div class="topic-title">${topic.title}</div>
                             <div class="topic-description">${topic.description}</div>
@@ -368,12 +368,12 @@ class EnhancedSearchInterface {
     
     getResultIcon(type) {
         const icons = {
-            'article': 'fas fa-book',
-            'user': 'fas fa-user',
-            'message': 'fas fa-comment',
-            'category': 'fas fa-folder'
+            'article': 'iw iw-book',
+            'user': 'iw iw-user',
+            'message': 'iw iw-comment',
+            'category': 'iw iw-folder'
         };
-        return icons[type] || 'fas fa-file';
+        return icons[type] || 'iw iw-file';
     }
     
     formatDate(dateString) {

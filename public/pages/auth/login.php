@@ -165,7 +165,7 @@ include __DIR__ . "/../../includes/header.php";
     
     <?php if (is_maintenance_mode()): ?>
         <div class="alert alert-info" >
-            <i class="fas fa-tools" style="margin-right: 0.5rem;"></i>
+            <i class="iw iw-tools" style="margin-right: 0.5rem;"></i>
             <strong>Maintenance Mode Active:</strong> The site is currently under maintenance. Only administrators can log in during this time.
         </div>
     <?php endif; ?>

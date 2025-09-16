@@ -112,7 +112,7 @@ function renderTopSuggestions(suggestions) {
             ${suggestions.map(item => `
                 <div class="suggestion-item" onclick="window.location.href='${item.url}'">
                     <div class="suggestion-icon">
-                        <i class="${item.icon || 'fas fa-file-alt'}"></i>
+                        <i class="${item.icon || 'iw iw-file-alt'}"></i>
                     </div>
                     <div class="suggestion-content">
                         <div class="suggestion-title">${item.title}</div>
@@ -120,10 +120,10 @@ function renderTopSuggestions(suggestions) {
                     </div>
                     <div class="suggestion-actions">
                         <button class="btn btn-sm btn-primary" onclick="window.location.href='${item.url}'">
-                            <i class="fas fa-external-link-alt"></i> ${item.action || 'View'}
+                            <i class="iw iw-external-link-alt"></i> ${item.action || 'View'}
                         </button>
                         ${item.editable ? `<button class="btn btn-sm btn-outline" onclick="window.location.href='${item.editUrl}'">
-                            <i class="fas fa-edit"></i>
+                            <i class="iw iw-edit"></i>
                         </button>` : ''}
                     </div>
                 </div>
@@ -142,7 +142,7 @@ function renderArticles(articles) {
             ${articles.map(article => `
                 <div class="article-item" onclick="window.location.href='${article.url}'">
                     <div class="article-icon">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="iw iw-file-alt"></i>
                     </div>
                     <div class="article-content">
                         <div class="article-title">${article.title}</div>
@@ -178,15 +178,15 @@ function renderActions() {
     return `
         <div class="actions-list">
             <div class="action-item" onclick="window.location.href='/search?q=${encodeURIComponent(currentQuery)}'">
-                <i class="fas fa-search"></i>
+                <i class="iw iw-search"></i>
                 <span>Search for "${currentQuery}"</span>
             </div>
             <div class="action-item" onclick="window.location.href='/wiki/create_article'">
-                <i class="fas fa-plus"></i>
+                <i class="iw iw-plus"></i>
                 <span>Create new article</span>
             </div>
             <div class="action-item" onclick="window.location.href='/wiki'">
-                <i class="fas fa-book"></i>
+                <i class="iw iw-book"></i>
                 <span>Browse all articles</span>
             </div>
         </div>
@@ -250,7 +250,7 @@ function showNoResults() {
     const container = document.getElementById('searchSuggestionsContainer');
     container.innerHTML = `
         <div class="search-no-results">
-            <i class="fas fa-search"></i>
+            <i class="iw iw-search"></i>
             <h3>No results found</h3>
             <p>Try different keywords or check your spelling</p>
         </div>
@@ -261,7 +261,7 @@ function showError(message) {
     const container = document.getElementById('searchSuggestionsContainer');
     container.innerHTML = `
         <div class="search-error">
-            <i class="fas fa-exclamation-triangle"></i>
+            <i class="iw iw-exclamation-triangle"></i>
             <h3>Search Error</h3>
             <p>${message}</p>
         </div>
@@ -572,11 +572,11 @@ function showToast(message, type = 'info') {
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
         <div class="toast-content">
-            <i class="toast-icon fas fa-${getToastIcon(type)}"></i>
+            <i class="toast-icon iw iw-${getToastIcon(type)}"></i>
             <span class="toast-message">${message}</span>
         </div>
         <button class="toast-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
+            <i class="iw iw-times"></i>
         </button>
     `;
     

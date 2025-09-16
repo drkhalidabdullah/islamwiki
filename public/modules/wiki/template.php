@@ -109,10 +109,10 @@ include '../../includes/header.php';
         
         <div class="template-actions">
             <a href="/wiki/Template:<?php echo htmlspecialchars($template['name']); ?>/edit" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Edit Template
+                <i class="iw iw-edit"></i> Edit Template
             </a>
             <a href="/wiki/manage/templates" class="btn btn-secondary">
-                <i class="fas fa-list"></i> Manage Templates
+                <i class="iw iw-list"></i> Manage Templates
             </a>
         </div>
     </div>
@@ -205,22 +205,22 @@ include '../../includes/header.php';
                 <ul class="actions-list">
                     <li>
                         <a href="/wiki/Template:<?php echo htmlspecialchars($template['name']); ?>/edit">
-                            <i class="fas fa-edit"></i> Edit Template
+                            <i class="iw iw-edit"></i> Edit Template
                         </a>
                     </li>
                     <li>
                         <a href="/wiki/manage/templates">
-                            <i class="fas fa-list"></i> Manage Templates
+                            <i class="iw iw-list"></i> Manage Templates
                         </a>
                     </li>
                     <li>
                         <a href="#" onclick="copyTemplateCode()">
-                            <i class="fas fa-copy"></i> Copy Template Code
+                            <i class="iw iw-copy"></i> Copy Template Code
                         </a>
                     </li>
                     <li>
                         <a href="#" onclick="copyUsageExample()">
-                            <i class="fas fa-code"></i> Copy Usage Example
+                            <i class="iw iw-code"></i> Copy Usage Example
                         </a>
                     </li>
                 </ul>

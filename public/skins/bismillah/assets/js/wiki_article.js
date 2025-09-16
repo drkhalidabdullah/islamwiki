@@ -168,14 +168,14 @@ function toggleTOC() {
     if (tocCollapsed) {
         tocContent.classList.add('collapsed');
         if (toggleButton) {
-            toggleButton.classList.remove('fa-chevron-down');
-            toggleButton.classList.add('fa-chevron-right');
+            toggleButton.classList.remove('iw-chevron-down');
+            toggleButton.classList.add('iw-chevron-right');
         }
     } else {
         tocContent.classList.remove('collapsed');
         if (toggleButton) {
-            toggleButton.classList.remove('fa-chevron-right');
-            toggleButton.classList.add('fa-chevron-down');
+            toggleButton.classList.remove('iw-chevron-right');
+            toggleButton.classList.add('iw-chevron-down');
         }
     }
 }

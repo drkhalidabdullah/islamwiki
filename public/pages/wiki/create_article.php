@@ -203,7 +203,7 @@ include "../../includes/header.php";;
         <div class="form-row">
             <div class="form-group">
                 <div class="info-notice">
-                    <i class="fas fa-info-circle"></i>
+                    <i class="iw iw-info-circle"></i>
                     <span>Your article will be submitted for approval by moderators before being published.</span>
                 </div>
             </div>

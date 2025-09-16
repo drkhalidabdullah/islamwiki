@@ -95,7 +95,7 @@ include "../../includes/header.php";;
     
     <?php if (!$allow_registration): ?>
         <div class="alert alert-error">
-            <h3><i class="fas fa-lock"></i> Registration Currently Closed</h3>
+            <h3><i class="iw iw-lock"></i> Registration Currently Closed</h3>
             <p>New user registration is currently disabled. If you need access to this platform, please contact an administrator.</p>
             <p><a href="/login" class="btn btn-primary">Go to Login Page</a></p>
         </div>

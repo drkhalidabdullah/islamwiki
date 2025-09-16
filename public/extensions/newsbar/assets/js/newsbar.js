@@ -12,9 +12,9 @@ window.toggleNewsbar = function() {
         newsbar.classList.toggle('paused');
         
         if (newsbar.classList.contains('paused')) {
-            pauseBtn.className = 'fas fa-play';
+            pauseBtn.className = 'iw iw-play';
         } else {
-            pauseBtn.className = 'fas fa-pause';
+            pauseBtn.className = 'iw iw-pause';
         }
 };
 
@@ -36,7 +36,7 @@ window.closeNewsbar = function() {
         if (newsbar.classList.contains('hidden')) {
             console.log('Newsbar is now hidden, showing arrow');
             if (floatingCloseBtn) {
-                floatingCloseBtn.className = 'fas fa-arrow-down';
+                floatingCloseBtn.className = 'iw iw-arrow-down';
                 floatingCloseBtn.parentElement.title = 'Show Newsbar';
                 console.log('Updated floating close button to arrow');
             }
@@ -44,12 +44,12 @@ window.closeNewsbar = function() {
         } else {
             console.log('Newsbar is now visible, hiding arrow');
             if (closeBtn) {
-                closeBtn.className = 'fas fa-times';
+                closeBtn.className = 'iw iw-times';
                 closeBtn.parentElement.title = 'Close';
                 console.log('Updated close button to X');
             }
             if (floatingCloseBtn) {
-                floatingCloseBtn.className = 'fas fa-arrow-down';
+                floatingCloseBtn.className = 'iw iw-arrow-down';
                 floatingCloseBtn.parentElement.title = 'Show Newsbar';
                 console.log('Updated floating close button to arrow');
             }
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log('Floating close button found:', floatingCloseBtn);
             
             if (floatingCloseBtn) {
-                floatingCloseBtn.className = 'fas fa-arrow-down';
+                floatingCloseBtn.className = 'iw iw-arrow-down';
                 floatingCloseBtn.parentElement.title = 'Show Newsbar';
                 console.log('Updated floating close button to arrow on init');
             }
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.classList.add('paused');
                 const pauseBtn = this.querySelector('.newsbar-pause i');
                 if (pauseBtn) {
-                    pauseBtn.className = 'fas fa-play';
+                    pauseBtn.className = 'iw iw-play';
                 }
             }
         });
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.classList.remove('paused');
                 const pauseBtn = this.querySelector('.newsbar-pause i');
                 if (pauseBtn) {
-                    pauseBtn.className = 'fas fa-pause';
+                    pauseBtn.className = 'iw iw-pause';
                 }
             }
         });

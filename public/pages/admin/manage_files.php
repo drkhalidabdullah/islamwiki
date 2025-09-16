@@ -123,7 +123,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-folder-open"></i> Manage Files</h1>
+        <h1><i class="iw iw-folder-open"></i> Manage Files</h1>
         <p>View and manage uploaded files</p>
     </div>
 
@@ -161,7 +161,7 @@ include "../../includes/header.php";
             <form method="POST" style="display: inline;" onsubmit="return confirm('This will delete all orphaned files. Continue?')">
                 <input type="hidden" name="action" value="cleanup_orphaned">
                 <button type="submit" class="btn btn-warning">
-                    <i class="fas fa-broom"></i> Cleanup Orphaned Files
+                    <i class="iw iw-broom"></i> Cleanup Orphaned Files
                 </button>
             </form>
         </div>
@@ -184,7 +184,7 @@ include "../../includes/header.php";
                         <?php foreach ($files_by_type as $type): ?>
                         <tr>
                             <td>
-                                <i class="fas fa-file<?php echo get_file_icon($type['file_type']); ?>"></i>
+                                <i class="iw iw-file<?php echo get_file_icon($type['file_type']); ?>"></i>
                                 <?php echo htmlspecialchars($type['file_type'] ?: 'Unknown'); ?>
                             </td>
                             <td><?php echo number_format($type['count']); ?></td>
@@ -219,7 +219,7 @@ include "../../includes/header.php";
                         <?php foreach ($recent_files as $file): ?>
                         <tr>
                             <td>
-                                <i class="fas fa-file<?php echo get_file_icon($file['file_type']); ?>"></i>
+                                <i class="iw iw-file<?php echo get_file_icon($file['file_type']); ?>"></i>
                                 <a href="<?php echo htmlspecialchars($file['file_url']); ?>" target="_blank">
                                     <?php echo htmlspecialchars($file['original_name']); ?>
                                 </a>
@@ -230,13 +230,13 @@ include "../../includes/header.php";
                             <td><?php echo format_date($file['uploaded_at']); ?></td>
                             <td>
                                 <a href="<?php echo htmlspecialchars($file['file_url']); ?>" target="_blank" class="btn btn-sm btn-info">
-                                    <i class="fas fa-external-link-alt"></i> View
+                                    <i class="iw iw-external-link-alt"></i> View
                                 </a>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this file?')">
                                     <input type="hidden" name="action" value="delete_file">
                                     <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">
                                     <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i> Delete
+                                        <i class="iw iw-trash"></i> Delete
                                     </button>
                                 </form>
                             </td>
@@ -252,7 +252,7 @@ include "../../includes/header.php";
 
     <div class="form-actions">
         <a href="/admin" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <i class="iw iw-arrow-left"></i> Back to Dashboard
         </a>
     </div>
 </div>

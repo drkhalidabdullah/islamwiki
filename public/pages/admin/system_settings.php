@@ -457,12 +457,12 @@ include "../../includes/header.php";
 <div class="admin-container">
     <div class="admin-header">
         <div class="header-content">
-            <h1><i class="fas fa-cog"></i> System Settings</h1>
+            <h1><i class="iw iw-cog"></i> System Settings</h1>
             <p>Configure and manage your system settings, security, and preferences</p>
         </div>
         <div class="header-actions">
             <a href="/admin" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Admin Panel
+                <i class="iw iw-arrow-left"></i> Back to Admin Panel
             </a>
         </div>
     </div>
@@ -470,31 +470,31 @@ include "../../includes/header.php";
     
     <div class="settings-tabs">
         <button class="tab-button <?php echo $active_tab === 'general' ? 'active' : ''; ?>" onclick="showTab('general', this)">
-            <i class="fas fa-globe"></i> General
+            <i class="iw iw-globe"></i> General
         </button>
         <button class="tab-button <?php echo $active_tab === 'security' ? 'active' : ''; ?>" onclick="showTab('security', this)">
-            <i class="fas fa-shield-alt"></i> Security
+            <i class="iw iw-shield-alt"></i> Security
         </button>
         <button class="tab-button <?php echo $active_tab === 'email' ? 'active' : ''; ?>" onclick="showTab('email', this)">
-            <i class="fas fa-envelope"></i> Email
+            <i class="iw iw-envelope"></i> Email
         </button>
         <button class="tab-button <?php echo $active_tab === 'system' ? 'active' : ''; ?>" onclick="showTab('system', this)">
-            <i class="fas fa-server"></i> System Info
+            <i class="iw iw-server"></i> System Info
         </button>
         <button class="tab-button <?php echo $active_tab === 'statistics' ? 'active' : ''; ?>" onclick="showTab('statistics', this)">
-            <i class="fas fa-chart-bar"></i> Statistics
+            <i class="iw iw-chart-bar"></i> Statistics
         </button>
         <button class="tab-button <?php echo $active_tab === 'tools' ? 'active' : ''; ?>" onclick="showTab('tools', this)">
-            <i class="fas fa-tools"></i> Tools
+            <i class="iw iw-tools"></i> Tools
         </button>
         <button class="tab-button <?php echo $active_tab === 'extensions' ? 'active' : ''; ?>" onclick="showTab('extensions', this)">
-            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="iw iw-puzzle-piece"></i> Extensions
         </button>
         <button class="tab-button <?php echo $active_tab === 'modules' ? 'active' : ''; ?>" onclick="showTab('modules', this)">
-            <i class="fas fa-cubes"></i> Modules
+            <i class="iw iw-cubes"></i> Modules
         </button>
         <button class="tab-button <?php echo $active_tab === 'skins' ? 'active' : ''; ?>" onclick="showTab('skins', this)">
-            <i class="fas fa-palette"></i> Skins
+            <i class="iw iw-palette"></i> Skins
         </button>
     </div>
     
@@ -505,7 +505,7 @@ include "../../includes/header.php";
             <!-- Column 1: Site Information -->
             <div class="column-1">
                 <div class="card">
-                    <h2><i class="fas fa-globe"></i> Site Information</h2>
+                    <h2><i class="iw iw-globe"></i> Site Information</h2>
                     <form method="POST">
                         <input type="hidden" name="action" value="update_general">
                         <input type="hidden" name="form_section" value="site_info">
@@ -559,7 +559,7 @@ include "../../includes/header.php";
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save General Settings
+                            <i class="iw iw-save"></i> Save General Settings
                         </button>
                     </form>
                 </div>
@@ -568,7 +568,7 @@ include "../../includes/header.php";
             <!-- Column 2: Maintenance Mode + Feature Toggles -->
             <div class="column-2">
                 <div class="card maintenance-mode-card">
-                    <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
+                    <h2><i class="iw iw-tools"></i> Maintenance Mode</h2>
                     <form method="POST">
                         <input type="hidden" name="action" value="update_general">
                         <input type="hidden" name="form_section" value="maintenance">
@@ -576,7 +576,7 @@ include "../../includes/header.php";
                         <div class="maintenance-toggle-section">
                             <div class="feature-toggle maintenance-toggle">
                                 <div class="toggle-content">
-                                    <i class="fas fa-tools"></i>
+                                    <i class="iw iw-tools"></i>
                                     <div>
                                         <strong>Maintenance Mode</strong>
                                         <small>Put site in maintenance mode</small>
@@ -591,7 +591,7 @@ include "../../includes/header.php";
                             
                             <div class="maintenance-settings" id="maintenance-settings" >
                                 <h3 >
-                                    <i class="fas fa-cog"></i>
+                                    <i class="iw iw-cog"></i>
                                     Maintenance Settings
                                 </h3>
                                 
@@ -615,13 +615,13 @@ include "../../includes/header.php";
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Maintenance Settings
+                            <i class="iw iw-save"></i> Save Maintenance Settings
                         </button>
                     </form>
                 </div>
                 
                 <div class="card">
-                    <h2><i class="fas fa-toggle-on"></i> Feature Toggles</h2>
+                    <h2><i class="iw iw-toggle-on"></i> Feature Toggles</h2>
                 <form method="POST">
                     <input type="hidden" name="action" value="update_general">
                     <input type="hidden" name="form_section" value="features">
@@ -629,7 +629,7 @@ include "../../includes/header.php";
                     <div class="feature-grid">
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-user-plus"></i>
+                                <i class="iw iw-user-plus"></i>
                                 <div>
                                     <strong>Allow User Registration</strong>
                                     <small>Enable new user registration</small>
@@ -644,7 +644,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-envelope-check"></i>
+                                <i class="iw iw-envelope-check"></i>
                                 <div>
                                     <strong>Email Verification</strong>
                                     <small>Require email verification for new users</small>
@@ -659,7 +659,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-comments"></i>
+                                <i class="iw iw-comments"></i>
                                 <div>
                                     <strong>Comments</strong>
                                     <small>Enable commenting system</small>
@@ -674,7 +674,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-book"></i>
+                                <i class="iw iw-book"></i>
                                 <div>
                                     <strong>Wiki System</strong>
                                     <small>Enable wiki functionality</small>
@@ -689,7 +689,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-users"></i>
+                                <i class="iw iw-users"></i>
                                 <div>
                                     <strong>Social Features</strong>
                                     <small>Enable social networking features</small>
@@ -704,7 +704,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="iw iw-chart-line"></i>
                                 <div>
                                     <strong>Analytics</strong>
                                     <small>Enable analytics tracking</small>
@@ -719,7 +719,7 @@ include "../../includes/header.php";
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
-                                <i class="fas fa-bell"></i>
+                                <i class="iw iw-bell"></i>
                                 <div>
                                     <strong>Notifications</strong>
                                     <small>Enable notification system</small>
@@ -735,7 +735,7 @@ include "../../includes/header.php";
                     </div>
                     
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Feature Settings
+                        <i class="iw iw-save"></i> Save Feature Settings
                     </button>
                 </form>
                 </div>
@@ -746,7 +746,7 @@ include "../../includes/header.php";
     <!-- Security Settings Tab -->
     <div id="security-tab" class="tab-content <?php echo $active_tab === 'security' ? 'active' : ''; ?>">
         <div class="card">
-            <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+            <h2><i class="iw iw-shield-alt"></i> Security Settings</h2>
             <form method="POST">
                 <input type="hidden" name="action" value="update_security">
                 
@@ -779,7 +779,7 @@ include "../../includes/header.php";
                 <div class="security-features">
                     <div class="feature-toggle">
                         <div class="toggle-content">
-                            <i class="fas fa-key"></i>
+                            <i class="iw iw-key"></i>
                             <div>
                                 <strong>Require Strong Passwords</strong>
                                 <small>Enforce complex password requirements</small>
@@ -794,7 +794,7 @@ include "../../includes/header.php";
                     
                     <div class="feature-toggle">
                         <div class="toggle-content">
-                            <i class="fas fa-mobile-alt"></i>
+                            <i class="iw iw-mobile-alt"></i>
                             <div>
                                 <strong>Two-Factor Authentication</strong>
                                 <small>Enable 2FA for enhanced security</small>
@@ -809,7 +809,7 @@ include "../../includes/header.php";
                     
                     <div class="feature-toggle">
                         <div class="toggle-content">
-                            <i class="fas fa-robot"></i>
+                            <i class="iw iw-robot"></i>
                             <div>
                                 <strong>CAPTCHA Protection</strong>
                                 <small>Enable CAPTCHA for forms</small>
@@ -824,7 +824,7 @@ include "../../includes/header.php";
                     
                     <div class="feature-toggle">
                         <div class="toggle-content">
-                            <i class="fas fa-tachometer-alt"></i>
+                            <i class="iw iw-tachometer-alt"></i>
                             <div>
                                 <strong>Rate Limiting</strong>
                                 <small>Limit requests per IP address</small>
@@ -839,7 +839,7 @@ include "../../includes/header.php";
                 </div>
                 
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Security Settings
+                    <i class="iw iw-save"></i> Save Security Settings
                 </button>
             </form>
         </div>
@@ -849,7 +849,7 @@ include "../../includes/header.php";
     <div id="email-tab" class="tab-content <?php echo $active_tab === 'email' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-envelope"></i> SMTP Configuration</h2>
+                <h2><i class="iw iw-envelope"></i> SMTP Configuration</h2>
                 <form method="POST">
                     <input type="hidden" name="action" value="update_email">
                     
@@ -903,13 +903,13 @@ include "../../includes/header.php";
                     </div>
                     
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Email Settings
+                        <i class="iw iw-save"></i> Save Email Settings
                     </button>
                 </form>
             </div>
             
             <div class="card">
-                <h2><i class="fas fa-paper-plane"></i> Test Email</h2>
+                <h2><i class="iw iw-paper-plane"></i> Test Email</h2>
                 <form method="POST">
                     <input type="hidden" name="action" value="test_email">
                     
@@ -920,14 +920,14 @@ include "../../includes/header.php";
                     </div>
                     
                     <button type="submit" class="btn btn-info">
-                        <i class="fas fa-paper-plane"></i> Send Test Email
+                        <i class="iw iw-paper-plane"></i> Send Test Email
                     </button>
                 </form>
                 
                 <div class="email-features">
                     <div class="feature-toggle">
                         <div class="toggle-content">
-                            <i class="fas fa-bell"></i>
+                            <i class="iw iw-bell"></i>
                             <div>
                                 <strong>Email Notifications</strong>
                                 <small>Enable email notifications</small>
@@ -948,7 +948,7 @@ include "../../includes/header.php";
     <div id="system-tab" class="tab-content <?php echo $active_tab === 'system' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-server"></i> Server Information</h2>
+                <h2><i class="iw iw-server"></i> Server Information</h2>
                 <div class="info-grid">
                     <div class="info-item">
                         <strong>PHP Version:</strong>
@@ -978,7 +978,7 @@ include "../../includes/header.php";
             </div>
             
             <div class="card">
-                <h2><i class="fas fa-memory"></i> PHP Configuration</h2>
+                <h2><i class="iw iw-memory"></i> PHP Configuration</h2>
                 <div class="info-grid">
                     <div class="info-item">
                         <strong>Memory Limit:</strong>
@@ -1019,7 +1019,7 @@ include "../../includes/header.php";
     <div id="statistics-tab" class="tab-content <?php echo $active_tab === 'statistics' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-chart-bar"></i> Content Statistics</h2>
+                <h2><i class="iw iw-chart-bar"></i> Content Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number"><?php echo number_format($stats['total_users']); ?></div>
@@ -1055,7 +1055,7 @@ include "../../includes/header.php";
             </div>
             
             <div class="card">
-                <h2><i class="fas fa-hdd"></i> Storage Information</h2>
+                <h2><i class="iw iw-hdd"></i> Storage Information</h2>
                 <?php if ($stats['disk_usage'] !== 'N/A'): ?>
                 <div class="storage-info">
                     <div class="storage-item">
@@ -1086,13 +1086,13 @@ include "../../includes/header.php";
         </div>
         
         <div class="card">
-            <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+            <h2><i class="iw iw-clock"></i> Recent Activity</h2>
             <div class="activity-list">
                 <?php if (!empty($recent_activity)): ?>
                     <?php foreach ($recent_activity as $activity): ?>
                     <div class="activity-item">
                         <div class="activity-icon">
-                            <i class="fas fa-<?php echo $activity['type'] === 'user' ? 'user' : 'file-alt'; ?>"></i>
+                            <i class="iw iw-<?php echo $activity['type'] === 'user' ? 'user' : 'file-alt'; ?>"></i>
                         </div>
                         <div class="activity-content">
                             <div class="activity-title">
@@ -1116,91 +1116,91 @@ include "../../includes/header.php";
     <div id="tools-tab" class="tab-content <?php echo $active_tab === 'tools' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-tools"></i> System Tools</h2>
+                <h2><i class="iw iw-tools"></i> System Tools</h2>
                 <div class="tools-grid">
                     <form method="POST" class="tool-form">
                         <input type="hidden" name="action" value="clear_cache">
                         <div class="tool-content">
-                            <i class="fas fa-broom"></i>
+                            <i class="iw iw-broom"></i>
                             <div>
                                 <strong>Clear Cache</strong>
                                 <small>Clear system cache and temporary files</small>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-warning">
-                            <i class="fas fa-broom"></i> Clear Cache
+                            <i class="iw iw-broom"></i> Clear Cache
                         </button>
                     </form>
                     
                     <div class="tool-form">
                         <div class="tool-content">
-                            <i class="fas fa-database"></i>
+                            <i class="iw iw-database"></i>
                             <div>
                                 <strong>Database Backup</strong>
                                 <small>Create a backup of the database</small>
                             </div>
                         </div>
                         <a href="/admin/maintenance" class="btn btn-info">
-                            <i class="fas fa-database"></i> Go to Maintenance
+                            <i class="iw iw-database"></i> Go to Maintenance
                         </a>
                     </div>
                     
                     <div class="tool-form">
                         <div class="tool-content">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="iw iw-chart-line"></i>
                             <div>
                                 <strong>View Analytics</strong>
                                 <small>Access detailed analytics dashboard</small>
                             </div>
                         </div>
                         <a href="/admin/analytics" class="btn btn-primary">
-                            <i class="fas fa-chart-line"></i> View Analytics
+                            <i class="iw iw-chart-line"></i> View Analytics
                         </a>
                     </div>
                     
                     <div class="tool-form">
                         <div class="tool-content">
-                            <i class="fas fa-users-cog"></i>
+                            <i class="iw iw-users-cog"></i>
                             <div>
                                 <strong>Manage Users</strong>
                                 <small>User management and permissions</small>
                             </div>
                         </div>
                         <a href="/admin/manage_users" class="btn btn-secondary">
-                            <i class="fas fa-users-cog"></i> Manage Users
+                            <i class="iw iw-users-cog"></i> Manage Users
                         </a>
                     </div>
                 </div>
             </div>
             
             <div class="card">
-                <h2><i class="fas fa-heartbeat"></i> System Health</h2>
+                <h2><i class="iw iw-heartbeat"></i> System Health</h2>
                 <div class="health-container">
                     <div class="health-item">
                         <div class="health-label">Database</div>
                         <div class="health-status status-<?php echo $system_health['database']; ?>">
-                            <i class="fas fa-<?php echo $system_health['database'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+                            <i class="iw iw-<?php echo $system_health['database'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
                             <?php echo ucfirst($system_health['database']); ?>
                         </div>
                     </div>
                     <div class="health-item">
                         <div class="health-label">Storage</div>
                         <div class="health-status status-<?php echo $system_health['storage']; ?>">
-                            <i class="fas fa-<?php echo $system_health['storage'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+                            <i class="iw iw-<?php echo $system_health['storage'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
                             <?php echo ucfirst($system_health['storage']); ?>
                         </div>
                     </div>
                     <div class="health-item">
                         <div class="health-label">Memory</div>
                         <div class="health-status status-<?php echo $system_health['memory']; ?>">
-                            <i class="fas fa-<?php echo $system_health['memory'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+                            <i class="iw iw-<?php echo $system_health['memory'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
                             <?php echo ucfirst($system_health['memory']); ?>
                         </div>
                     </div>
                     <div class="health-item">
                         <div class="health-label">PHP Version</div>
                         <div class="health-status status-<?php echo $system_health['php']; ?>">
-                            <i class="fas fa-<?php echo $system_health['php'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+                            <i class="iw iw-<?php echo $system_health['php'] === 'healthy' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
                             <?php echo ucfirst($system_health['php']); ?>
                     </div>
                 </div>
@@ -1213,7 +1213,7 @@ include "../../includes/header.php";
     <div id="extensions-tab" class="tab-content <?php echo $active_tab === 'extensions' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-puzzle-piece"></i> Extensions Management</h2>
+                <h2><i class="iw iw-puzzle-piece"></i> Extensions Management</h2>
                 <p>Manage extensions that add additional functionality to your site.</p>
                 
                 <?php
@@ -1240,13 +1240,13 @@ include "../../includes/header.php";
                                     <input type="hidden" name="action" value="toggle_extension">
                                     <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
                                     <button type="submit" class="btn <?php echo $extension['enabled'] ? 'btn-warning' : 'btn-success'; ?>">
-                                        <i class="fas fa-<?php echo $extension['enabled'] ? 'pause' : 'play'; ?>"></i>
+                                        <i class="iw iw-<?php echo $extension['enabled'] ? 'pause' : 'play'; ?>"></i>
                                         <?php echo $extension['enabled'] ? 'Disable' : 'Enable'; ?>
                                     </button>
                                 </form>
                                 <?php if ($extension['enabled'] && !empty($extension['settings_form'])): ?>
                                 <button type="button" class="btn btn-outline extension-settings-toggle" onclick="toggleExtensionSettings('<?php echo htmlspecialchars($name); ?>')" title="Toggle Settings">
-                                    <i class="fas fa-chevron-down"></i>
+                                    <i class="iw iw-chevron-down"></i>
                                 </button>
                                 <?php endif; ?>
                             </div>
@@ -1260,7 +1260,7 @@ include "../../includes/header.php";
                                 <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
                                 <?php echo $extension['settings_form']; ?>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Save Settings
+                                    <i class="iw iw-save"></i> Save Settings
                                 </button>
                             </form>
                         </div>
@@ -1276,14 +1276,14 @@ include "../../includes/header.php";
     <div id="modules-tab" class="tab-content <?php echo $active_tab === 'modules' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-cubes"></i> Core Modules</h2>
+                <h2><i class="iw iw-cubes"></i> Core Modules</h2>
                 <p>Manage core system modules and their settings.</p>
                 
                 <div class="modules-container">
                     <div class="module-card">
                         <div class="module-header">
                             <div class="module-info">
-                                <h3><i class="fas fa-book"></i> Wiki Module</h3>
+                                <h3><i class="iw iw-book"></i> Wiki Module</h3>
                                 <p>Core wiki functionality for articles and content management</p>
                             </div>
                         </div>
@@ -1292,15 +1292,15 @@ include "../../includes/header.php";
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="wiki">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_wiki', true) ? 'btn-warning' : 'btn-success'; ?>">
-                                    <i class="fas fa-<?php echo get_system_setting('enable_wiki', true) ? 'pause' : 'play'; ?>"></i>
+                                    <i class="iw iw-<?php echo get_system_setting('enable_wiki', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_wiki', true) ? 'Disable' : 'Enable'; ?>
                                 </button>
                             </form>
                             <a href="/admin/manage_categories" class="btn btn-secondary">
-                                <i class="fas fa-tags"></i> Manage Categories
+                                <i class="iw iw-tags"></i> Manage Categories
                             </a>
                             <a href="/admin/create_article" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Create Article
+                                <i class="iw iw-plus"></i> Create Article
                             </a>
                         </div>
                     </div>
@@ -1308,7 +1308,7 @@ include "../../includes/header.php";
                     <div class="module-card">
                         <div class="module-header">
                             <div class="module-info">
-                                <h3><i class="fas fa-users"></i> Social Module</h3>
+                                <h3><i class="iw iw-users"></i> Social Module</h3>
                                 <p>Social networking features including friends and messaging</p>
                             </div>
                         </div>
@@ -1317,15 +1317,15 @@ include "../../includes/header.php";
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="social">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_social', true) ? 'btn-warning' : 'btn-success'; ?>">
-                                    <i class="fas fa-<?php echo get_system_setting('enable_social', true) ? 'pause' : 'play'; ?>"></i>
+                                    <i class="iw iw-<?php echo get_system_setting('enable_social', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_social', true) ? 'Disable' : 'Enable'; ?>
                                 </button>
                             </form>
                             <a href="/admin/manage_users" class="btn btn-secondary">
-                                <i class="fas fa-users-cog"></i> Manage Users
+                                <i class="iw iw-users-cog"></i> Manage Users
                             </a>
                             <a href="/friends" class="btn btn-primary">
-                                <i class="fas fa-users"></i> View Friends
+                                <i class="iw iw-users"></i> View Friends
                             </a>
                         </div>
                     </div>
@@ -1333,7 +1333,7 @@ include "../../includes/header.php";
                     <div class="module-card">
                         <div class="module-header">
                             <div class="module-info">
-                                <h3><i class="fas fa-comments"></i> Comments Module</h3>
+                                <h3><i class="iw iw-comments"></i> Comments Module</h3>
                                 <p>Commenting system for posts and articles</p>
                             </div>
                         </div>
@@ -1342,12 +1342,12 @@ include "../../includes/header.php";
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="comments">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_comments', true) ? 'btn-warning' : 'btn-success'; ?>">
-                                    <i class="fas fa-<?php echo get_system_setting('enable_comments', true) ? 'pause' : 'play'; ?>"></i>
+                                    <i class="iw iw-<?php echo get_system_setting('enable_comments', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_comments', true) ? 'Disable' : 'Enable'; ?>
                                 </button>
                             </form>
                             <a href="/admin/content_moderation" class="btn btn-secondary">
-                                <i class="fas fa-shield-alt"></i> Moderation
+                                <i class="iw iw-shield-alt"></i> Moderation
                             </a>
                         </div>
                     </div>
@@ -1355,7 +1355,7 @@ include "../../includes/header.php";
                     <div class="module-card">
                         <div class="module-header">
                             <div class="module-info">
-                                <h3><i class="fas fa-chart-line"></i> Analytics Module</h3>
+                                <h3><i class="iw iw-chart-line"></i> Analytics Module</h3>
                                 <p>Analytics and tracking functionality</p>
                             </div>
                         </div>
@@ -1364,12 +1364,12 @@ include "../../includes/header.php";
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="analytics">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_analytics', true) ? 'btn-warning' : 'btn-success'; ?>">
-                                    <i class="fas fa-<?php echo get_system_setting('enable_analytics', true) ? 'pause' : 'play'; ?>"></i>
+                                    <i class="iw iw-<?php echo get_system_setting('enable_analytics', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_analytics', true) ? 'Disable' : 'Enable'; ?>
                                 </button>
                             </form>
                             <a href="/admin/analytics" class="btn btn-primary">
-                                <i class="fas fa-chart-line"></i> View Analytics
+                                <i class="iw iw-chart-line"></i> View Analytics
                             </a>
                         </div>
                     </div>
@@ -1382,7 +1382,7 @@ include "../../includes/header.php";
     <div id="skins-tab" class="tab-content <?php echo $active_tab === 'skins' ? 'active' : ''; ?>">
         <div class="settings-grid">
             <div class="card">
-                <h2><i class="fas fa-palette"></i> Skin Management</h2>
+                <h2><i class="iw iw-palette"></i> Skin Management</h2>
                 <p>Manage and configure site themes and visual appearance.</p>
                 
                 <?php
@@ -1415,7 +1415,7 @@ include "../../includes/header.php";
                                 </label>
                             </div>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Skin Settings
+                                <i class="iw iw-save"></i> Save Skin Settings
                             </button>
                         </form>
                     </div>
@@ -1433,7 +1433,7 @@ include "../../includes/header.php";
                                     <img src="<?php echo $preview; ?>" alt="<?php echo htmlspecialchars($skin['display_name']); ?> Preview">
                                     <?php else: ?>
                                     <div class="skin-preview-placeholder">
-                                        <i class="fas fa-palette"></i>
+                                        <i class="iw iw-palette"></i>
                                         <span>No Preview</span>
                                     </div>
                                     <?php endif; ?>
@@ -1451,12 +1451,12 @@ include "../../includes/header.php";
                                             <input type="hidden" name="action" value="activate_skin">
                                             <input type="hidden" name="skin_name" value="<?php echo htmlspecialchars($skin['name']); ?>">
                                             <button type="submit" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-check"></i> Activate
+                                                <i class="iw iw-check"></i> Activate
                                             </button>
                                         </form>
                                         <?php else: ?>
                                         <span class="btn btn-success btn-sm">
-                                            <i class="fas fa-check-circle"></i> Active
+                                            <i class="iw iw-check-circle"></i> Active
                                         </span>
                                         <?php endif; ?>
                                     </div>

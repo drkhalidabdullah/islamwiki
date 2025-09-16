@@ -40,7 +40,7 @@ $stmt = $pdo->prepare("
         MIN(wa.created_at) as first_article,
         SUM(wa.word_count) as total_words,
         SUM(wa.char_count) as total_chars,
-        AVG(wa.word_count) as avg_words_per_article
+        AVG(wa.word_count) as avg_words_per_article             
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
     WHERE wa.status = 'published'
@@ -250,7 +250,7 @@ include '../../../includes/header.php';
     <!-- Header Section -->
     <div class="page-info-header">
         <h1 >
-            <i class="fas fa-info-circle"></i> Information for "<?php echo htmlspecialchars($article['title']); ?>"
+            <i class="iw iw-info-circle"></i> Information for "<?php echo htmlspecialchars($article['title']); ?>"
         </h1>
         <p >
             Comprehensive page information and statistics

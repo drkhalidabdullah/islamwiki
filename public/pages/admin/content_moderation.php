@@ -96,7 +96,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-shield-alt"></i> Content Moderation</h1>
+        <h1><i class="iw iw-shield-alt"></i> Content Moderation</h1>
         <p>Review and manage content reports and flagged content</p>
     </div>
 
@@ -104,7 +104,7 @@ include "../../includes/header.php";
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">
-                <i class="fas fa-flag"></i>
+                <i class="iw iw-flag"></i>
             </div>
             <div class="stat-content">
                 <h3><?php echo number_format($stats['total_reports']); ?></h3>
@@ -113,7 +113,7 @@ include "../../includes/header.php";
         </div>
         <div class="stat-card">
             <div class="stat-icon">
-                <i class="fas fa-clock"></i>
+                <i class="iw iw-clock"></i>
             </div>
             <div class="stat-content">
                 <h3><?php echo number_format($stats['pending_reports']); ?></h3>
@@ -122,7 +122,7 @@ include "../../includes/header.php";
         </div>
         <div class="stat-card">
             <div class="stat-icon">
-                <i class="fas fa-check-circle"></i>
+                <i class="iw iw-check-circle"></i>
             </div>
             <div class="stat-content">
                 <h3><?php echo number_format($stats['resolved_reports']); ?></h3>
@@ -131,7 +131,7 @@ include "../../includes/header.php";
         </div>
         <div class="stat-card">
             <div class="stat-icon">
-                <i class="fas fa-times-circle"></i>
+                <i class="iw iw-times-circle"></i>
             </div>
             <div class="stat-content">
                 <h3><?php echo number_format($stats['dismissed_reports']); ?></h3>
@@ -171,7 +171,7 @@ include "../../includes/header.php";
         
         <?php if (empty($reports)): ?>
         <div class="empty-state">
-            <i class="fas fa-inbox"></i>
+            <i class="iw iw-inbox"></i>
             <h3>No reports found</h3>
             <p>No content reports match your current filters.</p>
         </div>
@@ -227,12 +227,12 @@ include "../../includes/header.php";
                     <div class="report-actions">
                         <a href="/moderate-content/<?php echo $report['content_type']; ?>/<?php echo $report['content_id']; ?>" 
                            class="btn btn-sm btn-outline" target="_blank">
-                            <i class="fas fa-external-link-alt"></i> View Content
+                            <i class="iw iw-external-link-alt"></i> View Content
                         </a>
                         
                         <?php if ($report['status'] === 'pending'): ?>
                         <button class="btn btn-sm btn-primary" onclick="showUpdateModal(<?php echo $report['id']; ?>)">
-                            <i class="fas fa-edit"></i> Update Status
+                            <i class="iw iw-edit"></i> Update Status
                         </button>
                         <?php endif; ?>
                     </div>
@@ -246,7 +246,7 @@ include "../../includes/header.php";
         <div class="pagination">
             <?php if ($page > 1): ?>
             <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="btn btn-outline">
-                <i class="fas fa-chevron-left"></i> Previous
+                <i class="iw iw-chevron-left"></i> Previous
             </a>
             <?php endif; ?>
             
@@ -256,7 +256,7 @@ include "../../includes/header.php";
             
             <?php if ($page < $total_pages): ?>
             <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="btn btn-outline">
-                Next <i class="fas fa-chevron-right"></i>
+                Next <i class="iw iw-chevron-right"></i>
             </a>
             <?php endif; ?>
         </div>

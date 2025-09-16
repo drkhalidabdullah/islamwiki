@@ -126,9 +126,9 @@ function createCitationModal() {
         <div id="citationModal" class="citation-modal" style="display: none;">
             <div class="citation-modal-content">
                 <div class="citation-modal-header">
-                    <h3><i class="fas fa-quote-left"></i> Cite this page</h3>
+                    <h3><i class="iw iw-quote-left"></i> Cite this page</h3>
                     <button class="citation-modal-close" onclick="closeCitationModal()">
-                        <i class="fas fa-times"></i>
+                        <i class="iw iw-times"></i>
                     </button>
                 </div>
                 <div class="citation-modal-body">
@@ -150,10 +150,10 @@ function createCitationModal() {
                     
                     <div class="citation-actions">
                         <button class="btn btn-primary" onclick="copyCitation()">
-                            <i class="fas fa-copy"></i> Copy Citation
+                            <i class="iw iw-copy"></i> Copy Citation
                         </button>
                         <button class="btn btn-secondary" onclick="downloadCitation()">
-                            <i class="fas fa-download"></i> Download
+                            <i class="iw iw-download"></i> Download
                         </button>
                     </div>
                     
@@ -248,7 +248,7 @@ function showToast(message, type = 'info') {
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
         <div class="toast-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <i class="iw iw-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
             <span>${message}</span>
         </div>
     `;

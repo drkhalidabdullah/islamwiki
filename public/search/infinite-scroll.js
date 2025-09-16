@@ -169,12 +169,12 @@ class InfiniteScroll {
     
     getResultIcon(type) {
         const icons = {
-            'article': 'fas fa-book',
-            'user': 'fas fa-user',
-            'message': 'fas fa-comment',
-            'category': 'fas fa-folder'
+            'article': 'iw iw-book',
+            'user': 'iw iw-user',
+            'message': 'iw iw-comment',
+            'category': 'iw iw-folder'
         };
-        return icons[type] || 'fas fa-file';
+        return icons[type] || 'iw iw-file';
     }
     
     formatDate(dateString) {

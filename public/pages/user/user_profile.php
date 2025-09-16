@@ -98,7 +98,7 @@ include "../../includes/header.php";
                         </div>
                     <?php endif; ?>
                     <div class="camera-icon-overlay">
-                        <i class="fas fa-camera"></i>
+                        <i class="iw iw-camera"></i>
                     </div>
                 </div>
             <?php else: ?>
@@ -414,11 +414,11 @@ include "../../includes/header.php";
             <div id="initialOptions" class="options-container">
                 <div class="option-buttons">
                     <button class="option-btn primary" onclick="showProfilePictureViewer()">
-                        <i class="fas fa-eye"></i>
+                        <i class="iw iw-eye"></i>
                         See profile picture
                     </button>
                     <button class="option-btn secondary" onclick="showPictureSelection()">
-                        <i class="fas fa-camera"></i>
+                        <i class="iw iw-camera"></i>
                         Choose profile picture
                     </button>
                 </div>
@@ -428,14 +428,14 @@ include "../../includes/header.php";
             <div id="pictureSelection" class="selection-container" style="display: none;">
                 <div class="selection-actions">
                     <button class="action-btn primary" onclick="triggerFileUpload()">
-                        <i class="fas fa-plus"></i>
+                        <i class="iw iw-plus"></i>
                         Upload photo
                     </button>
                     <div class="upload-hint">
                         <small>💡 Hold Shift while clicking to upload directly without adjustment</small>
                     </div>
                     <button class="action-btn secondary" onclick="showFrames()">
-                        <i class="fas fa-square"></i>
+                        <i class="iw iw-square"></i>
                         Add Frame
                     </button>
                 </div>
@@ -480,7 +480,7 @@ include "../../includes/header.php";
                     <div class="profile-preview">
                         <img id="adjustmentImage" src="" alt="Profile preview">
                         <div class="drag-overlay">
-                            <i class="fas fa-arrows-alt"></i>
+                            <i class="iw iw-arrows-alt"></i>
                             <span>Drag to Reposition</span>
                         </div>
                     </div>
@@ -493,7 +493,7 @@ include "../../includes/header.php";
                         </div>
                     </div>
                     <div class="privacy-info">
-                        <i class="fas fa-globe"></i>
+                        <i class="iw iw-globe"></i>
                         <span>Your profile picture is public.</span>
                     </div>
                 </div>
@@ -521,11 +521,11 @@ include "../../includes/header.php";
                 <div class="viewer-actions">
                     <div class="options-dropdown">
                         <button class="options-btn" onclick="toggleOptionsDropdown()">
-                            <i class="fas fa-ellipsis-v"></i>
+                            <i class="iw iw-ellipsis-v"></i>
                         </button>
                         <div class="options-menu" id="optionsMenu">
                             <button class="option-item delete-btn" onclick="deleteCurrentPhoto()">
-                                <i class="fas fa-trash"></i>
+                                <i class="iw iw-trash"></i>
                                 Delete Photo
                             </button>
                         </div>

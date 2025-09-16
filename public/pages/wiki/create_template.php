@@ -80,7 +80,7 @@ include '../../includes/header.php';
 
 <div class="create-template-container">
     <div class="page-header">
-        <h1><i class="fas fa-puzzle-piece"></i> Create Template</h1>
+        <h1><i class="iw iw-puzzle-piece"></i> Create Template</h1>
         <p>Create a new reusable template for your wiki</p>
     </div>
 
@@ -136,10 +136,10 @@ include '../../includes/header.php';
             
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="previewTemplate()">
-                    <i class="fas fa-eye"></i> Preview
+                    <i class="iw iw-eye"></i> Preview
                 </button>
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Create Template
+                    <i class="iw iw-save"></i> Create Template
                 </button>
             </div>
         </form>

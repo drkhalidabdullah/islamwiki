@@ -198,7 +198,7 @@ function clusterArticles($articles, $query) {
                 'results' => $category_articles,
                 'relevance_score' => calculateCategoryRelevance($category, $query),
                 'cluster_size' => count($category_articles),
-                'icon' => 'fas fa-folder'
+                'icon' => 'iw iw-folder'
             ];
         }
     }
@@ -222,7 +222,7 @@ function clusterArticles($articles, $query) {
                 'results' => $author_articles,
                 'relevance_score' => calculateAuthorRelevance($author, $query),
                 'cluster_size' => count($author_articles),
-                'icon' => 'fas fa-user'
+                'icon' => 'iw iw-user'
             ];
         }
     }
@@ -270,7 +270,7 @@ function clusterUsers($users, $query) {
                 'results' => $activity_users,
                 'relevance_score' => 0.5,
                 'cluster_size' => count($activity_users),
-                'icon' => 'fas fa-clock'
+                'icon' => 'iw iw-clock'
             ];
         }
     }
@@ -311,7 +311,7 @@ function clusterByTimePeriod($articles) {
                 'results' => $period_articles,
                 'relevance_score' => $period === 'Recent' ? 1.0 : ($period === 'This Month' ? 0.8 : 0.6),
                 'cluster_size' => count($period_articles),
-                'icon' => 'fas fa-calendar'
+                'icon' => 'iw iw-calendar'
             ];
         }
     }
@@ -363,7 +363,7 @@ function clusterByTopicSimilarity($articles, $query) {
                 'results' => $topic_articles,
                 'relevance_score' => calculateTopicRelevance($topic, $query),
                 'cluster_size' => count($topic_articles),
-                'icon' => 'fas fa-tags'
+                'icon' => 'iw iw-tags'
             ];
         }
     }

@@ -132,15 +132,15 @@ class EnhancedSearch {
 
     renderContentTypeResults(contentType, results) {
         const typeConfig = {
-            articles: { title: 'Wiki Pages', icon: 'fas fa-book', color: '#3498db' },
-            users: { title: 'People', icon: 'fas fa-users', color: '#e74c3c' },
-            posts: { title: 'Posts', icon: 'fas fa-comment', color: '#2ecc71' },
-            groups: { title: 'Groups', icon: 'fas fa-layer-group', color: '#9b59b6' },
-            events: { title: 'Events', icon: 'fas fa-calendar', color: '#f39c12' },
-            ummah: { title: 'Ummah', icon: 'fas fa-mosque', color: '#1abc9c' }
+            articles: { title: 'Wiki Pages', icon: 'iw iw-book', color: '#3498db' },
+            users: { title: 'People', icon: 'iw iw-users', color: '#e74c3c' },
+            posts: { title: 'Posts', icon: 'iw iw-comment', color: '#2ecc71' },
+            groups: { title: 'Groups', icon: 'iw iw-layer-group', color: '#9b59b6' },
+            events: { title: 'Events', icon: 'iw iw-calendar', color: '#f39c12' },
+            ummah: { title: 'Ummah', icon: 'iw iw-mosque', color: '#1abc9c' }
         };
 
-        const config = typeConfig[contentType] || { title: contentType, icon: 'fas fa-file', color: '#95a5a6' };
+        const config = typeConfig[contentType] || { title: contentType, icon: 'iw iw-file', color: '#95a5a6' };
 
         let html = `
             <div class="results-section">
@@ -189,7 +189,7 @@ class EnhancedSearch {
         return `
             <a href="/wiki/${article.slug}" class="result-item article-result">
                 <div class="result-icon">
-                    <i class="fas fa-book"></i>
+                    <i class="iw iw-book"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
@@ -236,7 +236,7 @@ class EnhancedSearch {
         return `
             <a href="/posts/${post.id}" class="result-item post-result">
                 <div class="result-icon">
-                    <i class="fas fa-comment"></i>
+                    <i class="iw iw-comment"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
@@ -257,7 +257,7 @@ class EnhancedSearch {
         return `
             <a href="/groups/${group.slug}" class="result-item group-result">
                 <div class="result-icon">
-                    <i class="fas fa-layer-group"></i>
+                    <i class="iw iw-layer-group"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
@@ -281,7 +281,7 @@ class EnhancedSearch {
         return `
             <a href="/events/${event.slug}" class="result-item event-result">
                 <div class="result-icon">
-                    <i class="fas fa-calendar"></i>
+                    <i class="iw iw-calendar"></i>
                 </div>
                 <div class="result-content">
                     <h5 class="result-title">
@@ -301,12 +301,12 @@ class EnhancedSearch {
 
     renderUmmahResult(item) {
         const typeConfig = {
-            featured_article: { icon: 'fas fa-star', title: 'Featured Article' },
-            discussion: { icon: 'fas fa-comments', title: 'Community Discussion' },
-            announcement: { icon: 'fas fa-bullhorn', title: 'Community Announcement' }
+            featured_article: { icon: 'iw iw-star', title: 'Featured Article' },
+            discussion: { icon: 'iw iw-comments', title: 'Community Discussion' },
+            announcement: { icon: 'iw iw-bullhorn', title: 'Community Announcement' }
         };
 
-        const config = typeConfig[item.content_type] || { icon: 'fas fa-file', title: 'Community Content' };
+        const config = typeConfig[item.content_type] || { icon: 'iw iw-file', title: 'Community Content' };
 
         return `
             <a href="/${item.content_type === 'featured_article' ? 'wiki/' + item.slug : 'posts/' + item.id}" class="result-item ummah-result">
@@ -333,7 +333,7 @@ class EnhancedSearch {
         let html = `
             <div class="no-results">
                 <div class="no-results-icon">
-                    <i class="fas fa-search"></i>
+                    <i class="iw iw-search"></i>
                 </div>
                 <h4>No results found</h4>
                 <p>No results found for "${query}"</p>
@@ -384,7 +384,7 @@ class EnhancedSearch {
         resultsContainer.innerHTML = `
             <div class="search-error">
                 <div class="error-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="iw iw-exclamation-triangle"></i>
                 </div>
                 <h4>Search Error</h4>
                 <p>${message}</p>

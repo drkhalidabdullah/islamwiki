@@ -156,13 +156,13 @@ include "../../../includes/header.php";
                     
                     <div class="page-meta">
                         <div class="page-author">
-                            <i class="fas fa-user"></i>
+                            <i class="iw iw-user"></i>
                             <a href="/user/<?php echo $page['username']; ?>">
                                 <?php echo htmlspecialchars($page['display_name'] ?: $page['username']); ?>
                             </a>
                         </div>
                         <div class="page-date">
-                            <i class="fas fa-calendar"></i>
+                            <i class="iw iw-calendar"></i>
                             <span title="<?php echo format_date($page['created_at']); ?>">
                                 <?php echo time_ago($page['created_at']); ?>
                             </span>
@@ -177,16 +177,16 @@ include "../../../includes/header.php";
                     
                     <div class="page-stats">
                         <div class="stat">
-                            <i class="fas fa-eye"></i>
+                            <i class="iw iw-eye"></i>
                             <span><?php echo number_format($page['view_count']); ?> views</span>
                         </div>
                         <div class="stat">
-                            <i class="fas fa-edit"></i>
+                            <i class="iw iw-edit"></i>
                             <span><?php echo $page['edit_count']; ?> edits</span>
                         </div>
                         <?php if ($page['word_count'] > 0): ?>
                         <div class="stat">
-                            <i class="fas fa-file-text"></i>
+                            <i class="iw iw-file-text"></i>
                             <span><?php echo number_format($page['word_count']); ?> words</span>
                         </div>
                         <?php endif; ?>

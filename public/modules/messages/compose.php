@@ -101,10 +101,10 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 <h2>Compose Message</h2>
                 <div class="messages-actions">
                     <a href="/messages" class="messages-options" title="All Messages">
-                        <i class="fas fa-inbox"></i>
+                        <i class="iw iw-inbox"></i>
                     </a>
                     <a href="/messages/sent" class="messages-options" title="Sent Messages">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="iw iw-paper-plane"></i>
                     </a>
                 </div>
             </div>
@@ -123,7 +123,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 <div class="recipients-section" id="friendsSection">
                     <?php if (empty($friends)): ?>
                         <div class="no-friends">
-                            <i class="fas fa-users"></i>
+                            <i class="iw iw-users"></i>
                             <h3>No friends yet</h3>
                             <p>Add some friends to start messaging.</p>
                             <a href="/friends" class="btn btn-primary">Find Friends</a>
@@ -146,7 +146,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 <div class="recipients-section" id="recentSection" style="display: none;">
                     <?php if (empty($recent_conversations)): ?>
                         <div class="no-recent">
-                            <i class="fas fa-history"></i>
+                            <i class="iw iw-history"></i>
                             <h3>No recent conversations</h3>
                             <p>Start a conversation to see it here.</p>
                         </div>
@@ -173,11 +173,11 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <h1>Compose New Message</h1>
                     <div class="compose-actions">
                         <button class="btn-save-draft" id="saveDraftBtn" title="Save as Draft">
-                            <i class="fas fa-save"></i>
+                            <i class="iw iw-save"></i>
                             Save Draft
                         </button>
                         <button class="btn-clear" id="clearBtn" title="Clear Message">
-                            <i class="fas fa-trash"></i>
+                            <i class="iw iw-trash"></i>
                             Clear
                         </button>
                     </div>
@@ -192,7 +192,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                                 <span class="placeholder">Select a recipient...</span>
                             </div>
                             <button type="button" class="btn-select-recipient" id="selectRecipientBtn">
-                                <i class="fas fa-plus"></i>
+                                <i class="iw iw-plus"></i>
                             </button>
                         </div>
                     </div>
@@ -208,19 +208,19 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                         <div class="message-actions">
                             <div class="message-tools">
                                 <button type="button" class="tool-btn" title="Bold">
-                                    <i class="fas fa-bold"></i>
+                                    <i class="iw iw-bold"></i>
                                 </button>
                                 <button type="button" class="tool-btn" title="Italic">
-                                    <i class="fas fa-italic"></i>
+                                    <i class="iw iw-italic"></i>
                                 </button>
                                 <button type="button" class="tool-btn" title="Underline">
-                                    <i class="fas fa-underline"></i>
+                                    <i class="iw iw-underline"></i>
                                 </button>
                                 <button type="button" class="tool-btn" title="Emoji">
-                                    <i class="fas fa-smile"></i>
+                                    <i class="iw iw-smile"></i>
                                 </button>
                                 <button type="button" class="tool-btn" title="Attach File">
-                                    <i class="fas fa-paperclip"></i>
+                                    <i class="iw iw-paperclip"></i>
                                 </button>
                             </div>
                             <div class="message-counter">
@@ -254,7 +254,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             
             <div class="compose-tips">
                 <div class="tip-item">
-                    <i class="fas fa-lightbulb"></i>
+                    <i class="iw iw-lightbulb"></i>
                     <div class="tip-content">
                         <h4>Use @mentions</h4>
                         <p>Type @username to mention someone in your message.</p>
@@ -262,7 +262,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 </div>
                 
                 <div class="tip-item">
-                    <i class="fas fa-shield-alt"></i>
+                    <i class="iw iw-shield-alt"></i>
                     <div class="tip-content">
                         <h4>End-to-end encryption</h4>
                         <p>Your messages are encrypted and secure.</p>
@@ -270,7 +270,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 </div>
                 
                 <div class="tip-item">
-                    <i class="fas fa-clock"></i>
+                    <i class="iw iw-clock"></i>
                     <div class="tip-content">
                         <h4>Draft auto-save</h4>
                         <p>Your drafts are automatically saved every 30 seconds.</p>
@@ -278,7 +278,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 </div>
                 
                 <div class="tip-item">
-                    <i class="fas fa-edit"></i>
+                    <i class="iw iw-edit"></i>
                     <div class="tip-content">
                         <h4>Rich formatting</h4>
                         <p>Use the toolbar to format your text with bold, italic, and more.</p>
@@ -414,9 +414,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manual save draft
     saveDraftBtn.addEventListener('click', function() {
         saveDraft();
-        this.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        this.innerHTML = '<i class="iw iw-check"></i> Saved!';
         setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+            this.innerHTML = '<i class="iw iw-save"></i> Save Draft';
         }, 2000);
     });
     

@@ -55,7 +55,7 @@ include "../../includes/header.php";
                         </h4>
                         <div class="change-actions">
                             <a href="/wiki/<?php echo $change['slug']; ?>/history" class="btn-icon" title="View History">
-                                <i class="fas fa-history"></i>
+                                <i class="iw iw-history"></i>
                             </a>
                         </div>
                     </div>
@@ -71,7 +71,7 @@ include "../../includes/header.php";
                     </div>
                     <?php if ($change['changes_summary']): ?>
                     <div class="change-summary">
-                        <i class="fas fa-edit"></i>
+                        <i class="iw iw-edit"></i>
                         <span><?php echo htmlspecialchars($change['changes_summary']); ?></span>
                     </div>
                     <?php endif; ?>
@@ -104,7 +104,7 @@ include "../../includes/header.php";
         <?php if (empty($watchlist)): ?>
             <div class="empty-state">
                 <div class="empty-icon">
-                    <i class="fas fa-eye-slash"></i>
+                    <i class="iw iw-eye-slash"></i>
                 </div>
                 <h3>No articles in your watchlist</h3>
                 <p>Start watching articles by clicking the eye icon on any article page.</p>
@@ -121,12 +121,12 @@ include "../../includes/header.php";
                             </h3>
                             <div class="item-actions">
                                 <a href="/wiki/<?php echo $item['slug']; ?>/history" class="btn-icon" title="View History">
-                                    <i class="fas fa-history"></i>
+                                    <i class="iw iw-history"></i>
                                 </a>
                                 <button class="btn-icon btn-remove" 
                                         onclick="removeFromWatchlist(<?php echo $item['article_id']; ?>, this)"
                                         title="Remove from watchlist">
-                                    <i class="fas fa-eye-slash"></i>
+                                    <i class="iw iw-eye-slash"></i>
                                 </button>
                             </div>
                         </div>
@@ -145,7 +145,7 @@ include "../../includes/header.php";
                         
                         <?php if ($item['notify_email']): ?>
                         <div class="item-notifications">
-                            <i class="fas fa-bell"></i>
+                            <i class="iw iw-bell"></i>
                             <span>Email notifications enabled</span>
                         </div>
                         <?php endif; ?>

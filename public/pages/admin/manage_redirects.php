@@ -83,7 +83,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-exchange-alt"></i> Manage Redirects</h1>
+        <h1><i class="iw iw-exchange-alt"></i> Manage Redirects</h1>
         <p>Create and manage page redirects</p>
     </div>
 
@@ -125,7 +125,7 @@ include "../../includes/header.php";
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create Redirect
+                    <i class="iw iw-plus"></i> Create Redirect
                 </button>
             </div>
         </form>
@@ -165,7 +165,7 @@ include "../../includes/header.php";
                                     <input type="hidden" name="action" value="delete_redirect">
                                     <input type="hidden" name="redirect_id" value="<?php echo $redirect['id']; ?>">
                                     <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i> Delete
+                                        <i class="iw iw-trash"></i> Delete
                                     </button>
                                 </form>
                             </td>
@@ -181,7 +181,7 @@ include "../../includes/header.php";
 
     <div class="form-actions">
         <a href="/admin" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <i class="iw iw-arrow-left"></i> Back to Dashboard
         </a>
     </div>
 </div>

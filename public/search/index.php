@@ -79,31 +79,31 @@ include __DIR__ . "/../includes/header.php";
                     <h4>Content Type</h4>
                     <div class="filter-options">
                         <a href="?q=<?php echo urlencode($query); ?>&type=all" class="filter-link <?php echo ($content_type === 'all') ? 'active' : ''; ?>">
-                            <i class="fas fa-search"></i>
+                            <i class="iw iw-search"></i>
                             All Content
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=articles" class="filter-link <?php echo ($content_type === 'articles') ? 'active' : ''; ?>">
-                            <i class="fas fa-book"></i>
+                            <i class="iw iw-book"></i>
                             Wiki Pages
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=posts" class="filter-link <?php echo ($content_type === 'posts') ? 'active' : ''; ?>">
-                            <i class="fas fa-comment"></i>
+                            <i class="iw iw-comment"></i>
                             Posts
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=people" class="filter-link <?php echo ($content_type === 'people') ? 'active' : ''; ?>">
-                            <i class="fas fa-users"></i>
+                            <i class="iw iw-users"></i>
                             People
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=groups" class="filter-link <?php echo ($content_type === 'groups') ? 'active' : ''; ?>">
-                            <i class="fas fa-layer-group"></i>
+                            <i class="iw iw-layer-group"></i>
                             Groups
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=events" class="filter-link <?php echo ($content_type === 'events') ? 'active' : ''; ?>">
-                            <i class="fas fa-calendar"></i>
+                            <i class="iw iw-calendar"></i>
                             Events
                         </a>
                         <a href="?q=<?php echo urlencode($query); ?>&type=ummah" class="filter-link <?php echo ($content_type === 'ummah') ? 'active' : ''; ?>">
-                            <i class="fas fa-mosque"></i>
+                            <i class="iw iw-mosque"></i>
                             Ummah
                         </a>
                     </div>
@@ -138,7 +138,7 @@ include __DIR__ . "/../includes/header.php";
                 <!-- Clear Filters -->
                 <div class="filter-actions">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="clearFilters()">
-                        <i class="fas fa-times"></i> Clear Filters
+                        <i class="iw iw-times"></i> Clear Filters
                     </button>
                 </div>
             </div>
@@ -193,20 +193,20 @@ include __DIR__ . "/../includes/header.php";
                     
                     <div class="search-input-group">
                         <div class="search-input-wrapper">
-                            <i class="fas fa-search search-icon"></i>
+                            <i class="iw iw-search search-icon"></i>
                             <input type="text" name="q" value="<?php echo htmlspecialchars($query); ?>" 
                                    placeholder="Search everything..." class="search-input" id="searchInput" required>
                             <button type="button" class="clear-search" id="clearSearch" style="display: none;">
-                                <i class="fas fa-times"></i>
+                                <i class="iw iw-times"></i>
                             </button>
                         </div>
                         <button type="submit" class="btn btn-primary search-btn">
-                            <i class="fas fa-search"></i> Search
+                            <i class="iw iw-search"></i> Search
                         </button>
                     </div>
                     <div class="search-options">
                         <a href="/search/advanced" class="btn btn-secondary">
-                            <i class="fas fa-cog"></i> Advanced Search
+                            <i class="iw iw-cog"></i> Advanced Search
                         </a>
                     </div>
                 </form>
@@ -225,7 +225,7 @@ include __DIR__ . "/../includes/header.php";
                 <?php else: ?>
                     <div class="search-welcome">
                         <div class="welcome-icon">
-                            <i class="fas fa-search"></i>
+                            <i class="iw iw-search"></i>
                         </div>
                         <h3>Start Your Search</h3>
                         <p>Enter a search term above to discover content across our platform</p>

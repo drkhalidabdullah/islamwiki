@@ -51,7 +51,7 @@ function getTopSuggestions($query) {
     
     // Search for exact title matches
     $stmt = $pdo->prepare("
-        SELECT 'article' as type, title, slug, 'fas fa-file-alt' as icon, 
+        SELECT 'article' as type, title, slug, 'iw iw-file-alt' as icon, 
                CONCAT('/wiki/', slug) as url, 'View Article' as action,
                CONCAT('/wiki/', slug, '/edit') as editUrl, 1 as editable
         FROM wiki_articles 

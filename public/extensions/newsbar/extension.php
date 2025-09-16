@@ -57,7 +57,7 @@ class NewsBarExtension {
         echo '<div class="newsbar-content">';
         echo '<div class="newsbar-left">';
         echo '<div class="newsbar-label">';
-        echo '<i class="fas fa-bullhorn"></i>';
+        echo '<i class="iw iw-bullhorn"></i>';
         echo '<span>Latest News</span>';
         echo '</div>';
         echo '</div>';
@@ -78,7 +78,7 @@ class NewsBarExtension {
         echo '<div class="newsbar-right">';
         echo '<div class="newsbar-controls">';
         echo '<button class="newsbar-pause" onclick="toggleNewsbar()" title="Pause/Resume">';
-        echo '<i class="fas fa-pause"></i>';
+        echo '<i class="iw iw-pause"></i>';
         echo '</button>';
         echo '</div>';
         echo '</div>';

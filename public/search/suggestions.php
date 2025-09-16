@@ -56,7 +56,7 @@ try {
                 'excerpt' => substr($suggestion['excerpt'], 0, 100) . '...',
                 'views' => number_format($suggestion['view_count']),
                 'date' => date('M j, Y', strtotime($suggestion['published_at'])),
-                'icon' => 'fas fa-book',
+                'icon' => 'iw iw-book',
                 'relevance' => $suggestion['relevance_score']
             ];
         }
@@ -101,7 +101,7 @@ try {
                 'bio' => substr($suggestion['bio'], 0, 80) . '...',
                 'avatar' => $suggestion['avatar'] ?: '/assets/images/default-avatar.png',
                 'join_date' => date('M Y', strtotime($suggestion['created_at'])),
-                'icon' => 'fas fa-user',
+                'icon' => 'iw iw-user',
                 'relevance' => $suggestion['relevance_score']
             ];
         }
@@ -140,7 +140,7 @@ try {
                 'category' => 'Categories',
                 'description' => substr($suggestion['description'], 0, 80) . '...',
                 'article_count' => $suggestion['article_count'],
-                'icon' => 'fas fa-folder',
+                'icon' => 'iw iw-folder',
                 'relevance' => $suggestion['relevance_score']
             ];
         }
@@ -166,7 +166,7 @@ try {
                 'url' => '/search?q=' . urlencode($popular['query']),
                 'category' => 'Popular Searches',
                 'search_count' => $popular['search_count'],
-                'icon' => 'fas fa-fire',
+                'icon' => 'iw iw-fire',
                 'relevance' => 30
             ];
         }

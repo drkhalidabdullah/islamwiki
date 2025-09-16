@@ -35,31 +35,31 @@ include "../../includes/header.php";;
         <!-- Left Sidebar -->
         <div class="friends-sidebar">
             <div class="friends-nav">
-                <h2><i class="fas fa-users"></i> Friends</h2>
+                <h2><i class="iw iw-users"></i> Friends</h2>
                 <nav class="friends-menu">
                     <a href="/friends" class="friends-nav-item">
-                        <i class="fas fa-home"></i>
+                        <i class="iw iw-home"></i>
                         <span>Home</span>
                     </a>
                     <a href="/friends/requests" class="friends-nav-item">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="iw iw-user-plus"></i>
                         <span>Friend Requests</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/suggestions" class="friends-nav-item">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="iw iw-user-plus"></i>
                         <span>Suggestions</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/all" class="friends-nav-item active">
-                        <i class="fas fa-users"></i>
+                        <i class="iw iw-users"></i>
                         <span>All friends</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/lists" class="friends-nav-item">
-                        <i class="fas fa-list"></i>
+                        <i class="iw iw-list"></i>
                         <span>Custom Lists</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                 </nav>
             </div>
@@ -75,7 +75,7 @@ include "../../includes/header.php";;
                 
                 <?php if (empty($friends)): ?>
                     <div class="no-friends">
-                        <i class="fas fa-users"></i>
+                        <i class="iw iw-users"></i>
                         <h3>No friends yet</h3>
                         <p>Start connecting with people by adding friends from suggestions or accepting friend requests.</p>
                         <a href="/friends/suggestions" class="btn btn-primary">Find Friends</a>
@@ -94,11 +94,11 @@ include "../../includes/header.php";;
                                 </div>
                                 <div class="friend-actions">
                                     <a href="/user/<?php echo $friend['username']; ?>" class="btn-view-profile">
-                                        <i class="fas fa-user"></i>
+                                        <i class="iw iw-user"></i>
                                         View Profile
                                     </a>
                                     <button class="btn-unfriend" onclick="unfriend(<?php echo $friend['id']; ?>)">
-                                        <i class="fas fa-user-times"></i>
+                                        <i class="iw iw-user-times"></i>
                                         Unfriend
                                     </button>
                                 </div>

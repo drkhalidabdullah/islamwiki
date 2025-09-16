@@ -60,14 +60,14 @@ class EnhancedSearchOverlay {
             <div class="search-overlay-content">
                 <div class="search-overlay-header">
                     <div class="search-input-container">
-                        <i class="fas fa-search search-icon"></i>
+                        <i class="iw iw-search search-icon"></i>
                         <input type="text" 
                                id="enhancedSearchInput" 
                                class="search-overlay-input" 
                                placeholder="Search articles, users, content..."
                                autocomplete="off">
                         <button class="search-clear-btn" id="searchClearBtn" style="display: none;">
-                            <i class="fas fa-times"></i>
+                            <i class="iw iw-times"></i>
                         </button>
                     </div>
                 </div>
@@ -255,7 +255,7 @@ class EnhancedSearchOverlay {
                 ${suggestions.map(item => `
                     <div class="suggestion-item">
                         <div class="suggestion-icon">
-                            ${item.icon ? `<i class="${item.icon}"></i>` : '<i class="fas fa-file-alt"></i>'}
+                            ${item.icon ? `<i class="${item.icon}"></i>` : '<i class="iw iw-file-alt"></i>'}
                         </div>
                         <div class="suggestion-content">
                             <div class="suggestion-title">${item.title}</div>
@@ -263,10 +263,10 @@ class EnhancedSearchOverlay {
                         </div>
                         <div class="suggestion-actions">
                             <button class="btn btn-sm btn-primary" onclick="window.location.href='${item.url}'">
-                                <i class="fas fa-external-link-alt"></i> ${item.action || 'View'}
+                                <i class="iw iw-external-link-alt"></i> ${item.action || 'View'}
                             </button>
                             ${item.editable ? `<button class="btn btn-sm btn-outline" onclick="window.location.href='${item.editUrl}'">
-                                <i class="fas fa-edit"></i>
+                                <i class="iw iw-edit"></i>
                             </button>` : ''}
                         </div>
                     </div>
@@ -285,7 +285,7 @@ class EnhancedSearchOverlay {
                 ${articles.map(article => `
                     <div class="article-item" onclick="window.location.href='${article.url}'">
                         <div class="article-icon">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="iw iw-file-alt"></i>
                         </div>
                         <div class="article-content">
                             <div class="article-title">${article.title}</div>
@@ -321,15 +321,15 @@ class EnhancedSearchOverlay {
         return `
             <div class="actions-list">
                 <div class="action-item" onclick="window.location.href='/search?q=${encodeURIComponent(this.currentQuery)}'">
-                    <i class="fas fa-search"></i>
+                    <i class="iw iw-search"></i>
                     <span>Search for "${this.currentQuery}"</span>
                 </div>
                 <div class="action-item" onclick="window.location.href='/create_article'">
-                    <i class="fas fa-plus"></i>
+                    <i class="iw iw-plus"></i>
                     <span>Create new article</span>
                 </div>
                 <div class="action-item" onclick="window.location.href='/wiki'">
-                    <i class="fas fa-book"></i>
+                    <i class="iw iw-book"></i>
                     <span>Browse all articles</span>
                 </div>
             </div>
@@ -390,7 +390,7 @@ class EnhancedSearchOverlay {
     showNoResults() {
         this.suggestionsContainer.innerHTML = `
             <div class="search-no-results">
-                <i class="fas fa-search"></i>
+                <i class="iw iw-search"></i>
                 <h3>No results found</h3>
                 <p>Try different keywords or check your spelling</p>
             </div>
@@ -400,7 +400,7 @@ class EnhancedSearchOverlay {
     showError(message) {
         this.suggestionsContainer.innerHTML = `
             <div class="search-error">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="iw iw-exclamation-triangle"></i>
                 <h3>Search Error</h3>
                 <p>${message}</p>
             </div>

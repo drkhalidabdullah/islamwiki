@@ -54,7 +54,7 @@ include "../../includes/header.php";;
 
 <div class="create-post-container">
     <div class="card">
-        <h1><i class="fas fa-edit"></i> Create Post</h1>
+        <h1><i class="iw iw-edit"></i> Create Post</h1>
         <p>Share your thoughts with the community using Markdown</p>
     </div>
 
@@ -67,46 +67,46 @@ include "../../includes/header.php";;
                 <div class="markdown-toolbar">
                     <div class="toolbar-group">
                         <button type="button" class="toolbar-btn" data-action="bold" title="Bold">
-                            <i class="fas fa-bold"></i>
+                            <i class="iw iw-bold"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="italic" title="Italic">
-                            <i class="fas fa-italic"></i>
+                            <i class="iw iw-italic"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="strikethrough" title="Strikethrough">
-                            <i class="fas fa-strikethrough"></i>
+                            <i class="iw iw-strikethrough"></i>
                         </button>
                     </div>
                     
                     <div class="toolbar-group">
                         <button type="button" class="toolbar-btn" data-action="heading" title="Heading">
-                            <i class="fas fa-heading"></i>
+                            <i class="iw iw-heading"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="quote" title="Quote">
-                            <i class="fas fa-quote-left"></i>
+                            <i class="iw iw-quote-left"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="code" title="Code">
-                            <i class="fas fa-code"></i>
+                            <i class="iw iw-code"></i>
                         </button>
                     </div>
                     
                     <div class="toolbar-group">
                         <button type="button" class="toolbar-btn" data-action="link" title="Link">
-                            <i class="fas fa-link"></i>
+                            <i class="iw iw-link"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="image" title="Image">
-                            <i class="fas fa-image"></i>
+                            <i class="iw iw-image"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="list" title="List">
-                            <i class="fas fa-list"></i>
+                            <i class="iw iw-list"></i>
                         </button>
                     </div>
                     
                     <div class="toolbar-group">
                         <button type="button" class="toolbar-btn" data-action="toggle-preview" title="Toggle Preview">
-                            <i class="fas fa-eye"></i>
+                            <i class="iw iw-eye"></i>
                         </button>
                         <button type="button" class="toolbar-btn" data-action="help" title="Markdown Help">
-                            <i class="fas fa-question-circle"></i>
+                            <i class="iw iw-question-circle"></i>
                         </button>
                     </div>
                 </div>

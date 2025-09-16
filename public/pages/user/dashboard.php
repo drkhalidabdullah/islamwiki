@@ -243,21 +243,21 @@ include "../../includes/header.php";
                 <h4>Quick Actions</h4>
                 <div class="action-buttons">
                     <a href="/pages/social/create_post.php" class="action-btn">
-                        <i class="fas fa-edit"></i>
+                        <i class="iw iw-edit"></i>
                         <span>Create Post</span>
                     </a>
                     <?php if (is_editor()): ?>
                     <a href="/pages/wiki/create_article.php" class="action-btn">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="iw iw-file-alt"></i>
                         <span>New Article</span>
                     </a>
                     <?php endif; ?>
                     <a href="/search" class="action-btn">
-                        <i class="fas fa-search"></i>
+                        <i class="iw iw-search"></i>
                         <span>Search</span>
                     </a>
                     <a href="/pages/user/settings.php" class="action-btn">
-                        <i class="fas fa-cog"></i>
+                        <i class="iw iw-cog"></i>
                         <span>Settings</span>
                     </a>
                 </div>
@@ -301,46 +301,46 @@ include "../../includes/header.php";
                         <div class="markdown-toolbar" id="postToolbar" style="display: none;">
                             <div class="toolbar-group">
                                 <button type="button" class="toolbar-btn" data-action="bold" title="Bold">
-                                    <i class="fas fa-bold"></i>
+                                    <i class="iw iw-bold"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="italic" title="Italic">
-                                    <i class="fas fa-italic"></i>
+                                    <i class="iw iw-italic"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="strikethrough" title="Strikethrough">
-                                    <i class="fas fa-strikethrough"></i>
+                                    <i class="iw iw-strikethrough"></i>
                                 </button>
     </div>
     
                             <div class="toolbar-group">
                                 <button type="button" class="toolbar-btn" data-action="heading" title="Heading">
-                                    <i class="fas fa-heading"></i>
+                                    <i class="iw iw-heading"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="quote" title="Quote">
-                                    <i class="fas fa-quote-left"></i>
+                                    <i class="iw iw-quote-left"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="code" title="Code">
-                                    <i class="fas fa-code"></i>
+                                    <i class="iw iw-code"></i>
                                 </button>
                             </div>
                             
                             <div class="toolbar-group">
                                 <button type="button" class="toolbar-btn" data-action="link" title="Link">
-                                    <i class="fas fa-link"></i>
+                                    <i class="iw iw-link"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="list" title="List">
-                                    <i class="fas fa-list"></i>
+                                    <i class="iw iw-list"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="image" title="Image">
-                                    <i class="fas fa-image"></i>
+                                    <i class="iw iw-image"></i>
                                 </button>
                             </div>
                             
                             <div class="toolbar-group">
                                 <button type="button" class="toolbar-btn" data-action="toggle-preview" title="Toggle Preview">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="iw iw-eye"></i>
                                 </button>
                                 <button type="button" class="toolbar-btn" data-action="help" title="Markdown Help">
-                                    <i class="fas fa-question-circle"></i>
+                                    <i class="iw iw-question-circle"></i>
                                 </button>
                             </div>
                         </div>
@@ -367,7 +367,7 @@ include "../../includes/header.php";
                         <div class="post-input-footer">
                             <div class="post-options">
                                 <button type="button" class="formatting-btn" id="toggleFormatting" title="Show formatting tools">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="iw iw-edit"></i>
                                     <span>Format</span>
                                 </button>
                                 <label class="privacy-option">
@@ -383,7 +383,7 @@ include "../../includes/header.php";
                         </div>
                     </div>
                     <button id="fullscreenBtn" class="fullscreen-btn" title="Toggle Fullscreen Editor">
-                        <i class="fas fa-expand"></i>
+                        <i class="iw iw-expand"></i>
                     </button>
                 </div>
                 <div class="create-post-divider"></div>
@@ -391,19 +391,19 @@ include "../../includes/header.php";
                     <div class="add-to-post-text">Add to your post:</div>
                     <div class="post-action-buttons">
                         <button class="post-action-btn" onclick="handlePhotoVideo()" title="Add Photo/Video">
-                            <i class="fas fa-images" style="color: #27ae60;"></i>
+                            <i class="iw iw-images" style="color: #27ae60;"></i>
                             <span>Photo/Video</span>
                         </button>
                         <button class="post-action-btn" onclick="handleTagPeople()" title="Tag People">
-                            <i class="fas fa-user-tag" style="color: #3b82f6;"></i>
+                            <i class="iw iw-user-tag" style="color: #3b82f6;"></i>
                             <span>Tag People</span>
                         </button>
                         <button class="post-action-btn" onclick="handleFeeling()" title="Add Feeling/Activity">
-                            <i class="fas fa-smile" style="color: #f59e0b;"></i>
+                            <i class="iw iw-smile" style="color: #f59e0b;"></i>
                             <span>Feeling/Activity</span>
                         </button>
                         <button class="post-action-btn" onclick="handleGIF()" title="Add GIF">
-                            <i class="fas fa-gift" style="color: #8b5cf6;"></i>
+                            <i class="iw iw-gift" style="color: #8b5cf6;"></i>
                             <span>GIF</span>
                         </button>
                     </div>
@@ -569,22 +569,22 @@ include "../../includes/header.php";
                                 <div class="card-footer">
                                     <div class="engagement-stats">
                                         <?php if ($item['content_type'] === 'post'): ?>
-                                            <span><i class="fas fa-comment"></i> <?php echo $item['comments_count']; ?></span>
-                                            <span><i class="fas fa-heart"></i> <?php echo $item['likes_count']; ?></span>
-                                            <span><i class="fas fa-share"></i> <?php echo $item['shares_count']; ?></span>
+                                            <span><i class="iw iw-comment"></i> <?php echo $item['comments_count']; ?></span>
+                                            <span><i class="iw iw-heart"></i> <?php echo $item['likes_count']; ?></span>
+                                            <span><i class="iw iw-share"></i> <?php echo $item['shares_count']; ?></span>
                                         <?php else: ?>
-                                            <span><i class="fas fa-eye"></i> <?php echo number_format($item['view_count']); ?></span>
-                                            <span><i class="fas fa-comment"></i> 0</span>
-                                            <span><i class="fas fa-heart"></i> 0</span>
+                                            <span><i class="iw iw-eye"></i> <?php echo number_format($item['view_count']); ?></span>
+                                            <span><i class="iw iw-comment"></i> 0</span>
+                                            <span><i class="iw iw-heart"></i> 0</span>
                                         <?php endif; ?>
                                     </div>
                                     <?php if ($item['content_type'] === 'post'): ?>
                                     <div class="post-actions">
-                                        <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-heart"></i></button>
+                                        <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-heart"></i></button>
                                         <?php if ($enable_comments): ?>
-                                        <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-comment"></i></button>
+                                        <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-comment"></i></button>
                                         <?php endif; ?>
-                                        <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-share"></i></button>
+                                        <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-share"></i></button>
                                     </div>
                     <?php endif; ?>
                 </div>
@@ -654,22 +654,22 @@ include "../../includes/header.php";
                                 <div class="card-footer">
                                     <div class="engagement-stats">
                                         <?php if ($item['content_type'] === 'post'): ?>
-                                            <span><i class="fas fa-comment"></i> <?php echo $item['comments_count']; ?></span>
-                                            <span><i class="fas fa-heart"></i> <?php echo $item['likes_count']; ?></span>
-                                            <span><i class="fas fa-share"></i> <?php echo $item['shares_count']; ?></span>
+                                            <span><i class="iw iw-comment"></i> <?php echo $item['comments_count']; ?></span>
+                                            <span><i class="iw iw-heart"></i> <?php echo $item['likes_count']; ?></span>
+                                            <span><i class="iw iw-share"></i> <?php echo $item['shares_count']; ?></span>
                                         <?php else: ?>
-                                            <span><i class="fas fa-eye"></i> <?php echo number_format($item['view_count']); ?></span>
-                                            <span><i class="fas fa-comment"></i> 0</span>
-                                            <span><i class="fas fa-heart"></i> 0</span>
+                                            <span><i class="iw iw-eye"></i> <?php echo number_format($item['view_count']); ?></span>
+                                            <span><i class="iw iw-comment"></i> 0</span>
+                                            <span><i class="iw iw-heart"></i> 0</span>
                                         <?php endif; ?>
                                     </div>
                                     <?php if ($item['content_type'] === 'post'): ?>
                                     <div class="post-actions">
-                                        <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-heart"></i></button>
+                                        <button class="action-btn like-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-heart"></i></button>
                                         <?php if ($enable_comments): ?>
-                                        <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-comment"></i></button>
+                                        <button class="action-btn comment-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-comment"></i></button>
                                         <?php endif; ?>
-                                        <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="fas fa-share"></i></button>
+                                        <button class="action-btn share-btn" data-post-id="<?php echo $item['id']; ?>"><i class="iw iw-share"></i></button>
                                     </div>
                                     <?php endif; ?>
                                 </div>
@@ -747,7 +747,7 @@ include "../../includes/header.php";
                             <p class="item-meta"><?php echo format_date($article['updated_at']); ?></p>
                         </div>
                         <button class="unwatch-btn" onclick="unwatchArticle(<?php echo $article['id']; ?>)">
-                            <i class="fas fa-times"></i>
+                            <i class="iw iw-times"></i>
                         </button>
                     </div>
                     <?php endforeach; ?>
@@ -775,7 +775,7 @@ include "../../includes/header.php";
                             <span class="user-handle">@<?php echo htmlspecialchars($user['username']); ?></span>
                         </div>
                         <button class="unfollow-btn" onclick="unfollowUser(<?php echo $user['following_id']; ?>)">
-                            <i class="fas fa-user-times"></i>
+                            <i class="iw iw-user-times"></i>
                         </button>
                     </div>
                     <?php endforeach; ?>

@@ -64,32 +64,32 @@ include 'includes/header.php';
                 <div class="quick-actions">
                     <?php if (is_logged_in()): ?>
                         <a href="/create_post" class="action-item">
-                            <i class="fas fa-plus"></i>
+                            <i class="iw iw-plus"></i>
                             <span>Create Post</span>
                         </a>
                         <a href="/create_article" class="action-item">
-                            <i class="fas fa-edit"></i>
+                            <i class="iw iw-edit"></i>
                             <span>Write Article</span>
                         </a>
                         <a href="/messages" class="action-item">
-                            <i class="fas fa-envelope"></i>
+                            <i class="iw iw-envelope"></i>
                             <span>Messages</span>
                         </a>
                     <?php else: ?>
                         <a href="/register" class="action-item">
-                            <i class="fas fa-user-plus"></i>
+                            <i class="iw iw-user-plus"></i>
                             <span>Join Community</span>
                         </a>
                         <a href="/wiki" class="action-item">
-                            <i class="fas fa-book"></i>
+                            <i class="iw iw-book"></i>
                             <span>Browse Articles</span>
                         </a>
                         <a href="/search" class="action-item">
-                            <i class="fas fa-search"></i>
+                            <i class="iw iw-search"></i>
                             <span>Search Content</span>
                         </a>
                         <a href="/login" class="action-item">
-                            <i class="fas fa-sign-in-alt"></i>
+                            <i class="iw iw-sign-in-alt"></i>
                             <span>Login</span>
                         </a>
                     <?php endif; ?>
@@ -102,7 +102,7 @@ include 'includes/header.php';
                 <div class="stats-list">
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-book"></i>
+                            <i class="iw iw-book"></i>
                         </div>
                         <div class="stat-content">
                             <span class="stat-number"><?php echo number_format($total_articles); ?></span>
@@ -111,7 +111,7 @@ include 'includes/header.php';
                     </div>
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="iw iw-users"></i>
                         </div>
                         <div class="stat-content">
                             <span class="stat-number"><?php echo number_format($total_users); ?></span>
@@ -120,7 +120,7 @@ include 'includes/header.php';
                     </div>
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-comment"></i>
+                            <i class="iw iw-comment"></i>
                         </div>
                         <div class="stat-content">
                             <span class="stat-number"><?php echo number_format($total_posts); ?></span>
@@ -129,7 +129,7 @@ include 'includes/header.php';
                     </div>
                     <div class="stat-item">
                         <div class="stat-icon">
-                            <i class="fas fa-folder"></i>
+                            <i class="iw iw-folder"></i>
                         </div>
                         <div class="stat-content">
                             <span class="stat-number"><?php echo number_format($total_categories); ?></span>
@@ -177,11 +177,11 @@ include 'includes/header.php';
                     <?php if (!is_logged_in()): ?>
                         <div class="hero-actions">
                             <a href="/register" class="btn btn-primary">
-                                <i class="fas fa-user-plus"></i>
+                                <i class="iw iw-user-plus"></i>
                                 Get Started
                             </a>
                             <a href="/login" class="btn btn-secondary">
-                                <i class="fas fa-sign-in-alt"></i>
+                                <i class="iw iw-sign-in-alt"></i>
                                 Login
                             </a>
                         </div>
@@ -216,7 +216,7 @@ include 'includes/header.php';
                         <div class="article-footer">
                             <div class="article-stats">
                                 <span class="views">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="iw iw-eye"></i>
                                     <?php echo number_format($article['view_count']); ?>
                                 </span>
                             </div>
@@ -263,7 +263,7 @@ include 'includes/header.php';
                 <div class="highlights-grid">
                     <div class="highlight-card">
                         <div class="highlight-icon">
-                            <i class="fas fa-book-open"></i>
+                            <i class="iw iw-book-open"></i>
                         </div>
                         <div class="highlight-content">
                             <h3>Knowledge Base</h3>
@@ -273,7 +273,7 @@ include 'includes/header.php';
                     </div>
                     <div class="highlight-card">
                         <div class="highlight-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="iw iw-users"></i>
                         </div>
                         <div class="highlight-content">
                             <h3>Community</h3>
@@ -283,7 +283,7 @@ include 'includes/header.php';
                     </div>
                     <div class="highlight-card">
                         <div class="highlight-icon">
-                            <i class="fas fa-search"></i>
+                            <i class="iw iw-search"></i>
                         </div>
                         <div class="highlight-content">
                             <h3>Search</h3>

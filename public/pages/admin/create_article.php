@@ -74,7 +74,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-plus"></i> Create New Article</h1>
+        <h1><i class="iw iw-plus"></i> Create New Article</h1>
         <p>Add a new article to the wiki</p>
     </div>
 
@@ -129,10 +129,10 @@ include "../../includes/header.php";
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Create Article
+                    <i class="iw iw-save"></i> Create Article
                 </button>
                 <a href="/admin" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    <i class="iw iw-arrow-left"></i> Back to Dashboard
                 </a>
             </div>
         </form>

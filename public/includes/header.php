@@ -78,6 +78,7 @@ if ($toast_message) {
     
     <!-- Load additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/iw-icons.css">
     
     <!-- Load admin CSS if needed -->
     <?php if (isset($admin_css) && $admin_css): ?>
@@ -100,7 +101,7 @@ if ($toast_message) {
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
     <!-- Mobile Sidebar Toggle -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
+        <i class="iw iw-bars"></i>
     </button>
     
     <!-- Mobile Sidebar Overlay -->
@@ -112,7 +113,7 @@ if ($toast_message) {
         <div class="sidebar-top">
             <!-- Logo at top -->
             <a href="/" class="sidebar-item" title="<?php echo get_site_name(); ?> Home">
-                <i class="fas fa-book-open"></i>
+                <i class="iw iw-book-open"></i>
             </a>
             
             <!-- Separator -->
@@ -121,7 +122,7 @@ if ($toast_message) {
             <!-- Main Navigation -->
             <div class="search-container">
                 <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="openSearch(); return false;">
-                    <i class="fas fa-search"></i>
+                    <i class="iw iw-search"></i>
                 </a>
             </div>
             
@@ -131,12 +132,12 @@ if ($toast_message) {
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
                 <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
-                    <i class="fas fa-home"></i>
+                    <i class="iw iw-home"></i>
                 </a>
                 
                 <?php if ($enable_wiki): ?>
                 <a href="/wiki" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/wiki') === 0) ? 'active' : ''; ?>" title="Wiki">
-                    <i class="fas fa-book"></i>
+                    <i class="iw iw-book"></i>
                 </a>
                 <?php endif; ?>
             </div>
@@ -147,20 +148,20 @@ if ($toast_message) {
         <div class="sidebar-dropdown sidebar-create">
             <div class="user-icon-dropdown">
                 <a href="#" class="sidebar-item user-icon-trigger" title="Create">
-                    <i class="fas fa-plus"></i>
+                    <i class="iw iw-plus"></i>
                 </a>
                 <div class="user-dropdown-menu">
                     <a href="/create_post" class="dropdown-item">
-                        <i class="fas fa-edit"></i>
+                        <i class="iw iw-edit"></i>
                         <span>Create Post</span>
                     </a>
                     <?php if ($enable_wiki): ?>
                     <a href="/pages/wiki/create_article.php" class="dropdown-item">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="iw iw-file-alt"></i>
                         <span>Create Article</span>
                     </a>
                     <a href="/wiki/upload" class="dropdown-item">
-                        <i class="fas fa-upload"></i>
+                        <i class="iw iw-upload"></i>
                         <span>Upload File</span>
                     </a>
                     <?php endif; ?>
@@ -172,45 +173,66 @@ if ($toast_message) {
         <!-- Messages Dropdown -->
         <?php
         $messagesItems = [
-            ['url' => '/messages', 'icon' => 'fas fa-inbox', 'text' => 'Inbox'],
-            ['url' => '/messages/sent', 'icon' => 'fas fa-paper-plane', 'text' => 'Sent'],
-            ['url' => '/messages/compose', 'icon' => 'fas fa-edit', 'text' => 'Compose']
+            ['url' => '/messages', 'icon' => 'iw iw-inbox', 'text' => 'Inbox'],
+            ['url' => '/messages/sent', 'icon' => 'iw iw-paper-plane', 'text' => 'Sent'],
+            ['url' => '/messages/compose', 'icon' => 'iw iw-edit', 'text' => 'Compose']
         ];
         $isMessagesActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/messages') === 0;
-        createSidebarDropdown('messages', 'Messages', 'fas fa-comments', $messagesItems, $isMessagesActive);
+        createSidebarDropdown('messages', 'Messages', 'iw iw-comments', $messagesItems, $isMessagesActive);
         ?>
         
         <!-- Friends Dropdown -->
         <?php
         $friendsItems = [
-            ['url' => '/friends', 'icon' => 'fas fa-users', 'text' => 'All Friends'],
-            ['url' => '/friends/requests', 'icon' => 'fas fa-user-plus', 'text' => 'Friend Requests'],
-            ['url' => '/friends/suggestions', 'icon' => 'fas fa-user-friends', 'text' => 'Suggestions'],
-            ['url' => '/friends/find', 'icon' => 'fas fa-search', 'text' => 'Find Friends']
+            ['url' => '/friends', 'icon' => 'iw iw-users', 'text' => 'All Friends'],
+            ['url' => '/friends/requests', 'icon' => 'iw iw-user-plus', 'text' => 'Friend Requests'],
+            ['url' => '/friends/suggestions', 'icon' => 'iw iw-user-friends', 'text' => 'Suggestions'],
+            ['url' => '/friends/find', 'icon' => 'iw iw-search', 'text' => 'Find Friends']
         ];
         $isFriendsActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0;
-        createSidebarDropdown('friends', 'Friends', 'fas fa-users', $friendsItems, $isFriendsActive);
+        createSidebarDropdown('friends', 'Friends', 'iw iw-users', $friendsItems, $isFriendsActive);
         ?>
+        
+        <!-- Notifications Dropdown -->
+        <div class="sidebar-dropdown sidebar-notifications">
+            <div class="user-icon-dropdown">
+                <a href="#" class="sidebar-item user-icon-trigger" title="Notifications">
+                    <i class="iw iw-bell"></i>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </a>
+                <div class="user-dropdown-menu" id="notificationsMenu">
+                    <div class="notification-header">
+                        <h3>Recent Notifications</h3>
+                        <button class="mark-all-read" id="markAllRead">Mark all read</button>
+                    </div>
+                    <div class="notification-content" id="notificationContent">
+                        <div class="notification-loading">Loading notifications...</div>
+                    </div>
+                    <div class="notification-footer">
+                        <a href="/notifications" class="view-all-notifications">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <?php endif; ?>
         
-        <a href="/pages/user/watchlist.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/watchlist') !== false) ? 'active' : ''; ?>" title="My Watchlist">
-<i class="fas fa-eye"></i>
-        </a>
         
         <!-- User section at bottom -->
         <?php
         $userItems = [
-            ['url' => '/user/' . $current_user['username'], 'icon' => 'fas fa-user', 'text' => 'Profile'],
-            ['url' => '/dashboard', 'icon' => 'fas fa-tachometer-alt', 'text' => 'Dashboard'],
-            ['url' => '/settings', 'icon' => 'fas fa-cog', 'text' => 'Settings']
+            ['url' => '/user/' . $current_user['username'], 'icon' => 'iw iw-user', 'text' => 'Profile'],
+            ['url' => '/dashboard', 'icon' => 'iw iw-tachometer-alt', 'text' => 'Dashboard'],
+            ['url' => '/pages/user/watchlist.php', 'icon' => 'iw iw-eye', 'text' => 'My Watchlist'],
+            ['url' => '/settings', 'icon' => 'iw iw-cog', 'text' => 'Settings']
         ];
         
         if (is_admin()) {
-            $userItems[] = ['url' => '/admin', 'icon' => 'fas fa-shield-alt', 'text' => 'Admin Panel'];
+            $userItems[] = ['url' => '/admin', 'icon' => 'iw iw-shield-alt', 'text' => 'Admin Panel'];
         }
         
         $userItems[] = ['divider' => true];
-        $userItems[] = ['url' => '/logout', 'icon' => 'fas fa-sign-out-alt', 'text' => 'Logout'];
+        $userItems[] = ['url' => '/logout', 'icon' => 'iw iw-sign-out-alt', 'text' => 'Logout'];
         
         // Get user's current profile picture from database
         $stmt = $pdo->prepare("SELECT avatar FROM users WHERE id = ?");
@@ -224,17 +246,21 @@ if ($toast_message) {
         $avatar_url = $user_avatar ?: '/assets/images/default-avatar.png';
         $userAvatar = '<img src="' . htmlspecialchars($avatar_url) . '" alt="Profile" class="user-avatar-img" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K\';">';
         
-        createSidebarDropdown('user', 'User Menu', 'fas fa-user', $userItems, false, $userAvatar);
+        $isUserActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/user/') === 0 || 
+                        strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0 || 
+                        strpos($_SERVER['REQUEST_URI'] ?? '', '/watchlist') !== false || 
+                        strpos($_SERVER['REQUEST_URI'] ?? '', '/settings') === 0;
+        createSidebarDropdown('user', 'User Menu', 'iw iw-user', $userItems, $isUserActive, $userAvatar);
         ?>
         
         <?php else: ?>
         <!-- Guest navigation -->
         <?php
         $guestItems = [
-            ['url' => '/login', 'icon' => 'fas fa-sign-in-alt', 'text' => 'Login'],
-            ['url' => '/register', 'icon' => 'fas fa-user-plus', 'text' => 'Create Account']
+            ['url' => '/login', 'icon' => 'iw iw-sign-in-alt', 'text' => 'Login'],
+            ['url' => '/register', 'icon' => 'iw iw-user-plus', 'text' => 'Create Account']
         ];
-        createSidebarDropdown('guest', 'User Menu', 'fas fa-user', $guestItems, false);
+        createSidebarDropdown('guest', 'User Menu', 'iw iw-user', $guestItems, false);
         ?>
         <?php endif; ?>
     </nav>
@@ -245,7 +271,7 @@ if ($toast_message) {
     <div class="maintenance-banner">
         <div class="maintenance-banner-content">
             <div class="maintenance-banner-left">
-                <i class="fas fa-tools"></i>
+                <i class="iw iw-tools"></i>
                 <span>Maintenance Mode Active</span>
             </div>
             <div class="maintenance-banner-center">
@@ -253,11 +279,11 @@ if ($toast_message) {
             </div>
             <div class="maintenance-banner-right">
                 <a href="/admin/system_settings" class="maintenance-banner-link">
-                    <i class="fas fa-cog"></i>
+                    <i class="iw iw-cog"></i>
                     Manage
                 </a>
                 <button class="maintenance-banner-close" onclick="closeMaintenanceBanner()" title="Hide Banner">
-                    <i class="fas fa-times"></i>
+                    <i class="iw iw-times"></i>
                 </button>
             </div>
         </div>
@@ -277,10 +303,10 @@ if ($toast_message) {
     <div class="search-overlay-content">
         <div class="search-overlay-header">
             <div class="search-input-container">
-                <i class="fas fa-search search-icon"></i>
+                <i class="iw iw-search search-icon"></i>
                 <input type="text" id="searchInput" class="search-overlay-input" placeholder="Search articles, users, content..." autocomplete="off">
                 <button class="search-clear-btn" id="searchClearBtn" style="display: none;">
-                    <i class="fas fa-times"></i>
+                    <i class="iw iw-times"></i>
                 </button>
             </div>
         </div>
@@ -450,11 +476,11 @@ function showToast(message, type = 'info') {
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
         <div class="toast-content">
-            <i class="toast-icon fas fa-${getToastIcon(type)}"></i>
+            <i class="toast-icon iw iw-${getToastIcon(type)}"></i>
             <span class="toast-message">${message}</span>
         </div>
         <button class="toast-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
+            <i class="iw iw-times"></i>
         </button>
     `;
     
@@ -569,4 +595,5 @@ showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; 
 <script src="/skins/bismillah/assets/js/header.js"></script>
 <script src="/skins/bismillah/assets/js/enhanced-search-overlay.js"></script>
 <script src="/skins/bismillah/assets/js/avatar-updater.js"></script>
+<script src="/skins/bismillah/assets/js/notifications.js"></script>
 

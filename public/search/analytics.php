@@ -49,7 +49,7 @@ include "../includes/header.php";
     <div class="metrics-grid">
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-search"></i>
+                <i class="iw iw-search"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($analytics_data['total_searches']); ?></h3>
@@ -62,7 +62,7 @@ include "../includes/header.php";
 
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-users"></i>
+                <i class="iw iw-users"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($analytics_data['unique_searchers']); ?></h3>
@@ -75,7 +75,7 @@ include "../includes/header.php";
 
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-chart-line"></i>
+                <i class="iw iw-chart-line"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($analytics_data['avg_results_per_search'], 1); ?></h3>
@@ -88,7 +88,7 @@ include "../includes/header.php";
 
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-clock"></i>
+                <i class="iw iw-clock"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($analytics_data['avg_search_time'], 2); ?>s</h3>
@@ -120,7 +120,7 @@ include "../includes/header.php";
                         <p><?php echo number_format($search['search_count']); ?> searches</p>
                         <div class="search-trend">
                             <span class="trend-indicator <?php echo $search['trend'] === 'up' ? 'up' : ($search['trend'] === 'down' ? 'down' : 'stable'); ?>">
-                                <i class="fas fa-arrow-<?php echo $search['trend'] === 'up' ? 'up' : ($search['trend'] === 'down' ? 'down' : 'right'); ?>"></i>
+                                <i class="iw iw-arrow-<?php echo $search['trend'] === 'up' ? 'up' : ($search['trend'] === 'down' ? 'down' : 'right'); ?>"></i>
                             </span>
                             <span><?php echo ucfirst($search['trend']); ?></span>
                         </div>
@@ -413,7 +413,7 @@ function generateSearchInsights($analytics_data, $trends_data) {
     // Search volume insight
     if ($analytics_data['total_searches'] > 1000) {
         $insights[] = [
-            'icon' => 'fas fa-chart-line',
+            'icon' => 'iw iw-chart-line',
             'title' => 'High Search Volume',
             'description' => 'Your search system is experiencing high usage with ' . number_format($analytics_data['total_searches']) . ' searches this period.',
             'recommendation' => 'Consider optimizing search performance and adding more content to meet user demand.'
@@ -423,7 +423,7 @@ function generateSearchInsights($analytics_data, $trends_data) {
     // Success rate insight
     if ($analytics_data['success_rate'] < 70) {
         $insights[] = [
-            'icon' => 'fas fa-exclamation-triangle',
+            'icon' => 'iw iw-exclamation-triangle',
             'title' => 'Low Success Rate',
             'description' => 'Only ' . number_format($analytics_data['success_rate'], 1) . '% of searches are returning results.',
             'recommendation' => 'Improve search algorithms and add more content to increase success rate.'
@@ -435,7 +435,7 @@ function generateSearchInsights($analytics_data, $trends_data) {
         $searches_per_user = $analytics_data['total_searches'] / $analytics_data['unique_searchers'];
         if ($searches_per_user > 5) {
             $insights[] = [
-                'icon' => 'fas fa-users',
+                'icon' => 'iw iw-users',
                 'title' => 'High User Engagement',
                 'description' => 'Users are highly engaged with an average of ' . number_format($searches_per_user, 1) . ' searches per user.',
                 'recommendation' => 'This indicates strong user satisfaction with the search functionality.'

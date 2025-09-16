@@ -297,11 +297,11 @@ function updateLikeCount(postId, change) {
     // Find all like count elements for this post
     const feedItems = document.querySelectorAll(`[data-post-id="${postId}"]`);
     feedItems.forEach(item => {
-        const likeCountSpan = item.querySelector('.engagement-stats span i.fa-heart')?.parentElement;
+        const likeCountSpan = item.querySelector('.engagement-stats span i.iw-heart')?.parentElement;
         if (likeCountSpan) {
             const currentCount = parseInt(likeCountSpan.textContent.trim()) || 0;
             const newCount = Math.max(0, currentCount + change);
-            likeCountSpan.innerHTML = `<i class="fas fa-heart"></i> ${newCount}`;
+            likeCountSpan.innerHTML = `<i class="iw iw-heart"></i> ${newCount}`;
         }
     });
 }
@@ -497,11 +497,11 @@ function replyToComment(commentId) {
 function updateCommentCount(postId, change) {
     const feedItems = document.querySelectorAll(`[data-post-id="${postId}"]`);
     feedItems.forEach(item => {
-        const commentCountSpan = item.querySelector('.engagement-stats span i.fa-comment')?.parentElement;
+        const commentCountSpan = item.querySelector('.engagement-stats span i.iw-comment')?.parentElement;
         if (commentCountSpan) {
             const currentCount = parseInt(commentCountSpan.textContent.trim()) || 0;
             const newCount = Math.max(0, currentCount + change);
-            commentCountSpan.innerHTML = `<i class="fas fa-comment"></i> ${newCount}`;
+            commentCountSpan.innerHTML = `<i class="iw iw-comment"></i> ${newCount}`;
         }
     });
 }
@@ -578,7 +578,7 @@ function initializePostCreation() {
             postInput.value = postInputSimple.value;
             
             // Update button
-            this.innerHTML = '<i class="fas fa-edit"></i><span>Simple</span>';
+            this.innerHTML = '<i class="iw iw-edit"></i><span>Simple</span>';
             this.title = 'Switch to simple mode';
             
             // Initialize toolbar
@@ -594,7 +594,7 @@ function initializePostCreation() {
             postInputSimple.value = postInput.value;
             
             // Update button
-            this.innerHTML = '<i class="fas fa-edit"></i><span>Format</span>';
+            this.innerHTML = '<i class="iw iw-edit"></i><span>Format</span>';
             this.title = 'Show formatting tools';
         }
         
@@ -718,11 +718,11 @@ function initializePostCreation() {
         
         if (isPreviewVisible) {
             previewContainer.style.display = 'none';
-            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="fas fa-eye"></i>';
+            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="iw iw-eye"></i>';
         } else {
             previewContainer.style.display = 'flex';
             updatePreview();
-            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="fas fa-eye-slash"></i>';
+            document.querySelector('[data-action="toggle-preview"]').innerHTML = '<i class="iw iw-eye-slash"></i>';
         }
     }
     
@@ -808,7 +808,7 @@ function initializePostCreation() {
         if (isFullscreenMode) {
             // Enter fullscreen mode
             createPostCard.classList.add('fullscreen');
-            icon.className = 'fas fa-compress';
+            icon.className = 'iw iw-compress';
             this.title = 'Exit Fullscreen';
             
             // Auto-enable formatting mode in fullscreen
@@ -818,7 +818,7 @@ function initializePostCreation() {
         } else {
             // Exit fullscreen mode
             createPostCard.classList.remove('fullscreen');
-            icon.className = 'fas fa-expand';
+            icon.className = 'iw iw-expand';
             this.title = 'Toggle Fullscreen Editor';
         }
     });
@@ -1081,7 +1081,7 @@ function createImagePreview(file, imageUrl) {
         <div class="image-preview">
             <img src="${imageUrl}" alt="${file.name}" class="preview-image">
             <button type="button" class="remove-image-btn" onclick="removeImagePreview(this)">
-                <i class="fas fa-times"></i>
+                <i class="iw iw-times"></i>
             </button>
         </div>
     `;

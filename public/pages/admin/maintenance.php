@@ -160,12 +160,12 @@ include "../../includes/header.php";
     <!-- Header -->
     <div class="maintenance-header">
         <div class="header-content">
-            <h1><i class="fas fa-tools"></i> System Maintenance</h1>
+            <h1><i class="iw iw-tools"></i> System Maintenance</h1>
             <p>Primary maintenance control center and system diagnostics</p>
         </div>
         <div class="header-actions">
             <a href="/admin" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Admin
+                <i class="iw iw-arrow-left"></i> Back to Admin
             </a>
         </div>
     </div>
@@ -173,10 +173,10 @@ include "../../includes/header.php";
     <!-- Primary Maintenance Mode Control -->
     <div class="maintenance-section primary-control">
         <div class="section-header">
-            <h2><i class="fas fa-power-off"></i> Maintenance Mode Control</h2>
+            <h2><i class="iw iw-power-off"></i> Maintenance Mode Control</h2>
             <div class="header-actions">
                 <a href="/admin/system_settings" class="btn btn-outline btn-sm">
-                    <i class="fas fa-cog"></i> Configure Settings
+                    <i class="iw iw-cog"></i> Configure Settings
                 </a>
             </div>
         </div>
@@ -185,7 +185,7 @@ include "../../includes/header.php";
             <?php if (is_maintenance_mode()): ?>
                 <div class="maintenance-active">
                     <div class="status-indicator">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="iw iw-exclamation-triangle"></i>
                         <span>Maintenance Mode Active</span>
                         <div class="status-badge">ONLINE</div>
                     </div>
@@ -206,18 +206,18 @@ include "../../includes/header.php";
                     <div class="maintenance-actions">
                         <form method="POST" style="display: inline;">
                             <button type="submit" name="toggle_maintenance" class="btn btn-success btn-lg">
-                                <i class="fas fa-power-off"></i> Disable Maintenance Mode
+                                <i class="iw iw-power-off"></i> Disable Maintenance Mode
                             </button>
                         </form>
                         <a href="/admin/system_settings" class="btn btn-warning">
-                            <i class="fas fa-edit"></i> Edit Message & Settings
+                            <i class="iw iw-edit"></i> Edit Message & Settings
                         </a>
                     </div>
                 </div>
             <?php else: ?>
                 <div class="maintenance-inactive">
                     <div class="status-indicator">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="iw iw-check-circle"></i>
                         <span>Site is Online</span>
                         <div class="status-badge online">LIVE</div>
                     </div>
@@ -235,11 +235,11 @@ include "../../includes/header.php";
                         <form method="POST" style="display: inline;">
                             <button type="submit" name="toggle_maintenance" class="btn btn-warning btn-lg" 
                                     onclick="return confirm('⚠️ WARNING: This will make the site inaccessible to regular users.\n\nAre you sure you want to enable maintenance mode?')">
-                                <i class="fas fa-tools"></i> Enable Maintenance Mode
+                                <i class="iw iw-tools"></i> Enable Maintenance Mode
                             </button>
                         </form>
                         <a href="/admin/system_settings" class="btn btn-primary">
-                            <i class="fas fa-cog"></i> Configure Settings
+                            <i class="iw iw-cog"></i> Configure Settings
                         </a>
                     </div>
                 </div>
@@ -249,11 +249,11 @@ include "../../includes/header.php";
 
     <!-- Quick Maintenance Actions -->
     <div class="maintenance-section">
-        <h2><i class="fas fa-bolt"></i> Quick Maintenance Actions</h2>
+        <h2><i class="iw iw-bolt"></i> Quick Maintenance Actions</h2>
         <div class="quick-actions-grid">
             <div class="quick-action-card">
                 <div class="action-icon">
-                    <i class="fas fa-broom"></i>
+                    <i class="iw iw-broom"></i>
                 </div>
                 <div class="action-content">
                     <h3>Clear All Caches</h3>
@@ -262,7 +262,7 @@ include "../../includes/header.php";
                         <input type="hidden" name="cache_type" value="all">
                         <button type="submit" name="clear_cache" class="btn btn-primary" 
                                 onclick="return confirm('Clear all caches? This will improve performance.')">
-                            <i class="fas fa-trash"></i> Clear All
+                            <i class="iw iw-trash"></i> Clear All
                         </button>
                     </form>
                 </div>
@@ -270,7 +270,7 @@ include "../../includes/header.php";
 
             <div class="quick-action-card">
                 <div class="action-icon">
-                    <i class="fas fa-database"></i>
+                    <i class="iw iw-database"></i>
                 </div>
                 <div class="action-content">
                     <h3>Optimize Database</h3>
@@ -278,7 +278,7 @@ include "../../includes/header.php";
                     <form method="POST" style="display: inline;">
                         <button type="submit" name="optimize_database" class="btn btn-success" 
                                 onclick="return confirm('Optimize all database tables? This may take a moment.')">
-                            <i class="fas fa-magic"></i> Optimize
+                            <i class="iw iw-magic"></i> Optimize
                         </button>
                     </form>
                 </div>
@@ -286,7 +286,7 @@ include "../../includes/header.php";
 
             <div class="quick-action-card">
                 <div class="action-icon">
-                    <i class="fas fa-users"></i>
+                    <i class="iw iw-users"></i>
                 </div>
                 <div class="action-content">
                     <h3>Clean Sessions</h3>
@@ -294,7 +294,7 @@ include "../../includes/header.php";
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="sessions">
                         <button type="submit" name="clear_cache" class="btn btn-info">
-                            <i class="fas fa-user-times"></i> Clean
+                            <i class="iw iw-user-times"></i> Clean
                         </button>
                     </form>
                 </div>
@@ -302,7 +302,7 @@ include "../../includes/header.php";
 
             <div class="quick-action-card">
                 <div class="action-icon">
-                    <i class="fas fa-file-alt"></i>
+                    <i class="iw iw-file-alt"></i>
                 </div>
                 <div class="action-content">
                     <h3>Clean Old Logs</h3>
@@ -310,7 +310,7 @@ include "../../includes/header.php";
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="logs">
                         <button type="submit" name="clear_cache" class="btn btn-warning">
-                            <i class="fas fa-history"></i> Clean
+                            <i class="iw iw-history"></i> Clean
                         </button>
                     </form>
                 </div>
@@ -320,10 +320,10 @@ include "../../includes/header.php";
 
     <!-- System Health -->
     <div class="maintenance-section">
-        <h2><i class="fas fa-heartbeat"></i> System Health</h2>
+        <h2><i class="iw iw-heartbeat"></i> System Health</h2>
         <div class="health-grid">
             <div class="health-card">
-                <h3><i class="fas fa-server"></i> Server Status</h3>
+                <h3><i class="iw iw-server"></i> Server Status</h3>
                 <div class="health-metrics">
                     <div class="metric">
                         <span class="label">PHP Version:</span>
@@ -345,7 +345,7 @@ include "../../includes/header.php";
             </div>
 
             <div class="health-card">
-                <h3><i class="fas fa-database"></i> Database Status</h3>
+                <h3><i class="iw iw-database"></i> Database Status</h3>
                 <div class="health-metrics">
                     <?php if (isset($db_info['error'])): ?>
                         <div class="metric error">
@@ -373,29 +373,29 @@ include "../../includes/header.php";
 
     <!-- Advanced Maintenance Tools -->
     <div class="maintenance-section">
-        <h2><i class="fas fa-wrench"></i> Advanced Maintenance Tools</h2>
+        <h2><i class="iw iw-wrench"></i> Advanced Maintenance Tools</h2>
         <div class="tools-grid">
             <!-- Cache Management -->
             <div class="tool-card">
-                <h3><i class="fas fa-broom"></i> Cache Management</h3>
+                <h3><i class="iw iw-broom"></i> Cache Management</h3>
                 <p>Clear specific types of cached data</p>
                 <div class="tool-actions">
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="system">
                         <button type="submit" name="clear_cache" class="btn btn-primary btn-sm">
-                            <i class="fas fa-database"></i> System Cache
+                            <i class="iw iw-database"></i> System Cache
                         </button>
                     </form>
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="sessions">
                         <button type="submit" name="clear_cache" class="btn btn-info btn-sm">
-                            <i class="fas fa-users"></i> Sessions
+                            <i class="iw iw-users"></i> Sessions
                         </button>
                     </form>
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cache_type" value="logs">
                         <button type="submit" name="clear_cache" class="btn btn-warning btn-sm">
-                            <i class="fas fa-file-alt"></i> Old Logs
+                            <i class="iw iw-file-alt"></i> Old Logs
                         </button>
                     </form>
                 </div>
@@ -403,20 +403,20 @@ include "../../includes/header.php";
 
             <!-- File Cleanup -->
             <div class="tool-card">
-                <h3><i class="fas fa-folder-open"></i> File Cleanup</h3>
+                <h3><i class="iw iw-folder-open"></i> File Cleanup</h3>
                 <p>Clean up temporary and orphaned files</p>
                 <div class="tool-actions">
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cleanup_type" value="temp">
                         <button type="submit" name="cleanup_files" class="btn btn-info">
-                            <i class="fas fa-clock"></i> Temp Files
+                            <i class="iw iw-clock"></i> Temp Files
                         </button>
                     </form>
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="cleanup_type" value="uploads">
                         <button type="submit" name="cleanup_files" class="btn btn-warning" 
                                 onclick="return confirm('This will delete orphaned upload files. Continue?')">
-                            <i class="fas fa-upload"></i> Orphaned Files
+                            <i class="iw iw-upload"></i> Orphaned Files
                         </button>
                     </form>
                 </div>
@@ -426,10 +426,10 @@ include "../../includes/header.php";
 
     <!-- System Statistics -->
     <div class="maintenance-section">
-        <h2><i class="fas fa-chart-bar"></i> System Statistics</h2>
+        <h2><i class="iw iw-chart-bar"></i> System Statistics</h2>
         <div class="stats-grid">
             <div class="stat-card">
-                <h3><i class="fas fa-users"></i> Sessions</h3>
+                <h3><i class="iw iw-users"></i> Sessions</h3>
                 <div class="stat-content">
                     <div class="stat-number"><?php echo number_format($maintenance_stats['total_sessions'] ?? 0); ?></div>
                     <div class="stat-label">Total Sessions</div>
@@ -438,7 +438,7 @@ include "../../includes/header.php";
             </div>
 
             <div class="stat-card">
-                <h3><i class="fas fa-file-alt"></i> Logs</h3>
+                <h3><i class="iw iw-file-alt"></i> Logs</h3>
                 <div class="stat-content">
                     <div class="stat-number"><?php echo number_format($maintenance_stats['total_logs'] ?? 0); ?></div>
                     <div class="stat-label">Total Logs</div>
@@ -447,7 +447,7 @@ include "../../includes/header.php";
             </div>
 
             <div class="stat-card">
-                <h3><i class="fas fa-hdd"></i> Storage</h3>
+                <h3><i class="iw iw-hdd"></i> Storage</h3>
                 <div class="stat-content">
                     <div class="stat-number"><?php echo format_file_size($system_info['disk_free_space']); ?></div>
                     <div class="stat-label">Free Space</div>

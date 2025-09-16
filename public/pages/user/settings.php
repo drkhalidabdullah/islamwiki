@@ -170,7 +170,7 @@ include "../../includes/header.php";
                 <?php if (get_system_setting('allow_skin_selection', true)): ?>
                 <li class="nav-item">
                     <a href="/skin_selection" class="nav-link">
-                        <i class="fas fa-palette"></i>
+                        <i class="iw iw-palette"></i>
                         <span>Skin Selection</span>
                     </a>
                 </li>

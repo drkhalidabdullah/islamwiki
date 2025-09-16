@@ -76,7 +76,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
         <!-- Left Side: Maintenance Information -->
         <div class="maintenance-content">
             <div class="maintenance-icon">
-                <i class="fas fa-tools"></i>
+                <i class="iw iw-tools"></i>
             </div>
             
             <h1 class="maintenance-title">Site Maintenance</h1>
@@ -89,7 +89,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
             <div class="maintenance-details">
                 <div class="detail-item">
                     <div class="detail-icon">
-                        <i class="fas fa-clock"></i>
+                        <i class="iw iw-clock"></i>
                     </div>
                     <div class="detail-label">Estimated Time</div>
                     <div class="detail-value"><?php echo htmlspecialchars($estimated_downtime); ?></div>
@@ -97,7 +97,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
                 
                 <div class="detail-item">
                     <div class="detail-icon">
-                        <i class="fas fa-calendar"></i>
+                        <i class="iw iw-calendar"></i>
                     </div>
                     <div class="detail-label">Started</div>
                     <div class="detail-value"><?php echo date('M j, Y \a\t g:i A'); ?></div>
@@ -105,7 +105,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
                 
                 <div class="detail-item">
                     <div class="detail-icon">
-                        <i class="fas fa-info-circle"></i>
+                        <i class="iw iw-info-circle"></i>
                     </div>
                     <div class="detail-label">Status</div>
                     <div class="detail-value">In Progress</div>
@@ -122,7 +122,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
         <div class="login-section">
             <div class="login-header">
                 <div class="login-icon">
-                    <i class="fas fa-shield-alt"></i>
+                    <i class="iw iw-shield-alt"></i>
                 </div>
                 <h2 class="login-title">Admin Login</h2>
                 <p class="login-subtitle">Administrators can access the site during maintenance</p>
@@ -131,7 +131,7 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
             <form class="login-form" method="POST">
                 <?php if ($login_error): ?>
                     <div class="login-error">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="iw iw-exclamation-triangle"></i>
                         <?php echo htmlspecialchars($login_error); ?>
                     </div>
                 <?php endif; ?>
@@ -150,13 +150,13 @@ $estimated_downtime = get_system_setting('estimated_downtime', '2-4 hours');
                 </div>
                 
                 <button type="submit" name="login" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
+                    <i class="iw iw-sign-in-alt"></i>
                     Login as Admin
                 </button>
             </form>
             
             <div class="admin-notice">
-                <i class="fas fa-info-circle"></i>
+                <i class="iw iw-info-circle"></i>
                 <strong>Note:</strong> Only administrators can log in during maintenance mode.
             </div>
         </div>

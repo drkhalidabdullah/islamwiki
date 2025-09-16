@@ -149,7 +149,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-folder"></i> Manage Categories</h1>
+        <h1><i class="iw iw-folder"></i> Manage Categories</h1>
         <p>Create and manage content categories</p>
     </div>
 
@@ -198,7 +198,7 @@ include "../../includes/header.php";
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create Category
+                    <i class="iw iw-plus"></i> Create Category
                 </button>
             </div>
         </form>
@@ -253,7 +253,7 @@ include "../../includes/header.php";
 
     <div class="form-actions">
         <a href="/admin" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <i class="iw iw-arrow-left"></i> Back to Dashboard
         </a>
     </div>
 </div>

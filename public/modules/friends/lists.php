@@ -33,31 +33,31 @@ include "../../includes/header.php";;
         <!-- Left Sidebar -->
         <div class="friends-sidebar">
             <div class="friends-nav">
-                <h2><i class="fas fa-users"></i> Friends</h2>
+                <h2><i class="iw iw-users"></i> Friends</h2>
                 <nav class="friends-menu">
                     <a href="/friends" class="friends-nav-item">
-                        <i class="fas fa-home"></i>
+                        <i class="iw iw-home"></i>
                         <span>Home</span>
                     </a>
                     <a href="/friends/requests" class="friends-nav-item">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="iw iw-user-plus"></i>
                         <span>Friend Requests</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/suggestions" class="friends-nav-item">
-                        <i class="fas fa-user-plus"></i>
+                        <i class="iw iw-user-plus"></i>
                         <span>Suggestions</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/all" class="friends-nav-item">
-                        <i class="fas fa-users"></i>
+                        <i class="iw iw-users"></i>
                         <span>All friends</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                     <a href="/friends/lists" class="friends-nav-item active">
-                        <i class="fas fa-list"></i>
+                        <i class="iw iw-list"></i>
                         <span>Custom Lists</span>
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="iw iw-chevron-right"></i>
                     </a>
                 </nav>
             </div>
@@ -69,7 +69,7 @@ include "../../includes/header.php";;
                 <div class="section-header">
                     <h1>Custom Lists</h1>
                     <button class="btn-create-list" onclick="createNewList()">
-                        <i class="fas fa-plus"></i>
+                        <i class="iw iw-plus"></i>
                         Create List
                     </button>
                 </div>
@@ -81,10 +81,10 @@ include "../../includes/header.php";;
                                 <h3 class="list-name"><?php echo htmlspecialchars($list['name']); ?></h3>
                                 <div class="list-actions">
                                     <button class="btn-edit-list" onclick="editList(<?php echo $list['id']; ?>)">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="iw iw-edit"></i>
                                     </button>
                                     <button class="btn-delete-list" onclick="deleteList(<?php echo $list['id']; ?>)">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="iw iw-trash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@ include "../../includes/header.php";;
                             </div>
                             <div class="list-footer">
                                 <a href="/friends/lists/<?php echo $list['id']; ?>" class="btn-view-list">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="iw iw-eye"></i>
                                     View List
                                 </a>
                             </div>
@@ -104,7 +104,7 @@ include "../../includes/header.php";;
                 
                 <?php if (empty($custom_lists)): ?>
                     <div class="no-lists">
-                        <i class="fas fa-list"></i>
+                        <i class="iw iw-list"></i>
                         <h3>No custom lists yet</h3>
                         <p>Create custom lists to organize your friends into groups.</p>
                         <button class="btn btn-primary" onclick="createNewList()">Create Your First List</button>

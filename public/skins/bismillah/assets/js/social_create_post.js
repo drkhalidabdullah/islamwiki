@@ -103,11 +103,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (isPreviewVisible) {
             previewContainer.style.display = 'none';
-            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Show Preview';
+            previewBtn.innerHTML = '<i class="iw iw-eye"></i> Show Preview';
         } else {
             previewContainer.style.display = 'flex';
             updatePreview();
-            previewBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Preview';
+            previewBtn.innerHTML = '<i class="iw iw-eye-slash"></i> Hide Preview';
         }
     }
     

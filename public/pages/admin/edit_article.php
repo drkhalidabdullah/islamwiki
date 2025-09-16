@@ -102,7 +102,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-edit"></i> Edit Article</h1>
+        <h1><i class="iw iw-edit"></i> Edit Article</h1>
         <p>Edit: <?php echo htmlspecialchars($article['title']); ?></p>
     </div>
 
@@ -172,13 +172,13 @@ include "../../includes/header.php";
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Update Article
+                    <i class="iw iw-save"></i> Update Article
                 </button>
                 <a href="/wiki/article.php?slug=<?php echo $article['slug']; ?>" class="btn btn-info" target="_blank">
-                    <i class="fas fa-external-link-alt"></i> View Article
+                    <i class="iw iw-external-link-alt"></i> View Article
                 </a>
                 <a href="/admin" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    <i class="iw iw-arrow-left"></i> Back to Dashboard
                 </a>
             </div>
         </form>

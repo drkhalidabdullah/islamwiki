@@ -81,37 +81,37 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             <div class="messenger-actions">
                 <div class="messenger-options">
                     <button class="options-btn" id="optionsBtn">
-                        <i class="fas fa-ellipsis-v"></i>
+                        <i class="iw iw-ellipsis-v"></i>
                     </button>
                     <div class="options-menu" id="optionsMenu">
                         <a href="#" class="options-item">
-                            <i class="fas fa-cog"></i>
+                            <i class="iw iw-cog"></i>
                             Preferences
                         </a>
                         <a href="#" class="options-item">
-                            <i class="fas fa-comment"></i>
+                            <i class="iw iw-comment"></i>
                             Message requests
                         </a>
                         <a href="#" class="options-item">
-                            <i class="fas fa-archive"></i>
+                            <i class="iw iw-archive"></i>
                             Archived chats
                         </a>
                         <a href="#" class="options-item">
-                            <i class="fas fa-ban"></i>
+                            <i class="iw iw-ban"></i>
                             Restricted accounts
                         </a>
                         <a href="#" class="options-item">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="iw iw-shield-alt"></i>
                             Privacy & safety
                         </a>
                         <a href="#" class="options-item">
-                            <i class="fas fa-question-circle"></i>
+                            <i class="iw iw-question-circle"></i>
                             Help
                         </a>
                     </div>
                 </div>
                 <button class="new-message-btn" id="newMessageBtn">
-                    <i class="fas fa-pencil-alt"></i>
+                    <i class="iw iw-pencil-alt"></i>
                 </button>
             </div>
         </div>
@@ -131,7 +131,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
         <div class="new-message-section" id="newMessageSection" style="display: none;">
             <div class="new-message-header">
                 <button class="back-btn" id="backToChats">
-                    <i class="fas fa-arrow-left"></i>
+                    <i class="iw iw-arrow-left"></i>
                 </button>
                 <h3>New message</h3>
             </div>
@@ -156,7 +156,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
         <div class="conversations-list" id="conversationsList">
             <?php if (empty($conversations)): ?>
                 <div class="no-conversations">
-                    <i class="fas fa-comments"></i>
+                    <i class="iw iw-comments"></i>
                     <p>No conversations yet</p>
                     <p>Start a new conversation!</p>
                 </div>
@@ -188,7 +188,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
         <!-- Default state when no conversation is selected -->
         <div class="no-conversation" id="noConversation">
             <div class="no-conversation-content">
-                <i class="fas fa-comments"></i>
+                <i class="iw iw-comments"></i>
                 <h3>Your Messages</h3>
                 <p>Select a conversation to start messaging</p>
             </div>
@@ -208,13 +208,13 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 </div>
                 <div class="chat-actions">
                     <button class="chat-action-btn" title="Voice Call">
-                        <i class="fas fa-phone"></i>
+                        <i class="iw iw-phone"></i>
                     </button>
                     <button class="chat-action-btn" title="Video Call">
-                        <i class="fas fa-video"></i>
+                        <i class="iw iw-video"></i>
                     </button>
                     <button class="chat-action-btn" title="More Options" id="infoBtn">
-                        <i class="fas fa-info-circle"></i>
+                        <i class="iw iw-info-circle"></i>
                     </button>
                 </div>
             </div>
@@ -225,20 +225,20 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             
             <div class="chat-input">
                 <button class="chat-input-btn" title="Attach File">
-                    <i class="fas fa-paperclip"></i>
+                    <i class="iw iw-paperclip"></i>
                 </button>
                 <button class="chat-input-btn" title="Emoji">
-                    <i class="far fa-smile"></i>
+                    <i class="iw iw-smile"></i>
                 </button>
                 <button class="chat-input-btn" title="Sticker">
-                    <i class="fas fa-sticky-note"></i>
+                    <i class="iw iw-sticky-note"></i>
                 </button>
                 <button class="chat-input-btn" title="GIF">
-                    <i class="fas fa-image"></i>
+                    <i class="iw iw-image"></i>
                 </button>
                 <input type="text" placeholder="Aa" class="chat-text-input" id="messageInput">
                 <button class="chat-send-btn" title="Send Message" id="sendMessageBtn">
-                    <i class="fas fa-paper-plane"></i>
+                    <i class="iw iw-paper-plane"></i>
                 </button>
             </div>
             </div>
@@ -252,7 +252,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                         <button class="info-tab" data-tab="search">Search</button>
                     </div>
                     <button class="info-close" id="infoClose">
-                        <i class="fas fa-times"></i>
+                        <i class="iw iw-times"></i>
                     </button>
                 </div>
 
@@ -262,20 +262,20 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                         <img src="/assets/images/default-avatar.png" alt="User" class="info-user-avatar" id="infoUserAvatar">
                         <div class="info-user-name" id="infoUserName">User Name</div>
                         <div class="info-encryption">
-                            <i class="fas fa-lock"></i>
+                            <i class="iw iw-lock"></i>
                             End-to-end encrypted
                         </div>
                         <div class="info-profile-actions">
                             <button class="info-profile-btn" id="viewProfileBtn">
-                                <i class="fas fa-user"></i>
+                                <i class="iw iw-user"></i>
                                 Profile
                             </button>
                             <button class="info-profile-btn" id="muteBtn">
-                                <i class="fas fa-bell-slash"></i>
+                                <i class="iw iw-bell-slash"></i>
                                 Mute
                             </button>
                             <button class="info-profile-btn" id="searchBtn">
-                                <i class="fas fa-search"></i>
+                                <i class="iw iw-search"></i>
                                 Search
                             </button>
                         </div>
@@ -284,11 +284,11 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Chat info</span>
-                            <i class="fas fa-chevron-up"></i>
+                            <i class="iw iw-chevron-up"></i>
                         </div>
                         <div class="info-section-content">
                             <div class="info-item">
-                                <i class="fas fa-thumbtack"></i>
+                                <i class="iw iw-thumbtack"></i>
                                 <span>View pinned messages</span>
                             </div>
                         </div>
@@ -297,19 +297,19 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Customize chat</span>
-                            <i class="fas fa-chevron-up"></i>
+                            <i class="iw iw-chevron-up"></i>
                         </div>
                         <div class="info-section-content">
                             <div class="info-item">
-                                <i class="fas fa-palette"></i>
+                                <i class="iw iw-palette"></i>
                                 <span>Change theme</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-smile"></i>
+                                <i class="iw iw-smile"></i>
                                 <span>Change emoji</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-edit"></i>
+                                <i class="iw iw-edit"></i>
                                 <span>Edit nicknames</span>
                             </div>
                         </div>
@@ -318,15 +318,15 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Media & files</span>
-                            <i class="fas fa-chevron-up"></i>
+                            <i class="iw iw-chevron-up"></i>
                         </div>
                         <div class="info-section-content">
                             <div class="info-item">
-                                <i class="fas fa-images"></i>
+                                <i class="iw iw-images"></i>
                                 <span>Media</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-file"></i>
+                                <i class="iw iw-file"></i>
                                 <span>Files</span>
                             </div>
                         </div>
@@ -335,40 +335,40 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Privacy & support</span>
-                            <i class="fas fa-chevron-up"></i>
+                            <i class="iw iw-chevron-up"></i>
                         </div>
                         <div class="info-section-content">
                             <div class="info-item">
-                                <i class="fas fa-bell-slash"></i>
+                                <i class="iw iw-bell-slash"></i>
                                 <span>Mute notifications</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-shield-alt"></i>
+                                <i class="iw iw-shield-alt"></i>
                                 <span>Message permissions</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-clock"></i>
+                                <i class="iw iw-clock"></i>
                                 <span>Disappearing messages</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-eye"></i>
+                                <i class="iw iw-eye"></i>
                                 <span>Read receipts</span>
                                 <span class="info-status">On</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-lock"></i>
+                                <i class="iw iw-lock"></i>
                                 <span>Verify end-to-end encryption</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-ban"></i>
+                                <i class="iw iw-ban"></i>
                                 <span>Restrict</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-minus-circle"></i>
+                                <i class="iw iw-minus-circle"></i>
                                 <span>Block</span>
                             </div>
                             <div class="info-item">
-                                <i class="fas fa-exclamation-triangle"></i>
+                                <i class="iw iw-exclamation-triangle"></i>
                                 <span>Report</span>
                             </div>
                         </div>
@@ -413,12 +413,12 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="search-header">
                         <span>Search in conversation</span>
                         <button class="search-close" id="searchClose">
-                            <i class="fas fa-times"></i>
+                            <i class="iw iw-times"></i>
                         </button>
                     </div>
                     <div class="search-input-container">
                         <input type="text" class="search-input" id="conversationSearch" placeholder="Search messages...">
-                        <i class="fas fa-search"></i>
+                        <i class="iw iw-search"></i>
                     </div>
                     <div class="search-results" id="searchResults">
                         <!-- Search results will be displayed here -->
@@ -436,7 +436,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
         <div class="mute-dialog-header">
             <h3>Mute conversation</h3>
             <button class="mute-dialog-close" id="muteDialogClose">
-                <i class="fas fa-times"></i>
+                <i class="iw iw-times"></i>
             </button>
         </div>
         <div class="mute-dialog-content">

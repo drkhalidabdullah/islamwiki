@@ -83,10 +83,10 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 <h2>Sent Messages</h2>
                 <div class="messages-actions">
                     <a href="/messages/compose" class="new-message-btn" title="Compose New Message">
-                        <i class="fas fa-pencil-alt"></i>
+                        <i class="iw iw-pencil-alt"></i>
                     </a>
                     <a href="/messages" class="messages-options" title="All Messages">
-                        <i class="fas fa-inbox"></i>
+                        <i class="iw iw-inbox"></i>
                     </a>
                 </div>
             </div>
@@ -105,7 +105,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             <div class="conversations-list">
                 <?php if (empty($sent_messages)): ?>
                     <div class="no-messages">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="iw iw-paper-plane"></i>
                         <h3>No sent messages</h3>
                         <p>You haven't sent any messages yet.</p>
                         <a href="/messages/compose" class="btn btn-primary">Compose Message</a>
@@ -123,7 +123,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                             <div class="conversation-meta">
                                 <div class="conversation-time"><?php echo date('M j', strtotime($message['created_at'])); ?></div>
                                 <div class="sent-indicator">
-                                    <i class="fas fa-paper-plane"></i>
+                                    <i class="iw iw-paper-plane"></i>
                                 </div>
                             </div>
                         </div>
@@ -146,13 +146,13 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     </div>
                     <div class="chat-actions">
                         <button class="chat-action-btn" title="Voice call">
-                            <i class="fas fa-phone"></i>
+                            <i class="iw iw-phone"></i>
                         </button>
                         <button class="chat-action-btn" title="Video call">
-                            <i class="fas fa-video"></i>
+                            <i class="iw iw-video"></i>
                         </button>
                         <button class="chat-action-btn" title="Chat info">
-                            <i class="fas fa-info-circle"></i>
+                            <i class="iw iw-info-circle"></i>
                         </button>
                     </div>
                 </div>
@@ -172,23 +172,23 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
 
                 <div class="chat-input">
                     <button class="chat-input-btn" title="Voice message">
-                        <i class="fas fa-microphone"></i>
+                        <i class="iw iw-microphone"></i>
                     </button>
                     <button class="chat-input-btn" title="Attach photo">
-                        <i class="fas fa-image"></i>
+                        <i class="iw iw-image"></i>
                     </button>
                     <button class="chat-input-btn" title="GIF">
-                        <i class="fas fa-smile"></i>
+                        <i class="iw iw-smile"></i>
                     </button>
                     <input type="text" placeholder="Aa" class="chat-text-input" id="messageInput">
                     <button class="chat-input-btn" title="Emoji">
-                        <i class="fas fa-smile"></i>
+                        <i class="iw iw-smile"></i>
                     </button>
                 </div>
             <?php else: ?>
                 <div class="no-conversation">
                     <div class="no-conversation-content">
-                        <i class="fas fa-paper-plane"></i>
+                        <i class="iw iw-paper-plane"></i>
                         <h3>Select a sent message</h3>
                         <p>Choose a conversation from the sidebar to view your sent messages</p>
                     </div>
@@ -205,7 +205,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-details">
                         <div class="info-name"><?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?></div>
                         <div class="info-status">
-                            <i class="fas fa-lock"></i>
+                            <i class="iw iw-lock"></i>
                             End-to-end encrypted
                         </div>
                     </div>
@@ -213,13 +213,13 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 
                 <div class="chat-info-actions">
                     <button class="info-action-btn" title="Profile">
-                        <i class="fas fa-user"></i>
+                        <i class="iw iw-user"></i>
                     </button>
                     <button class="info-action-btn" title="Mute">
-                        <i class="fas fa-bell"></i>
+                        <i class="iw iw-bell"></i>
                     </button>
                     <button class="info-action-btn" title="Search">
-                        <i class="fas fa-search"></i>
+                        <i class="iw iw-search"></i>
                     </button>
                 </div>
                 
@@ -227,25 +227,25 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Message info</span>
-                            <i class="fas fa-chevron-down"></i>
+                            <i class="iw iw-chevron-down"></i>
                         </div>
                     </div>
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Customize chat</span>
-                            <i class="fas fa-chevron-down"></i>
+                            <i class="iw iw-chevron-down"></i>
                         </div>
                     </div>
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Media & files</span>
-                            <i class="fas fa-chevron-down"></i>
+                            <i class="iw iw-chevron-down"></i>
                         </div>
                     </div>
                     <div class="info-section">
                         <div class="info-section-header">
                             <span>Privacy & support</span>
-                            <i class="fas fa-chevron-down"></i>
+                            <i class="iw iw-chevron-down"></i>
                         </div>
                     </div>
                 </div>

@@ -123,7 +123,7 @@ function generateContentInsights($query) {
             'type' => 'content_coverage',
             'title' => 'Content Coverage',
             'description' => "Found {$content_stats['article_count']} articles across {$content_stats['category_count']} categories by {$content_stats['author_count']} authors",
-            'icon' => 'fas fa-book',
+            'icon' => 'iw iw-book',
             'priority' => 'high'
         ];
         
@@ -132,7 +132,7 @@ function generateContentInsights($query) {
                 'type' => 'rich_content',
                 'title' => 'Rich Content Available',
                 'description' => 'This topic has extensive coverage with multiple articles and perspectives',
-                'icon' => 'fas fa-star',
+                'icon' => 'iw iw-star',
                 'priority' => 'medium'
             ];
         }
@@ -141,7 +141,7 @@ function generateContentInsights($query) {
             'type' => 'content_gap',
             'title' => 'Content Gap Identified',
             'description' => 'No articles found for this topic. Consider creating content to fill this gap',
-            'icon' => 'fas fa-exclamation-triangle',
+            'icon' => 'iw iw-exclamation-triangle',
             'priority' => 'high'
         ];
     }
@@ -168,7 +168,7 @@ function generateBehaviorInsights($query, $user_id) {
             'type' => 'recurring_search',
             'title' => 'Recurring Interest',
             'description' => "You've searched for this topic {$user_stats['search_count']} times, indicating strong interest",
-            'icon' => 'fas fa-repeat',
+            'icon' => 'iw iw-repeat',
             'priority' => 'medium'
         ];
     }
@@ -193,7 +193,7 @@ function generateBehaviorInsights($query, $user_id) {
             'type' => 'related_interest',
             'title' => 'Related Interests',
             'description' => "You've also searched for: {$related_list}",
-            'icon' => 'fas fa-link',
+            'icon' => 'iw iw-link',
             'priority' => 'low'
         ];
     }
@@ -213,7 +213,7 @@ function generateTrendInsights($query, $search_stats) {
                 'type' => 'trending_topic',
                 'title' => 'Trending Topic',
                 'description' => 'This topic has been searched frequently in the last week, indicating growing interest',
-                'icon' => 'fas fa-fire',
+                'icon' => 'iw iw-fire',
                 'priority' => 'high'
             ];
         } elseif ($recent_ratio < 0.1) {
@@ -221,7 +221,7 @@ function generateTrendInsights($query, $search_stats) {
                 'type' => 'classic_topic',
                 'title' => 'Classic Topic',
                 'description' => 'This is a well-established topic with consistent search interest over time',
-                'icon' => 'fas fa-bookmark',
+                'icon' => 'iw iw-bookmark',
                 'priority' => 'medium'
             ];
         }
@@ -232,7 +232,7 @@ function generateTrendInsights($query, $search_stats) {
                 'type' => 'popular_topic',
                 'title' => 'Popular Topic',
                 'description' => "This topic has been searched {$search_stats['total_searches']} times, making it one of the most popular topics",
-                'icon' => 'fas fa-chart-line',
+                'icon' => 'iw iw-chart-line',
                 'priority' => 'high'
             ];
         }
@@ -250,7 +250,7 @@ function generateQualityInsights($query, $search_stats) {
                 'type' => 'high_quality_results',
                 'title' => 'High Quality Results',
                 'description' => 'This search typically returns many relevant results, indicating good content coverage',
-                'icon' => 'fas fa-check-circle',
+                'icon' => 'iw iw-check-circle',
                 'priority' => 'medium'
             ];
         } elseif ($search_stats['avg_results'] < 5) {
@@ -258,7 +258,7 @@ function generateQualityInsights($query, $search_stats) {
                 'type' => 'limited_results',
                 'title' => 'Limited Results',
                 'description' => 'This search typically returns few results. Consider broadening your search terms',
-                'icon' => 'fas fa-info-circle',
+                'icon' => 'iw iw-info-circle',
                 'priority' => 'medium'
             ];
         }
@@ -292,7 +292,7 @@ function generateSearchRecommendations($query, $user_id) {
             'title' => $search['query'],
             'description' => "Similar search that typically returns {$search['avg_results']} results",
             'url' => '/search?q=' . urlencode($search['query']),
-            'icon' => 'fas fa-search'
+            'icon' => 'iw iw-search'
         ];
     }
     
@@ -317,7 +317,7 @@ function generateSearchRecommendations($query, $user_id) {
             'title' => $category['name'],
             'description' => "Browse {$category['article_count']} articles in this category",
             'url' => '/wiki/category/' . $category['slug'],
-            'icon' => 'fas fa-folder'
+            'icon' => 'iw iw-folder'
         ];
     }
     
@@ -340,7 +340,7 @@ function generateSearchRecommendations($query, $user_id) {
             'title' => $article['title'],
             'description' => "Popular article with {$article['view_count']} views",
             'url' => '/wiki/' . $article['slug'],
-            'icon' => 'fas fa-book'
+            'icon' => 'iw iw-book'
         ];
     }
     

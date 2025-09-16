@@ -124,7 +124,7 @@ include "../../includes/header.php";
                 <div class="category-list">
                     <?php foreach ($categories as $category): ?>
                     <a href="category.php?slug=<?php echo $category['slug']; ?>" class="category-item">
-                        <i class="fas fa-folder"></i>
+                        <i class="iw iw-folder"></i>
                         <span><?php echo htmlspecialchars($category['name']); ?></span>
                     </a>
                     <?php endforeach; ?>
@@ -151,21 +151,21 @@ include "../../includes/header.php";
                 <h3>Quick Actions</h3>
                 <div class="quick-actions">
                     <a href="/search?type=articles" class="action-item">
-                        <i class="fas fa-search"></i>
+                        <i class="iw iw-search"></i>
                         <span>Search Articles</span>
                     </a>
                     <?php if ($is_logged_in && $is_editor): ?>
                     <a href="/create_article" class="action-item">
-                        <i class="fas fa-plus"></i>
+                        <i class="iw iw-plus"></i>
                         <span>Create Article</span>
                     </a>
                     <?php endif; ?>
                     <a href="#all-articles" class="action-item" onclick="document.querySelector('.all-articles-section').scrollIntoView({behavior: 'smooth'});">
-                        <i class="fas fa-list"></i>
+                        <i class="iw iw-list"></i>
                         <span>Browse All Articles</span>
                     </a>
                     <a href="/wiki" class="action-item">
-                        <i class="fas fa-random"></i>
+                        <i class="iw iw-random"></i>
                         <span>Random Article</span>
                     </a>
                 </div>
@@ -206,16 +206,16 @@ include "../../includes/header.php";
                 <div class="header-right">
                     <div class="header-actions">
                         <button type="button" title="History">
-                            <i class="fas fa-history"></i>
+                            <i class="iw iw-history"></i>
                         </button>
                         <button type="button" title="Comments">
-                            <i class="fas fa-comments"></i>
+                            <i class="iw iw-comments"></i>
                         </button>
                     </div>
                     <div class="header-meta">
-                        <span><i class="fas fa-folder"></i> No category</span>
-                        <span><i class="fas fa-calendar"></i> <?php echo date('M j, Y'); ?></span>
-                        <span><i class="fas fa-eye"></i> <?php echo number_format($total_articles); ?> views</span>
+                        <span><i class="iw iw-folder"></i> No category</span>
+                        <span><i class="iw iw-calendar"></i> <?php echo date('M j, Y'); ?></span>
+                        <span><i class="iw iw-eye"></i> <?php echo number_format($total_articles); ?> views</span>
                     </div>
                 </div>
             </div>
@@ -224,7 +224,7 @@ include "../../includes/header.php";
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-book"></i>
+                        <i class="iw iw-book"></i>
                     </div>
                     <div class="stat-content">
                         <h3><?php echo number_format($total_articles); ?></h3>
@@ -233,7 +233,7 @@ include "../../includes/header.php";
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-folder"></i>
+                        <i class="iw iw-folder"></i>
                     </div>
                     <div class="stat-content">
                         <h3><?php echo number_format($total_categories); ?></h3>
@@ -242,7 +242,7 @@ include "../../includes/header.php";
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-eye"></i>
+                        <i class="iw iw-eye"></i>
                     </div>
                     <div class="stat-content">
                         <h3><?php echo number_format(array_sum(array_column($recent_articles, 'view_count'))); ?></h3>
@@ -281,7 +281,7 @@ include "../../includes/header.php";
                         <div class="article-footer">
                             <div class="article-stats">
                                 <span class="views">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="iw iw-eye"></i>
                                     <?php echo number_format($article['view_count']); ?>
                                 </span>
                             </div>

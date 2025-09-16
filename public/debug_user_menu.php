@@ -23,20 +23,20 @@ include 'includes/header.php';
             
             // Create user menu items
             $userItems = [
-                ['url' => '/user/profile', 'icon' => 'fas fa-user', 'text' => 'My Profile'],
-                ['url' => '/user/settings', 'icon' => 'fas fa-cog', 'text' => 'Settings'],
-                ['url' => '/user/posts', 'icon' => 'fas fa-file-alt', 'text' => 'My Posts'],
-                ['url' => '/user/articles', 'icon' => 'fas fa-edit', 'text' => 'My Articles'],
-                ['url' => '/user/notifications', 'icon' => 'fas fa-bell', 'text' => 'Notifications']
+                ['url' => '/user/profile', 'icon' => 'iw iw-user', 'text' => 'My Profile'],
+                ['url' => '/user/settings', 'icon' => 'iw iw-cog', 'text' => 'Settings'],
+                ['url' => '/user/posts', 'icon' => 'iw iw-file-alt', 'text' => 'My Posts'],
+                ['url' => '/user/articles', 'icon' => 'iw iw-edit', 'text' => 'My Articles'],
+                ['url' => '/user/notifications', 'icon' => 'iw iw-bell', 'text' => 'Notifications']
             ];
             
             if (in_array('admin', $user_roles)) {
                 $userItems[] = ['divider' => true];
-                $userItems[] = ['url' => '/admin', 'icon' => 'fas fa-shield-alt', 'text' => 'Admin Panel'];
+                $userItems[] = ['url' => '/admin', 'icon' => 'iw iw-shield-alt', 'text' => 'Admin Panel'];
             }
             
             $userItems[] = ['divider' => true];
-            $userItems[] = ['url' => '/logout', 'icon' => 'fas fa-sign-out-alt', 'text' => 'Logout'];
+            $userItems[] = ['url' => '/logout', 'icon' => 'iw iw-sign-out-alt', 'text' => 'Logout'];
             
             $userAvatar = '<img src="/assets/images/default-avatar.png" alt="Profile" style="width: 36px; height: 36px; border-radius: 50%;">';
             

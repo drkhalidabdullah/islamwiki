@@ -72,11 +72,11 @@ $stats['total_comments'] = $stmt->fetch()['count'];
 
 // Recent activity
 $stmt = $pdo->query("
-    SELECT 'user' as type, username as title, created_at, 'fas fa-user' as icon, 'success' as color
+    SELECT 'user' as type, username as title, created_at, 'iw iw-user' as icon, 'success' as color
     FROM users 
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     UNION ALL
-    SELECT 'article' as type, title, created_at, 'fas fa-file-alt' as icon, 'info' as color
+    SELECT 'article' as type, title, created_at, 'iw iw-file-alt' as icon, 'info' as color
     FROM wiki_articles 
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     ORDER BY created_at DESC 
@@ -144,17 +144,17 @@ include "../../includes/header.php";
     <!-- Welcome Header -->
     <div class="admin-welcome">
         <div class="welcome-content">
-            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <h1><i class="iw iw-tachometer-alt"></i> Admin Dashboard</h1>
             <p>Welcome back, <?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?>! Here's what's happening with your site.</p>
             <div class="welcome-actions">
                 <a href="/pages/wiki/create_article.php" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create Article
+                    <i class="iw iw-plus"></i> Create Article
                 </a>
                 <a href="/admin/manage_users" class="btn btn-secondary">
-                    <i class="fas fa-users"></i> Manage Users
+                    <i class="iw iw-users"></i> Manage Users
                 </a>
                 <a href="/admin/analytics" class="btn btn-info">
-                    <i class="fas fa-chart-line"></i> View Analytics
+                    <i class="iw iw-chart-line"></i> View Analytics
                 </a>
             </div>
         </div>
@@ -176,30 +176,30 @@ include "../../includes/header.php";
 
     <!-- System Health -->
     <div class="dashboard-section system-health-section">
-        <h2><i class="fas fa-heartbeat"></i> System Health</h2>
+        <h2><i class="iw iw-heartbeat"></i> System Health</h2>
         <div class="health-status">
             <div class="health-item">
                 <span class="health-label">Database</span>
                 <span class="health-status-indicator status-<?php echo $system_health['database']; ?>">
-                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['database']); ?>
+                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['database']); ?>
                 </span>
             </div>
             <div class="health-item">
                 <span class="health-label">Storage</span>
                 <span class="health-status-indicator status-<?php echo $system_health['storage']; ?>">
-                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['storage']); ?>
+                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['storage']); ?>
                 </span>
             </div>
             <div class="health-item">
                 <span class="health-label">Memory</span>
                 <span class="health-status-indicator status-<?php echo $system_health['memory']; ?>">
-                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['memory']); ?>
+                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['memory']); ?>
                 </span>
             </div>
             <div class="health-item">
                 <span class="health-label">Uptime</span>
                 <span class="health-status-indicator status-<?php echo $system_health['uptime']; ?>">
-                    <i class="fas fa-circle"></i> <?php echo ucfirst($system_health['uptime']); ?>
+                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['uptime']); ?>
                 </span>
             </div>
         </div>
@@ -210,10 +210,10 @@ include "../../includes/header.php";
         <div class="stat-card stat-users">
             <div class="stat-header">
                 <div class="stat-icon">
-                    <i class="fas fa-users"></i>
+                    <i class="iw iw-users"></i>
                 </div>
                 <div class="stat-trend">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="iw iw-arrow-up"></i>
                     <span>+<?php echo $stats['new_users_30d']; ?> this month</span>
                 </div>
             </div>
@@ -229,10 +229,10 @@ include "../../includes/header.php";
         <div class="stat-card stat-articles">
             <div class="stat-header">
                 <div class="stat-icon">
-                    <i class="fas fa-file-alt"></i>
+                    <i class="iw iw-file-alt"></i>
                 </div>
                 <div class="stat-trend">
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="iw iw-arrow-up"></i>
                     <span>+<?php echo $stats['new_articles_30d']; ?> this month</span>
                 </div>
             </div>
@@ -249,10 +249,10 @@ include "../../includes/header.php";
         <div class="stat-card stat-files">
             <div class="stat-header">
                 <div class="stat-icon">
-                    <i class="fas fa-folder"></i>
+                    <i class="iw iw-folder"></i>
                 </div>
                 <div class="stat-trend">
-                    <i class="fas fa-hdd"></i>
+                    <i class="iw iw-hdd"></i>
                     <span><?php echo format_file_size($stats['total_file_size']); ?></span>
                 </div>
             </div>
@@ -268,10 +268,10 @@ include "../../includes/header.php";
         <div class="stat-card stat-categories">
             <div class="stat-header">
                 <div class="stat-icon">
-                    <i class="fas fa-tags"></i>
+                    <i class="iw iw-tags"></i>
                 </div>
                 <div class="stat-trend">
-                    <i class="fas fa-layer-group"></i>
+                    <i class="iw iw-layer-group"></i>
                     <span>Organized content</span>
                 </div>
             </div>
@@ -291,13 +291,13 @@ include "../../includes/header.php";
         <div class="dashboard-left">
             <!-- Maintenance Mode Status -->
             <div class="dashboard-section maintenance-status-section">
-                <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
+                <h2><i class="iw iw-tools"></i> Maintenance Mode</h2>
                 <div class="maintenance-status">
                     <?php if (is_maintenance_mode()): ?>
                         <div class="maintenance-active">
                             <div class="maintenance-info">
                                 <div class="maintenance-status-indicator">
-                                    <i class="fas fa-circle status-warning"></i>
+                                    <i class="iw iw-circle status-warning"></i>
                                     <span>Maintenance Mode Active</span>
                                 </div>
                                 <div class="maintenance-details">
@@ -307,10 +307,10 @@ include "../../includes/header.php";
                             </div>
                             <div class="maintenance-actions">
                                 <a href="/admin/system_settings" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-cog"></i> Manage
+                                    <i class="iw iw-cog"></i> Manage
                                 </a>
                                 <button onclick="toggleMaintenanceMode()" class="btn btn-success btn-sm">
-                                    <i class="fas fa-power-off"></i> Disable
+                                    <i class="iw iw-power-off"></i> Disable
                                 </button>
                             </div>
                         </div>
@@ -318,7 +318,7 @@ include "../../includes/header.php";
                         <div class="maintenance-inactive">
                             <div class="maintenance-info">
                                 <div class="maintenance-status-indicator">
-                                    <i class="fas fa-circle status-healthy"></i>
+                                    <i class="iw iw-circle status-healthy"></i>
                                     <span>Site is Online</span>
                                 </div>
                                 <div class="maintenance-details">
@@ -327,10 +327,10 @@ include "../../includes/header.php";
                             </div>
                             <div class="maintenance-actions">
                                 <a href="/admin/system_settings" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-cog"></i> Settings
+                                    <i class="iw iw-cog"></i> Settings
                                 </a>
                                 <button onclick="toggleMaintenanceMode()" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-tools"></i> Enable
+                                    <i class="iw iw-tools"></i> Enable
                                 </button>
                             </div>
                         </div>
@@ -340,7 +340,7 @@ include "../../includes/header.php";
 
             <!-- Recent Activity -->
             <div class="dashboard-section">
-                <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                <h2><i class="iw iw-clock"></i> Recent Activity</h2>
                 <div class="activity-feed">
                     <?php if (!empty($recent_activity)): ?>
                         <?php foreach ($recent_activity as $activity): ?>
@@ -368,29 +368,29 @@ include "../../includes/header.php";
         <div class="dashboard-right">
             <!-- Admin Actions -->
             <div class="dashboard-section">
-                <h2><i class="fas fa-cogs"></i> Admin Actions</h2>
+                <h2><i class="iw iw-cogs"></i> Admin Actions</h2>
                 
                 <!-- Most Common Actions -->
                 <div class="action-category">
-                    <h3><i class="fas fa-star"></i> Most Used</h3>
+                    <h3><i class="iw iw-star"></i> Most Used</h3>
                     <div class="action-grid">
                         <a href="/pages/wiki/create_article.php" class="action-item primary">
-                            <i class="fas fa-plus"></i>
+                            <i class="iw iw-plus"></i>
                             <span>Create Article</span>
                             <small>New wiki content</small>
                         </a>
                         <a href="/admin/manage_users" class="action-item primary">
-                            <i class="fas fa-users"></i>
+                            <i class="iw iw-users"></i>
                             <span>Manage Users</span>
                             <small>User accounts</small>
                         </a>
                         <a href="/admin/analytics" class="action-item primary">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="iw iw-chart-line"></i>
                             <span>Analytics</span>
                             <small>Site statistics</small>
                         </a>
                         <a href="/admin/system_settings" class="action-item primary">
-                            <i class="fas fa-cog"></i>
+                            <i class="iw iw-cog"></i>
                             <span>Settings</span>
                             <small>System config</small>
                         </a>
@@ -399,25 +399,25 @@ include "../../includes/header.php";
 
                 <!-- System Management -->
                 <div class="action-category">
-                    <h3><i class="fas fa-tools"></i> System Management</h3>
+                    <h3><i class="iw iw-tools"></i> System Management</h3>
                     <div class="action-grid">
                         <a href="/admin/maintenance" class="action-item secondary">
-                            <i class="fas fa-wrench"></i>
+                            <i class="iw iw-wrench"></i>
                             <span>Maintenance</span>
                             <small>System maintenance</small>
                         </a>
                         <a href="/admin/manage_files" class="action-item secondary">
-                            <i class="fas fa-folder-open"></i>
+                            <i class="iw iw-folder-open"></i>
                             <span>File Manager</span>
                             <small>Uploaded files</small>
                         </a>
                         <a href="/admin/manage_categories" class="action-item secondary">
-                            <i class="fas fa-tags"></i>
+                            <i class="iw iw-tags"></i>
                             <span>Categories</span>
                             <small>Content organization</small>
                         </a>
                         <a href="/admin/content_moderation" class="action-item secondary">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="iw iw-shield-alt"></i>
                             <span>Moderation</span>
                             <small>Content review</small>
                         </a>
@@ -426,15 +426,15 @@ include "../../includes/header.php";
 
                 <!-- Advanced Tools -->
                 <div class="action-category">
-                    <h3><i class="fas fa-cog"></i> Advanced Tools</h3>
+                    <h3><i class="iw iw-cog"></i> Advanced Tools</h3>
                     <div class="action-grid">
                         <a href="/admin/manage_redirects" class="action-item tertiary">
-                            <i class="fas fa-exchange-alt"></i>
+                            <i class="iw iw-exchange-alt"></i>
                             <span>Redirects</span>
                             <small>URL redirects</small>
                         </a>
                         <a href="/admin/manage_permissions" class="action-item tertiary">
-                            <i class="fas fa-key"></i>
+                            <i class="iw iw-key"></i>
                             <span>Permissions</span>
                             <small>Access control</small>
                         </a>
@@ -444,7 +444,7 @@ include "../../includes/header.php";
 
             <!-- Popular Articles -->
             <div class="dashboard-section">
-                <h2><i class="fas fa-fire"></i> Popular Articles</h2>
+                <h2><i class="iw iw-fire"></i> Popular Articles</h2>
                 <div class="popular-articles">
                     <?php if (!empty($popular_articles)): ?>
                         <?php foreach ($popular_articles as $article): ?>
@@ -455,7 +455,7 @@ include "../../includes/header.php";
                             </div>
                             <div class="article-stats">
                                 <span class="view-count">
-                                    <i class="fas fa-eye"></i> <?php echo number_format($article['view_count']); ?>
+                                    <i class="iw iw-eye"></i> <?php echo number_format($article['view_count']); ?>
                                 </span>
                             </div>
                         </div>
@@ -468,7 +468,7 @@ include "../../includes/header.php";
 
             <!-- Server Information -->
             <div class="dashboard-section">
-                <h2><i class="fas fa-server"></i> Server Info</h2>
+                <h2><i class="iw iw-server"></i> Server Info</h2>
                 <div class="server-info">
                     <div class="info-item">
                         <span class="info-label">PHP Version</span>

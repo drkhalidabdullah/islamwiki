@@ -41,10 +41,10 @@ include "../../includes/header.php";
     <div class="admin-header">
         <div class="header-actions">
             <a href="/admin" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Admin Panel
+                <i class="iw iw-arrow-left"></i> Back to Admin Panel
             </a>
         </div>
-        <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+        <h1><i class="iw iw-chart-line"></i> Analytics Dashboard</h1>
         <p>Monitor site performance, user behavior, and content engagement</p>
     </div>
 
@@ -67,7 +67,7 @@ include "../../includes/header.php";
         <div class="health-cards">
             <div class="health-card <?php echo $system_health['database'] === 'healthy' ? 'healthy' : 'unhealthy'; ?>">
                 <div class="health-icon">
-                    <i class="fas fa-database"></i>
+                    <i class="iw iw-database"></i>
                 </div>
                 <div class="health-content">
                     <h3>Database</h3>
@@ -76,7 +76,7 @@ include "../../includes/header.php";
             </div>
             <div class="health-card <?php echo $system_health['errors_last_hour'] < 10 ? 'healthy' : 'warning'; ?>">
                 <div class="health-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="iw iw-exclamation-triangle"></i>
                 </div>
                 <div class="health-content">
                     <h3>Errors (Last Hour)</h3>
@@ -85,7 +85,7 @@ include "../../includes/header.php";
             </div>
             <div class="health-card <?php echo $system_health['avg_response_time'] < 1000 ? 'healthy' : 'warning'; ?>">
                 <div class="health-icon">
-                    <i class="fas fa-tachometer-alt"></i>
+                    <i class="iw iw-tachometer-alt"></i>
                 </div>
                 <div class="health-content">
                     <h3>Avg Response Time</h3>
@@ -99,7 +99,7 @@ include "../../includes/header.php";
     <div class="metrics-grid">
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-eye"></i>
+                <i class="iw iw-eye"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format(array_sum(array_column($page_views, 'count'))); ?></h3>
@@ -108,7 +108,7 @@ include "../../includes/header.php";
         </div>
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-users"></i>
+                <i class="iw iw-users"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($user_engagement['active_users'] ?? 0); ?></h3>
@@ -117,7 +117,7 @@ include "../../includes/header.php";
         </div>
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-mouse-pointer"></i>
+                <i class="iw iw-mouse-pointer"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format($user_engagement['total_actions'] ?? 0); ?></h3>
@@ -126,7 +126,7 @@ include "../../includes/header.php";
         </div>
         <div class="metric-card">
             <div class="metric-icon">
-                <i class="fas fa-search"></i>
+                <i class="iw iw-search"></i>
             </div>
             <div class="metric-content">
                 <h3><?php echo number_format(array_sum(array_column($search_analytics, 'search_count'))); ?></h3>

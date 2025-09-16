@@ -169,7 +169,7 @@ include "../../includes/header.php";
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1><i class="fas fa-user-edit"></i> Edit User</h1>
+        <h1><i class="iw iw-user-edit"></i> Edit User</h1>
         <p>Edit user: <?php echo htmlspecialchars($user['username']); ?></p>
     </div>
 
@@ -231,7 +231,7 @@ include "../../includes/header.php";
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Profile
+                        <i class="iw iw-save"></i> Update Profile
                     </button>
                 </div>
             </form>
@@ -269,7 +269,7 @@ include "../../includes/header.php";
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-user-tag"></i> Update Role
+                        <i class="iw iw-user-tag"></i> Update Role
                     </button>
                 </div>
             </form>
@@ -294,7 +294,7 @@ include "../../includes/header.php";
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-warning">
-                        <i class="fas fa-key"></i> Reset Password
+                        <i class="iw iw-key"></i> Reset Password
                     </button>
                 </div>
             </form>
@@ -318,7 +318,7 @@ include "../../includes/header.php";
 
     <div class="form-actions">
         <a href="/admin/manage_users" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Users
+            <i class="iw iw-arrow-left"></i> Back to Users
         </a>
     </div>
 </div>

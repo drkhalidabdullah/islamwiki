@@ -87,12 +87,12 @@ function toggleExtensionSettings(extensionName) {
     if (isHidden) {
         // Show settings
         settingsDiv.style.display = 'block';
-        icon.className = 'fas fa-chevron-up';
+        icon.className = 'iw iw-chevron-up';
         toggleButton.title = 'Hide Settings';
     } else {
         // Hide settings
         settingsDiv.style.display = 'none';
-        icon.className = 'fas fa-chevron-down';
+        icon.className = 'iw iw-chevron-down';
         toggleButton.title = 'Show Settings';
     }
 }
@@ -279,12 +279,12 @@ function toggleExtensionSettings(extensionName) {
     if (isHidden) {
         // Show settings
         settingsDiv.style.display = 'block';
-        icon.className = 'fas fa-chevron-up';
+        icon.className = 'iw iw-chevron-up';
         toggleButton.title = 'Hide Settings';
     } else {
         // Hide settings
         settingsDiv.style.display = 'none';
-        icon.className = 'fas fa-chevron-down';
+        icon.className = 'iw iw-chevron-down';
         toggleButton.title = 'Show Settings';
     }
 }

@@ -199,7 +199,7 @@ include "../includes/header.php";
                     <input type="text" name="q" value="<?php echo htmlspecialchars($query); ?>" 
                            placeholder="Enter your search query..." class="search-input" required>
                     <button type="submit" class="search-button">
-                        <i class="fas fa-search"></i>
+                        <i class="iw iw-search"></i>
                         Search
                     </button>
                 </div>
@@ -340,8 +340,8 @@ include "../includes/header.php";
                             
                             <div class="result-footer">
                                 <div class="result-stats">
-                                    <span><i class="fas fa-eye"></i> <?php echo number_format($result['view_count']); ?> views</span>
-                                    <span><i class="fas fa-edit"></i> <?php echo format_date($result['updated_at']); ?></span>
+                                    <span><i class="iw iw-eye"></i> <?php echo number_format($result['view_count']); ?> views</span>
+                                    <span><i class="iw iw-edit"></i> <?php echo format_date($result['updated_at']); ?></span>
                                 </div>
                                 <div class="result-actions">
                                     <a href="/wiki/<?php echo $result['slug']; ?>" class="btn btn-sm btn-primary">Read</a>
