@@ -194,8 +194,10 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             </div>
         </div>
         
-        <!-- Chat interface (hidden by default) -->
-        <div class="chat-interface" id="chatInterface" style="display: none;">
+        <!-- Chat Wrapper -->
+        <div class="chat-wrapper">
+            <!-- Chat interface (hidden by default) -->
+            <div class="chat-interface" id="chatInterface" style="display: none;">
             <div class="chat-header">
                 <div class="chat-user-info">
                     <img src="/assets/images/default-avatar.png" alt="User" class="chat-user-avatar" id="chatUserAvatar">
@@ -211,7 +213,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <button class="chat-action-btn" title="Video Call">
                         <i class="fas fa-video"></i>
                     </button>
-                    <button class="chat-action-btn" title="More Options">
+                    <button class="chat-action-btn" title="More Options" id="infoBtn">
                         <i class="fas fa-info-circle"></i>
                     </button>
                 </div>
@@ -239,6 +241,232 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box" id="infoBox" style="display: none;">
+                <div class="info-header">
+                    <div class="info-tabs">
+                        <button class="info-tab active" data-tab="profile">Profile</button>
+                        <button class="info-tab" data-tab="mute">Mute</button>
+                        <button class="info-tab" data-tab="search">Search</button>
+                    </div>
+                    <button class="info-close" id="infoClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Profile Tab -->
+                <div class="info-content" id="profileTab">
+                    <div class="info-user-profile">
+                        <img src="/assets/images/default-avatar.png" alt="User" class="info-user-avatar" id="infoUserAvatar">
+                        <div class="info-user-name" id="infoUserName">User Name</div>
+                        <div class="info-encryption">
+                            <i class="fas fa-lock"></i>
+                            End-to-end encrypted
+                        </div>
+                        <div class="info-profile-actions">
+                            <button class="info-profile-btn" id="viewProfileBtn">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </button>
+                            <button class="info-profile-btn" id="muteBtn">
+                                <i class="fas fa-bell-slash"></i>
+                                Mute
+                            </button>
+                            <button class="info-profile-btn" id="searchBtn">
+                                <i class="fas fa-search"></i>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-section-header">
+                            <span>Chat info</span>
+                            <i class="fas fa-chevron-up"></i>
+                        </div>
+                        <div class="info-section-content">
+                            <div class="info-item">
+                                <i class="fas fa-thumbtack"></i>
+                                <span>View pinned messages</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-section-header">
+                            <span>Customize chat</span>
+                            <i class="fas fa-chevron-up"></i>
+                        </div>
+                        <div class="info-section-content">
+                            <div class="info-item">
+                                <i class="fas fa-palette"></i>
+                                <span>Change theme</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-smile"></i>
+                                <span>Change emoji</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit nicknames</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-section-header">
+                            <span>Media & files</span>
+                            <i class="fas fa-chevron-up"></i>
+                        </div>
+                        <div class="info-section-content">
+                            <div class="info-item">
+                                <i class="fas fa-images"></i>
+                                <span>Media</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-file"></i>
+                                <span>Files</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-section-header">
+                            <span>Privacy & support</span>
+                            <i class="fas fa-chevron-up"></i>
+                        </div>
+                        <div class="info-section-content">
+                            <div class="info-item">
+                                <i class="fas fa-bell-slash"></i>
+                                <span>Mute notifications</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Message permissions</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Disappearing messages</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-eye"></i>
+                                <span>Read receipts</span>
+                                <span class="info-status">On</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-lock"></i>
+                                <span>Verify end-to-end encryption</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-ban"></i>
+                                <span>Restrict</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-minus-circle"></i>
+                                <span>Block</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Report</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mute Tab -->
+                <div class="info-content" id="muteTab" style="display: none;">
+                    <div class="mute-options">
+                        <div class="mute-option">
+                            <input type="radio" name="muteDuration" value="15" id="mute15">
+                            <label for="mute15">For 15 minutes</label>
+                        </div>
+                        <div class="mute-option">
+                            <input type="radio" name="muteDuration" value="60" id="mute60">
+                            <label for="mute60">For 1 Hour</label>
+                        </div>
+                        <div class="mute-option">
+                            <input type="radio" name="muteDuration" value="480" id="mute480">
+                            <label for="mute480">For 8 Hours</label>
+                        </div>
+                        <div class="mute-option">
+                            <input type="radio" name="muteDuration" value="1440" id="mute1440">
+                            <label for="mute1440">For 24 Hours</label>
+                        </div>
+                        <div class="mute-option">
+                            <input type="radio" name="muteDuration" value="permanent" id="mutePermanent">
+                            <label for="mutePermanent">Until I turn it back on</label>
+                        </div>
+                    </div>
+                    <div class="mute-description">
+                        Chat windows will stay closed, and you won't get push notifications on your devices.
+                    </div>
+                    <div class="mute-actions">
+                        <button class="mute-cancel" id="muteCancel">Cancel</button>
+                        <button class="mute-confirm" id="muteConfirm">Mute</button>
+                    </div>
+                </div>
+
+                <!-- Search Tab -->
+                <div class="info-content" id="searchTab" style="display: none;">
+                    <div class="search-header">
+                        <span>Search in conversation</span>
+                        <button class="search-close" id="searchClose">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-input-container">
+                        <input type="text" class="search-input" id="conversationSearch" placeholder="Search messages...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="search-results" id="searchResults">
+                        <!-- Search results will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mute Overlay -->
+<div class="mute-overlay" id="muteOverlay" style="display: none;">
+    <div class="mute-dialog">
+        <div class="mute-dialog-header">
+            <h3>Mute conversation</h3>
+            <button class="mute-dialog-close" id="muteDialogClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mute-dialog-content">
+            <div class="mute-option">
+                <input type="radio" name="muteDurationOverlay" value="15" id="mute15Overlay" checked>
+                <label for="mute15Overlay">For 15 minutes</label>
+            </div>
+            <div class="mute-option">
+                <input type="radio" name="muteDurationOverlay" value="60" id="mute60Overlay">
+                <label for="mute60Overlay">For 1 Hour</label>
+            </div>
+            <div class="mute-option">
+                <input type="radio" name="muteDurationOverlay" value="480" id="mute480Overlay">
+                <label for="mute480Overlay">For 8 Hours</label>
+            </div>
+            <div class="mute-option">
+                <input type="radio" name="muteDurationOverlay" value="1440" id="mute1440Overlay">
+                <label for="mute1440Overlay">For 24 Hours</label>
+            </div>
+            <div class="mute-option">
+                <input type="radio" name="muteDurationOverlay" value="permanent" id="mutePermanentOverlay">
+                <label for="mutePermanentOverlay">Until I turn it back on</label>
+            </div>
+            <div class="mute-description">
+                Chat windows will stay closed, and you won't get push notifications on your devices.
+            </div>
+        </div>
+        <div class="mute-dialog-actions">
+            <button class="mute-cancel" id="muteOverlayCancel">Cancel</button>
+            <button class="mute-confirm" id="muteOverlayConfirm">Mute</button>
         </div>
     </div>
 </div>
@@ -255,8 +483,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const optionsMenu = document.getElementById('optionsMenu');
     const recipientInput = document.getElementById('recipientInput');
     const recipientsList = document.getElementById('recipientsList');
+    const infoBtn = document.getElementById('infoBtn');
+    const infoBox = document.getElementById('infoBox');
+    const infoClose = document.getElementById('infoClose');
+    const infoTabs = document.querySelectorAll('.info-tab');
+    const muteOverlay = document.getElementById('muteOverlay');
+    const muteDialogClose = document.getElementById('muteDialogClose');
+    const muteOverlayCancel = document.getElementById('muteOverlayCancel');
+    const muteOverlayConfirm = document.getElementById('muteOverlayConfirm');
+    const conversationSearch = document.getElementById('conversationSearch');
+    const searchResults = document.getElementById('searchResults');
     
     let currentConversation = null;
+    let currentSearchResults = [];
     
     // New message button
     newMessageBtn.addEventListener('click', function() {
@@ -281,6 +520,192 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!optionsBtn.contains(e.target) && !optionsMenu.contains(e.target)) {
             optionsMenu.style.display = 'none';
         }
+    });
+
+    // Info button functionality
+    infoBtn.addEventListener('click', function() {
+        if (infoBox.style.display === 'none' || infoBox.style.display === '') {
+            // Show info box as third column
+            infoBox.style.display = 'flex';
+            // Update user info in info box
+            const chatUserName = document.getElementById('chatUserName').textContent;
+            const chatUserAvatar = document.getElementById('chatUserAvatar').src;
+            document.getElementById('infoUserName').textContent = chatUserName;
+            document.getElementById('infoUserAvatar').src = chatUserAvatar;
+        } else {
+            // Hide info box, return to two-column layout
+            infoBox.style.display = 'none';
+        }
+    });
+
+    // Close info box
+    infoClose.addEventListener('click', function() {
+        infoBox.style.display = 'none';
+    });
+
+    // Info tab switching
+    infoTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            
+            // Remove active class from all tabs
+            infoTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all content
+            document.querySelectorAll('.info-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected content
+            if (tabName === 'mute') {
+                document.getElementById('muteTab').style.display = 'block';
+            } else if (tabName === 'search') {
+                document.getElementById('searchTab').style.display = 'block';
+                conversationSearch.focus();
+            } else {
+                document.getElementById('profileTab').style.display = 'block';
+            }
+        });
+    });
+
+    // Mute functionality
+    document.getElementById('muteCancel').addEventListener('click', function() {
+        // Switch to profile tab
+        infoTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="profile"]').classList.add('active');
+        document.querySelectorAll('.info-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('profileTab').style.display = 'block';
+    });
+
+    document.getElementById('muteConfirm').addEventListener('click', function() {
+        const selectedDuration = document.querySelector('input[name="muteDuration"]:checked').value;
+        console.log('Muting conversation for:', selectedDuration);
+        // Here you would implement the actual muting logic
+        alert('Conversation muted for ' + selectedDuration + ' minutes');
+        // Switch back to profile tab
+        infoTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="profile"]').classList.add('active');
+        document.querySelectorAll('.info-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('profileTab').style.display = 'block';
+    });
+
+    // Mute overlay functionality
+    document.querySelector('[data-tab="mute"]').addEventListener('click', function() {
+        muteOverlay.style.display = 'flex';
+    });
+
+    muteDialogClose.addEventListener('click', function() {
+        muteOverlay.style.display = 'none';
+    });
+
+    muteOverlayCancel.addEventListener('click', function() {
+        muteOverlay.style.display = 'none';
+    });
+
+    muteOverlayConfirm.addEventListener('click', function() {
+        const selectedDuration = document.querySelector('input[name="muteDurationOverlay"]:checked').value;
+        console.log('Muting conversation for:', selectedDuration);
+        // Here you would implement the actual muting logic
+        alert('Conversation muted for ' + selectedDuration + ' minutes');
+        muteOverlay.style.display = 'none';
+    });
+
+    // Search functionality
+    conversationSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        if (searchTerm.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+        
+        // Search through current conversation messages
+        searchInConversation(searchTerm);
+    });
+
+    function searchInConversation(searchTerm) {
+        // This would typically make an AJAX call to search messages
+        // For now, we'll simulate with the current messages
+        const messages = document.querySelectorAll('.message');
+        const results = [];
+        
+        messages.forEach((message, index) => {
+            const messageText = message.querySelector('.message-content').textContent.toLowerCase();
+            if (messageText.includes(searchTerm)) {
+                results.push({
+                    id: index,
+                    text: message.querySelector('.message-content').textContent,
+                    time: message.querySelector('.message-time').textContent,
+                    sender: message.classList.contains('sent') ? 'You' : document.getElementById('chatUserName').textContent
+                });
+            }
+        });
+        
+        displaySearchResults(results, searchTerm);
+    }
+
+    function displaySearchResults(results, searchTerm) {
+        currentSearchResults = results;
+        searchResults.innerHTML = '';
+        
+        if (results.length === 0) {
+            searchResults.innerHTML = '<div class="no-results">No messages found</div>';
+            return;
+        }
+        
+        results.forEach(result => {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'search-result';
+            resultDiv.innerHTML = `
+                <div class="search-result-text">${highlightSearchTerm(result.text, searchTerm)}</div>
+                <div class="search-result-meta">
+                    <span class="search-result-sender">${result.sender}</span>
+                    <span class="search-result-time">${result.time}</span>
+                </div>
+            `;
+            searchResults.appendChild(resultDiv);
+        });
+    }
+
+    function highlightSearchTerm(text, searchTerm) {
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    // Profile action buttons
+    document.getElementById('viewProfileBtn').addEventListener('click', function() {
+        // Get current conversation user ID and redirect to profile
+        if (currentConversation) {
+            window.location.href = `/user/profile/${currentConversation}`;
+        } else {
+            alert('No conversation selected');
+        }
+    });
+
+    document.getElementById('muteBtn').addEventListener('click', function() {
+        // Switch to mute tab
+        infoTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="mute"]').classList.add('active');
+        document.querySelectorAll('.info-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('muteTab').style.display = 'block';
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        // Switch to search tab
+        infoTabs.forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="search"]').classList.add('active');
+        document.querySelectorAll('.info-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('searchTab').style.display = 'block';
+        conversationSearch.focus();
     });
     
     // Recipient search

@@ -89,6 +89,9 @@ class MessagingSystem {
         this.currentConversation = conversationId;
         this.lastMessageId = 0;
         
+        // Update global current conversation for profile link
+        window.currentConversation = conversationId;
+        
         // Update active conversation
         document.querySelectorAll('.conversation-item').forEach(item => {
             item.classList.remove('active');
