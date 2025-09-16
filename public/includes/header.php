@@ -115,18 +115,12 @@ if ($toast_message) {
                 <i class="fas fa-book-open"></i>
             </a>
             
-            <!-- Separator -->
-            <div class="sidebar-separator"></div>
-            
             <!-- Main Navigation -->
             <div class="search-container">
                 <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="openSearch(); return false;">
                     <i class="fas fa-search"></i>
                 </a>
             </div>
-            
-            <!-- Separator -->
-            <div class="sidebar-separator"></div>
             
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
@@ -143,34 +137,30 @@ if ($toast_message) {
         </div>
         
         <?php if (is_logged_in()): ?>
-        <!-- Separator -->
-        <div class="sidebar-separator"></div>
-        
         <!-- Create Dropdown -->
-        <div class="sidebar-dropdown">
-            <a href="#" class="sidebar-item dropdown-trigger" title="Create" data-target="createMenu">
-                <i class="fas fa-plus"></i>
-            </a>
-            <div class="dropdown-menu" id="createMenu">
-                <a href="/create_post" class="dropdown-item">
-                    <i class="fas fa-edit"></i>
-                    <span>Create Post</span>
+        <div class="sidebar-dropdown sidebar-create">
+            <div class="user-icon-dropdown">
+                <a href="#" class="sidebar-item user-icon-trigger" title="Create" data-target="createMenu">
+                    <i class="fas fa-plus"></i>
                 </a>
-                <?php if ($enable_wiki): ?>
-                <a href="/pages/wiki/create_article.php" class="dropdown-item">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Create Article</span>
-                </a>
-                <a href="/wiki/upload" class="dropdown-item">
-                    <i class="fas fa-upload"></i>
-                    <span>Upload File</span>
-                </a>
-                <?php endif; ?>
+                <div class="user-dropdown-menu" id="createMenu">
+                    <a href="/create_post" class="dropdown-item">
+                        <i class="fas fa-edit"></i>
+                        <span>Create Post</span>
+                    </a>
+                    <?php if ($enable_wiki): ?>
+                    <a href="/pages/wiki/create_article.php" class="dropdown-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Create Article</span>
+                    </a>
+                    <a href="/wiki/upload" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload File</span>
+                    </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
-        
-        <!-- Separator -->
-        <div class="sidebar-separator"></div>
         
         <?php if ($enable_social): ?>
         <!-- Messages Dropdown -->

@@ -1305,7 +1305,8 @@ nav.sidebar {
 .sidebar-dropdown.sidebar-messages .user-dropdown-menu.show,
 .sidebar-dropdown.sidebar-friends .user-dropdown-menu.show,
 .sidebar-dropdown.sidebar-user .user-dropdown-menu.show,
-.sidebar-dropdown.sidebar-guest .user-dropdown-menu.show {
+.sidebar-dropdown.sidebar-guest .user-dropdown-menu.show,
+.sidebar-dropdown.sidebar-create .user-dropdown-menu.show {
     display: block !important;
     opacity: 1 !important;
     transform: translateX(0) !important;
@@ -1329,8 +1330,44 @@ html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-m
     transform: translateX(0) !important;
 }
 
+/* Specific rules for create dropdown - positioned relative to button */
+html body .sidebar .sidebar-create .user-icon-dropdown.active .user-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+    transform: translateX(0) !important;
+}
+
 /* Allow JavaScript to override positioning */
 html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    background: #34495e !important;
+    border-radius: 0 8px 8px 0 !important;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    position: fixed !important;
+    left: 60px !important;
+    top: auto !important;
+    bottom: auto !important;
+    padding: 8px 0 !important;
+    min-width: 180px !important;
+    z-index: 999999 !important;
+}
+
+/* Allow JavaScript to override positioning for create dropdown */
+html body .sidebar .sidebar-create .user-icon-dropdown.active .user-dropdown-menu.show {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -2033,6 +2070,12 @@ html, body {
     margin-top: 0 !important;
 }
 
+/* When both maintenance banner and newsbar are present */
+.maintenance-banner + .newsbar + .main-content,
+.maintenance-banner + .main-content {
+    padding-top: 120px !important;
+}
+
 /* When sidebar and newsbar are hidden during maintenance mode */
 .main-content.maintenance-mode {
     padding-top: 0 !important;
@@ -2050,7 +2093,7 @@ html, body {
     position: fixed;
     top: 0;
     left: 60px;
-    z-index: 10000;
+    z-index: 10001;
     width: calc(100vw - 60px);
     max-width: calc(100vw - 60px);
     box-sizing: border-box;
@@ -2142,6 +2185,11 @@ html, body {
     transform: scale(1.1);
 }
 
+/* Newsbar positioning when maintenance banner is present */
+.maintenance-banner + .newsbar {
+    top: 60px;
+}
+
 /* Responsive Maintenance Banner */
 @media (max-width: 992px) {
     .maintenance-banner {
@@ -2154,6 +2202,7 @@ html, body {
         left: 50px;
         width: calc(100vw - 50px);
         max-width: calc(100vw - 50px);
+        top: 60px;
     }
 }
 
