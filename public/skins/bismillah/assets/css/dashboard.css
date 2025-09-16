@@ -45,7 +45,7 @@ body {
 .dashboard-container {
     width: 100%;
     margin: 0;
-    padding: 24px;
+    padding: 24px 0;
     min-height: 100vh;
 }
 
@@ -54,8 +54,9 @@ body {
     grid-template-columns: 420px 1fr 300px;
     gap: 32px;
     align-items: start;
-    max-width: 1600px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+    padding: 0 24px;
 }
 
 /* Enhanced Sidebar Styles */
@@ -2270,7 +2271,11 @@ body {
 
 @media (max-width: 768px) {
     .dashboard-container {
-        padding: 16px;
+        padding: 16px 0;
+    }
+    
+    .dashboard-layout {
+        padding: 0 16px;
     }
     
     .feed-header {

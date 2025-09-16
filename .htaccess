@@ -35,6 +35,9 @@ RewriteRule ^logout$ /public/logout.php [L]
 # Handle search
 RewriteRule ^search$ /public/search/index.php [L]
 
+# Handle API routes
+RewriteRule ^api/(.*)$ /public/api/$1 [L]
+
 # Default routing - serve from public directory
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

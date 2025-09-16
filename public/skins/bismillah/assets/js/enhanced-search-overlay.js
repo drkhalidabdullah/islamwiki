@@ -99,7 +99,7 @@ class EnhancedSearchOverlay {
         }
 
         // Get references to elements
-        this.searchInput = document.getElementById('enhancedSearchInput');
+        this.searchInput = document.getElementById('searchInput');
         this.suggestionsContainer = document.getElementById('searchSuggestionsContainer');
         this.clearBtn = document.getElementById('searchClearBtn');
         
@@ -115,6 +115,7 @@ class EnhancedSearchOverlay {
         });
 
         this.searchInput.addEventListener('keydown', (e) => {
+            console.log('Key pressed:', e.key, 'Code:', e.code);
             this.handleKeyNavigation(e);
         });
 
@@ -413,8 +414,64 @@ class EnhancedSearchOverlay {
     }
 
     handleKeyNavigation(e) {
+        console.log('handleKeyNavigation called with key:', e.key);
+        // Handle Enter key to navigate to first result
+        if (e.key === 'Enter') {
+            console.log('Enter key detected, preventing default and navigating');
+            e.preventDefault();
+            this.navigateToFirstResult();
+        }
         // Handle arrow keys for navigation
         // This can be enhanced for keyboard navigation
+    }
+
+    navigateToFirstResult() {
+        const query = this.currentQuery.trim();
+        console.log('Navigate to first result for query:', query);
+        
+        if (!query) return;
+
+        // Look for the first clickable result in the current display
+        const firstResult = this.suggestionsContainer.querySelector('.suggestion-item a, .article-item a, .result-item a');
+        console.log('First result found:', firstResult);
+        
+        if (firstResult) {
+            console.log('Navigating to:', firstResult.href);
+            // Navigate to the first result
+            window.location.href = firstResult.href;
+        } else {
+            // Also check for elements with onclick handlers (like article-item)
+            const firstClickableItem = this.suggestionsContainer.querySelector('.article-item[onclick], .suggestion-item[onclick]');
+            console.log('First clickable item found:', firstClickableItem);
+            
+            if (firstClickableItem) {
+                // Extract URL from onclick handler
+                const onclickAttr = firstClickableItem.getAttribute('onclick');
+                const urlMatch = onclickAttr.match(/window\.location\.href='([^']+)'/);
+                if (urlMatch) {
+                    console.log('Navigating to URL from onclick:', urlMatch[1]);
+                    window.location.href = urlMatch[1];
+                    return;
+                }
+            }
+            
+            console.log('No results found, trying direct navigation');
+            // If no results are displayed, try to navigate to a direct page match
+            this.tryDirectNavigation(query);
+        }
+    }
+
+    async tryDirectNavigation(query) {
+        try {
+            console.log('Trying direct navigation for:', query);
+            // For now, just redirect to search page - we can improve this later
+            console.log('Redirecting to search page');
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        } catch (error) {
+            console.error('Direct navigation error:', error);
+            // Fallback to search results page
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        }
     }
 
     async loadInitialSuggestions() {

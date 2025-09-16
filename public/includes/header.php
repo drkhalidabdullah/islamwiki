@@ -115,12 +115,18 @@ if ($toast_message) {
                 <i class="fas fa-book-open"></i>
             </a>
             
+            <!-- Separator -->
+            <div class="sidebar-separator"></div>
+            
             <!-- Main Navigation -->
             <div class="search-container">
                 <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="openSearch(); return false;">
                     <i class="fas fa-search"></i>
                 </a>
             </div>
+            
+            <!-- Separator -->
+            <div class="sidebar-separator"></div>
             
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
@@ -579,4 +585,6 @@ showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; 
 <?php endif; ?>
 </script>
 <script src="/skins/bismillah/assets/js/header.js"></script>
+<script src="/skins/bismillah/assets/js/enhanced-search-overlay.js"></script>
+<script src="/skins/bismillah/assets/js/avatar-updater.js"></script>
 

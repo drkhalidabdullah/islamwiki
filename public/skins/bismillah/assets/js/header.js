@@ -3,37 +3,19 @@ let currentQuery = '';
 
 function openSearch() {
     console.log('Opening enhanced search overlay...');
-    const overlay = document.getElementById('searchOverlay');
-    console.log('Overlay found:', overlay);
-    if (overlay) {
-        console.log('Adding show class...');
-        overlay.classList.add('show');
-        console.log('Overlay classes after adding show:', overlay.className);
-        const input = document.getElementById('searchInput');
-        if (input) {
-            input.focus();
-        }
-        // Temporarily comment out loadInitialSuggestions to test
-        // loadInitialSuggestions();
+    if (window.searchOverlay) {
+        window.searchOverlay.openSearchOverlay();
     } else {
-        console.error('Search overlay element not found!');
+        console.error('Enhanced search overlay not initialized!');
     }
 }
 
 function closeSearch() {
     console.log('Closing enhanced search overlay...');
-    const overlay = document.getElementById('searchOverlay');
-    if (overlay) {
-        overlay.classList.remove('show');
-        const input = document.getElementById('searchInput');
-        if (input) {
-            input.value = '';
-        }
-        const clearBtn = document.getElementById('searchClearBtn');
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-        }
-        showWelcome();
+    if (window.searchOverlay) {
+        window.searchOverlay.closeSearchOverlay();
+    } else {
+        console.error('Enhanced search overlay not initialized!');
     }
 }
 
