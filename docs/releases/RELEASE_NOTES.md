@@ -1,5 +1,108 @@
 # Release Notes
 
+## Version 0.0.0.13 - Facebook Messenger-Style Messaging System
+
+**Release Date:** September 15, 2025  
+**Version:** 0.0.0.13  
+**Type:** Major Feature Release - Revolutionary Messaging System  
+**Status:** Production Ready ✅
+
+## 🎯 Release Overview
+
+Version 0.0.0.13 introduces a **revolutionary messaging system** that completely transforms the user experience with a Facebook Messenger-style interface. This major release features a three-column layout, comprehensive info box functionality, real-time messaging, and modern UI/UX design that rivals the best social media platforms.
+
+## 🚀 Major Features
+
+### 💬 **Revolutionary Messaging System**
+
+#### **Facebook Messenger-Style Interface**
+- **Complete Redesign**: Messaging interface now matches Facebook Messenger's design language
+- **Three-Column Layout**: Sidebar | Chat Interface | Info Box (toggleable)
+- **Full-Width Design**: Utilizes complete viewport width for optimal messaging experience
+- **Responsive Layout**: Adapts perfectly to different screen sizes and devices
+
+#### **Real-Time Messaging**
+- **Instant Delivery**: Messages are sent and received in real-time using AJAX
+- **Polling System**: Automatic message updates with smart duplicate prevention
+- **Message Persistence**: All messages are properly stored and retrieved from database
+- **Session Management**: Fixed session handling for proper authentication across all messaging features
+
+#### **Comprehensive Info Box**
+- **Three-Tab System**: Profile, Mute, and Search tabs with modern styling
+- **Profile Tab**: User information, encryption status, and action buttons
+- **Mute Tab**: Multiple duration options (15min, 1hr, 8hr, 24hr, permanent)
+- **Search Tab**: Real-time conversation search with highlighted results
+- **Toggle Functionality**: Info box can be shown/hidden to switch between two and three-column layouts
+
+### 🎨 **Enhanced User Interface**
+
+#### **Modern Design Language**
+- **Gradient Backgrounds**: Beautiful gradient effects throughout the interface
+- **Card-Based Layout**: Modern card designs with shadows and rounded corners
+- **Smooth Animations**: 0.3s transitions and hover effects for all interactive elements
+- **Professional Styling**: Consistent design language matching the overall platform aesthetic
+
+#### **Interactive Elements**
+- **Hover Effects**: Subtle animations and color changes on hover
+- **Button Animations**: Lift effects and gradient transitions for buttons
+- **Tab Switching**: Smooth transitions between different info box tabs
+- **Search Highlighting**: Animated search result highlighting with gradient backgrounds
+
+### 🔧 **Technical Improvements**
+
+#### **Session Management**
+- **Fixed Authentication**: Resolved session handling issues for proper user authentication
+- **Cross-Page Sessions**: Sessions work correctly across all messaging pages
+- **AJAX Integration**: Proper session handling for all AJAX endpoints
+- **Security**: Enhanced session security and validation
+
+#### **Web Server Configuration**
+- **Server Consolidation**: Resolved conflicts between Apache and PHP-FPM
+- **Permission Management**: Fixed file ownership and permission issues
+- **Session Files**: Proper session file handling for both www-data and khalid users
+- **Performance**: Optimized web server configuration for better performance
+
+## 🐛 Bug Fixes
+
+### **Critical Fixes**
+- **500 Internal Server Error**: Fixed 500 errors on messaging pages
+- **Session Issues**: Resolved session authentication problems
+- **Message Duplication**: Fixed duplicate message sending issue
+- **Recursion Errors**: Resolved infinite recursion in JavaScript functions
+- **Database Errors**: Fixed database column issues in message storage
+
+### **UI/UX Fixes**
+- **Layout Issues**: Fixed info box positioning and three-column layout
+- **Button Functionality**: Resolved click handlers and event listeners
+- **Responsive Design**: Fixed mobile and tablet display issues
+- **Animation Performance**: Optimized CSS animations for better performance
+
+## 📁 File Changes
+
+### **Modified Files**
+- `public/pages/social/messages.php` - Complete redesign with Facebook Messenger interface
+- `public/skins/bismillah/assets/css/social.css` - Enhanced styling with modern design
+- `public/skins/bismillah/assets/js/messaging.js` - Improved real-time messaging functionality
+- `public/api/ajax/send_message.php` - Enhanced message sending with error handling
+- `public/api/ajax/get_messages.php` - Improved message retrieval with polling support
+
+## 🎯 User Experience Improvements
+
+### **Messaging Experience**
+- **Intuitive Interface**: Facebook Messenger-style design that users are familiar with
+- **Real-Time Updates**: Messages appear instantly without page refresh
+- **Search Functionality**: Easy search through conversation history
+- **Profile Access**: Quick access to user profiles from conversations
+- **Mute Options**: Flexible muting options for better conversation management
+
+### **Visual Enhancements**
+- **Modern Design**: Professional, modern interface with beautiful gradients
+- **Smooth Animations**: Subtle animations that enhance user experience
+- **Responsive Layout**: Perfect display on all devices
+- **Consistent Styling**: Unified design language throughout the interface
+
+---
+
 ## Version 0.0.0.14 - Enhanced User Interface & Authentication Experience
 
 **Release Date:** September 2025  

@@ -2,11 +2,37 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.12
+## 🎯 Current Version: 0.0.0.13
 
-**Latest Release:** September 11, 2025  
+**Latest Release:** September 15, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - Enhanced Wiki Experience & Search System
+**Type:** Major Feature Release - Facebook Messenger-Style Messaging System
+
+## 🚀 What's New in v0.0.0.13
+
+### 💬 **Revolutionary Messaging System**
+- **Facebook Messenger-Style Interface**: Complete redesign matching Facebook's messaging experience
+- **Three-Column Layout**: Sidebar | Chat Interface | Info Box (toggleable)
+- **Real-Time Messaging**: Instant message delivery with AJAX-powered updates
+- **Comprehensive Info Box**: Profile, Mute, and Search tabs with modern styling
+- **Profile Integration**: Direct links to user profiles from conversations
+- **Advanced Search**: Real-time conversation search with highlighted results
+- **Mute Functionality**: Multiple duration options with overlay dialogs
+- **Modern UI/UX**: Gradient backgrounds, smooth animations, and professional styling
+
+### 🎨 **Enhanced User Interface**
+- **Full-Width Design**: Messaging interface uses complete viewport width
+- **Responsive Layout**: Adapts perfectly to different screen sizes
+- **Interactive Elements**: Hover effects, animations, and micro-interactions
+- **Card-Based Design**: Modern card layouts with shadows and gradients
+- **Professional Styling**: Consistent design language throughout the interface
+
+### 🔧 **Technical Improvements**
+- **Session Management**: Fixed session handling for proper authentication
+- **Web Server Consolidation**: Resolved conflicts between Apache and PHP-FPM
+- **Database Optimization**: Enhanced message storage and retrieval
+- **Error Handling**: Comprehensive error logging and user feedback
+- **Performance**: Optimized AJAX calls and real-time updates
 
 ## 🚀 What's New in v0.0.0.12
 
@@ -239,7 +265,19 @@ html/
 
 ## 📊 Version History
 
-### v0.0.0.12 (Current) - Enhanced Wiki Experience & Search System
+### v0.0.0.13 (Current) - Facebook Messenger-Style Messaging System
+- Facebook Messenger-style messaging interface with three-column layout
+- Comprehensive info box with Profile, Mute, and Search functionality
+- Real-time messaging with AJAX-powered updates and polling
+- Advanced conversation search with highlighted results
+- Mute functionality with multiple duration options
+- Profile integration with direct user profile links
+- Modern UI/UX with gradients, animations, and professional styling
+- Full-width responsive design for optimal messaging experience
+- Session management and web server consolidation fixes
+- Enhanced error handling and performance optimizations
+
+### v0.0.0.12 - Enhanced Wiki Experience & Search System
 - Three-column wiki layout with sticky sidebars
 - Table of contents with smooth scrolling and active highlighting
 - Wikipedia-style special pages (What Links Here, Page Information)
