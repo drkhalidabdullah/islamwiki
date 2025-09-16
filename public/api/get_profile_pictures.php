@@ -20,21 +20,65 @@ try {
     $stmt->execute([$user_id]);
     $current_avatar = $stmt->fetchColumn();
     
+    // Get username for user-specific directory
+    $username = $_SESSION['username'] ?? 'user_' . $user_id;
+    $upload_dir = '../uploads/users/' . $username . '/images/';
+    
     $photos = [];
     
-    // Add current avatar if it exists
-    if ($current_avatar) {
+    // Scan the uploads directory for all profile pictures
+    if (is_dir($upload_dir)) {
+        $files = scandir($upload_dir);
+        $profile_pictures = [];
+        
+        foreach ($files as $file) {
+            // Look for files that match the profile picture pattern (profile_USERID_TIMESTAMP.jpg)
+            if (preg_match('/^profile_' . $user_id . '_\d+\.(jpg|jpeg|png|gif|webp)$/i', $file)) {
+                $file_path = $upload_dir . $file;
+                $file_url = '/uploads/users/' . $username . '/images/' . $file;
+                
+                // Get file modification time for sorting
+                $file_time = filemtime($file_path);
+                
+                $profile_pictures[] = [
+                    'filename' => $file,
+                    'url' => $file_url,
+                    'timestamp' => $file_time,
+                    'is_current' => ($file_url === $current_avatar)
+                ];
+            }
+        }
+        
+        // Sort by timestamp (newest first)
+        usort($profile_pictures, function($a, $b) {
+            return $b['timestamp'] - $a['timestamp'];
+        });
+        
+        // Format for frontend
+        foreach ($profile_pictures as $pic) {
+            $photos[] = [
+                'url' => $pic['url'],
+                'is_current' => $pic['is_current'],
+                'timestamp' => $pic['timestamp'],
+                'filename' => $pic['filename']
+            ];
+        }
+    }
+    
+    // If no profile pictures found in directory, add current avatar if it exists
+    if (empty($photos) && $current_avatar) {
         $photos[] = [
             'url' => $current_avatar,
-            'is_current' => true
+            'is_current' => true,
+            'timestamp' => time(),
+            'filename' => basename($current_avatar)
         ];
     }
     
-    // For now, we'll just return the current avatar
-    // In a full implementation, you might want to store a history of profile pictures
     echo json_encode([
         'success' => true,
-        'photos' => $photos
+        'photos' => $photos,
+        'count' => count($photos)
     ]);
     
 } catch (Exception $e) {

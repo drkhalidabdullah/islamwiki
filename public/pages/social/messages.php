@@ -142,7 +142,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                 <div class="recipients-header">Your contacts</div>
                 <?php foreach ($friends as $friend): ?>
                     <div class="recipient-item" data-user-id="<?php echo $friend['id']; ?>" data-user-name="<?php echo htmlspecialchars($friend['display_name'] ?: $friend['username']); ?>">
-                        <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($friend['display_name'] ?: $friend['username']); ?>" 
+                        <img src="<?php echo htmlspecialchars($friend['avatar'] ?? '/assets/images/default-avatar.png'); ?>" alt="<?php echo htmlspecialchars($friend['display_name'] ?: $friend['username']); ?>" 
                              class="recipient-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
                         <div class="recipient-info">
                             <div class="recipient-name"><?php echo htmlspecialchars($friend['display_name'] ?: $friend['username']); ?></div>
@@ -165,7 +165,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <div class="conversation-item" 
                          data-conversation-id="<?php echo $conv['other_user_id']; ?>"
                          data-other-user-id="<?php echo $conv['other_user_id']; ?>">
-                        <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($conv['display_name'] ?: $conv['username']); ?>" 
+                        <img src="<?php echo htmlspecialchars($conv['avatar'] ?? '/assets/images/default-avatar.png'); ?>" alt="<?php echo htmlspecialchars($conv['display_name'] ?: $conv['username']); ?>" 
                              class="conversation-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
                         <div class="conversation-info">
                             <div class="conversation-name"><?php echo htmlspecialchars($conv['display_name'] ?: $conv['username']); ?></div>

@@ -109,6 +109,7 @@ function updateProfilePicturesOnPage(newAvatarUrl) {
         .author-avatar img,
         .user-avatar img,
         .profile-picture,
+        .user-avatar-img,
         img[src*="profile_"],
         img[src*="avatar"]
     `);

@@ -78,6 +78,8 @@ foreach ($sizes as $size_name => $dimensions) {
 $new_avatar_url = '/uploads/users/' . $username . '/images/' . $filename;
 $stmt = $pdo->prepare("UPDATE users SET avatar = ? WHERE id = ?");
 if ($stmt->execute([$new_avatar_url, $user_id])) {
+    // Update session with new avatar
+    $_SESSION['avatar'] = $new_avatar_url;
     // Set cache control headers to prevent caching
     header('Cache-Control: no-cache, no-store, must-revalidate');
     header('Pragma: no-cache');

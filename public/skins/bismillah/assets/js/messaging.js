@@ -199,6 +199,28 @@ class MessagingSystem {
         messageDiv.className = `message ${message.sender_id == window.currentUserId ? 'sent' : 'received'}`;
         messageDiv.setAttribute('data-message-id', message.id);
         
+        // Create message content container
+        const messageContentContainer = document.createElement('div');
+        messageContentContainer.className = 'message-content-container';
+        
+        // Add profile picture for received messages only
+        if (message.sender_id != window.currentUserId) {
+            const messageAvatar = document.createElement('div');
+            messageAvatar.className = 'message-avatar';
+            
+            const avatarImg = document.createElement('img');
+            avatarImg.src = message.avatar || '/assets/images/default-avatar.png';
+            avatarImg.alt = message.display_name || message.username || 'User';
+            avatarImg.onerror = "this.src='/assets/images/default-avatar.png'";
+            
+            messageAvatar.appendChild(avatarImg);
+            messageContentContainer.appendChild(messageAvatar);
+        }
+        
+        // Create message bubble container
+        const messageBubble = document.createElement('div');
+        messageBubble.className = 'message-bubble';
+        
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
         messageContent.textContent = message.message;
@@ -207,8 +229,11 @@ class MessagingSystem {
         messageTime.className = 'message-time';
         messageTime.textContent = new Date(message.created_at).toLocaleString();
         
-        messageDiv.appendChild(messageContent);
-        messageDiv.appendChild(messageTime);
+        messageBubble.appendChild(messageContent);
+        messageBubble.appendChild(messageTime);
+        messageContentContainer.appendChild(messageBubble);
+        
+        messageDiv.appendChild(messageContentContainer);
         
         return messageDiv;
     }

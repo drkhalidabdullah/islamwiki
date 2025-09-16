@@ -271,6 +271,9 @@ function uploadFileDirectly(file) {
                 // Update profile pictures site-wide with server timestamp
                 updateProfilePictureSiteWide(data.new_avatar_url, data.timestamp);
                 
+                // Refresh the profile pictures list to show the new upload
+                loadProfilePictures();
+                
                 // Close modal after a short delay to show the success
                 setTimeout(() => {
                     closeProfilePictureModal();
@@ -426,6 +429,9 @@ function saveProfilePicture() {
                     // Update profile pictures site-wide with server timestamp
                     updateProfilePictureSiteWide(data.new_avatar_url, data.timestamp);
                     
+                    // Refresh the profile pictures list to show the new upload
+                    loadProfilePictures();
+                    
                     // Close modal after a short delay to show the success
                     setTimeout(() => {
                         closeProfilePictureModal();
@@ -544,13 +550,27 @@ function loadProfilePictures() {
     .then(text => {
         try {
             const data = JSON.parse(text);
+            console.log('Profile pictures loaded:', data);
             if (data.success) {
                 const container = document.getElementById('profilePictures');
+                
+                if (data.photos.length === 0) {
+                    container.innerHTML = '<div class="no-photos">No profile pictures yet</div>';
+                    return;
+                }
+                
                 container.innerHTML = data.photos.map(photo => `
-                    <div class="photo-item" onclick="selectPhoto('${photo.url}')">
-                        <img src="${photo.url}" alt="Profile picture">
+                    <div class="photo-item ${photo.is_current ? 'current' : ''}" onclick="selectPhoto('${photo.url}')">
+                        <img src="${photo.url}?t=${photo.timestamp}" alt="Profile picture">
+                        ${photo.is_current ? '<div class="current-badge">Current</div>' : ''}
                     </div>
                 `).join('');
+                
+                console.log(`Loaded ${data.count} profile pictures`);
+                
+                // Update the section header with count
+                const sectionHeader = document.querySelector('#profilePictures').closest('.photo-section').querySelector('h4');
+                sectionHeader.textContent = `Profile pictures (${data.count})`;
             }
         } catch (e) {
             console.error('JSON parse error for profile pictures:', e);
@@ -742,6 +762,7 @@ function updateProfilePictureSiteWide(newAvatarUrl, serverTimestamp = null) {
         .author-avatar img,
         .user-avatar img,
         .profile-picture,
+        .user-avatar-img,
         img[src*="profile_"],
         img[src*="avatar"]
     `);
@@ -797,7 +818,79 @@ document.addEventListener('click', function(e) {
     if (e.target === modal) {
         closeProfilePictureModal();
     }
+    
+    // Close options dropdown when clicking outside
+    const optionsMenu = document.getElementById('optionsMenu');
+    const optionsBtn = document.querySelector('.options-btn');
+    if (optionsMenu && !optionsMenu.contains(e.target) && !optionsBtn.contains(e.target)) {
+        optionsMenu.classList.remove('show');
+    }
 });
+
+// Options dropdown functions
+function toggleOptionsDropdown() {
+    const menu = document.getElementById('optionsMenu');
+    menu.classList.toggle('show');
+}
+
+function deleteCurrentPhoto() {
+    const viewerImage = document.getElementById('viewerImage');
+    const currentPhotoUrl = viewerImage.src;
+    
+    if (!currentPhotoUrl) {
+        showNotification('No photo selected to delete', 'error');
+        return;
+    }
+    
+    // Confirm deletion
+    if (!confirm('Are you sure you want to delete this photo? This action cannot be undone.')) {
+        return;
+    }
+    
+    // Close dropdown
+    document.getElementById('optionsMenu').classList.remove('show');
+    
+    // Show loading
+    showNotification('Deleting photo...', 'info');
+    
+    // Extract filename from URL
+    const filename = currentPhotoUrl.split('/').pop().split('?')[0];
+    
+    // Send delete request
+    fetch('/api/delete_photo.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename,
+            type: 'profile_picture'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Photo deleted successfully', 'success');
+            
+            // Close viewer
+            closeProfilePictureViewer();
+            
+            // Refresh profile pictures list
+            loadProfilePictures();
+            
+            // If this was the current profile picture, update it
+            if (data.was_current) {
+                updateProfilePictureSiteWide(data.new_avatar_url || '', data.timestamp);
+            }
+        } else {
+            showNotification('Failed to delete photo: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting photo:', error);
+        showNotification('Failed to delete photo', 'error');
+    });
+}
 
 // Handle drag functionality for image repositioning
 document.addEventListener('DOMContentLoaded', function() {

@@ -146,10 +146,10 @@ if ($toast_message) {
         <!-- Create Dropdown -->
         <div class="sidebar-dropdown sidebar-create">
             <div class="user-icon-dropdown">
-                <a href="#" class="sidebar-item user-icon-trigger" title="Create" data-target="createMenu">
+                <a href="#" class="sidebar-item user-icon-trigger" title="Create">
                     <i class="fas fa-plus"></i>
                 </a>
-                <div class="user-dropdown-menu" id="createMenu">
+                <div class="user-dropdown-menu">
                     <a href="/create_post" class="dropdown-item">
                         <i class="fas fa-edit"></i>
                         <span>Create Post</span>
@@ -212,7 +212,17 @@ if ($toast_message) {
         $userItems[] = ['divider' => true];
         $userItems[] = ['url' => '/logout', 'icon' => 'fas fa-sign-out-alt', 'text' => 'Logout'];
         
-        $userAvatar = '<img src="/assets/images/default-avatar.png" alt="Profile" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K\';">';
+        // Get user's current profile picture from database
+        $stmt = $pdo->prepare("SELECT avatar FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user_avatar = $stmt->fetchColumn();
+        
+        // Update session with current avatar
+        $_SESSION['avatar'] = $user_avatar;
+        
+        // Use avatar or default
+        $avatar_url = $user_avatar ?: '/assets/images/default-avatar.png';
+        $userAvatar = '<img src="' . htmlspecialchars($avatar_url) . '" alt="Profile" class="user-avatar-img" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K\';">';
         
         createSidebarDropdown('user', 'User Menu', 'fas fa-user', $userItems, false, $userAvatar);
         ?>
@@ -353,35 +363,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
     
-    // User icon dropdown functionality - Simplified approach
-    document.addEventListener('DOMContentLoaded', function() {
-        const userIconDropdowns = document.querySelectorAll('.user-icon-dropdown');
-        
-        userIconDropdowns.forEach(dropdown => {
-            const trigger = dropdown.querySelector('.user-icon-trigger');
-            const menu = dropdown.querySelector('.user-dropdown-menu');
-            
-            if (!trigger || !menu) return;
-            
-            // Prevent default link behavior
-            trigger.addEventListener('click', function(e) {
-                e.preventDefault();
-            });
-            
-            // Use CSS-only hover approach with JavaScript fallback
-            // The CSS should handle the hover, but we'll add a small delay for better UX
-            let hoverTimeout;
-            
-            dropdown.addEventListener('mouseenter', function() {
-                clearTimeout(hoverTimeout);
-                // Let CSS handle the display
-            });
-            
-            dropdown.addEventListener('mouseleave', function() {
-                // Let CSS handle the hiding
-            });
-        });
-    });
+    // User icon dropdown functionality is handled by header.js
     
     // Mobile sidebar functionality
     function toggleSidebar() {

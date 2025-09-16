@@ -1156,6 +1156,21 @@ nav.sidebar {
     object-fit: cover;
 }
 
+/* User avatar image in sidebar */
+.user-avatar-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.user-avatar-img:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
 /* Core Sidebar Dropdown Styles */
 .sidebar-dropdown {
     position: relative;
@@ -1301,134 +1316,44 @@ nav.sidebar {
     z-index: 9999 !important;
 }
 
-/* Show states for all dropdowns */
-.sidebar-dropdown.sidebar-messages .user-dropdown-menu.show,
-.sidebar-dropdown.sidebar-friends .user-dropdown-menu.show,
-.sidebar-dropdown.sidebar-user .user-dropdown-menu.show,
-.sidebar-dropdown.sidebar-guest .user-dropdown-menu.show,
-.sidebar-dropdown.sidebar-create .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateX(0) !important;
-}
-
-/* Specific rules for messages dropdown - positioned relative to button */
-html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+.sidebar-dropdown.sidebar-create .user-dropdown-menu {
+    position: absolute !important;
+    left: 50px !important;
+    top: 0 !important;
     background: #34495e !important;
     border-radius: 0 8px 8px 0 !important;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important;
-    left: 60px !important;
-    top: auto !important;
-    bottom: auto !important;
     padding: 8px 0 !important;
     min-width: 180px !important;
-    z-index: 999999 !important;
-    transform: translateX(0) !important;
+    display: none !important;
+    opacity: 0 !important;
+    transform: translateX(-10px) !important;
+    transition: all 0.3s ease !important;
+    z-index: 9999 !important;
 }
 
-/* Specific rules for create dropdown - positioned relative to button */
-html body .sidebar .sidebar-create .user-icon-dropdown.active .user-dropdown-menu {
+/* Show states for all dropdowns - SIMPLIFIED: Only .show class needed */
+.sidebar-dropdown .user-dropdown-menu.show {
     display: block !important;
     opacity: 1 !important;
-    visibility: visible !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
+    transform: translateX(0) !important;
     position: fixed !important;
     left: 60px !important;
     top: auto !important;
     bottom: auto !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important;
-    transform: translateX(0) !important;
-}
-
-/* Allow JavaScript to override positioning */
-html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateX(0) !important;
     background: #34495e !important;
     border-radius: 0 8px 8px 0 !important;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important;
-    left: 60px !important;
-    top: auto !important;
-    bottom: auto !important;
     padding: 8px 0 !important;
     min-width: 180px !important;
     z-index: 999999 !important;
 }
 
-/* Allow JavaScript to override positioning for create dropdown */
-html body .sidebar .sidebar-create .user-icon-dropdown.active .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateX(0) !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important;
-    left: 60px !important;
-    top: auto !important;
-    bottom: auto !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important;
-}
+/* REMOVED: Complex .active class rules - using only .show class now */
 
-/* JavaScript positioning override - highest specificity */
-html body .sidebar .sidebar-messages .user-icon-dropdown.active .user-dropdown-menu[style*="top"] {
-    top: var(--menu-top, auto) !important;
-}
+/* REMOVED: Complex .active class rules - using only .show class now */
 
-/* Specific rules for friends dropdown - positioned relative to button */
-html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important;
-    left: 60px !important;
-    top: auto !important;
-    bottom: auto !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important;
-    transform: translateX(0) !important;
-}
-
-/* Allow JavaScript to override positioning */
-html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateX(0) !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important;
-    left: 60px !important;
-    top: auto !important;
-    bottom: auto !important;
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important;
-}
-
-/* JavaScript positioning override - highest specificity */
-html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-menu[style*="top"] {
-    top: var(--menu-top, auto) !important;
-}
+/* REMOVED: All complex .active class rules - using only .show class now */
 
 /* Dropdown menu items */
 .sidebar-dropdown .dropdown-item {
@@ -1794,31 +1719,7 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
 
 
 
-/* NUCLEAR OPTION - MAXIMUM SPECIFICITY - FIXED POSITIONING TO AVOID OVERFLOW HIDDEN */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu,
-html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important; /* Fixed to avoid sidebar overflow hidden */
-    left: 60px !important; /* Position to touch the right edge of sidebar (sidebar is 60px wide) */
-    bottom: 10px !important; /* Position from bottom of viewport with smaller margin */
-    top: auto !important; /* Override top positioning */
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important; /* Higher than sidebar z-index: 1001 */
-    transform: translateX(0) !important;
-    overflow: hidden !important;
-}
-
-/* DEBUG - Make sure the dropdown container is positioned correctly */
-html body .sidebar .sidebar-user .user-icon-dropdown.active,
-html body .sidebar .sidebar-guest .user-icon-dropdown.active {
-    position: relative !important;
-}
+/* REMOVED: Complex .active class rules - using only .show class now */
 
 /* User dropdown menu items */
 .user-dropdown-menu .dropdown-item {
@@ -1850,24 +1751,7 @@ html body .sidebar .sidebar-guest .user-icon-dropdown.active {
     text-align: center !important;
 }
 
-/* Show dropdown when .show class is present - ULTRA SPECIFIC - FIXED POSITIONING */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu.show,
-html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu.show {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateX(0) !important;
-    background: #34495e !important;
-    border-radius: 0 8px 8px 0 !important;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.2) !important;
-    position: fixed !important; /* Fixed to avoid sidebar overflow hidden */
-    left: 60px !important; /* Position to touch the right edge of sidebar (sidebar is 60px wide) */
-    bottom: 10px !important; /* Position from bottom of viewport with smaller margin */
-    top: auto !important; /* Override top positioning */
-    padding: 8px 0 !important;
-    min-width: 180px !important;
-    z-index: 999999 !important; /* Higher than sidebar z-index: 1001 */
-}
+/* REMOVED: Complex .active class rules - using only .show class now */
 
 /* HOVER DISABLED - CLICK ONLY */
 

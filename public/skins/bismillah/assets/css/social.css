@@ -3691,3 +3691,37 @@
         margin: 20px;
     }
 }
+
+/* Message Avatars */
+.message-content-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message.sent .message-content-container {
+    flex-direction: row-reverse;
+}
+
+.message.sent .message-avatar {
+    display: none; /* Hide avatar for sent messages */
+}
+
+.message-bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}

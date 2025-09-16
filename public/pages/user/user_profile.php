@@ -518,7 +518,20 @@ include "../../includes/header.php";
         <div class="viewer-comments-section">
             <div class="viewer-header">
                 <h3>Profile Picture</h3>
-                <button class="viewer-close" onclick="closeProfilePictureViewer()">&times;</button>
+                <div class="viewer-actions">
+                    <div class="options-dropdown">
+                        <button class="options-btn" onclick="toggleOptionsDropdown()">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="options-menu" id="optionsMenu">
+                            <button class="option-item delete-btn" onclick="deleteCurrentPhoto()">
+                                <i class="fas fa-trash"></i>
+                                Delete Photo
+                            </button>
+                        </div>
+                    </div>
+                    <button class="viewer-close" onclick="closeProfilePictureViewer()">&times;</button>
+                </div>
             </div>
             <div class="viewer-comments" id="viewerComments">
                 <!-- Comments will be loaded here -->

@@ -399,35 +399,59 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             
+            console.log('=== DROPDOWN CLICK DEBUG ===');
+            console.log('Trigger element:', trigger);
+            console.log('Dropdown element:', dropdown);
+            console.log('Menu element:', menu);
+            console.log('Menu classes before:', menu.className);
+            console.log('Menu has show class before:', menu.classList.contains('show'));
+            
             // Close all other dropdowns first
             userIconDropdowns.forEach(otherDropdown => {
                 if (otherDropdown !== dropdown) {
                     const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
                     if (otherMenu) {
                         otherMenu.classList.remove('show');
-                        otherDropdown.classList.remove('active');
+                        console.log('Closed other dropdown:', otherMenu);
                     }
                 }
             });
             
             // Toggle current dropdown
             const isOpen = menu.classList.contains('show');
+            console.log('Is currently open:', isOpen);
+            
             if (isOpen) {
+                console.log('CLOSING dropdown...');
                 menu.classList.remove('show');
-                dropdown.classList.remove('active');
-                console.log('User menu closed');
-                console.log('Classes after close:', menu.className, dropdown.className);
+                console.log('Dropdown closed - Classes after close:', menu.className);
+                console.log('Menu has show class after close:', menu.classList.contains('show'));
+                
+                // Check computed styles
+                setTimeout(() => {
+                    const computedStyle = window.getComputedStyle(menu);
+                    console.log('Computed display after close:', computedStyle.display);
+                    console.log('Computed opacity after close:', computedStyle.opacity);
+                    console.log('Computed visibility after close:', computedStyle.visibility);
+                }, 50);
             } else {
+                console.log('OPENING dropdown...');
                 // Position the dropdown menu relative to the trigger button
                 positionDropdownMenu(trigger, menu);
                 
                 menu.classList.add('show');
-                dropdown.classList.add('active');
-                console.log('User menu opened');
-                console.log('Classes after open:', menu.className, dropdown.className);
-                console.log('Menu element:', menu);
-                console.log('Dropdown element:', dropdown);
+                console.log('Dropdown opened - Classes after open:', menu.className);
+                console.log('Menu has show class after open:', menu.classList.contains('show'));
+                
+                // Check computed styles
+                setTimeout(() => {
+                    const computedStyle = window.getComputedStyle(menu);
+                    console.log('Computed display after open:', computedStyle.display);
+                    console.log('Computed opacity after open:', computedStyle.opacity);
+                    console.log('Computed visibility after open:', computedStyle.visibility);
+                }, 50);
             }
+            console.log('=== END DEBUG ===');
         });
     });
     
@@ -438,50 +462,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const menu = dropdown.querySelector('.user-dropdown-menu');
                 if (menu) {
                     menu.classList.remove('show');
-                    dropdown.classList.remove('active');
                 }
             });
         }
     });
     
-    // Fallback: Direct click handler for user menu triggers
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.user-icon-trigger')) {
-            console.log('User menu trigger clicked');
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const trigger = e.target.closest('.user-icon-trigger');
-            const dropdown = trigger.closest('.user-icon-dropdown');
-            const menu = dropdown?.querySelector('.user-dropdown-menu');
-            
-            if (menu) {
-                // Close all other dropdowns
-                userIconDropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
-                        if (otherMenu) {
-                            otherMenu.classList.remove('show');
-                            otherDropdown.classList.remove('active');
-                        }
-                    }
-                });
-                
-                // Toggle current dropdown
-                const isActive = dropdown.classList.contains('active');
-                if (isActive) {
-                    menu.classList.remove('show');
-                    dropdown.classList.remove('active');
-                } else {
-                    menu.classList.add('show');
-                    dropdown.classList.add('active');
-                    
-                    // Position the menu
-                    positionDropdownMenu(trigger, menu);
-                }
-            }
-        }
-    });
+    // Fallback handler removed - using direct event listeners above
     
     // Close dropdowns when clicking on dropdown items
     document.querySelectorAll('.user-dropdown-menu .dropdown-item').forEach(item => {
@@ -490,7 +476,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const menu = dropdown.querySelector('.user-dropdown-menu');
                 if (menu) {
                     menu.classList.remove('show');
-                    dropdown.classList.remove('active');
                 }
             });
         });
@@ -513,9 +498,14 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.classList.remove('active');
     }
     
-    // Close sidebar when clicking on sidebar items (mobile)
+    // Close sidebar when clicking on sidebar items (mobile) - but not dropdown triggers
     document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
+            // Don't close sidebar if this is a dropdown trigger
+            if (item.classList.contains('user-icon-trigger')) {
+                return;
+            }
+            
             if (window.innerWidth <= 768) {
                 closeSidebar();
             }
