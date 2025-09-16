@@ -1,17 +1,33 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.14-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.15-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.14
+## 🎯 Current Version: 0.0.0.15
 
-**Latest Release:** September 2025  
+**Latest Release:** September 15, 2025  
 **Status:** Production Ready ✅  
-**Type:** User Experience Enhancement - UI/UX Improvements
+**Type:** Feature Enhancement - Enhanced Messaging System & Documentation
+
+## 🚀 What's New in v0.0.0.15
+
+### 📚 **Comprehensive Documentation Updates**
+- **Complete Documentation Overhaul**: Updated all documentation files to reflect current features
+- **Version Management**: Centralized version management system with automatic updates
+- **Release Notes**: Comprehensive release notes for all versions
+- **Changelog System**: Detailed changelog tracking for all releases
+- **API Documentation**: Enhanced API documentation with examples
+- **User Guides**: Updated user guides with latest features
+
+### 🔧 **Technical Improvements**
+- **Version Consistency**: All files now reference the same version number
+- **Documentation Structure**: Organized documentation with clear navigation
+- **Release Management**: Streamlined release process with proper versioning
+- **Code Documentation**: Enhanced inline documentation and comments
 
 ## 🚀 What's New in v0.0.0.14
 
