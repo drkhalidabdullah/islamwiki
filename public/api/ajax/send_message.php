@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 
@@ -62,10 +63,10 @@ if ($recipient_id == $_SESSION['user_id']) {
 try {
     // Insert message
     $stmt = $pdo->prepare("
-        INSERT INTO messages (sender_id, recipient_id, message, subject, created_at, is_read) 
-        VALUES (?, ?, ?, ?, NOW(), 0)
+        INSERT INTO messages (sender_id, recipient_id, message, created_at, is_read) 
+        VALUES (?, ?, ?, NOW(), 0)
     ");
-    $stmt->execute([$_SESSION['user_id'], $recipient_id, $message, $subject]);
+    $stmt->execute([$_SESSION['user_id'], $recipient_id, $message]);
     
     $message_id = $pdo->lastInsertId();
     
@@ -87,7 +88,13 @@ try {
     
 } catch (PDOException $e) {
     error_log("Message send error: " . $e->getMessage());
+    error_log("Message send error details: " . print_r($e, true));
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Failed to send message']);
+    echo json_encode(['success' => false, 'message' => 'Failed to send message: ' . $e->getMessage()]);
+} catch (Exception $e) {
+    error_log("General error: " . $e->getMessage());
+    error_log("General error details: " . print_r($e, true));
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Failed to send message: ' . $e->getMessage()]);
 }
 ?>

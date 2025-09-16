@@ -6,6 +6,7 @@ class MessagingSystem {
         this.lastMessageId = 0;
         this.pollInterval = null;
         this.isPolling = false;
+        this.isSending = false; // Flag to prevent duplicate sends
         
         this.init();
     }
@@ -34,7 +35,7 @@ class MessagingSystem {
         }
         
         // Send button
-        const sendButton = document.querySelector('.btn-send');
+        const sendButton = document.getElementById('sendMessageBtn');
         if (sendButton) {
             sendButton.addEventListener('click', () => this.sendMessage());
         }
@@ -96,9 +97,34 @@ class MessagingSystem {
         const activeItem = document.querySelector(`[data-conversation-id="${conversationId}"]`);
         if (activeItem) {
             activeItem.classList.add('active');
+            
+            // Update chat header with user info
+            const userName = activeItem.querySelector('.conversation-name').textContent;
+            const userAvatar = activeItem.querySelector('.conversation-avatar').src;
+            
+            const chatUserName = document.getElementById('chatUserName');
+            const chatUserAvatar = document.getElementById('chatUserAvatar');
+            
+            if (chatUserName) {
+                chatUserName.textContent = userName;
+            }
+            if (chatUserAvatar) {
+                chatUserAvatar.src = userAvatar;
+            }
         }
         
-        // Load messages
+        // Show chat interface and hide no conversation state
+        const noConversation = document.getElementById('noConversation');
+        const chatInterface = document.getElementById('chatInterface');
+        
+        if (noConversation) {
+            noConversation.style.display = 'none';
+        }
+        if (chatInterface) {
+            chatInterface.style.display = 'flex';
+        }
+        
+        // Load messages (will clear on initial load)
         await this.loadMessages();
         
         // Scroll to bottom
@@ -106,30 +132,60 @@ class MessagingSystem {
     }
     
     async loadMessages() {
-        if (!this.currentConversation) return;
+        if (!this.currentConversation) {
+            console.log('No current conversation set');
+            return;
+        }
+        
+        console.log('Loading messages for conversation:', this.currentConversation);
         
         try {
-            const response = await fetch(`/api/ajax/get_messages.php?conversation_id=${this.currentConversation}&last_message_id=${this.lastMessageId}`);
+            const response = await fetch(`/api/ajax/get_messages.php?conversation_id=${this.currentConversation}&last_message_id=${this.lastMessageId}`, {
+                credentials: 'same-origin'
+            });
+            console.log('Response status:', response.status);
+            
             const data = await response.json();
+            console.log('Response data:', data);
             
             if (data.success) {
-                this.displayMessages(data.messages);
+                console.log('Messages loaded:', data.messages.length);
+                // Clear messages only on initial load (when lastMessageId is 0)
+                const clearFirst = this.lastMessageId === 0;
+                this.displayMessages(data.messages, clearFirst);
                 if (data.messages.length > 0) {
                     this.lastMessageId = data.messages[data.messages.length - 1].id;
                 }
+            } else {
+                console.error('API error:', data.message);
             }
         } catch (error) {
             console.error('Error loading messages:', error);
         }
     }
     
-    displayMessages(messages) {
+    displayMessages(messages, clearFirst = false) {
         const chatMessages = document.getElementById('chatMessages');
-        if (!chatMessages) return;
+        if (!chatMessages) {
+            console.error('Chat messages container not found');
+            return;
+        }
         
+        console.log('Displaying', messages.length, 'messages');
+        
+        // Clear messages if this is initial load
+        if (clearFirst) {
+            chatMessages.innerHTML = '';
+        }
+        
+        // Only add messages that aren't already displayed
         messages.forEach(message => {
-            const messageElement = this.createMessageElement(message);
-            chatMessages.appendChild(messageElement);
+            // Check if message already exists
+            const existingMessage = chatMessages.querySelector(`[data-message-id="${message.id}"]`);
+            if (!existingMessage) {
+                const messageElement = this.createMessageElement(message);
+                chatMessages.appendChild(messageElement);
+            }
         });
         
         this.scrollToBottom();
@@ -138,6 +194,7 @@ class MessagingSystem {
     createMessageElement(message) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${message.sender_id == window.currentUserId ? 'sent' : 'received'}`;
+        messageDiv.setAttribute('data-message-id', message.id);
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
@@ -154,10 +211,18 @@ class MessagingSystem {
     }
     
     async sendMessage() {
+        // Prevent duplicate sends
+        if (this.isSending) {
+            console.log('Message already being sent, ignoring duplicate request');
+            return;
+        }
+        
         const messageInput = document.getElementById('messageInput');
         const message = messageInput.value.trim();
         
         if (!message || !this.currentConversation) return;
+        
+        this.isSending = true;
         
         try {
             const response = await fetch('/api/ajax/send_message.php', {
@@ -165,6 +230,7 @@ class MessagingSystem {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     recipient_id: this.currentConversation,
                     message: message
@@ -174,6 +240,7 @@ class MessagingSystem {
             const data = await response.json();
             
             if (data.success) {
+                console.log('Message sent successfully:', data.data);
                 // Clear input
                 messageInput.value = '';
                 messageInput.style.height = 'auto';
@@ -189,11 +256,14 @@ class MessagingSystem {
                 // Update conversation list
                 this.updateConversationList(data.data);
             } else {
-                alert('Failed to send message: ' + data.message);
+                console.error('Failed to send message:', data);
+                alert('Failed to send message: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
             console.error('Error sending message:', error);
             alert('Failed to send message');
+        } finally {
+            this.isSending = false;
         }
     }
     
@@ -260,18 +330,16 @@ class MessagingSystem {
         }
     }
     
-    // Public methods for external use
-    loadConversation(conversationId) {
-        this.loadConversation(conversationId);
-    }
-    
-    sendMessage() {
-        this.sendMessage();
-    }
 }
 
 // Initialize messaging system when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Prevent multiple initializations
+    if (window.messagingSystem) {
+        console.log('Messaging system already initialized');
+        return;
+    }
+    
     // Set current user ID for message display
     window.currentUserId = window.currentUserId || null;
     
@@ -280,11 +348,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Global functions for backward compatibility
     window.loadConversation = function(conversationId) {
-        window.messagingSystem.loadConversation(conversationId);
+        if (window.messagingSystem) {
+            window.messagingSystem.loadConversation(conversationId);
+        }
     };
     
     window.sendMessage = function() {
-        window.messagingSystem.sendMessage();
+        if (window.messagingSystem) {
+            window.messagingSystem.sendMessage();
+        }
     };
 });
 
