@@ -1227,6 +1227,7 @@ nav.sidebar {
     transform: translateX(-10px);
     transition: all 0.3s ease;
     z-index: 1002;
+    overflow: hidden;
 }
 
 .sidebar-dropdown .user-dropdown-menu.show {
@@ -1412,7 +1413,7 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
 .sidebar-dropdown .dropdown-item:hover {
     background: rgba(52, 152, 219, 0.2);
     color: #3498db;
-    transform: translateX(4px);
+    transform: none;
 }
 
 .sidebar-dropdown .dropdown-item:hover i {
@@ -1773,6 +1774,7 @@ html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu
     min-width: 180px !important;
     z-index: 999999 !important; /* Higher than sidebar z-index: 1001 */
     transform: translateX(0) !important;
+    overflow: hidden !important;
 }
 
 /* DEBUG - Make sure the dropdown container is positioned correctly */
@@ -1792,6 +1794,8 @@ html body .sidebar .sidebar-guest .user-icon-dropdown.active {
     transition: all 0.2s ease !important;
     border-radius: 4px !important;
     margin: 2px 8px 2px 4px !important;
+    width: calc(100% - 16px) !important;
+    box-sizing: border-box !important;
 }
 
 .user-dropdown-menu .dropdown-item:hover {
@@ -1845,7 +1849,7 @@ html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu
 .user-dropdown-menu .dropdown-item:hover {
     background: rgba(52, 152, 219, 0.3);
     color: #ffffff;
-    transform: translateX(5px);
+    transform: none;
 }
 
 .user-dropdown-menu .dropdown-item i {
