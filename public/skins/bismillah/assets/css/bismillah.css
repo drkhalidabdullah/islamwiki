@@ -1705,7 +1705,8 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
 }
 
 /* User Icon Dropdown Styles */
-.sidebar-user .user-icon-dropdown {
+.sidebar-user .user-icon-dropdown,
+.sidebar-guest .user-icon-dropdown {
     position: relative !important;
     display: block !important;
     width: 36px !important;
@@ -1713,7 +1714,8 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
     margin: 0 !important;
 }
 
-.sidebar-user .user-icon-trigger {
+.sidebar-user .user-icon-trigger,
+.sidebar-guest .user-icon-trigger {
     cursor: pointer !important;
     transition: all 0.3s ease !important;
     display: flex !important;
@@ -1723,24 +1725,30 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
     height: 100% !important;
     outline: none !important;
     border-radius: 50% !important;
+    pointer-events: auto !important;
+    z-index: 1000 !important;
 }
 
-.sidebar-user .user-icon-trigger:hover {
+.sidebar-user .user-icon-trigger:hover,
+.sidebar-guest .user-icon-trigger:hover {
     background: rgba(255, 255, 255, 0.1) !important;
     transform: scale(1.05) !important;
 }
 
-.sidebar-user .user-icon-trigger:focus {
+.sidebar-user .user-icon-trigger:focus,
+.sidebar-guest .user-icon-trigger:focus {
     background: rgba(255, 255, 255, 0.2) !important;
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5) !important;
 }
 
-.sidebar-user .user-icon-trigger:active {
+.sidebar-user .user-icon-trigger:active,
+.sidebar-guest .user-icon-trigger:active {
     transform: scale(0.95) !important;
 }
 
 /* Active state when dropdown is open */
-.sidebar-user .user-icon-dropdown.active .user-icon-trigger {
+.sidebar-user .user-icon-dropdown.active .user-icon-trigger,
+.sidebar-guest .user-icon-dropdown.active .user-icon-trigger {
     background: rgba(52, 152, 219, 0.3) !important;
     color: #3498db !important;
 }
@@ -1749,7 +1757,8 @@ html body .sidebar .sidebar-friends .user-icon-dropdown.active .user-dropdown-me
 
 
 /* NUCLEAR OPTION - MAXIMUM SPECIFICITY - FIXED POSITIONING TO AVOID OVERFLOW HIDDEN */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu {
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu,
+html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -1767,7 +1776,8 @@ html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu 
 }
 
 /* DEBUG - Make sure the dropdown container is positioned correctly */
-html body .sidebar .sidebar-user .user-icon-dropdown.active {
+html body .sidebar .sidebar-user .user-icon-dropdown.active,
+html body .sidebar .sidebar-guest .user-icon-dropdown.active {
     position: relative !important;
 }
 
@@ -1800,7 +1810,8 @@ html body .sidebar .sidebar-user .user-icon-dropdown.active {
 }
 
 /* Show dropdown when .show class is present - ULTRA SPECIFIC - FIXED POSITIONING */
-html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu.show {
+html body .sidebar .sidebar-user .user-icon-dropdown.active .user-dropdown-menu.show,
+html body .sidebar .sidebar-guest .user-icon-dropdown.active .user-dropdown-menu.show {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;

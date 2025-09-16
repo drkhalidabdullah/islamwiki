@@ -394,6 +394,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const userIconDropdowns = document.querySelectorAll('.user-icon-dropdown');
     console.log("Found user icon dropdowns:", userIconDropdowns.length);
     
+    // Debug: Log all dropdown elements
+    userIconDropdowns.forEach((dropdown, index) => {
+        console.log(`Dropdown ${index}:`, dropdown);
+        const trigger = dropdown.querySelector('.user-icon-trigger');
+        const menu = dropdown.querySelector('.user-dropdown-menu');
+        console.log(`  Trigger:`, trigger);
+        console.log(`  Menu:`, menu);
+    });
+    
     userIconDropdowns.forEach(dropdown => {
         const trigger = dropdown.querySelector('.user-icon-trigger');
         const menu = dropdown.querySelector('.user-dropdown-menu');
@@ -450,6 +459,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     dropdown.classList.remove('active');
                 }
             });
+        }
+    });
+    
+    // Fallback: Direct click handler for user menu triggers
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.user-icon-trigger')) {
+            console.log('User menu trigger clicked');
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const trigger = e.target.closest('.user-icon-trigger');
+            const dropdown = trigger.closest('.user-icon-dropdown');
+            const menu = dropdown?.querySelector('.user-dropdown-menu');
+            
+            if (menu) {
+                // Close all other dropdowns
+                userIconDropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        const otherMenu = otherDropdown.querySelector('.user-dropdown-menu');
+                        if (otherMenu) {
+                            otherMenu.classList.remove('show');
+                            otherDropdown.classList.remove('active');
+                        }
+                    }
+                });
+                
+                // Toggle current dropdown
+                const isActive = dropdown.classList.contains('active');
+                if (isActive) {
+                    menu.classList.remove('show');
+                    dropdown.classList.remove('active');
+                } else {
+                    menu.classList.add('show');
+                    dropdown.classList.add('active');
+                    
+                    // Position the menu
+                    positionDropdownMenu(trigger, menu);
+                }
+            }
         }
     });
     
