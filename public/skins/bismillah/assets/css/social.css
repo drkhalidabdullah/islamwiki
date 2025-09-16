@@ -331,6 +331,39 @@
     color: white;
 }
 
+.messages-actions-tabs {
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    gap: 10px;
+}
+
+.action-tab {
+    background: #f8f9fa;
+    color: #7f8c8d;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+}
+
+.action-tab:hover {
+    background: #3498db;
+    color: white;
+    transform: translateY(-1px);
+    border-color: #2980b9;
+}
+
+.action-tab i {
+    font-size: 0.8rem;
+}
+
 .conversations-list {
     flex: 1;
     overflow-y: auto;
@@ -1203,6 +1236,462 @@
 .no-lists p {
     margin: 0 0 20px 0;
     font-size: 1rem;
+}
+
+/* ===== MESSAGES SUBPAGES SPECIFIC STYLES ===== */
+
+/* Sent Messages Page */
+.sent-indicator {
+    color: #3498db;
+    font-size: 0.8rem;
+}
+
+.sent-indicator i {
+    margin-right: 2px;
+}
+
+.no-messages {
+    text-align: center;
+    padding: 60px 20px;
+    color: #7f8c8d;
+}
+
+.no-messages i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #bdc3c7;
+}
+
+.no-messages h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.no-messages p {
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+}
+
+/* Compose Message Page */
+.compose-area {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.compose-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #ecf0f1;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.compose-header h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.compose-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-save-draft,
+.btn-clear {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-save-draft:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+.btn-clear:hover {
+    background: #e74c3c;
+    transform: translateY(-1px);
+}
+
+.compose-form {
+    padding: 30px;
+}
+
+.compose-recipient,
+.compose-subject,
+.compose-message {
+    margin-bottom: 25px;
+}
+
+.compose-recipient label,
+.compose-subject label,
+.compose-message label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.recipient-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.recipient-selector:focus-within {
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.selected-recipient {
+    flex: 1;
+    min-height: 20px;
+}
+
+.selected-recipient .placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+.selected-recipient .selected-name {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.btn-select-recipient {
+    background: #3498db;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-select-recipient:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+.compose-subject input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.compose-subject input:focus {
+    outline: none;
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.compose-message textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 200px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.compose-message textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.message-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.message-tools {
+    display: flex;
+    gap: 5px;
+}
+
+.tool-btn {
+    background: #ecf0f1;
+    color: #7f8c8d;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+}
+
+.tool-btn:hover {
+    background: #3498db;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.message-counter {
+    color: #95a5a6;
+    font-size: 0.8rem;
+}
+
+.compose-footer {
+    border-top: 1px solid #ecf0f1;
+    padding: 20px 0 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.compose-options {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #bdc3c7;
+    border-radius: 4px;
+    margin-right: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.compose-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-cancel {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+.btn-send {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-send:hover {
+    background: #229954;
+    transform: translateY(-1px);
+}
+
+/* Recipients List */
+.recipients-section {
+    display: block;
+}
+
+.recipient-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+.recipient-item:hover {
+    background: #f8f9fa;
+}
+
+.recipient-item.selected {
+    background: #e8f4fd;
+    border-left: 3px solid #3498db;
+}
+
+.recipient-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recipient-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.recipient-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recipient-status,
+.recipient-preview {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-recent {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+}
+
+.no-recent i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #bdc3c7;
+}
+
+.no-recent h3 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.no-recent p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Compose Info Sidebar */
+.compose-info-header {
+    padding: 20px;
+    border-bottom: 1px solid #ecf0f1;
+    background: white;
+}
+
+.compose-info-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.compose-tips {
+    padding: 20px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.tip-item:hover {
+    background: #e8f4fd;
+    transform: translateY(-1px);
+}
+
+.tip-item i {
+    color: #3498db;
+    font-size: 1.2rem;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.tip-content h4 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tip-content p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    line-height: 1.4;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
