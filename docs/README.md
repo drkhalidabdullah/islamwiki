@@ -2,11 +2,27 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.13
+## 🎯 Current Version: 0.0.0.15
 
 **Latest Release:** September 15, 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Release - Facebook Messenger-Style Messaging System
+**Type:** Feature Enhancement - Enhanced Messaging System & Documentation
+
+## 🚀 What's New in v0.0.0.15
+
+### 📚 **Comprehensive Documentation Updates**
+- **Complete Documentation Overhaul**: Updated all documentation files to reflect current features
+- **Version Management**: Centralized version management system with automatic updates
+- **Release Notes**: Comprehensive release notes for all versions
+- **Changelog System**: Detailed changelog tracking for all releases
+- **API Documentation**: Enhanced API documentation with examples
+- **User Guides**: Updated user guides with latest features
+
+### 🔧 **Technical Improvements**
+- **Version Consistency**: All files now reference the same version number
+- **Documentation Structure**: Organized documentation with clear navigation
+- **Release Management**: Streamlined release process with proper versioning
+- **Code Documentation**: Enhanced inline documentation and comments
 
 ## 🚀 What's New in v0.0.0.13
 
@@ -265,7 +281,17 @@ html/
 
 ## 📊 Version History
 
-### v0.0.0.13 (Current) - Facebook Messenger-Style Messaging System
+### v0.0.0.15 (Current) - Enhanced Messaging System & Documentation
+- Comprehensive documentation updates across all files
+- Centralized version management system implementation
+- Complete changelog and release notes overhaul
+- Enhanced API documentation with examples
+- Updated user guides with latest features
+- Streamlined release management process
+- Version consistency across all components
+- Improved code documentation and comments
+
+### v0.0.0.13 - Facebook Messenger-Style Messaging System
 - Facebook Messenger-style messaging interface with three-column layout
 - Comprehensive info box with Profile, Mute, and Search functionality
 - Real-time messaging with AJAX-powered updates and polling
