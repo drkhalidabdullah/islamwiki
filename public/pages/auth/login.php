@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['username'] = $user['username'];
                         $_SESSION['display_name'] = $user['display_name'];
                         $_SESSION['email'] = $user['email'];
-                        $_SESSION['avatar'] = $user['avatar'] ?? '/assets/images/default-avatar.png';
+                        $_SESSION['avatar'] = $user['avatar'] ?? '/assets/images/default-avatar.svg';
                         $_SESSION['login_time'] = time();
                         
                         // Log activity

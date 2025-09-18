@@ -20,6 +20,17 @@ class NotificationManager {
             this.markAllReadBtn.addEventListener('click', () => this.markAllAsRead());
         }
         
+        // Set up click listener for notification dropdown trigger
+        const notificationTrigger = document.querySelector('.sidebar-notifications .user-icon-trigger');
+        if (notificationTrigger) {
+            notificationTrigger.addEventListener('click', (e) => {
+                // Small delay to ensure dropdown is open before loading
+                setTimeout(() => {
+                    this.loadNotifications();
+                }, 100);
+            });
+        }
+        
         // Auto-refresh notifications every 30 seconds
         setInterval(() => {
             this.loadNotifications(true);
@@ -37,9 +48,20 @@ class NotificationManager {
         
         try {
             console.log('Loading notifications...');
-            const response = await fetch('/api/ajax/get_notifications.php?limit=10');
+            const response = await fetch('/api/ajax/get_notifications.php?limit=10', {
+                method: 'GET',
+                credentials: 'same-origin', // Include cookies for session
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             console.log('Response status:', response.status);
             console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             
             const responseText = await response.text();
             console.log('Response text:', responseText);
@@ -132,7 +154,7 @@ class NotificationManager {
         
         return `
             <a href="${notification.url}" class="notification-item ${notification.unread ? 'unread' : ''}" data-type="${notification.type}">
-                <img src="${notification.avatar}" alt="Avatar" class="notification-avatar" onerror="this.src='/assets/images/default-avatar.png'">
+                <img src="${notification.avatar}" alt="Avatar" class="notification-avatar" onerror="this.src='/assets/images/default-avatar.svg'">
                 <div class="notification-details">
                     <div class="notification-title">${notification.title}</div>
                     <div class="notification-description">${notification.description}</div>
@@ -238,6 +260,18 @@ class NotificationManager {
         if (this.content) {
             this.content.innerHTML = `<div class="notification-empty">${message}</div>`;
         }
+        console.error('Notification error:', message);
+    }
+    
+    // Debug method to check system status
+    debugStatus() {
+        console.log('Notification Manager Debug Status:');
+        console.log('- Badge element:', this.badge);
+        console.log('- Content element:', this.content);
+        console.log('- Mark all read button:', this.markAllReadBtn);
+        console.log('- Current notifications:', this.notifications.length);
+        console.log('- Unread count:', this.unreadCount);
+        console.log('- Is loading:', this.isLoading);
     }
 }
 
@@ -246,5 +280,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Only initialize if we're on a page with notifications
     if (document.getElementById('notificationBadge')) {
         window.notificationManager = new NotificationManager();
+        
+        // Add debug function to global scope
+        window.debugNotifications = function() {
+            if (window.notificationManager) {
+                window.notificationManager.debugStatus();
+            } else {
+                console.log('Notification manager not initialized');
+            }
+        };
+        
+        console.log('Notification manager initialized');
+    } else {
+        console.log('Notification badge not found, skipping notification manager initialization');
     }
 });

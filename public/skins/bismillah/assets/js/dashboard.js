@@ -405,7 +405,7 @@ function displayComments(comments) {
         html += `
             <div class="comment-item">
                 <div class="comment-header">
-                    <img src="/assets/images/default-avatar.png" alt="User" class="comment-avatar">
+                    <img src="/assets/images/default-avatar.svg" alt="User" class="comment-avatar">
                     <div class="comment-author">
                         <strong>${comment.display_name || comment.username}</strong>
                         <span class="comment-time">${formatCommentTime(comment.created_at)}</span>
@@ -429,7 +429,7 @@ function displayReplies(replies) {
         html += `
             <div class="reply-item">
                 <div class="reply-header">
-                    <img src="/assets/images/default-avatar.png" alt="User" class="reply-avatar">
+                    <img src="/assets/images/default-avatar.svg" alt="User" class="reply-avatar">
                     <div class="reply-author">
                         <strong>${reply.display_name || reply.username}</strong>
                         <span class="reply-time">${formatCommentTime(reply.created_at)}</span>

@@ -6,22 +6,22 @@
  * Update this file to change the version across the entire site.
  * 
  * @package IslamWiki
- * @version 0.0.0.15
- * @since 0.0.0.15
+ * @version 0.0.0.16
+ * @since 0.0.0.16
  */
 
 // Main version constants
-define('SITE_VERSION', '0.0.0.15');
+define('SITE_VERSION', '0.0.0.16');
 define('SITE_VERSION_MAJOR', '0');
 define('SITE_VERSION_MINOR', '0');
-define('SITE_VERSION_PATCH', '15');
-define('SITE_VERSION_FULL', '0.0.0.15');
+define('SITE_VERSION_PATCH', '16');
+define('SITE_VERSION_FULL', '0.0.0.16');
 
 // Version metadata
-define('SITE_VERSION_NAME', 'Enhanced Messaging System & Documentation');
-define('SITE_VERSION_TYPE', 'Feature Enhancement - Messaging & Documentation Updates');
+define('SITE_VERSION_NAME', 'Notification System & Admin Dashboard Improvements');
+define('SITE_VERSION_TYPE', 'Bug Fixes + UI Improvements - Notifications & Admin Dashboard');
 define('SITE_VERSION_STATUS', 'Production Ready');
-define('SITE_VERSION_DATE', 'September 15, 2025');
+define('SITE_VERSION_DATE', 'September 16, 2025');
 
 // Version information array
 $version_info = [

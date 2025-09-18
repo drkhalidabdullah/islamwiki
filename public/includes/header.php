@@ -78,7 +78,7 @@ if ($toast_message) {
     
     <!-- Load additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/skins/bismillah/assets/css/iw-icons.css">
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/iw-icons.css?v=<?php echo time(); ?>">
     
     <!-- Load admin CSS if needed -->
     <?php if (isset($admin_css) && $admin_css): ?>
@@ -243,7 +243,7 @@ if ($toast_message) {
         $_SESSION['avatar'] = $user_avatar;
         
         // Use avatar or default
-        $avatar_url = $user_avatar ?: '/assets/images/default-avatar.png';
+        $avatar_url = $user_avatar ?: '/assets/images/default-avatar.svg';
         $userAvatar = '<img src="' . htmlspecialchars($avatar_url) . '" alt="Profile" class="user-avatar-img" onerror="this.src=\'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K\';">';
         
         $isUserActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/user/') === 0 || 
@@ -596,4 +596,13 @@ showToast('<?php echo addslashes($toast_message); ?>', '<?php echo $toast_type; 
 <script src="/skins/bismillah/assets/js/enhanced-search-overlay.js"></script>
 <script src="/skins/bismillah/assets/js/avatar-updater.js"></script>
 <script src="/skins/bismillah/assets/js/notifications.js"></script>
+<script>
+// Initialize notification manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on a page with notifications
+    if (document.getElementById('notificationBadge')) {
+        window.notificationManager = new NotificationManager();
+    }
+});
+</script>
 

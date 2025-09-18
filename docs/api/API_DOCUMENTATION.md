@@ -12,10 +12,11 @@ The IslamWiki API provides comprehensive access to all platform functionality th
 4. [Permission APIs](#permission-apis)
 5. [Content APIs](#content-apis)
 6. [Social APIs](#social-apis)
-7. [Analytics APIs](#analytics-apis)
-8. [Error Handling](#error-handling)
-9. [Rate Limiting](#rate-limiting)
-10. [Examples](#examples)
+7. [Notification APIs](#notification-apis)
+8. [Analytics APIs](#analytics-apis)
+9. [Error Handling](#error-handling)
+10. [Rate Limiting](#rate-limiting)
+11. [Examples](#examples)
 
 ## Authentication
 
@@ -392,6 +393,83 @@ GET /api/ajax/get_messages.php?conversation_id=123&page=1
         "total_pages": 2,
         "total_messages": 15
     }
+}
+```
+
+## Notification APIs
+
+### Get Notifications
+- **Endpoint**: `/api/ajax/get_notifications.php`
+- **Method**: GET
+- **Authentication**: Required
+- **Description**: Retrieves recent notifications for the logged-in user
+
+#### Parameters
+- `limit` (optional): Number of notifications to retrieve (default: 10)
+
+#### Response
+```json
+{
+    "success": true,
+    "notifications": [
+        {
+            "id": "msg_123",
+            "type": "message",
+            "title": "New Message",
+            "description": "John Doe sent you a message",
+            "content": "Hello, how are you?",
+            "avatar": "/uploads/profile_pictures/user123.jpg",
+            "time": "2025-09-16 10:30:00",
+            "url": "/messages",
+            "unread": true
+        }
+    ],
+    "unread_count": 5,
+    "total": 15
+}
+```
+
+#### Error Handling
+The API includes comprehensive error handling:
+- **Database Query Protection**: Each query is wrapped in try-catch blocks
+- **Graceful Degradation**: Returns partial data if some queries fail
+- **Error Logging**: Detailed error logs for debugging
+- **Fallback Behavior**: Returns empty arrays instead of crashing
+
+#### Features
+- **Multiple Sources**: Aggregates notifications from messages, posts, articles, watchlist, interactions, comments, and followers
+- **Real-time Updates**: Notifications are fetched in real-time when dropdown is opened
+- **Session Handling**: Proper session cookie transmission for authentication
+- **Debug Support**: Includes `window.debugNotifications()` function for troubleshooting
+
+### Mark Notification as Read
+- **Endpoint**: `/api/ajax/mark_notification_read.php`
+- **Method**: POST
+- **Authentication**: Required
+- **Description**: Marks a specific notification as read
+
+#### Parameters
+- `notification_id`: ID of the notification to mark as read
+
+#### Response
+```json
+{
+    "success": true,
+    "message": "Notification marked as read"
+}
+```
+
+### Mark All Notifications as Read
+- **Endpoint**: `/api/ajax/mark_all_notifications_read.php`
+- **Method**: POST
+- **Authentication**: Required
+- **Description**: Marks all notifications for the user as read
+
+#### Response
+```json
+{
+    "success": true,
+    "message": "All notifications marked as read"
 }
 ```
 

@@ -1,15 +1,15 @@
 /* Import Google Fonts for better typography */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* CSS Variables for consistent theming */
+/* CSS Variables for consistent theming - SIMPLIFIED */
 :root {
-    --primary-color: #6366f1;
-    --primary-hover: #4f46e5;
-    --secondary-color: #8b5cf6;
-    --accent-color: #06b6d4;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --error-color: #ef4444;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #2563eb;
+    --accent-color: #2563eb;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --error-color: #dc2626;
     --text-primary: #1f2937;
     --text-secondary: #6b7280;
     --text-muted: #9ca3af;
@@ -38,7 +38,7 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-secondary);
     min-height: 100vh;
 }
 
@@ -85,7 +85,7 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
 }
 
 .profile-header {
@@ -221,7 +221,7 @@ body {
     content: '';
     width: 4px;
     height: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     border-radius: var(--radius-sm);
     flex-shrink: 0;
 }
@@ -303,13 +303,9 @@ body {
 
 .feed-header h1 {
     margin: 0;
-    color: var(--text-primary);
+    color: var(--primary-color);
     font-size: 2rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .feed-filters {
@@ -358,7 +354,7 @@ body {
     content: '';
     width: 4px;
     height: 24px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     border-radius: var(--radius-sm);
 }
 
@@ -387,7 +383,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -456,7 +452,7 @@ body {
     align-items: center;
     padding: 20px 24px;
     border-bottom: 1px solid var(--border-light);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     color: white;
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
@@ -669,6 +665,18 @@ body {
     object-fit: cover;
     flex-shrink: 0;
     margin-top: 4px;
+}
+
+.user-avatar.avatar-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3498db;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
 }
 
 .post-input-container {
@@ -1635,7 +1643,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -1724,6 +1732,18 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
+.author-avatar.avatar-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3498db;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+
 .author-details {
     display: flex;
     flex-direction: column;
@@ -1757,7 +1777,7 @@ body {
 }
 
 .content-type-badge {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     color: white;
     padding: 6px 12px;
     border-radius: var(--radius-full);
@@ -1795,7 +1815,7 @@ body {
 
 .category-tag {
     display: inline-block;
-    background: var(--accent-color);
+    background: var(--primary-color);
     color: white;
     padding: 6px 12px;
     border-radius: var(--radius-full);
@@ -2212,7 +2232,7 @@ body {
     right: 20px;
     width: 60px;
     height: 40px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     border-radius: var(--radius-md);
     opacity: 0.1;
 }
@@ -2230,7 +2250,7 @@ body {
     transform: translateY(-50%);
     width: 4px;
     height: 20px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary-color);
     border-radius: var(--radius-sm);
     opacity: 0.6;
 }

@@ -114,7 +114,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
                     <?php foreach ($sent_messages as $message): ?>
                         <div class="conversation-item <?php echo ($active_conversation == $message['other_user_id']) ? 'active' : ''; ?>" 
                              onclick="loadConversation(<?php echo $message['other_user_id']; ?>)">
-                            <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($message['display_name'] ?: $message['username']); ?>" 
+                            <img src="/assets/images/default-avatar.svg" alt="<?php echo htmlspecialchars($message['display_name'] ?: $message['username']); ?>" 
                                  class="conversation-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
                             <div class="conversation-info">
                                 <div class="conversation-name"><?php echo htmlspecialchars($message['display_name'] ?: $message['username']); ?></div>
@@ -137,7 +137,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
             <?php if ($active_user): ?>
                 <div class="chat-header">
                     <div class="chat-user-info">
-                        <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?>" 
+                        <img src="/assets/images/default-avatar.svg" alt="<?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?>" 
                              class="chat-user-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
                         <div class="chat-user-details">
                             <div class="chat-user-name"><?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?></div>
@@ -200,7 +200,7 @@ window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
         <?php if ($active_user): ?>
             <div class="messages-info">
                 <div class="chat-info-header">
-                    <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?>" 
+                    <img src="/assets/images/default-avatar.svg" alt="<?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?>" 
                          class="info-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSI4IiB5PSI4IiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0xMiAxMkMxNC4yMDkxIDEyIDE2IDEwLjIwOTEgMTYgOEMxNiA1Ljc5MDg2IDE0LjIwOTEgNCAxMiA0QzkuNzkwODYgNCA4IDUuNzkwODYgOCA4QzggMTAuMjA5MSA5Ljc5MDYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42OTExNyAxNCA2IDE2LjY5MTE3IDYgMjBIMjBDMjAgMTYuNjkxMTcgMTcuMzA4OCAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K';">
                     <div class="info-details">
                         <div class="info-name"><?php echo htmlspecialchars($active_user['display_name'] ?: $active_user['username']); ?></div>

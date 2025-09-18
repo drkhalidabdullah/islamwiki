@@ -824,6 +824,18 @@ function get_post_likes_count($post_id) {
     }
 }
 
+/**
+ * Get user avatar with fallback to default
+ * @param string|null $avatar The user's avatar path
+ * @return string The avatar path or default avatar
+ */
+function get_user_avatar($avatar = null) {
+    if (!empty($avatar) && file_exists($_SERVER['DOCUMENT_ROOT'] . $avatar)) {
+        return $avatar;
+    }
+    return '/assets/images/default-avatar.svg';
+}
+
 function add_comment($post_id, $user_id, $content, $parent_id = null) {
     global $pdo;
     

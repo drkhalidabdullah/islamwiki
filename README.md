@@ -1,17 +1,39 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.15-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.16-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.15
+## 🎯 Current Version: 0.0.0.16
 
-**Latest Release:** September 15, 2025  
+**Latest Release:** September 16, 2025  
 **Status:** Production Ready ✅  
-**Type:** Feature Enhancement - Enhanced Messaging System & Documentation
+**Type:** Bug Fixes + UI Improvements - Notification System & Admin Dashboard
+
+## 🚀 What's New in v0.0.0.16
+
+### 🎨 **Admin Dashboard Improvements**
+- **Simplified Color Scheme**: Implemented consistent CSS variables across admin interface
+- **Modern Design**: Replaced complex gradients with clean, professional colors
+- **Better Accessibility**: Improved contrast and readability throughout admin panels
+- **Unified Theming**: All admin components now use the same color variables for consistency
+
+### 🔔 **Notification System Fixes**
+- **500 Error Resolution**: Fixed critical server errors in notifications API that prevented loading
+- **Error Handling**: Added comprehensive try-catch blocks for all database queries
+- **Graceful Degradation**: System continues working even when individual queries fail
+- **Better Debugging**: Enhanced error logging and debug features for troubleshooting
+- **Session Handling**: Fixed session cookie transmission in API requests
+- **Improved UX**: Better error messages and fallback behavior for users
+
+### 🛠️ **Technical Improvements**
+- **Database Query Protection**: All notification queries wrapped in individual error handling
+- **API Reliability**: Notifications API now returns 200 OK even with partial failures
+- **Enhanced Debugging**: Added `window.debugNotifications()` function for development
+- **Code Quality**: Improved CSS organization and JavaScript error handling
 
 ## 🚀 What's New in v0.0.0.15
 

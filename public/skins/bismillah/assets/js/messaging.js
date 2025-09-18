@@ -209,9 +209,9 @@ class MessagingSystem {
             messageAvatar.className = 'message-avatar';
             
             const avatarImg = document.createElement('img');
-            avatarImg.src = message.avatar || '/assets/images/default-avatar.png';
+            avatarImg.src = message.avatar || '/assets/images/default-avatar.svg';
             avatarImg.alt = message.display_name || message.username || 'User';
-            avatarImg.onerror = "this.src='/assets/images/default-avatar.png'";
+            avatarImg.onerror = "this.src='/assets/images/default-avatar.svg'";
             
             messageAvatar.appendChild(avatarImg);
             messageContentContainer.appendChild(messageAvatar);

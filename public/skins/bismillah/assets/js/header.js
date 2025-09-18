@@ -443,6 +443,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Dropdown opened - Classes after open:', menu.className);
                 console.log('Menu has show class after open:', menu.classList.contains('show'));
                 
+                // Load notifications if this is the notifications dropdown
+                if (menu.id === 'notificationsMenu' && window.notificationManager) {
+                    console.log('Loading notifications for dropdown...');
+                    window.notificationManager.loadNotifications();
+                }
+                
                 // Check computed styles
                 setTimeout(() => {
                     const computedStyle = window.getComputedStyle(menu);

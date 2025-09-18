@@ -84,7 +84,7 @@ include "../../includes/header.php";;
                         <?php foreach ($friend_requests as $request): ?>
                             <div class="request-item">
                                 <div class="request-user">
-                                    <img src="/assets/images/default-avatar.png" alt="<?php echo htmlspecialchars($request['display_name'] ?: $request['username']); ?>" 
+                                    <img src="/assets/images/default-avatar.svg" alt="<?php echo htmlspecialchars($request['display_name'] ?: $request['username']); ?>" 
                                          class="request-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwNiAxMiAxMiAxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMiAxNEM4LjY5MTE3IDE0IDYgMTYuNjkxMTcgNiAyMEgyMEMyMCAxNi42OTExNyAxNy4zMDg4IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=';">
                                     <div class="request-info">
                                         <h3 class="request-name"><?php echo htmlspecialchars($request['display_name'] ?: $request['username']); ?></h3>

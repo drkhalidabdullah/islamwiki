@@ -214,8 +214,13 @@ include "../../includes/header.php";
             <div class="profile-card">
                 <div class="profile-header">
                     <div class="profile-avatar">
-                        <img src="/assets/images/default-avatar.png" alt="Profile" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiM0Mjg1RjQiLz4KPHN2ZyB4PSIxNSIgeT0iMTUiIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwNiAxMiAxMiAxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMiAxNEM4LjY5MTE3IDE0IDYgMTYuNjkxMTcgNiAyMEgxOEMxOCAxNi42OTExNyAxNS4zMDg4IDE0IDEyIDE0WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo='">
+                        <?php if (!empty($current_user['avatar'])): ?>
+                            <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile">
+                        <?php else: ?>
+                            <div class="avatar-circle">
+                                <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="profile-info">
                         <h3><?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?></h3>
@@ -295,7 +300,13 @@ include "../../includes/header.php";
             <!-- Create Post Component -->
             <div class="create-post-card">
                 <div class="create-post-header">
-                    <img src="/assets/images/default-avatar.png" alt="User" class="user-avatar">
+                    <?php if (!empty($current_user['avatar'])): ?>
+                        <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="User" class="user-avatar">
+                    <?php else: ?>
+                        <div class="user-avatar avatar-circle">
+                            <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="post-input-container">
                         <!-- Markdown Toolbar -->
                         <div class="markdown-toolbar" id="postToolbar" style="display: none;">
@@ -520,7 +531,13 @@ include "../../includes/header.php";
                                 <?php if ($item['content_type'] === 'post'): ?>
                                 <div class="card-header">
                                     <div class="author-info">
-                                        <img src="/assets/images/default-avatar.png" alt="User" class="author-avatar">
+                                        <?php if (!empty($item['avatar'])): ?>
+                                            <img src="<?php echo htmlspecialchars($item['avatar']); ?>" alt="User" class="author-avatar">
+                                        <?php else: ?>
+                                            <div class="author-avatar avatar-circle">
+                                                <?php echo strtoupper(substr($item['display_name'] ?: $item['username'], 0, 2)); ?>
+                                            </div>
+                                        <?php endif; ?>
                                         <div class="author-details">
                                             <a href="/pages/user/user_profile.php?username=<?php echo urlencode($item['username']); ?>" class="author-name">
                                                 <?php echo htmlspecialchars($item['display_name'] ?: $item['username']); ?>
@@ -605,7 +622,13 @@ include "../../includes/header.php";
                                 <?php if ($item['content_type'] === 'post'): ?>
                                 <div class="card-header">
                                     <div class="author-info">
-                                        <img src="/assets/images/default-avatar.png" alt="User" class="author-avatar">
+                                        <?php if (!empty($item['avatar'])): ?>
+                                            <img src="<?php echo htmlspecialchars($item['avatar']); ?>" alt="User" class="author-avatar">
+                                        <?php else: ?>
+                                            <div class="author-avatar avatar-circle">
+                                                <?php echo strtoupper(substr($item['display_name'] ?: $item['username'], 0, 2)); ?>
+                                            </div>
+                                        <?php endif; ?>
                                         <div class="author-details">
                                             <a href="/pages/user/user_profile.php?username=<?php echo urlencode($item['username']); ?>" class="author-name">
                                                 <?php echo htmlspecialchars($item['display_name'] ?: $item['username']); ?>
@@ -767,7 +790,7 @@ include "../../includes/header.php";
                 <div class="following-list">
                     <?php foreach (array_slice($following, 0, 5) as $user): ?>
                     <div class="following-item">
-                        <img src="/assets/images/default-avatar.png" alt="User" class="user-avatar">
+                        <img src="/assets/images/default-avatar.svg" alt="User" class="user-avatar">
                         <div class="user-info">
                             <a href="/pages/user/user_profile.php?username=<?php echo urlencode($user['username']); ?>" class="user-name">
                                 <?php echo htmlspecialchars($user['display_name'] ?: $user['username']); ?>

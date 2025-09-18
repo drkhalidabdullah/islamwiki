@@ -99,7 +99,7 @@ try {
                 'url' => '/user/' . $suggestion['username'],
                 'category' => 'Users',
                 'bio' => substr($suggestion['bio'], 0, 80) . '...',
-                'avatar' => $suggestion['avatar'] ?: '/assets/images/default-avatar.png',
+                'avatar' => $suggestion['avatar'] ?: '/assets/images/default-avatar.svg',
                 'join_date' => date('M Y', strtotime($suggestion['created_at'])),
                 'icon' => 'iw iw-user',
                 'relevance' => $suggestion['relevance_score']
