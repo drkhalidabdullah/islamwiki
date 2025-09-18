@@ -200,9 +200,11 @@ include "../../includes/header.php";
 
 ?>
 <script src="/skins/bismillah/assets/js/dashboard.js"></script>
+<script src="/skins/bismillah/assets/js/mentions.js"></script>
 <?php
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/dashboard.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/mentions.css">
 <?php
 ?>
 
@@ -518,6 +520,7 @@ include "../../includes/header.php";
                 // Debug: Check what content we have
                 // echo "<!-- Debug: Following content count: " . count($following_content) . " -->";
                 // echo "<!-- Debug: All content count: " . count($all_content) . " -->";
+                // echo "<!-- Debug: Recent posts count: " . count($recent_posts) . " -->";
                 // echo "<!-- Debug: Recent articles count: " . count($recent_articles) . " -->";
                 // echo "<!-- Debug: Featured articles count: " . count($featured_articles) . " -->";
                 ?>
@@ -554,7 +557,8 @@ include "../../includes/header.php";
                                 <div class="card-content">
                                     <div class="post-content"><?php 
                                         $parser = new MarkdownParser();
-                                        echo $parser->parse($item['content']); 
+                                        $markdown_content = $parser->parse($item['content']);
+                                        echo parse_mentions($markdown_content);
                                     ?></div>
                                 </div>
                                 <?php else: ?>
@@ -610,7 +614,7 @@ include "../../includes/header.php";
                         <?php else: ?>
                             <div class="empty-state">
                                 <p>You're not following anyone yet. <a href="/search">Find people to follow</a></p>
-        </div>
+                            </div>
                         <?php endif; ?>
     </div>
                     
@@ -645,7 +649,8 @@ include "../../includes/header.php";
                                 <div class="card-content">
                                     <div class="post-content"><?php 
                                         $parser = new MarkdownParser();
-                                        echo $parser->parse($item['content']); 
+                                        $markdown_content = $parser->parse($item['content']);
+                                        echo parse_mentions($markdown_content);
                                     ?></div>
                                 </div>
                                 <?php else: ?>

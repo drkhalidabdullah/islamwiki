@@ -92,6 +92,7 @@
 .iw-file-text::before { content: "\f15c"; }
 .iw-unlink::before { content: "\f127"; }
 .iw-undo::before { content: "\f0e2"; }
+.iw-camera::before { content: "\f030"; }
 
 /* Animations */
 .iw-spin {

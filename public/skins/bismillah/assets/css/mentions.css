@@ -1,0 +1,169 @@
+/* Mentions System Styles */
+
+/* Mention links in content */
+.mention-link {
+    color: #007bff;
+    text-decoration: none;
+    background: #e3f2fd;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.mention-link:hover {
+    background: #bbdefb;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Autocomplete dropdown */
+.mentions-dropdown {
+    position: absolute;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    font-size: 14px;
+}
+
+.mentions-dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.mentions-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.mentions-dropdown-item:hover,
+.mentions-dropdown-item.selected {
+    background-color: #f8f9fa;
+}
+
+.mention-user-avatar {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.mention-user-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mention-user-avatar .avatar-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #3498db;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.mention-user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mention-username {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 2px;
+}
+
+.mention-display-name {
+    color: #6c757d;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Textarea styling for mentions */
+textarea[data-mentions="true"] {
+    position: relative;
+}
+
+/* Highlight @mentions in textarea (for preview) */
+.mention-highlight {
+    background: #e3f2fd;
+    color: #007bff;
+    font-weight: 500;
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .mentions-dropdown {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .mentions-dropdown-item {
+        border-bottom-color: #4a5568;
+    }
+    
+    .mentions-dropdown-item:hover,
+    .mentions-dropdown-item.selected {
+        background-color: #4a5568;
+    }
+    
+    .mention-username {
+        color: #e2e8f0;
+    }
+    
+    .mention-display-name {
+        color: #a0aec0;
+    }
+    
+    .mention-link {
+        background: #2d3748;
+        color: #63b3ed;
+    }
+    
+    .mention-link:hover {
+        background: #4a5568;
+        color: #90cdf4;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .mentions-dropdown {
+        max-width: calc(100vw - 20px);
+        left: 10px !important;
+        right: 10px;
+        width: auto !important;
+    }
+    
+    .mentions-dropdown-item {
+        padding: 10px 12px;
+    }
+    
+    .mention-user-avatar {
+        width: 28px;
+        height: 28px;
+        margin-right: 8px;
+    }
+    
+    .mention-user-avatar .avatar-circle {
+        font-size: 11px;
+    }
+}

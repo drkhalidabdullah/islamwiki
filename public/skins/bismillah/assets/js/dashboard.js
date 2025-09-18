@@ -564,8 +564,9 @@ function initializePostCreation() {
     let currentInput = postInputSimple;
     
     // Handle formatting toggle
-    toggleFormattingBtn.addEventListener('click', function() {
-        isFormattingMode = !isFormattingMode;
+    if (toggleFormattingBtn) {
+        toggleFormattingBtn.addEventListener('click', function() {
+            isFormattingMode = !isFormattingMode;
         
         if (isFormattingMode) {
             // Switch to formatting mode
@@ -600,19 +601,26 @@ function initializePostCreation() {
         
         // Update input handlers
         updateInputHandlers();
-    });
+        });
+    }
     
     // Handle post input changes
     function updateInputHandlers() {
         // Remove existing listeners
-        postInput.removeEventListener('input', handleInputChange);
-        postInputSimple.removeEventListener('input', handleInputChange);
-        postInput.removeEventListener('paste', handlePaste);
-        postInputSimple.removeEventListener('paste', handlePaste);
+        if (postInput) {
+            postInput.removeEventListener('input', handleInputChange);
+            postInput.removeEventListener('paste', handlePaste);
+        }
+        if (postInputSimple) {
+            postInputSimple.removeEventListener('input', handleInputChange);
+            postInputSimple.removeEventListener('paste', handlePaste);
+        }
         
         // Add listeners to current input
-        currentInput.addEventListener('input', handleInputChange);
-        currentInput.addEventListener('paste', handlePaste);
+        if (currentInput) {
+            currentInput.addEventListener('input', handleInputChange);
+            currentInput.addEventListener('paste', handlePaste);
+        }
     }
     
     // Handle paste events
@@ -731,7 +739,8 @@ function initializePostCreation() {
     updateInputHandlers();
     
     // Handle post submission
-    submitBtn.addEventListener('click', function() {
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
         let content = currentInput.value.trim();
         if (!content) return;
         
@@ -789,19 +798,23 @@ function initializePostCreation() {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Post';
         });
-    });
+        });
+    }
     
     // Handle cancel button
-    cancelBtn.addEventListener('click', function() {
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
         currentInput.value = '';
         uploadedImages = []; // Clear uploaded images
         clearImagePreviews(); // Clear image previews
         submitBtn.disabled = true;
         this.style.display = 'none';
-    });
+        });
+    }
     
     // Handle fullscreen toggle
-    fullscreenBtn.addEventListener('click', function() {
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', function() {
         isFullscreenMode = !isFullscreenMode;
         const icon = this.querySelector('i');
         
@@ -821,7 +834,8 @@ function initializePostCreation() {
             icon.className = 'iw iw-expand';
             this.title = 'Toggle Fullscreen Editor';
         }
-    });
+        });
+    }
     
     // Handle escape key to exit fullscreen
     document.addEventListener('keydown', function(e) {
@@ -832,28 +846,34 @@ function initializePostCreation() {
     
     // Handle Enter key (Ctrl+Enter to submit)
     function addKeydownListener() {
-        currentInput.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                if (!submitBtn.disabled) {
-                    submitBtn.click();
+        if (currentInput) {
+            currentInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.click();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     
     // Add initial keydown listener
     addKeydownListener();
     
     // Help modal functionality
-    helpModalClose.addEventListener('click', function() {
-        helpModal.style.display = 'none';
-    });
-    
-    helpModal.addEventListener('click', function(e) {
-        if (e.target === helpModal) {
+    if (helpModalClose) {
+        helpModalClose.addEventListener('click', function() {
             helpModal.style.display = 'none';
-        }
-    });
+        });
+    }
+    
+    if (helpModal) {
+        helpModal.addEventListener('click', function(e) {
+            if (e.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+    }
 }
 
 function addPostToFeed(post) {

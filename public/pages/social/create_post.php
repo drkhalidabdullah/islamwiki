@@ -45,10 +45,12 @@ include "../../includes/header.php";;
 
 ?>
 <script src="/skins/bismillah/assets/js/social_create_post.js"></script>
+<script src="/skins/bismillah/assets/js/mentions.js"></script>
 <?php
 
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/social_create_post.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/mentions.css">
 <?php
 ?>
 

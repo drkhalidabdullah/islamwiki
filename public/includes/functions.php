@@ -686,7 +686,19 @@ function create_user_post($user_id, $content, $post_type = 'text', $media_url = 
             $is_public
         ]);
         
-        return $result ? $pdo->lastInsertId() : false;
+        if ($result) {
+            $post_id = $pdo->lastInsertId();
+            
+            // Handle mentions
+            $mentioned_usernames = extract_mentions($content);
+            if (!empty($mentioned_usernames)) {
+                send_mention_notifications($mentioned_usernames, $post_id, $user_id);
+            }
+            
+            return $post_id;
+        }
+        
+        return false;
     } catch (Exception $e) {
         error_log("Error creating user post: " . $e->getMessage());
         return false;
@@ -844,7 +856,18 @@ function add_comment($post_id, $user_id, $content, $parent_id = null) {
             INSERT INTO post_comments (post_id, user_id, content, parent_id) 
             VALUES (?, ?, ?, ?)
         ");
-        return $stmt->execute([$post_id, $user_id, $content, $parent_id]);
+        
+        $result = $stmt->execute([$post_id, $user_id, $content, $parent_id]);
+        
+        if ($result) {
+            // Handle mentions in comments
+            $mentioned_usernames = extract_mentions($content);
+            if (!empty($mentioned_usernames)) {
+                send_mention_notifications($mentioned_usernames, $post_id, $user_id);
+            }
+        }
+        
+        return $result;
     } catch (Exception $e) {
         return false;
     }
@@ -902,5 +925,75 @@ function get_comment_count($post_id) {
         return $result['count'];
     } catch (Exception $e) {
         return 0;
+    }
+}
+
+/**
+ * Parse @mentions in text and convert them to links
+ * @param string $text The text to parse (can be raw text or HTML)
+ * @return string The text with @mentions converted to links
+ */
+function parse_mentions($text) {
+    // Pattern to match @username mentions
+    $pattern = '/@([a-zA-Z0-9_]+)/';
+    
+    return preg_replace_callback($pattern, function($matches) {
+        $username = $matches[1];
+        
+        // Check if user exists
+        $user = get_user_by_username($username);
+        if ($user) {
+            return '<a href="/pages/user/user_profile.php?username=' . urlencode($username) . '" class="mention-link">@' . htmlspecialchars($username) . '</a>';
+        }
+        
+        // If user doesn't exist, return original text
+        return $matches[0];
+    }, $text);
+}
+
+
+/**
+ * Extract @mentions from text
+ * @param string $text The text to extract mentions from
+ * @return array Array of usernames mentioned
+ */
+function extract_mentions($text) {
+    $pattern = '/@([a-zA-Z0-9_]+)/';
+    preg_match_all($pattern, $text, $matches);
+    return array_unique($matches[1]);
+}
+
+
+/**
+ * Send mention notifications
+ * @param array $mentioned_usernames Array of usernames mentioned
+ * @param int $post_id The post ID
+ * @param int $author_id The author of the post
+ */
+function send_mention_notifications($mentioned_usernames, $post_id, $author_id) {
+    global $pdo;
+    
+    if (empty($mentioned_usernames)) {
+        return;
+    }
+    
+    try {
+        // Get user IDs for mentioned usernames
+        $placeholders = str_repeat('?,', count($mentioned_usernames) - 1) . '?';
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username IN ($placeholders) AND status = 'active'");
+        $stmt->execute($mentioned_usernames);
+        $mentioned_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // Create notifications for each mentioned user
+        foreach ($mentioned_users as $user_id) {
+            // Don't notify the author
+            if ($user_id == $author_id) {
+                continue;
+            }
+            
+            create_notification($user_id, 'mention', 'You were mentioned in a post', $post_id);
+        }
+    } catch (Exception $e) {
+        error_log("Mention notification error: " . $e->getMessage());
     }
 }
