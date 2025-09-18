@@ -79,6 +79,7 @@ if ($toast_message) {
     <!-- Load additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/skins/bismillah/assets/css/iw-icons.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/dashboard.css?v=<?php echo time(); ?>">
     
     <!-- Load admin CSS if needed -->
     <?php if (isset($admin_css) && $admin_css): ?>

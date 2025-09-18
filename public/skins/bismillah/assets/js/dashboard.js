@@ -820,6 +820,7 @@ function initializePostCreation() {
         
         if (isFullscreenMode) {
             // Enter fullscreen mode
+            document.body.classList.add('fullscreen-mode');
             createPostCard.classList.add('fullscreen');
             icon.className = 'iw iw-compress';
             this.title = 'Exit Fullscreen';
@@ -830,6 +831,7 @@ function initializePostCreation() {
             }
         } else {
             // Exit fullscreen mode
+            document.body.classList.remove('fullscreen-mode');
             createPostCard.classList.remove('fullscreen');
             icon.className = 'iw iw-expand';
             this.title = 'Toggle Fullscreen Editor';

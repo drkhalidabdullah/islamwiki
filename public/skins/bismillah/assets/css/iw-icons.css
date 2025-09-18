@@ -93,6 +93,79 @@
 .iw-unlink::before { content: "\f127"; }
 .iw-undo::before { content: "\f0e2"; }
 .iw-camera::before { content: "\f030"; }
+.iw-expand::before { content: "\f065"; }
+.iw-compress::before { content: "\f066"; }
+
+/* Missing icons from dashboard */
+.iw-bold::before { content: "\f032"; }
+.iw-gift::before { content: "\f06b"; }
+.iw-heading::before { content: "\f1dc"; }
+.iw-image::before { content: "\f03e"; }
+.iw-images::before { content: "\f302"; }
+.iw-italic::before { content: "\f033"; }
+.iw-question-circle::before { content: "\f059"; }
+.iw-smile::before { content: "\f118"; }
+.iw-strikethrough::before { content: "\f0cc"; }
+.iw-user-tag::before { content: "\f507"; }
+.iw-user-times::before { content: "\f235"; }
+.iw-puzzle-piece::before { content: "\f12e"; }
+
+/* Additional commonly used icons */
+.iw-archive::before { content: "\f187"; }
+.iw-arrow-up::before { content: "\f062"; }
+.iw-ban::before { content: "\f05e"; }
+.iw-bolt::before { content: "\f0e7"; }
+.iw-broom::before { content: "\f51a"; }
+.iw-chart-bar::before { content: "\f080"; }
+.iw-chart-line::before { content: "\f201"; }
+.iw-check::before { content: "\f00c"; }
+.iw-check-circle::before { content: "\f058"; }
+.iw-chevron-left::before { content: "\f053"; }
+.iw-chevron-up::before { content: "\f077"; }
+.iw-circle::before { content: "\f111"; }
+.iw-clock::before { content: "\f017"; }
+.iw-cogs::before { content: "\f085"; }
+.iw-cubes::before { content: "\f1b3"; }
+.iw-database::before { content: "\f1c0"; }
+.iw-ellipsis-v::before { content: "\f142"; }
+.iw-envelope-check::before { content: "\f199"; }
+.iw-exchange-alt::before { content: "\f362"; }
+.iw-exclamation-triangle::before { content: "\f071"; }
+.iw-eye-slash::before { content: "\f070"; }
+.iw-file::before { content: "\f15b"; }
+.iw-fire::before { content: "\f06d"; }
+.iw-folder-open::before { content: "\f07c"; }
+.iw-globe::before { content: "\f0ac"; }
+.iw-hdd::before { content: "\f0a0"; }
+.iw-heartbeat::before { content: "\f21e"; }
+.iw-key::before { content: "\f084"; }
+.iw-layer-group::before { content: "\f5fd"; }
+.iw-lightbulb::before { content: "\f0eb"; }
+.iw-lock::before { content: "\f023"; }
+.iw-magic::before { content: "\f0d0"; }
+.iw-memory::before { content: "\f538"; }
+.iw-microphone::before { content: "\f130"; }
+.iw-minus-circle::before { content: "\f056"; }
+.iw-mobile-alt::before { content: "\f3cd"; }
+.iw-mouse-pointer::before { content: "\f245"; }
+.iw-palette::before { content: "\f53f"; }
+.iw-paperclip::before { content: "\f0c6"; }
+.iw-pencil-alt::before { content: "\f303"; }
+.iw-phone::before { content: "\f095"; }
+.iw-power-off::before { content: "\f011"; }
+.iw-robot::before { content: "\f544"; }
+.iw-server::before { content: "\f233"; }
+.iw-square::before { content: "\f0c8"; }
+.iw-sticky-note::before { content: "\f249"; }
+.iw-tags::before { content: "\f02c"; }
+.iw-thumbtack::before { content: "\f08d"; }
+.iw-times-circle::before { content: "\f057"; }
+.iw-toggle-on::before { content: "\f205"; }
+.iw-underline::before { content: "\f0cd"; }
+.iw-user-edit::before { content: "\f4ff"; }
+.iw-users-cog::before { content: "\f509"; }
+.iw-video::before { content: "\f03d"; }
+.iw-wrench::before { content: "\f0ad"; }
 
 /* Animations */
 .iw-spin {
