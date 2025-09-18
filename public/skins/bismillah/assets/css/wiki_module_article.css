@@ -378,8 +378,13 @@
     color: #2c3e50;
 }
 
-.article-content h2:first-child {
-    margin-top: 0;
+.article-content h1:first-child,
+.article-content h2:first-child,
+.article-content h3:first-child,
+.article-content h4:first-child,
+.article-content h5:first-child,
+.article-content h6:first-child {
+    margin-top: 0.5rem !important;
 }
 
 .article-content h1,
@@ -404,7 +409,7 @@
     font-size: 1.5rem !important;
     font-weight: 700 !important;
     color: #1f2937 !important;
-    margin: 0 0 1rem 0 !important;
+    margin: 2rem 0 1rem 0 !important;
     padding-bottom: 0.75rem !important;
     border-bottom: 2px solid #f3f4f6 !important;
     position: relative !important;
@@ -412,6 +417,26 @@
 
 .article-content h3 {
     font-size: 1.25rem;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.article-content h4 {
+    font-size: 1.1rem;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.article-content h5 {
+    font-size: 1rem;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.article-content h6 {
+    font-size: 0.9rem;
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
 }
 
 .article-content p {

@@ -233,9 +233,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
         <!-- Three-column layout: 15% | 70% | 15% -->
         <div class="article-page">
             <div class="article-container">
-                <div class="wiki-layout<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 4 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
+                <div class="wiki-layout<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 3 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
             <!-- Left Sidebar: Table of Contents -->
-            <?php if ($parser->isTocEnabled() && (count($parser->getHeadings()) >= 4 || $parser->isTocForced())): ?>
+            <?php if ($parser->isTocEnabled() && (count($parser->getHeadings()) >= 3 || $parser->isTocForced())): ?>
             <aside class="wiki-toc">
                 <div class="toc-header">
                     <h3>Contents</h3>
@@ -252,7 +252,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <?php endif; ?>
             
             <!-- Main Content Area -->
-            <main class="wiki-main-content<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 4 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
+            <main class="wiki-main-content<?php echo (!$parser->isTocEnabled() || (count($parser->getHeadings()) < 3 && !$parser->isTocForced())) ? ' no-toc' : ''; ?>">
                 <div class="article-content">
                     <?php echo $parsed_content; ?>
                 </div>

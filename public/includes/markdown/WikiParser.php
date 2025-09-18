@@ -67,8 +67,8 @@ class WikiParser extends MarkdownParser {
         // Handle TOC limit from templates
         $content = $this->parseTOCLimit($content);
         
-        // Extract headings for TOC (after magic words are processed)
-        $this->extractHeadings($content);
+        // Parse wiki markup headings (=heading=, ==heading==, etc.)
+        $content = $this->parseWikiHeadings($content);
         
         // Parse other features
         $content = $this->parseReferences($content);
@@ -82,8 +82,11 @@ class WikiParser extends MarkdownParser {
         // Parse wiki formatting after wiki links to handle bold text in links
         $content = $this->parseWikiFormatting($content);
         
-        // Add TOC if needed
-        $content = $this->addTableOfContents($content);
+        // Extract headings for TOC (after content is parsed to HTML)
+        $this->extractHeadings($content);
+        
+        // TOC is handled by JavaScript in the sidebar, not inline
+        // $content = $this->addTableOfContents($content);
         
         // Add references section if any exist
         if (!empty($this->references)) {
@@ -834,12 +837,26 @@ class WikiParser extends MarkdownParser {
     }
     
     /**
+     * Parse wiki markup headings (=heading=, ==heading==, etc.)
+     */
+    private function parseWikiHeadings($content) {
+        // Match wiki headings: =heading=, ==heading==, ===heading===, etc.
+        $content = preg_replace_callback('/^(={1,6})\s*(.+?)\s*\1\s*$/m', function($matches) {
+            $level = strlen($matches[1]);
+            $text = trim($matches[2]);
+            return "<h$level>$text</h$level>";
+        }, $content);
+        
+        return $content;
+    }
+    
+    /**
      * Extract headings from content for TOC generation
      */
     private function extractHeadings($content) {
         $this->headings = [];
         
-        // Match markdown headings (# ## ### etc.)
+        // First, try to match markdown headings (# ## ### etc.) in raw content
         preg_match_all('/^(#{1,6})\s+(.+)$/m', $content, $matches, PREG_SET_ORDER);
         
         foreach ($matches as $match) {
@@ -853,6 +870,75 @@ class WikiParser extends MarkdownParser {
                 'id' => $id
             ];
         }
+        
+        // If no markdown headings found, look for HTML headings in parsed content
+        if (empty($this->headings)) {
+            preg_match_all('/<h([1-6])[^>]*>(.*?)<\/h[1-6]>/i', $content, $html_matches, PREG_SET_ORDER);
+            
+            foreach ($html_matches as $match) {
+                $level = (int)$match[1];
+                $text = trim(strip_tags($match[2]));
+                $id = $this->createHeadingId($text);
+                
+                $this->headings[] = [
+                    'level' => $level,
+                    'text' => $text,
+                    'id' => $id
+                ];
+            }
+        }
+        
+        // If still no headings found, look for bold text that might be treated as headings
+        if (empty($this->headings)) {
+            // Look for bold text patterns that could be section headers
+            preg_match_all('/<strong[^>]*>(.*?)<\/strong>/i', $content, $bold_matches, PREG_SET_ORDER);
+            $seen_headings = [];
+            
+            foreach ($bold_matches as $index => $match) {
+                $text = trim(strip_tags($match[1]));
+                // Only consider bold text that's reasonably long and looks like a heading
+                if (strlen($text) > 3 && strlen($text) < 100 && !preg_match('/^[a-z\s]+$/', $text)) {
+                    // Skip duplicates
+                    if (in_array($text, $seen_headings)) {
+                        continue;
+                    }
+                    
+                    // Skip very short Arabic text, symbols, or single characters with hyphens
+                    if (strlen($text) < 5 && (preg_match('/^[\p{Arabic}\s\-]+$/u', $text) || preg_match('/^[a-z\-]+$/i', $text))) {
+                        continue;
+                    }
+                    
+                    // Skip text that's mostly Arabic characters with hyphens (like س-ل-م)
+                    if (preg_match('/^[\p{Arabic}\-]+$/u', $text) && strlen($text) < 10) {
+                        continue;
+                    }
+                    
+                    // Skip text that's mostly symbols or very short
+                    if (preg_match('/^[\-\s]+$/', $text) || strlen(trim($text)) < 3) {
+                        continue;
+                    }
+                    
+                    $id = $this->createHeadingId($text);
+                    
+                    // Only add if we got a valid ID
+                    if (!empty($id) && $id !== '') {
+                        $this->headings[] = [
+                            'level' => 2, // Default to h2 for bold text
+                            'text' => $text,
+                            'id' => $id
+                        ];
+                        $seen_headings[] = $text;
+                    }
+                }
+            }
+        }
+        
+        // Debug: Log extracted headings for troubleshooting
+        if (empty($this->headings)) {
+            error_log("WikiParser: No headings found in content. Content length: " . strlen($content));
+        } else {
+            error_log("WikiParser: Found " . count($this->headings) . " headings");
+        }
     }
     
     /**
@@ -861,8 +947,39 @@ class WikiParser extends MarkdownParser {
     private function createHeadingId($text) {
         // Remove HTML tags and create URL-friendly ID
         $text = strip_tags($text);
+        
+        // For Arabic text, transliterate to English
+        if (preg_match('/[\p{Arabic}]/u', $text)) {
+            // Simple transliteration for common Arabic words
+            $transliterations = [
+                'إسلام' => 'islam',
+                'الله' => 'allah',
+                'القرآن' => 'quran',
+                'محمد' => 'muhammad',
+                'صلاة' => 'salah',
+                'زكاة' => 'zakat',
+                'صوم' => 'sawm',
+                'حج' => 'hajj',
+                'توحيد' => 'tawhid',
+                'ملائكة' => 'malaika',
+                'أنبياء' => 'anbiya',
+                'قيامة' => 'qiyama'
+            ];
+            
+            foreach ($transliterations as $arabic => $english) {
+                $text = str_replace($arabic, $english, $text);
+            }
+        }
+        
+        // Remove special characters but keep letters, numbers, spaces, hyphens, underscores
         $text = preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $text);
         $text = preg_replace('/\s+/', '_', trim($text));
+        
+        // If empty after processing, create a fallback ID
+        if (empty($text)) {
+            $text = 'heading_' . uniqid();
+        }
+        
         return strtolower($text);
     }
     
@@ -871,7 +988,7 @@ class WikiParser extends MarkdownParser {
      */
     private function addTableOfContents($content) {
         // Check if TOC should be shown
-        if (!$this->toc_enabled || (count($this->headings) < 4 && !$this->toc_forced)) {
+        if (!$this->toc_enabled || (count($this->headings) < 3 && !$this->toc_forced)) {
             return $content;
         }
         
