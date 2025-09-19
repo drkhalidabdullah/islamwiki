@@ -295,7 +295,7 @@ body {
     min-height: 600px;
     width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .feed-header {

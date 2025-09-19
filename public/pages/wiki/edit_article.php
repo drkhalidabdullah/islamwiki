@@ -70,16 +70,13 @@ if (!$article) {
 $errors = [];
 $success = '';
 
-// Get categories
-$stmt = $pdo->query("SELECT * FROM content_categories ORDER BY name");
-$categories = $stmt->fetchAll();
+// Categories are now handled via [[Category:Name]] syntax in content
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_input($_POST['title'] ?? '');
     $content = $_POST['content'] ?? '';
     $excerpt = sanitize_input($_POST['excerpt'] ?? '');
-    $category_id = (int)($_POST['category_id'] ?? 0);
     $status = sanitize_input($_POST['status'] ?? 'draft');
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
@@ -121,10 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare("
                 UPDATE wiki_articles 
-                SET title = ?, content = ?, excerpt = ?, category_id = ?, status = ?, slug = ?, is_featured = ?, updated_at = NOW()
+                SET title = ?, content = ?, excerpt = ?, status = ?, slug = ?, is_featured = ?, updated_at = NOW()
                 WHERE id = ?
             ");
-            if ($stmt->execute([$title, $content, $excerpt, $category_id ?: null, $status, $slug, $is_featured, $article_id])) {
+            if ($stmt->execute([$title, $content, $excerpt, $status, $slug, $is_featured, $article_id])) {
                 // Create new version entry for the edit
                 try {
                     $stmt = $pdo->prepare("
@@ -191,26 +188,11 @@ include "../../includes/header.php";;
     <?php endif; ?>
     
     <form method="POST" class="article-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="title">Title *</label>
-                <input type="text" id="title" name="title" required 
-                       value="<?php echo htmlspecialchars($article['title']); ?>"
-                       placeholder="Enter article title">
-            </div>
-            
-            <div class="form-group">
-                <label for="category_id">Category</label>
-                <select id="category_id" name="category_id">
-                    <option value="">Select a category</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?php echo $category['id']; ?>" 
-                                <?php echo ($article['category_id'] == $category['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="title">Title *</label>
+            <input type="text" id="title" name="title" required 
+                   value="<?php echo htmlspecialchars($article['title']); ?>"
+                   placeholder="Enter article title">
         </div>
         
         <div class="form-group">
@@ -229,6 +211,10 @@ include "../../includes/header.php";;
                 <div id="preview-container" style="display: none;">
                     <div id="preview-content"></div>
                 </div>
+            </div>
+            <div class="form-help">
+                <strong>Categories:</strong> Add categories at the end of your content using <code>[[Category:Category Name]]</code> syntax.<br>
+                <strong>Example:</strong> <code>[[Category:Islam]] [[Category:Religions]] [[Category:Theology]]</code>
             </div>
         </div>
         

@@ -4,6 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['action'] === 'update_prefer
     $language = sanitize_input($_POST['language'] ?? 'en');
     $timezone = sanitize_input($_POST['timezone'] ?? 'UTC');
     $theme = sanitize_input($_POST['theme'] ?? 'light');
+    $skin = sanitize_input($_POST['skin'] ?? 'bismillah');
     $date_format = sanitize_input($_POST['date_format'] ?? 'Y-m-d');
     $time_format = sanitize_input($_POST['time_format'] ?? '24');
     $posts_per_page = (int)($_POST['posts_per_page'] ?? 10);
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['action'] === 'update_prefer
         'language' => $language,
         'timezone' => $timezone,
         'theme' => $theme,
+        'skin' => $skin,
         'date_format' => $date_format,
         'time_format' => $time_format,
         'posts_per_page' => $posts_per_page,
@@ -50,6 +52,7 @@ if ($user_profile && !empty($user_profile['preferences'])) {
 $language = $preferences['language'] ?? 'en';
 $timezone = $preferences['timezone'] ?? 'UTC';
 $theme = $preferences['theme'] ?? 'light';
+$skin = $preferences['skin'] ?? 'bismillah';
 $date_format = $preferences['date_format'] ?? 'Y-m-d';
 $time_format = $preferences['time_format'] ?? '24';
 $posts_per_page = $preferences['posts_per_page'] ?? 10;
@@ -115,6 +118,14 @@ $compact_mode = $preferences['compact_mode'] ?? 0;
                         <option value="dark" <?php echo $theme === 'dark' ? 'selected' : ''; ?>>Dark</option>
                         <option value="auto" <?php echo $theme === 'auto' ? 'selected' : ''; ?>>Auto (System)</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="skin">Skin</label>
+                    <select id="skin" name="skin">
+                        <option value="bismillah" <?php echo $skin === 'bismillah' ? 'selected' : ''; ?>>Bismillah (Default)</option>
+                    </select>
+                    <small class="form-help">Choose your preferred visual theme and layout style.</small>
                 </div>
                 
                 <div class="form-group">

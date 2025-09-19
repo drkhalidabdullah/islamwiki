@@ -134,7 +134,7 @@ try {
             FROM wiki_articles wa
             JOIN users u ON wa.author_id = u.id
             JOIN user_follows uf ON uf.follower_id = ? AND uf.following_id = u.id
-            LEFT JOIN content_categories cc ON wa.category_id = cc.id
+            -- Categories now handled via wiki_categories table
             LEFT JOIN (
                 SELECT article_id, COUNT(*) as views_count 
                 FROM wiki_article_views 

@@ -103,12 +103,11 @@ try {
             u.username,
             u.display_name,
             u.avatar,
-            cc.name as category_name,
             COALESCE(view_counts.views_count, 0) as views_count
         FROM wiki_articles wa
         JOIN users u ON wa.author_id = u.id
         JOIN user_follows uf ON uf.follower_id = ? AND uf.following_id = u.id
-        LEFT JOIN content_categories cc ON wa.category_id = cc.id
+        -- Categories now handled via wiki_categories table
         LEFT JOIN (
             SELECT article_id, COUNT(*) as views_count 
             FROM wiki_article_views 
@@ -128,7 +127,7 @@ try {
             'type' => 'article',
             'title' => 'New Article',
             'description' => ($article['display_name'] ?: $article['username']) . ' published a new article',
-            'content' => $article['title'] . ($article['category_name'] ? ' in ' . $article['category_name'] : ''),
+            'content' => $article['title'],
             'avatar' => !empty($article['avatar']) ? $article['avatar'] : '/assets/images/default-avatar.svg',
             'time' => $article['created_at'],
             'url' => '/wiki/' . $article['title'],

@@ -128,13 +128,230 @@ function parse_wiki_title($full_title) {
         }
     }
     
-    // Default to Main namespace
+    // Return as main namespace if no namespace found
     $main_namespace = get_wiki_namespace('Main');
     return [
         'namespace' => $main_namespace,
         'title' => $full_title,
         'full_title' => $full_title
     ];
+}
+
+/**
+ * Create or get category by name
+ */
+function get_or_create_category($category_name) {
+    global $pdo;
+    
+    $slug = createSlug($category_name);
+    
+    // Try to get existing category
+    $stmt = $pdo->prepare("SELECT * FROM wiki_categories WHERE name = ? OR slug = ?");
+    $stmt->execute([$category_name, $slug]);
+    $category = $stmt->fetch();
+    
+    if ($category) {
+        return $category;
+    }
+    
+    // Create new category
+    $stmt = $pdo->prepare("
+        INSERT INTO wiki_categories (name, slug, created_by) 
+        VALUES (?, ?, ?)
+    ");
+    $stmt->execute([$category_name, $slug, $_SESSION['user_id'] ?? 1]);
+    
+    return get_or_create_category($category_name);
+}
+
+/**
+ * Add article to category
+ */
+function add_article_to_category($article_id, $category_name) {
+    global $pdo;
+    
+    $category = get_or_create_category($category_name);
+    
+    // Check if relationship already exists
+    $stmt = $pdo->prepare("
+        SELECT id FROM wiki_article_categories 
+        WHERE article_id = ? AND category_id = ?
+    ");
+    $stmt->execute([$article_id, $category['id']]);
+    
+    if (!$stmt->fetch()) {
+        // Add relationship
+        $stmt = $pdo->prepare("
+            INSERT INTO wiki_article_categories (article_id, category_id) 
+            VALUES (?, ?)
+        ");
+        $stmt->execute([$article_id, $category['id']]);
+        
+        // Update category article count
+        $stmt = $pdo->prepare("
+            UPDATE wiki_categories 
+            SET article_count = article_count + 1 
+            WHERE id = ?
+        ");
+        $stmt->execute([$category['id']]);
+    }
+}
+
+/**
+ * Remove article from category
+ */
+function remove_article_from_category($article_id, $category_name) {
+    global $pdo;
+    
+    $category = get_or_create_category($category_name);
+    
+    // Remove relationship
+    $stmt = $pdo->prepare("
+        DELETE FROM wiki_article_categories 
+        WHERE article_id = ? AND category_id = ?
+    ");
+    $stmt->execute([$article_id, $category['id']]);
+    
+    // Update category article count
+    $stmt = $pdo->prepare("
+        UPDATE wiki_categories 
+        SET article_count = article_count - 1 
+        WHERE id = ? AND article_count > 0
+    ");
+    $stmt->execute([$category['id']]);
+}
+
+/**
+ * Get categories for an article
+ */
+function get_article_categories($article_id) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT wc.* 
+        FROM wiki_categories wc
+        JOIN wiki_article_categories wac ON wc.id = wac.category_id
+        WHERE wac.article_id = ?
+        ORDER BY wc.name
+    ");
+    $stmt->execute([$article_id]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get articles in a category
+ */
+function get_category_articles($category_slug, $limit = 50, $offset = 0) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT wa.*, u.username, u.display_name
+        FROM wiki_articles wa
+        JOIN users u ON wa.author_id = u.id
+        JOIN wiki_article_categories wac ON wa.id = wac.article_id
+        JOIN wiki_categories wc ON wac.category_id = wc.id
+        WHERE wc.slug = ? AND wa.status = 'published'
+        ORDER BY wa.title
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$category_slug, $limit, $offset]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get subcategories of a category
+ */
+function get_category_subcategories($category_id) {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        SELECT * FROM wiki_categories 
+        WHERE parent_id = ? 
+        ORDER BY name
+    ");
+    $stmt->execute([$category_id]);
+    return $stmt->fetchAll();
+}
+
+/**
+ * Get parent categories of a category
+ */
+function get_category_parents($category_id) {
+    global $pdo;
+    
+    $parents = [];
+    $current_id = $category_id;
+    
+    while ($current_id) {
+        $stmt = $pdo->prepare("
+            SELECT parent_id, name, slug 
+            FROM wiki_categories 
+            WHERE id = ?
+        ");
+        $stmt->execute([$current_id]);
+        $category = $stmt->fetch();
+        
+        if ($category && $category['parent_id']) {
+            $parents[] = $category;
+            $current_id = $category['parent_id'];
+        } else {
+            break;
+        }
+    }
+    
+    return array_reverse($parents);
+}
+
+/**
+ * Update article categories from parsed content
+ */
+function update_article_categories($article_id, $categories) {
+    global $pdo;
+    
+    // Remove all existing categories for this article
+    $stmt = $pdo->prepare("
+        DELETE FROM wiki_article_categories WHERE article_id = ?
+    ");
+    $stmt->execute([$article_id]);
+    
+    // Add new categories
+    foreach ($categories as $category_name) {
+        add_article_to_category($article_id, $category_name);
+    }
+    
+    // Recalculate all category counts to ensure accuracy
+    $stmt = $pdo->prepare("
+        UPDATE wiki_categories 
+        SET article_count = (
+            SELECT COUNT(*) 
+            FROM wiki_article_categories wac
+            JOIN wiki_articles wa ON wac.article_id = wa.id
+            WHERE wac.category_id = wiki_categories.id 
+            AND wa.status = 'published'
+        )
+    ");
+    $stmt->execute();
+}
+
+/**
+ * Fix all category counts to match actual published articles
+ */
+function fix_all_category_counts() {
+    global $pdo;
+    
+    $stmt = $pdo->prepare("
+        UPDATE wiki_categories 
+        SET article_count = (
+            SELECT COUNT(*) 
+            FROM wiki_article_categories wac
+            JOIN wiki_articles wa ON wac.article_id = wa.id
+            WHERE wac.category_id = wiki_categories.id 
+            AND wa.status = 'published'
+        )
+    ");
+    $stmt->execute();
+    
+    return $stmt->rowCount();
 }
 
 /**
@@ -633,4 +850,43 @@ function get_wiki_statistics() {
     $stats['total_files'] = $stmt->fetch()['count'];
     
     return $stats;
+}
+
+/**
+ * Get total article count for templates
+ */
+function get_total_article_count() {
+    global $pdo;
+    
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM wiki_articles WHERE status = 'published'");
+    return $stmt->fetch()['count'];
+}
+
+/**
+ * Get Hijri date for templates
+ */
+function get_hijri_date() {
+    // Simple Hijri date calculation (approximate)
+    $gregorian_date = new DateTime();
+    $year = $gregorian_date->format('Y');
+    $month = $gregorian_date->format('n');
+    $day = $gregorian_date->format('j');
+    
+    // Convert to Hijri (approximate calculation)
+    $hijri_year = $year - 622;
+    $hijri_month = $month;
+    $hijri_day = $day;
+    
+    // Adjust for Hijri calendar differences
+    if ($month > 7) {
+        $hijri_year++;
+    }
+    
+    $hijri_months = [
+        1 => 'Muharram', 2 => 'Safar', 3 => 'Rabi\' al-awwal', 4 => 'Rabi\' al-thani',
+        5 => 'Jumada al-awwal', 6 => 'Jumada al-thani', 7 => 'Rajab', 8 => 'Sha\'ban',
+        9 => 'Ramadan', 10 => 'Shawwal', 11 => 'Dhu al-Qi\'dah', 12 => 'Dhu al-Hijjah'
+    ];
+    
+    return $hijri_day . ' ' . $hijri_months[$hijri_month] . ' ' . $hijri_year;
 }

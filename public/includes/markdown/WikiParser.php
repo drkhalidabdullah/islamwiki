@@ -20,6 +20,7 @@ class WikiParser extends MarkdownParser {
     private $toc_position = 'auto';
     private $toc_limit = 0;
     private $notitle = false;
+    private $nocat = false;
     
     // Security settings
     private $allowed_tags = [
@@ -43,7 +44,11 @@ class WikiParser extends MarkdownParser {
         
         // Initialize template parser if PDO is available
         if (isset($GLOBALS['pdo']) && $GLOBALS['pdo']) {
-            $this->template_parser = new TemplateParser($GLOBALS['pdo']);
+            try {
+                $this->template_parser = new TemplateParser($GLOBALS['pdo']);
+            } catch (Exception $e) {
+                error_log("Failed to initialize TemplateParser: " . $e->getMessage());
+            }
         }
     }
     
@@ -60,6 +65,7 @@ class WikiParser extends MarkdownParser {
         $this->toc_position = 'auto';
         $this->toc_limit = 0;
         $this->notitle = false;
+        $this->nocat = false;
         
         // Parse magic words first (including TOC magic words)
         $content = $this->parseMagicWords($content);
@@ -137,6 +143,9 @@ class WikiParser extends MarkdownParser {
                 return '<!-- TOC_POSITION -->';
             case 'NOTITLE':
                 $this->notitle = true;
+                return '';
+            case 'NOCAT':
+                $this->nocat = true;
                 return '';
             case 'NOEDITSECTION':
                 // Not implemented yet
@@ -694,6 +703,13 @@ class WikiParser extends MarkdownParser {
     }
     
     /**
+     * Get parsed categories
+     */
+    public function getCategories() {
+        return $this->categories;
+    }
+    
+    /**
      * Parse templates: {{Template Name|param1|param2}}
      */
     private function parseTemplates($content) {
@@ -701,10 +717,34 @@ class WikiParser extends MarkdownParser {
             return $content;
         }
         
+        // First handle includeonly/noinclude tags
+        $content = $this->parseIncludeOnlyTags($content);
+        
         $pattern = '/\{\{([^}]+)\}\}/';
         
         return preg_replace_callback($pattern, function($matches) {
             $template_content = $matches[1];
+            
+            // Handle MediaWiki-style parser functions like {{#time:format}}
+            if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
+                $function_name = trim($func_matches[1]);
+                $function_params = trim($func_matches[2]);
+                
+                if ($function_name === 'time') {
+                    return date($function_params);
+                } elseif ($function_name === 'invoke') {
+                    // Handle {{#invoke:Module|function|params}}
+                    $invoke_parts = explode('|', $function_params);
+                    $module = trim($invoke_parts[0]);
+                    $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'current';
+                    
+                    if ($module === 'Hijri' && $function === 'current') {
+                        return get_hijri_date();
+                    }
+                }
+                
+                return "{{#$function_name:$function_params}}"; // Return unchanged if not handled
+            }
             
             // Parse template name and parameters, being careful not to split wiki links
             $parts = $this->parseTemplateParameters($template_content);
@@ -723,6 +763,23 @@ class WikiParser extends MarkdownParser {
             
             return $this->template_parser->parseTemplate($template_name, $parameters);
         }, $content);
+    }
+    
+    /**
+     * Parse includeonly/noinclude tags
+     */
+    private function parseIncludeOnlyTags($content) {
+        // Handle <includeonly>content</includeonly> - only include the content
+        $content = preg_replace_callback('/<includeonly>(.*?)<\/includeonly>/s', function($matches) {
+            return $matches[1]; // Return just the content inside includeonly
+        }, $content);
+        
+        // Handle <noinclude>content</noinclude> - remove the content
+        $content = preg_replace_callback('/<noinclude>(.*?)<\/noinclude>/s', function($matches) {
+            return ''; // Remove noinclude content
+        }, $content);
+        
+        return $content;
     }
     
     /**
@@ -1269,9 +1326,6 @@ class WikiParser extends MarkdownParser {
     }
     
     // Getters for debugging and external access
-    public function getCategories() {
-        return $this->categories;
-    }
     
     public function getReferences() {
         return $this->references;
@@ -1299,6 +1353,10 @@ class WikiParser extends MarkdownParser {
     
     public function isNotitleEnabled() {
         return $this->notitle;
+    }
+    
+    public function isNocatEnabled() {
+        return $this->nocat;
     }
     
     public function getAllowedTags() {

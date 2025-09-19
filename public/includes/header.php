@@ -141,6 +141,12 @@ if ($toast_message) {
                     <i class="iw iw-book"></i>
                 </a>
                 <?php endif; ?>
+                
+                <?php if (is_logged_in() && $enable_social): ?>
+                <a href="/feed" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/feed') === 0) ? 'active' : ''; ?>" title="Feed">
+                    <i class="iw iw-rss"></i>
+                </a>
+                <?php endif; ?>
             </div>
         </div>
         

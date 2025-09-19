@@ -1,6 +1,6 @@
 <?php
 // Handle account actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
     if ($action === 'deactivate_account') {
@@ -98,7 +98,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $result = $stmt->fetch();
 $storage_usage['posts'] = $result['count'];
 
-$stmt = $pdo->prepare("SELECT COUNT(*) as count FROM wiki_articles WHERE created_by = ?");
+$stmt = $pdo->prepare("SELECT COUNT(*) as count FROM wiki_articles WHERE author_id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $result = $stmt->fetch();
 $storage_usage['articles'] = $result['count'];
@@ -252,3 +252,5 @@ $storage_usage['articles'] = $result['count'];
     </div>
 </div>
 
+
+<script src="/skins/bismillah/assets/js/user_settings_account.js"></script>

@@ -35,6 +35,19 @@ class TemplateParser {
                 return '<!-- TOC_LIMIT:' . $limit . ' -->';
             }
             
+            // Handle special template functions
+            if (strtolower($template_name) === 'numberofpages') {
+                return get_total_article_count();
+            }
+            
+            if (strtolower($template_name) === 'time') {
+                return date('H:i, d F Y');
+            }
+            
+            if (strtolower($template_name) === 'invoke') {
+                return get_hijri_date();
+            }
+            
             $template = $this->getTemplate($template_name);
             if (!$template) {
                 return "{{Template not found: $template_name}}";
@@ -365,7 +378,19 @@ class TemplateParser {
      * Parse conditionals with improved regex
      */
     private function parseConditionalsImproved($content, $parameters) {
-        // Parse {{#if:condition|true|false}} syntax with more flexible matching
+        // First handle {{#param}}...{{/param}} syntax
+        $content = preg_replace_callback('/\{\{#([^}]+)\}\}(.*?)\{\{\/\1\}\}/s', function($matches) use ($parameters) {
+            $param_name = trim($matches[1]);
+            $content = $matches[2];
+            
+            if (isset($parameters[$param_name]) && !empty($parameters[$param_name])) {
+                return $content;
+            } else {
+                return '';
+            }
+        }, $content);
+        
+        // Then parse {{#if:condition|true|false}} syntax with more flexible matching
         return preg_replace_callback('/\{\{#if:([^|]+)\|([^|]+)\|([^}]+)\}\}/', function($matches) use ($parameters) {
             $condition = trim($matches[1]);
             $true_value = trim($matches[2]);

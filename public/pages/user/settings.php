@@ -110,7 +110,10 @@ include "../../includes/header.php";
 <script src="/skins/bismillah/assets/js/bismillah.js"></script>
 <?php
 ?>
-<link rel="stylesheet" href="/skins/bismillah/assets/css/settings.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/settings_enhanced.css">
+<?php if ($page === 'skin'): ?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/skin_selection.css">
+<?php endif; ?>
 <?php
 ?>
 
@@ -168,8 +171,8 @@ include "../../includes/header.php";
                     </a>
                 </li>
                 <?php if (get_system_setting('allow_skin_selection', true)): ?>
-                <li class="nav-item">
-                    <a href="/skin_selection" class="nav-link">
+                <li class="nav-item <?php echo $page === 'skin' ? 'active' : ''; ?>">
+                    <a href="?page=skin" class="nav-link">
                         <i class="iw iw-palette"></i>
                         <span>Skin Selection</span>
                     </a>
@@ -205,6 +208,9 @@ include "../../includes/header.php";
                 case 'preferences':
                     include 'settings/preferences.php';
                     break;
+                case 'skin':
+                    include 'settings/skin.php';
+                    break;
                 case 'account':
                     include 'settings/account.php';
                     break;
@@ -218,4 +224,4 @@ include "../../includes/header.php";
 </div>
 
 
-<?php include "../../includes/footer.php";; ?>
+<?php include "../../includes/footer.php"; ?>

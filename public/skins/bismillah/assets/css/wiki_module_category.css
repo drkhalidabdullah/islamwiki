@@ -1,47 +1,405 @@
-.category-container {
-    max-width: 1000px;
+/* Wiki Category Module Styles */
+
+/* Category Page Layout */
+.wiki-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2.5rem;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 1.5rem;
+    min-height: 100vh;
 }
 
-.category-header {
-    margin-bottom: 3rem;
+.wiki-main-content {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    padding: 2rem;
 }
 
-.category-header .card {
-    text-align: center;
+.wiki-tools {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    height: fit-content;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.category-header h1 {
+/* Category Header */
+.article-content h1 {
     color: #2c3e50;
-    margin-bottom: 1rem;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 0.75rem;
+    font-weight: 700;
 }
 
 .category-description {
-    color: #666;
-    font-size: 1.1rem;
+    background: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 1.25rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #6c757d;
+    font-size: 1.05rem;
+    line-height: 1.6;
 }
 
-.articles-grid {
+/* Categories List */
+.categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.category-link {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.category-link:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+/* Article Categories (on article pages) */
+.article-categories {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.article-categories h3 {
+    color: #495057;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Subcategories */
+.category-subcategories {
+    margin: 2.5rem 0;
+    padding: 0 0.5rem;
+}
+
+.category-subcategories h3 {
+    color: #495057;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.subcategories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.subcategory-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.subcategory-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.15);
+    transform: translateY(-1px);
+}
+
+.subcategory-link {
+    display: block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.subcategory-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.article-count {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Category Articles */
+.category-articles {
+    margin: 2.5rem 0;
+    padding: 0 0.5rem;
+}
+
+.category-articles h3 {
+    color: #495057;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.article-count-info {
+    color: #6c757d;
+    margin-bottom: 2rem;
+    font-style: italic;
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+}
+
+.articles-list {
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.article-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.article-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.15);
+    transform: translateY(-1px);
+}
+
+.article-link {
+    display: block;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.article-link:hover {
+    color: #0056b3;
+    text-decoration: none;
 }
 
 .article-meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #666;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e9ecef;
 }
 
+.article-meta .last-updated {
+    display: block;
+    font-style: italic;
+    line-height: 1.5;
+    padding: 0.25rem 0;
+}
+
+/* No Articles State */
+.no-articles {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.no-articles p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Tools Section */
+.tools-section {
+    margin-bottom: 2rem;
+}
+
+.tools-section h3 {
+    color: #495057;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.tools-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tools-list li {
+    margin-bottom: 0.5rem;
+}
+
+.tool-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #007bff;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.tool-link:hover {
+    background: #e3f2fd;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Statistics */
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.stat-value {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .articles-grid {
+    .wiki-layout {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0.75rem;
+    }
+    
+    .wiki-main-content {
+        padding: 1.5rem;
+    }
+    
+    .subcategories-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .article-item {
+        padding: 1.25rem;
     }
     
     .article-meta {
-        flex-direction: column;
-        gap: 0.5rem;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    
+    .categories-list {
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .category-articles,
+    .category-subcategories,
+    .category-parents {
+        padding: 0;
+        margin: 2rem 0;
+    }
+}
+
+/* Parent Categories */
+.category-parents {
+    margin: 2rem 0;
+    padding: 0 0.5rem;
+}
+
+.category-parents h3 {
+    color: #495057;
+    font-size: 1.3rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .wiki-main-content {
+        background: #1a1a1a;
+        color: #e9ecef;
+    }
+    
+    .wiki-tools {
+        background: #2d2d2d;
+    }
+    
+    .article-content h1 {
+        color: #e9ecef;
+    }
+    
+    .category-description {
+        background: #2d2d2d;
+        color: #adb5bd;
+    }
+    
+    .subcategory-item,
+    .article-item {
+        background: #2d2d2d;
+        border-color: #495057;
+    }
+    
+    .subcategory-item:hover,
+    .article-item:hover {
+        border-color: #007bff;
+    }
+    
+    .tools-section h3 {
+        color: #e9ecef;
+        border-color: #495057;
+    }
+    
+    .stat-label {
+        color: #adb5bd;
+    }
+    
+    .stat-value {
+        color: #e9ecef;
     }
 }

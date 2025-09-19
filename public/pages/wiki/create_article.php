@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_input($_POST['title'] ?? '');
     $content = $_POST['content'] ?? '';
     $excerpt = sanitize_input($_POST['excerpt'] ?? '');
-    $category_id = (int)($_POST['category_id'] ?? 0);
     // Set status based on user role
     $status = is_editor() ? sanitize_input($_POST['status'] ?? 'draft') : 'pending_approval';
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
@@ -60,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare("
                 INSERT INTO wiki_articles 
-                (title, slug, content, excerpt, category_id, author_id, status, is_featured, created_at, updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                (title, slug, content, excerpt, author_id, status, is_featured, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
             ");
             
             $stmt->execute([
@@ -69,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $slug,
                 $content,
                 $excerpt,
-                $category_id ?: null,
                 $_SESSION['user_id'],
                 $status,
                 $is_featured
@@ -119,9 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get categories
-$stmt = $pdo->query("SELECT * FROM content_categories WHERE is_active = 1 ORDER BY name");
-$categories = $stmt->fetchAll();
+// Categories are now handled via [[Category:Name]] syntax in content
 
 include "../../includes/header.php";;
 
@@ -149,26 +145,11 @@ include "../../includes/header.php";;
     <?php endif; ?>
     
     <form method="POST" class="article-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="title">Title *</label>
-                <input type="text" id="title" name="title" required 
-                       value="<?php echo htmlspecialchars($_POST['title'] ?? $_GET['title'] ?? ''); ?>"
-                       placeholder="Enter article title">
-            </div>
-            
-            <div class="form-group">
-                <label for="category_id">Category</label>
-                <select id="category_id" name="category_id">
-                    <option value="">Select a category</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?php echo $category['id']; ?>" 
-                                <?php echo (($_POST['category_id'] ?? '') == $category['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="title">Title *</label>
+            <input type="text" id="title" name="title" required 
+                   value="<?php echo htmlspecialchars($_POST['title'] ?? $_GET['title'] ?? ''); ?>"
+                   placeholder="Enter article title">
         </div>
         
         <div class="form-group">
@@ -187,6 +168,10 @@ include "../../includes/header.php";;
                 <div id="preview-container" style="display: none;">
                     <div id="preview-content"></div>
                 </div>
+            </div>
+            <div class="form-help">
+                <strong>Categories:</strong> Add categories at the end of your content using <code>[[Category:Category Name]]</code> syntax.<br>
+                <strong>Example:</strong> <code>[[Category:Islam]] [[Category:Religions]] [[Category:Theology]]</code>
             </div>
         </div>
         

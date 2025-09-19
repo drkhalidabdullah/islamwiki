@@ -56,7 +56,7 @@ $stmt = $pdo->query("SELECT COUNT(*) as count FROM wiki_articles WHERE created_a
 $stats['new_articles_30d'] = $stmt->fetch()['count'];
 
 // Category statistics
-$stmt = $pdo->query("SELECT COUNT(*) as count FROM content_categories");
+$stmt = $pdo->query("SELECT COUNT(*) as count FROM wiki_categories");
 $stats['total_categories'] = $stmt->fetch()['count'];
 
 // File statistics
@@ -496,4 +496,4 @@ include "../../includes/header.php";
 
 
 
-<?php include "../../includes/footer.php";; ?>
+<?php include "../../includes/footer.php"; ?>

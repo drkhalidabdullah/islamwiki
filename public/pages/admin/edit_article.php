@@ -40,7 +40,6 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_input($_POST['title'] ?? '');
     $content = $_POST['content'] ?? '';
-    $category_id = (int)($_POST['category_id'] ?? 0);
     $status = $_POST['status'] ?? 'draft';
     $tags = sanitize_input($_POST['tags'] ?? '');
     
@@ -59,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $pdo->prepare("
                 UPDATE wiki_articles 
-                SET title = ?, slug = ?, content = ?, category_id = ?, status = ?, tags = ?, updated_at = NOW() 
+                SET title = ?, slug = ?, content = ?, status = ?, tags = ?, updated_at = NOW() 
                 WHERE id = ?
             ");
             
-            if ($stmt->execute([$title, $slug, $content, $category_id ?: null, $status, $tags, $article_id])) {
+            if ($stmt->execute([$title, $slug, $content, $status, $tags, $article_id])) {
                 $success = 'Article updated successfully.';
                 log_activity('article_updated', "Updated article: $title (ID: $article_id)");
                 
@@ -85,9 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get categories for dropdown
-$stmt = $pdo->query("SELECT id, name FROM content_categories ORDER BY name");
-$categories = $stmt->fetchAll();
+// Categories are now handled via [[Category:Name]] syntax in content
 
 include "../../includes/header.php";
 
@@ -121,27 +118,13 @@ include "../../includes/header.php";
                 <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($article['title']); ?>" required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="category_id">Category</label>
-                    <select id="category_id" name="category_id">
-                        <option value="">Select Category</option>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo $category['id']; ?>" <?php echo $article['category_id'] == $category['id'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($category['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft</option>
-                        <option value="published" <?php echo $article['status'] === 'published' ? 'selected' : ''; ?>>Published</option>
-                        <option value="archived" <?php echo $article['status'] === 'archived' ? 'selected' : ''; ?>>Archived</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                    <option value="published" <?php echo $article['status'] === 'published' ? 'selected' : ''; ?>>Published</option>
+                    <option value="archived" <?php echo $article['status'] === 'archived' ? 'selected' : ''; ?>>Archived</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -152,7 +135,11 @@ include "../../includes/header.php";
             <div class="form-group">
                 <label for="content">Content *</label>
                 <textarea id="content" name="content" rows="20" required><?php echo htmlspecialchars($article['content']); ?></textarea>
-                <small class="form-help">Use Markdown formatting for rich text content.</small>
+                <small class="form-help">
+                    Use Markdown formatting for rich text content.<br>
+                    <strong>Categories:</strong> Add categories at the end of your content using <code>[[Category:Category Name]]</code> syntax.<br>
+                    <strong>Example:</strong> <code>[[Category:Islam]] [[Category:Religions]] [[Category:Theology]]</code>
+                </small>
             </div>
 
             <div class="article-meta">

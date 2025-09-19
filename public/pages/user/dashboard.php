@@ -3,6 +3,7 @@ require_once '../../config/config.php';
 require_once '../../includes/functions.php';
 require_once '../../includes/analytics.php';
 require_once '../../includes/markdown/MarkdownParser.php';
+require_once '../../includes/markdown/WikiParser.php';
 
 $page_title = 'Dashboard';
 check_maintenance_mode();
@@ -102,10 +103,10 @@ $recent_posts = $stmt->fetchAll();
 
 // Get recent published articles
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'article' as content_type
+    SELECT wa.*, u.username, u.display_name, u.avatar, 'article' as content_type
         FROM wiki_articles wa 
         JOIN users u ON wa.author_id = u.id 
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    -- Categories now handled via wiki_categories table
     WHERE wa.status = 'published'
     ORDER BY wa.published_at DESC
     LIMIT 10
@@ -115,10 +116,10 @@ $recent_articles = $stmt->fetchAll();
 
 // Get featured articles
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'featured_article' as content_type
+    SELECT wa.*, u.username, u.display_name, u.avatar, 'featured_article' as content_type
     FROM wiki_articles wa
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    -- Categories now handled via wiki_categories table
     WHERE wa.status = 'published' AND wa.is_featured = 1
     ORDER BY wa.published_at DESC
     LIMIT 5
@@ -128,10 +129,10 @@ $featured_articles = $stmt->fetchAll();
 
 // Get user's own content
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'my_article' as content_type
+    SELECT wa.*, u.username, u.display_name, u.avatar, 'my_article' as content_type
     FROM wiki_articles wa
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    -- Categories now handled via wiki_categories table
     WHERE wa.author_id = ?
         ORDER BY wa.created_at DESC
     LIMIT 5
@@ -153,11 +154,11 @@ $my_posts = $stmt->fetchAll();
 
 // Get user's watchlist
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'watchlist' as content_type
+    SELECT wa.*, u.username, u.display_name, u.avatar, 'watchlist' as content_type
     FROM user_watchlists uw
     JOIN wiki_articles wa ON uw.article_id = wa.id
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    -- Categories now handled via wiki_categories table
     WHERE uw.user_id = ? AND wa.status = 'published'
     ORDER BY uw.created_at DESC
     LIMIT 5
@@ -167,10 +168,10 @@ $watchlist_articles = $stmt->fetchAll();
 
 // Get trending content
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'trending' as content_type
+    SELECT wa.*, u.username, u.display_name, u.avatar, 'trending' as content_type
     FROM wiki_articles wa
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
+    -- Categories now handled via wiki_categories table
     WHERE wa.status = 'published'
     ORDER BY wa.view_count DESC, wa.published_at DESC
     LIMIT 5
@@ -292,7 +293,7 @@ include "../../includes/header.php";
             <div class="feed-header">
                 <h1>Your Feed</h1>
                 <div class="feed-filters">
-                    <button class="filter-btn" data-filter="all">All</button>
+                    <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="posts">Posts</button>
                     <button class="filter-btn" data-filter="articles">Articles</button>
                     <button class="filter-btn" data-filter="following">Following</button>
@@ -468,10 +469,10 @@ include "../../includes/header.php";
                     
                     // Get articles from followed users only
                     $stmt = $pdo->prepare("
-                        SELECT wa.*, u.username, u.display_name, u.avatar, cc.name as category_name, 'article' as content_type
+                        SELECT wa.*, u.username, u.display_name, u.avatar, 'article' as content_type
                         FROM wiki_articles wa
                         JOIN users u ON wa.author_id = u.id
-                        LEFT JOIN content_categories cc ON wa.category_id = cc.id
+                        -- Categories now handled via wiki_categories table
                         WHERE wa.author_id IN ($placeholders) AND wa.status = 'published'
                         ORDER BY wa.published_at DESC
                         LIMIT 20
@@ -526,8 +527,8 @@ include "../../includes/header.php";
                 ?>
                 
                 <div class="unified-feed">
-                    <!-- Following Content (Default) -->
-                    <div class="feed-section" id="following-content">
+                    <!-- Following Content -->
+                    <div class="feed-section" id="following-content" style="display: none;">
                         <?php if (!empty($following_content)): ?>
                             <?php foreach (array_slice($following_content, 0, 20) as $item): ?>
                             <div class="feed-item" data-type="<?php echo $item['content_type']; ?>" data-filter="following" <?php echo $item['content_type'] === 'post' ? 'data-post-id="' . $item['id'] . '"' : ''; ?>>
@@ -579,9 +580,21 @@ include "../../includes/header.php";
                                 <div class="card-content">
                                     <h4><a href="/wiki/<?php echo $item['slug']; ?>"><?php echo htmlspecialchars($item['title']); ?></a></h4>
                                     <p><?php echo htmlspecialchars(truncate_text($item['excerpt'] ?: strip_tags($item['content']), 150)); ?></p>
-                                    <?php if (isset($item['category_name']) && $item['category_name']): ?>
-                                    <span class="category-tag"><?php echo htmlspecialchars($item['category_name']); ?></span>
-        <?php endif; ?>
+                                    <?php 
+                                    // Get categories for this article
+                                    $article_categories = get_article_categories($item['id']);
+                                    if (!empty($article_categories)): 
+                                    ?>
+                                    <div class="category-tags">
+                                        <?php foreach ($article_categories as $category): ?>
+                                        <span class="category-tag">
+                                            <a href="/wiki/category/<?php echo htmlspecialchars($category['slug']); ?>">
+                                                <?php echo htmlspecialchars($category['name']); ?>
+                                            </a>
+                                        </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php endif; ?>
                                     <div class="article-meta">
                                         <span class="updated-by">Updated by: <a href="/pages/user/user_profile.php?username=<?php echo urlencode($item['username']); ?>"><?php echo htmlspecialchars($item['display_name'] ?: $item['username']); ?></a> on <?php echo format_date($item['updated_at'] ?? $item['published_at']); ?></span>
     </div>
@@ -670,10 +683,31 @@ include "../../includes/header.php";
                                 </div>
                                 <div class="card-content">
                                     <h4><a href="/wiki/<?php echo $item['slug']; ?>"><?php echo htmlspecialchars($item['title']); ?></a></h4>
-                                    <p><?php echo htmlspecialchars(truncate_text($item['excerpt'] ?: strip_tags($item['content']), 150)); ?></p>
-                                    <?php if (isset($item['category_name']) && $item['category_name']): ?>
-                                    <span class="category-tag"><?php echo htmlspecialchars($item['category_name']); ?></span>
-    <?php endif; ?>
+                                    <p><?php 
+                                        // Use WikiParser for articles to properly parse templates
+                                        if ($item['content_type'] === 'article' || $item['content_type'] === 'featured_article') {
+                                            $parser = new WikiParser('');
+                                            $parsed_content = $parser->parse($item['content']);
+                                            echo htmlspecialchars(truncate_text($item['excerpt'] ?: strip_tags($parsed_content), 150));
+                                        } else {
+                                            echo htmlspecialchars(truncate_text($item['excerpt'] ?: strip_tags($item['content']), 150));
+                                        }
+                                    ?></p>
+                                    <?php 
+                                    // Get categories for this article
+                                    $article_categories = get_article_categories($item['id']);
+                                    if (!empty($article_categories)): 
+                                    ?>
+                                    <div class="category-tags">
+                                        <?php foreach ($article_categories as $category): ?>
+                                        <span class="category-tag">
+                                            <a href="/wiki/category/<?php echo htmlspecialchars($category['slug']); ?>">
+                                                <?php echo htmlspecialchars($category['name']); ?>
+                                            </a>
+                                        </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php endif; ?>
                                     <div class="article-meta">
                                         <span class="updated-by">Updated by: <a href="/pages/user/user_profile.php?username=<?php echo urlencode($item['username']); ?>"><?php echo htmlspecialchars($item['display_name'] ?: $item['username']); ?></a> on <?php echo format_date($item['updated_at'] ?? $item['published_at']); ?></span>
                                     </div>

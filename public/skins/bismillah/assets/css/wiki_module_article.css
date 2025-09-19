@@ -43,6 +43,295 @@
     gap: 0.5rem;
 }
 
+/* Categories at top of article */
+.article-categories-top {
+    margin: 1rem 0;
+    width: 100%;
+}
+
+/* When categories are hidden, reduce top margin of hero section */
+.article-header-compact.no-categories .article-header-top {
+    margin-bottom: 0.5rem;
+}
+
+.article-header-compact.no-categories .article-header-bottom {
+    margin-top: 0.5rem;
+}
+
+.article-categories-top .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.category-button {
+    display: inline-block;
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.category-button:hover {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.category-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 123, 255, 0.2);
+}
+
+/* Responsive design for category buttons */
+@media (max-width: 768px) {
+    .article-categories-top .categories-list {
+        justify-content: flex-start;
+    }
+    
+    .category-button {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+/* Dark mode support for category buttons */
+@media (prefers-color-scheme: dark) {
+    .category-button {
+        background: #2d2d2d;
+        color: #e9ecef;
+        border-color: #495057;
+    }
+    
+    .category-button:hover {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+}
+
+/* Guest Engagement Banner */
+.guest-engagement-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.banner-icon {
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.banner-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.banner-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.banner-text h4 {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.banner-text p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.banner-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.banner-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.banner-actions .btn-primary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.banner-actions .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.banner-actions .btn-outline {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.banner-actions .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+}
+
+/* Responsive design for guest engagement banner */
+@media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .banner-text {
+        min-width: auto;
+    }
+    
+    .banner-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .banner-actions .btn {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+/* Dark mode support for guest engagement banner */
+@media (prefers-color-scheme: dark) {
+    .guest-engagement-banner {
+        background: linear-gradient(135deg, #4c63d2 0%, #5a4fcf 100%);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Template Styles */
+.further-information {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #007bff;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.further-information strong {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.main-article {
+    background: #e8f4fd;
+    border: 1px solid #bee5eb;
+    border-left: 4px solid #17a2b8;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.main-article strong {
+    color: #17a2b8;
+    font-weight: 600;
+}
+
+.see-also {
+    background: #f0f8f0;
+    border: 1px solid #c3e6c3;
+    border-left: 4px solid #28a745;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.see-also strong {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Dark mode support for templates */
+@media (prefers-color-scheme: dark) {
+    .further-information {
+        background: #2d2d2d;
+        border-color: #495057;
+        border-left-color: #007bff;
+        color: #e9ecef;
+    }
+    
+    .further-information strong {
+        color: #66b3ff;
+    }
+    
+    .main-article {
+        background: #1a2a3a;
+        border-color: #495057;
+        border-left-color: #17a2b8;
+        color: #e9ecef;
+    }
+    
+    .main-article strong {
+        color: #5bc0de;
+    }
+    
+    .see-also {
+        background: #1a3a1a;
+        border-color: #495057;
+        border-left-color: #28a745;
+        color: #e9ecef;
+    }
+    
+    .see-also strong {
+        color: #5cb85c;
+    }
+}
+
 .article-header-bottom {
     display: flex;
     justify-content: space-between;
@@ -1201,6 +1490,77 @@
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
+}
+
+/* Sidebar Template Styles */
+.sidebar-template {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.sidebar-template .sidebar-header h3 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.sidebar-template .sidebar-image {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.sidebar-template .sidebar-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sidebar-template .sidebar-caption {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.sidebar-template .sidebar-section {
+    margin-bottom: 1rem;
+}
+
+.sidebar-template .sidebar-section h4 {
+    margin: 0 0 0.5rem 0;
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+}
+
+.sidebar-template .sidebar-content {
+    padding-left: 0.5rem;
+}
+
+.sidebar-template .sidebar-content ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.sidebar-template .sidebar-content li {
+    margin-bottom: 0.2rem;
+    font-size: 0.85rem;
+}
+
+.sidebar-template .sidebar-content strong {
+    color: #495057;
 }
 
 

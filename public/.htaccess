@@ -70,6 +70,7 @@ RewriteRule ^api/ajax/send_message/?$ /api/ajax/send_message.php [L,QSA]
 RewriteRule ^api/ajax/get_messages/?$ /api/ajax/get_messages.php [L,QSA]
 
 # Social pages
+RewriteRule ^feed/?$ /pages/social/feed.php [L,QSA]
 RewriteRule ^friends/?$ /pages/social/friends.php [L,QSA]
 RewriteRule ^friends/requests/?$ /modules/friends/requests.php [L,QSA]
 RewriteRule ^friends/suggestions/?$ /modules/friends/suggestions.php [L,QSA]

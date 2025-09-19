@@ -57,11 +57,10 @@ if ($redirect) {
 
 // Get article (handle both regular articles and namespace articles)
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, cc.name as category_name, cc.slug as category_slug,
+    SELECT wa.*, u.username, u.display_name,
            wn.name as namespace_name, wn.display_name as namespace_display_name
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id 
     LEFT JOIN wiki_namespaces wn ON wa.namespace_id = wn.id
     WHERE (wa.slug = ? OR wa.slug = ?) 
     AND (wa.status = 'published' OR (wa.status = 'draft' AND (wa.author_id = ? OR ?)))
@@ -74,6 +73,13 @@ if (!$article) {
     if ($title && strpos($title, 'Template:') === 0) {
         $template_name = substr($title, 9); // Remove "Template:" prefix
         redirect("/pages/wiki/create_template.php?name=" . urlencode($template_name));
+    }
+    
+    // Check if this is a category namespace request
+    if ($title && strpos($title, 'Category:') === 0) {
+        $category_name = substr($title, 9); // Remove "Category:" prefix
+        $category_slug = createSlug($category_name);
+        redirect("/wiki/category/" . urlencode($category_slug));
     }
     
     redirect("not_found.php?slug=" . urlencode($slug) . "&title=" . urlencode(ucfirst(str_replace('-', ' ', $slug))));
@@ -89,8 +95,20 @@ $page_title = $article['title'];
 $parser = new WikiParser('');
 $parsed_content = $parser->parse($article['content']);
 
+// Update article categories in database
+$categories = $parser->getCategories();
+if (!empty($categories)) {
+    update_article_categories($article['id'], $categories);
+}
+
+// Get current article categories for display
+$article_categories = get_article_categories($article['id']);
+
 // Check if NOTITLE is enabled
 $notitle_enabled = $parser->isNotitleEnabled();
+
+// Check if NOCAT is enabled
+$nocat_enabled = $parser->isNocatEnabled();
 
 // Set global variables for magic words
 $GLOBALS['current_page_name'] = $article['title'];
@@ -124,7 +142,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
 <article class="card">
         <header class="article-header">
             <!-- Compact Header Layout -->
-            <div class="article-header-compact">
+            <div class="article-header-compact<?php echo $nocat_enabled ? ' no-categories' : ''; ?>">
                 <!-- Top Row: Title on left, Tools on right -->
                 <div class="article-header-top<?php echo !$notitle_enabled ? ' with-title' : ''; ?>">
                     <?php if (!$notitle_enabled): ?>
@@ -204,17 +222,25 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                     </div>
                 </div>
                 
-                <!-- Bottom Row: Category on left, Date and Views on right -->
+                <!-- Categories Section -->
+                <?php if (!empty($article_categories) && !$nocat_enabled): ?>
+                <div class="article-categories-top">
+                    <div class="categories-list">
+                        <?php foreach ($article_categories as $category): ?>
+                        <a href="/wiki/category/<?php echo htmlspecialchars($category['slug']); ?>" 
+                           class="category-button" 
+                           title="<?php echo htmlspecialchars($category['description'] ?? ''); ?>">
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Bottom Row: Date and Views on right -->
                 <div class="article-header-bottom">
                     <div class="article-category-compact">
-                        <?php if ($article['category_name']): ?>
-                            <a href="/wiki/category/<?php echo $article['category_slug']; ?>" class="category-tag-compact">
-                                <i class="iw iw-folder"></i>
-                                <?php echo htmlspecialchars($article['category_name']); ?>
-                            </a>
-                        <?php else: ?>
-                            <span class="no-category">No category</span>
-                        <?php endif; ?>
+                        <!-- Categories are now displayed at the top as buttons -->
                     </div>
                     <div class="article-meta-compact">
                         <span class="article-date-compact">
@@ -305,12 +331,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <i class="iw iw-edit"></i>
                             <span>Last edited <?php echo date('M j, Y', strtotime($article['updated_at'])); ?></span>
                         </div>
-                        <?php if ($article['category_name']): ?>
-                        <div class="stat-item">
-                            <i class="iw iw-folder"></i>
-                            <span>Category: <?php echo htmlspecialchars($article['category_name']); ?></span>
-                        </div>
-                        <?php endif; ?>
+                        <!-- Categories are now displayed at the top as buttons -->
                     </div>
                 </div>
                 
@@ -388,21 +409,27 @@ $is_main_page = ($article['slug'] === 'Main_Page');
     </article>
     
     <!-- Related Articles -->
-    <?php if ($article['category_id']): ?>
     <?php
-    // Get related articles (same category, excluding current)
-    $stmt = $pdo->prepare("
-        SELECT wa.*, u.display_name, u.username 
-        FROM wiki_articles wa 
-        JOIN users u ON wa.author_id = u.id 
-        WHERE wa.category_id = ? AND wa.id != ? AND wa.status = 'published' 
-        ORDER BY wa.published_at DESC 
-        LIMIT 3
-    ");
-    $stmt->execute([$article['category_id'], $article['id']]);
-    $related_articles = $stmt->fetchAll();
-    
-    if (!empty($related_articles)):
+    // Get related articles based on shared categories
+    $article_categories = get_article_categories($article['id']);
+    if (!empty($article_categories)) {
+        $category_ids = array_column($article_categories, 'id');
+        $placeholders = str_repeat('?,', count($category_ids) - 1) . '?';
+        
+        $stmt = $pdo->prepare("
+            SELECT DISTINCT wa.*, u.display_name, u.username 
+            FROM wiki_articles wa 
+            JOIN users u ON wa.author_id = u.id 
+            JOIN wiki_article_categories wac ON wa.id = wac.article_id
+            WHERE wac.category_id IN ($placeholders) AND wa.id != ? AND wa.status = 'published' 
+            ORDER BY wa.published_at DESC 
+            LIMIT 3
+        ");
+        $params = array_merge($category_ids, [$article['id']]);
+        $stmt->execute($params);
+        $related_articles = $stmt->fetchAll();
+        
+        if (!empty($related_articles)):
     ?>
     <div class="related-articles">
         <h3>Related Articles</h3>
@@ -418,8 +445,10 @@ $is_main_page = ($article['slug'] === 'Main_Page');
             <?php endforeach; ?>
         </div>
     </div>
-    <?php endif; ?>
-    <?php endif; ?>
+    <?php 
+        endif;
+    }
+    ?>
 
     <!-- Footer -->
     <?php include_once '/var/www/html/public/includes/footer.php'; ?>

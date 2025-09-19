@@ -130,7 +130,7 @@ function get_content_for_moderation($content_type, $content_id) {
                 SELECT wa.*, u.username, u.display_name, cc.name as category_name
                 FROM wiki_articles wa
                 JOIN users u ON wa.author_id = u.id
-                LEFT JOIN content_categories cc ON wa.category_id = cc.id
+                -- Categories now handled via wiki_categories table
                 WHERE wa.id = ?
             ");
             break;

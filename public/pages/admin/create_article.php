@@ -19,7 +19,6 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitize_input($_POST['title'] ?? '');
     $content = $_POST['content'] ?? '';
-    $category_id = (int)($_POST['category_id'] ?? 0);
     $status = $_POST['status'] ?? 'draft';
     $tags = sanitize_input($_POST['tags'] ?? '');
     
@@ -37,11 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         try {
             $stmt = $pdo->prepare("
-                INSERT INTO wiki_articles (title, slug, content, author_id, category_id, status, tags, created_at, updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                INSERT INTO wiki_articles (title, slug, content, author_id, status, tags, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
             ");
             
-            if ($stmt->execute([$title, $slug, $content, $_SESSION['user_id'], $category_id ?: null, $status, $tags])) {
+            if ($stmt->execute([$title, $slug, $content, $_SESSION['user_id'], $status, $tags])) {
                 $article_id = $pdo->lastInsertId();
                 $success = 'Article created successfully.';
                 log_activity('article_created', "Created article: $title (ID: $article_id)");
@@ -57,9 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get categories for dropdown
-$stmt = $pdo->query("SELECT id, name FROM content_categories ORDER BY name");
-$categories = $stmt->fetchAll();
+// Categories are now handled via [[Category:Name]] syntax in content
 
 include "../../includes/header.php";
 
@@ -93,27 +90,13 @@ include "../../includes/header.php";
                 <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="category_id">Category</label>
-                    <select id="category_id" name="category_id">
-                        <option value="">Select Category</option>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo $category['id']; ?>" <?php echo ($_POST['category_id'] ?? '') == $category['id'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($category['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="draft" <?php echo ($_POST['status'] ?? 'draft') === 'draft' ? 'selected' : ''; ?>>Draft</option>
-                        <option value="published" <?php echo ($_POST['status'] ?? '') === 'published' ? 'selected' : ''; ?>>Published</option>
-                        <option value="archived" <?php echo ($_POST['status'] ?? '') === 'archived' ? 'selected' : ''; ?>>Archived</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="draft" <?php echo ($_POST['status'] ?? 'draft') === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                    <option value="published" <?php echo ($_POST['status'] ?? '') === 'published' ? 'selected' : ''; ?>>Published</option>
+                    <option value="archived" <?php echo ($_POST['status'] ?? '') === 'archived' ? 'selected' : ''; ?>>Archived</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -124,7 +107,11 @@ include "../../includes/header.php";
             <div class="form-group">
                 <label for="content">Content *</label>
                 <textarea id="content" name="content" rows="20" required><?php echo htmlspecialchars($_POST['content'] ?? ''); ?></textarea>
-                <small class="form-help">Use Markdown formatting for rich text content.</small>
+                <small class="form-help">
+                    Use Markdown formatting for rich text content.<br>
+                    <strong>Categories:</strong> Add categories at the end of your content using <code>[[Category:Category Name]]</code> syntax.<br>
+                    <strong>Example:</strong> <code>[[Category:Islam]] [[Category:Religions]] [[Category:Theology]]</code>
+                </small>
             </div>
 
             <div class="form-actions">

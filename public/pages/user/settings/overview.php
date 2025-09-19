@@ -81,8 +81,8 @@ try {
 }
 ?>
 
-<div class="settings-overview">
-    <div class="overview-header">
+<div class="settings-page">
+    <div class="page-header">
         <h2>Account Overview</h2>
         <p>Welcome back, <?php echo htmlspecialchars($current_user['display_name']); ?>! Here's a summary of your account activity.</p>
         
@@ -102,7 +102,12 @@ try {
         </div>
     </div>
 
-    <div class="stats-grid">
+    <div class="preferences-sections">
+        <div class="preferences-section">
+            <h3>Account Statistics</h3>
+            <p>Your activity and engagement metrics.</p>
+            
+            <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">
                 <i class="icon-posts"></i>
@@ -152,11 +157,13 @@ try {
                 <p>Comments</p>
             </div>
         </div>
-    </div>
+            </div>
+        </div>
 
-    <div class="overview-sections">
-        <div class="overview-section">
+        <div class="preferences-section">
             <h3>Quick Actions</h3>
+            <p>Common tasks and shortcuts.</p>
+            
             <div class="quick-actions">
                 <a href="?page=profile" class="quick-action">
                     <i class="icon-user"></i>
@@ -189,8 +196,9 @@ try {
             </div>
         </div>
 
-        <div class="overview-section">
+        <div class="preferences-section">
             <h3>Recent Posts</h3>
+            <p>Your latest posts and articles.</p>
             <div class="recent-content">
                 <?php if (empty($recent_posts)): ?>
                     <p class="no-content">No recent posts to display.</p>
@@ -207,8 +215,9 @@ try {
             </div>
         </div>
 
-        <div class="overview-section">
+        <div class="preferences-section">
             <h3>Recent Articles</h3>
+            <p>Your latest wiki articles.</p>
             <div class="recent-content">
                 <?php if (empty($recent_articles)): ?>
                     <p class="no-content">No recent articles to display.</p>

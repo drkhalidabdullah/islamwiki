@@ -9,10 +9,9 @@ $page_title = 'Home';
 
 // Get recent wiki articles
 $stmt = $pdo->query("
-    SELECT wa.*, u.username, u.display_name, cc.name as category_name
+    SELECT wa.*, u.username, u.display_name
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
     WHERE wa.status = 'published'
     ORDER BY wa.published_at DESC 
     LIMIT 8
@@ -21,10 +20,9 @@ $recent_articles = $stmt->fetchAll();
 
 // Get featured articles
 $stmt = $pdo->query("
-    SELECT wa.*, u.username, u.display_name, cc.name as category_name
+    SELECT wa.*, u.username, u.display_name
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id
     WHERE wa.status = 'published' AND wa.is_featured = 1
     ORDER BY wa.published_at DESC 
     LIMIT 6
@@ -49,7 +47,7 @@ if (is_logged_in()) {
 $total_articles = $pdo->query("SELECT COUNT(*) FROM wiki_articles WHERE status = 'published'")->fetchColumn();
 $total_users = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $total_posts = $pdo->query("SELECT COUNT(*) FROM user_posts WHERE is_public = 1")->fetchColumn();
-$total_categories = $pdo->query("SELECT COUNT(*) FROM content_categories WHERE is_active = 1")->fetchColumn();
+$total_categories = $pdo->query("SELECT COUNT(*) FROM wiki_categories")->fetchColumn();
 
 include 'includes/header.php';
 ?>
