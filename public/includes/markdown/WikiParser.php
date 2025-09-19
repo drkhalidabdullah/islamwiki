@@ -22,6 +22,11 @@ class WikiParser extends MarkdownParser {
     private $notitle = false;
     private $nocat = false;
     
+    // Template processing flag
+    private $is_processing_templates = false;
+    private $template_recursion_depth = 0;
+    private $max_template_recursion = 3;
+    
     // Security settings
     private $allowed_tags = [
         'p', 'br', 'strong', 'em', 'u', 's', 'code', 'pre', 'blockquote',
@@ -766,13 +771,13 @@ class WikiParser extends MarkdownParser {
             $template_name = trim(array_shift($parts));
             $parameters = [];
             
-            foreach ($parts as $part) {
+            foreach ($parts as $index => $part) {
                 $part = trim($part);
                 if (strpos($part, '=') !== false) {
                     list($key, $value) = explode('=', $part, 2);
                     $parameters[trim($key)] = trim($value);
                 } else {
-                    $parameters[] = $part;
+                    $parameters[(string)($index + 1)] = $part;
                 }
             }
             
@@ -780,8 +785,11 @@ class WikiParser extends MarkdownParser {
         }, $content);
         
         // Recursively process any remaining templates in the result
-        if ($result !== $content) {
+        // Limit recursion depth to prevent infinite loops
+        if ($result !== $content && $this->template_recursion_depth < $this->max_template_recursion) {
+            $this->template_recursion_depth++;
             $result = $this->parseTemplates($result);
+            $this->template_recursion_depth--;
         }
         
         return $result;

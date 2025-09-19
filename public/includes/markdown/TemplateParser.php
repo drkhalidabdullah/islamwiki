@@ -63,10 +63,13 @@ class TemplateParser {
             // Parse includeonly/noinclude tags first
             $content = $this->parseIncludeOnlyTags($content);
             
-            // Parse any templates in the content first (including {{#invoke}})
+            // Parse triple braces first (parameters)
+            $content = $this->parseTripleBraces($content, $parameters);
+            
+            // Parse any templates in the content (including {{#invoke}})
             $content = $this->parseTemplatesRecursive($content, $parameters);
             
-            // Use improved parsing approach for parameters
+            // Parse remaining template content (conditionals, double braces, magic words)
             $content = $this->parseTemplateContent($content, $parameters);
             
             // Parse wiki links in template content
@@ -318,6 +321,12 @@ class TemplateParser {
         
         if ($template) {
             $this->template_cache[$template_name] = $template;
+        } else {
+            // Auto-create template if not found
+            $template = $this->autoCreateTemplate($template_name, $slug);
+            if ($template) {
+                $this->template_cache[$template_name] = $template;
+            }
         }
         
         return $template;
@@ -415,16 +424,13 @@ class TemplateParser {
      * Improved template content parsing
      */
     private function parseTemplateContent($content, $parameters) {
-        // Step 1: Parse triple brace parameters recursively
-        $content = $this->parseTripleBraces($content, $parameters);
-        
-        // Step 2: Parse conditionals
+        // Step 1: Parse conditionals
         $content = $this->parseConditionalsImproved($content, $parameters);
         
-        // Step 3: Parse remaining double brace parameters
+        // Step 2: Parse remaining double brace parameters
         $content = $this->parseDoubleBraces($content, $parameters);
         
-        // Step 4: Parse magic words
+        // Step 3: Parse magic words
         $content = $this->parseTemplateMagicWords($content, $parameters);
         
         return $content;
@@ -799,5 +805,48 @@ class TemplateParser {
     private function parseIfeqFunction($template_content, $parameters) {
         // Simple implementation for now
         return "{{$template_content}}";
+    }
+    
+    /**
+     * Auto-create template if not found
+     */
+    private function autoCreateTemplate($template_name, $slug) {
+        try {
+            // Create a basic template structure
+            $content = "<div class=\"template-not-found\">
+    <strong>Template: $template_name</strong>
+    <p>This template does not exist yet. You can edit it to create the template content.</p>
+    <p><em>Parameters: {{{1|}}}, {{{2|}}}, {{{3|}}}</em></p>
+</div>";
+            
+            $stmt = $this->pdo->prepare("
+                INSERT INTO wiki_templates (name, slug, content, description, template_type, is_system_template, created_by, updated_by, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, 1, 1, NOW(), NOW())
+            ");
+            
+            $stmt->execute([
+                $template_name,
+                $slug,
+                $content,
+                "Auto-created template: $template_name",
+                'other',
+                0
+            ]);
+            
+            // Return the created template
+            return [
+                'name' => $template_name,
+                'slug' => $slug,
+                'content' => $content,
+                'description' => "Auto-created template: $template_name",
+                'template_type' => 'other',
+                'is_system_template' => 0,
+                'namespace' => 'Template'
+            ];
+            
+        } catch (Exception $e) {
+            error_log("Failed to create template $template_name: " . $e->getMessage());
+            return null;
+        }
     }
 }
