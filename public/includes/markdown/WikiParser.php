@@ -728,7 +728,7 @@ class WikiParser extends MarkdownParser {
         // First handle includeonly/noinclude tags
         $content = $this->parseIncludeOnlyTags($content);
         
-        $pattern = '/\{\{([^}]+)\}\}/';
+        $pattern = '/\{\{([^{}]*(?:\{[^}]*\}[^{}]*)*)\}\}/';
         
         $result = preg_replace_callback($pattern, function($matches) {
             $template_content = $matches[1];
@@ -800,12 +800,12 @@ class WikiParser extends MarkdownParser {
         
         // Recursively process any remaining templates in the result
         // Limit recursion depth to prevent infinite loops
-        // Skip recursive processing if the result contains HTML (templates were already processed)
-        if ($result !== $content && $this->template_recursion_depth < $this->max_template_recursion && !preg_match('/<[^>]+>/', $result)) {
-            $this->template_recursion_depth++;
-            $result = $this->parseTemplates($result);
-            $this->template_recursion_depth--;
-        }
+        // Skip recursive processing completely for now to avoid issues
+        // if ($result !== $content && $this->template_recursion_depth < $this->max_template_recursion) {
+        //     $this->template_recursion_depth++;
+        //     $result = $this->parseTemplates($result);
+        //     $this->template_recursion_depth--;
+        // }
         
         return $result;
     }
