@@ -1708,6 +1708,22 @@
     color: #d97706;
 }
 
+/* Move-protection icon */
+.move-protection-icon {
+    display: inline-block;
+    color: #dc2626;
+    font-size: 16px;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.move-protection-icon:hover {
+    transform: scale(1.2);
+    color: #b91c1c;
+}
+
 /* Template not found styling */
 .template-not-found {
     background: #fef3cd;
