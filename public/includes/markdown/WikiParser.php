@@ -800,7 +800,8 @@ class WikiParser extends MarkdownParser {
         
         // Recursively process any remaining templates in the result
         // Limit recursion depth to prevent infinite loops
-        if ($result !== $content && $this->template_recursion_depth < $this->max_template_recursion) {
+        // Skip recursive processing if the result contains HTML (templates were already processed)
+        if ($result !== $content && $this->template_recursion_depth < $this->max_template_recursion && !preg_match('/<[^>]+>/', $result)) {
             $this->template_recursion_depth++;
             $result = $this->parseTemplates($result);
             $this->template_recursion_depth--;
