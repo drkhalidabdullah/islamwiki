@@ -178,6 +178,11 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                         <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
                             <i class="iw iw-history"></i>
                         </a>
+                        <?php if (is_logged_in()): ?>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/source" class="btn-icon-compact" title="View Source">
+                                <i class="iw iw-code"></i>
+                            </a>
+                        <?php endif; ?>
                         <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon-compact" title="Discussion">
                             <i class="iw iw-comments"></i>
                             <?php if ($talk_page): ?>

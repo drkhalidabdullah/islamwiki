@@ -18,6 +18,9 @@ RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
 # /wiki/article-name/history -> /modules/wiki/history.php?slug=article-name
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/history/?$ /modules/wiki/history.php?slug=$1 [L,QSA]
 
+# /wiki/article-name/source -> /modules/wiki/source.php?slug=article-name
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/source/?$ /modules/wiki/source.php?slug=$1 [L,QSA]
+
 # /wiki/article-name/talk -> /modules/wiki/talk.php?slug=article-name
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/talk/?$ /modules/wiki/talk.php?slug=$1 [L,QSA]
 
