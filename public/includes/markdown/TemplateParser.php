@@ -21,6 +21,11 @@ class TemplateParser {
      * Parse template with advanced features
      */
     public function parseTemplate($template_name, $parameters = []) {
+        // Reset recursion depth if we're starting a new template processing
+        if ($this->recursion_depth <= 0) {
+            $this->recursion_depth = 0;
+        }
+        
         // Prevent infinite recursion
         if ($this->recursion_depth >= $this->max_recursion) {
             return "{{Template recursion limit exceeded: $template_name}}";
@@ -79,10 +84,22 @@ class TemplateParser {
             $content = $this->parseWikiLinks($content);
             
             $this->recursion_depth--;
+            
+            // Reset recursion depth to 0 if we're at the top level
+            if ($this->recursion_depth <= 0) {
+                $this->recursion_depth = 0;
+            }
+            
             return $content;
             
         } catch (Exception $e) {
             $this->recursion_depth--;
+            
+            // Reset recursion depth to 0 if we're at the top level
+            if ($this->recursion_depth <= 0) {
+                $this->recursion_depth = 0;
+            }
+            
             return "{{Template error: " . $e->getMessage() . "}}";
         }
     }
@@ -546,8 +563,14 @@ class TemplateParser {
         }, $content);
         
         // Parse {{param}} syntax - only match if it's not part of a wiki link
+        // Skip {{#invoke}} syntax as it should be handled by parseTemplatesRecursive
         $content = preg_replace_callback('/\{\{([^|{}]+)\}\}/', function($matches) use ($parameters) {
             $param_name = trim($matches[1]);
+            
+            // Skip {{#invoke}} syntax
+            if (strpos($param_name, '#invoke:') === 0) {
+                return $matches[0];
+            }
             
             // Skip if this looks like it might be part of a wiki link
             if (strpos($matches[0], '[') !== false || strpos($matches[0], ']') !== false) {

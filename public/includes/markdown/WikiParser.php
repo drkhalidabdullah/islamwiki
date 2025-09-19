@@ -807,7 +807,23 @@ class WikiParser extends MarkdownParser {
                 }
             }
             
-            $result = $this->template_parser->parseTemplate($template_name, $parameters);
+            // Create a fresh TemplateParser instance to avoid state issues
+            try {
+                if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER') && defined('DB_PASS')) {
+                    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+                    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES => false,
+                    ]);
+                    $fresh_template_parser = new TemplateParser($pdo);
+                    $result = $fresh_template_parser->parseTemplate($template_name, $parameters);
+                } else {
+                    $result = $this->template_parser->parseTemplate($template_name, $parameters);
+                }
+            } catch (Exception $e) {
+                $result = $this->template_parser->parseTemplate($template_name, $parameters);
+            }
             
             // Mark inline templates for special handling
             if (in_array($template_name, $inline_templates)) {
