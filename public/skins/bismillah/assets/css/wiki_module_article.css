@@ -1711,7 +1711,7 @@
 /* Move-protection icon */
 .move-protection-icon {
     display: inline-block;
-    color: #dc2626;
+    color: #16a34a;
     font-size: 16px;
     margin-left: 6px;
     cursor: help;
@@ -1720,6 +1720,22 @@
 }
 
 .move-protection-icon:hover {
+    transform: scale(1.2);
+    color: #15803d;
+}
+
+/* No-protection icon */
+.no-protection-icon {
+    display: inline-block;
+    color: #dc2626;
+    font-size: 16px;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.no-protection-icon:hover {
     transform: scale(1.2);
     color: #b91c1c;
 }

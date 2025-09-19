@@ -104,6 +104,9 @@ $has_semi_protection = strpos($article['content'], '{{pp-semi-indef}}') !== fals
 // Check if article has move-protection template
 $has_move_protection = strpos($article['content'], '{{pp-move}}') !== false;
 
+// Check if article has no protection (no semi-protection and no move-protection)
+$has_no_protection = !$has_semi_protection && !$has_move_protection;
+
 // Update article categories in database
 $categories = $parser->getCategories();
 if (!empty($categories)) {
@@ -165,6 +168,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <?php endif; ?>
                             <?php if ($has_move_protection): ?>
                                 <span class="move-protection-icon" title="This page is move-protected. Only administrators can move it.">↔️</span>
+                            <?php endif; ?>
+                            <?php if ($has_no_protection): ?>
+                                <span class="no-protection-icon" title="This page is not protected. Anyone can edit it.">⚠️</span>
                             <?php endif; ?>
                         </h1>
                     <?php endif; ?>
