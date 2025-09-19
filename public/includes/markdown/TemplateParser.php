@@ -55,7 +55,18 @@ class TemplateParser {
             
             $content = $template['content'];
             
-            // Use improved parsing approach
+            // Check if this is a module
+            if ($template['namespace'] === 'Module') {
+                return $this->executeModule($template_name, $content, $parameters);
+            }
+            
+            // Parse includeonly/noinclude tags first
+            $content = $this->parseIncludeOnlyTags($content);
+            
+            // Parse any templates in the content first (including {{#invoke}})
+            $content = $this->parseTemplatesRecursive($content, $parameters);
+            
+            // Use improved parsing approach for parameters
             $content = $this->parseTemplateContent($content, $parameters);
             
             // Parse wiki links in template content
@@ -68,6 +79,74 @@ class TemplateParser {
             $this->recursion_depth--;
             return "{{Template error: " . $e->getMessage() . "}}";
         }
+    }
+    
+    /**
+     * Parse includeonly/noinclude tags
+     */
+    private function parseIncludeOnlyTags($content) {
+        // Handle <includeonly>content</includeonly> - only include the content
+        $content = preg_replace_callback('/<includeonly>(.*?)<\/includeonly>/s', function($matches) {
+            return $matches[1]; // Return just the content inside includeonly
+        }, $content);
+        
+        // Handle <noinclude>content</noinclude> - remove the content
+        $content = preg_replace_callback('/<noinclude>(.*?)<\/noinclude>/s', function($matches) {
+            return ''; // Remove noinclude content
+        }, $content);
+        
+        return $content;
+    }
+    
+    /**
+     * Execute a module
+     */
+    private function executeModule($module_name, $content, $parameters = []) {
+        // For now, we'll handle specific modules
+        if (strtolower($module_name) === 'protection banner') {
+            return $this->executeProtectionBanner($parameters);
+        }
+        
+        // For other modules, we could add more sophisticated execution
+        return "{{Module execution not implemented: $module_name}}";
+    }
+    
+    /**
+     * Execute the Protection Banner module
+     */
+    private function executeProtectionBanner($parameters = []) {
+        $action = $parameters['action'] ?? 'edit';
+        $level = $parameters['level'] ?? 'semi-indef';
+        $reason = $parameters['reason'] ?? '';
+        $expiry = $parameters['expiry'] ?? 'indef';
+        
+        // Determine protection type
+        $protectionType = 'semi-indef';
+        if ($level === 'sysop') {
+            $protectionType = 'move';
+        } elseif ($level === 'templateeditor') {
+            $protectionType = 'template';
+        }
+        
+        // Generate protection banner
+        $banner = "<div class=\"protection-template {$protectionType}\">";
+        $banner .= "<div class=\"protection-banner\">";
+        
+        if ($action === 'edit') {
+            if ($level === 'semi-indef' || $level === 'autoconfirmed') {
+                $banner .= "<strong>This page is semi-protected.</strong> Only registered users can edit it.";
+            } elseif ($level === 'sysop') {
+                $banner .= "<strong>This page is fully protected.</strong> Only administrators can edit it.";
+            } elseif ($level === 'templateeditor') {
+                $banner .= "<strong>This page is template-protected.</strong> Only template editors can edit it.";
+            }
+        } elseif ($action === 'move') {
+            $banner .= "<strong>This page is move-protected.</strong> Only administrators can move it.";
+        }
+        
+        $banner .= "</div></div>";
+        
+        return $banner;
     }
     
     /**
@@ -151,6 +230,35 @@ class TemplateParser {
      */
     private function parseSingleTemplate($template_content, $parameters = []) {
         $template_content = trim($template_content);
+        
+        // Check if this is a {{#invoke}} syntax
+        if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
+            $function_name = trim($func_matches[1]);
+            $function_params = trim($func_matches[2]);
+            
+            if ($function_name === 'invoke') {
+                // Handle {{#invoke:Module|function|params}}
+                $invoke_parts = explode('|', $function_params);
+                $module = trim($invoke_parts[0]);
+                $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'main';
+                
+                // Parse additional parameters
+                $params = [];
+                for ($i = 2; $i < count($invoke_parts); $i++) {
+                    $param = trim($invoke_parts[$i]);
+                    if (strpos($param, '=') !== false) {
+                        list($key, $value) = explode('=', $param, 2);
+                        $params[trim($key)] = trim($value);
+                    } else {
+                        $params[] = $param;
+                    }
+                }
+                
+                // Execute the module
+                return $this->parseTemplate($module, $params);
+            }
+        }
+        
         $parts = explode('|', $template_content);
         $template_name = trim($parts[0]);
 
@@ -675,5 +783,21 @@ class TemplateParser {
         $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
         $text = preg_replace('/[\s-]+/', '-', $text);
         return trim($text, '-');
+    }
+    
+    /**
+     * Parse conditional function: #if:condition|true|false
+     */
+    private function parseConditionalFunction($template_content, $parameters) {
+        // Simple implementation for now
+        return "{{$template_content}}";
+    }
+    
+    /**
+     * Parse ifeq function: #ifeq:value1|value2|true|false
+     */
+    private function parseIfeqFunction($template_content, $parameters) {
+        // Simple implementation for now
+        return "{{$template_content}}";
     }
 }

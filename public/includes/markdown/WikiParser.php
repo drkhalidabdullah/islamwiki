@@ -722,7 +722,7 @@ class WikiParser extends MarkdownParser {
         
         $pattern = '/\{\{([^}]+)\}\}/';
         
-        return preg_replace_callback($pattern, function($matches) {
+        $result = preg_replace_callback($pattern, function($matches) {
             $template_content = $matches[1];
             
             // Handle MediaWiki-style parser functions like {{#time:format}}
@@ -736,11 +736,26 @@ class WikiParser extends MarkdownParser {
                     // Handle {{#invoke:Module|function|params}}
                     $invoke_parts = explode('|', $function_params);
                     $module = trim($invoke_parts[0]);
-                    $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'current';
+                    $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'main';
                     
-                    if ($module === 'Hijri' && $function === 'current') {
-                        return get_hijri_date();
+                    // Parse additional parameters
+                    $params = [];
+                    for ($i = 2; $i < count($invoke_parts); $i++) {
+                        $param = trim($invoke_parts[$i]);
+                        if (strpos($param, '=') !== false) {
+                            list($key, $value) = explode('=', $param, 2);
+                            $params[trim($key)] = trim($value);
+                        } else {
+                            $params[] = $param;
+                        }
                     }
+                    
+                    // Execute the module
+                    if ($this->template_parser) {
+                        return $this->template_parser->parseTemplate($module, $params);
+                    }
+                    
+                    return "{{#invoke:$module|$function}}";
                 }
                 
                 return "{{#$function_name:$function_params}}"; // Return unchanged if not handled
@@ -763,6 +778,13 @@ class WikiParser extends MarkdownParser {
             
             return $this->template_parser->parseTemplate($template_name, $parameters);
         }, $content);
+        
+        // Recursively process any remaining templates in the result
+        if ($result !== $content) {
+            $result = $this->parseTemplates($result);
+        }
+        
+        return $result;
     }
     
     /**

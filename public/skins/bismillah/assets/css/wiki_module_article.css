@@ -1492,6 +1492,113 @@
     justify-content: flex-end;
 }
 
+/* About Template Styles */
+.about-template {
+    background: #e8f4fd;
+    border: 1px solid #b3d9ff;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+}
+
+.about-header {
+    color: #2c3e50;
+    line-height: 1.5;
+}
+
+.about-header strong {
+    color: #1a365d;
+    font-weight: 600;
+}
+
+/* Protection Template Styles */
+.protection-template {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.protection-template.semi-indef {
+    background: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.protection-template.move-protection {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.protection-banner {
+    color: #856404;
+    font-weight: 500;
+}
+
+.protection-template.semi-indef .protection-banner {
+    color: #0c5460;
+}
+
+.protection-template.move-protection .protection-banner {
+    color: #721c24;
+}
+
+/* Quality Template Styles */
+.quality-template {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.quality-template.good-article {
+    background: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.quality-banner {
+    color: #155724;
+    font-weight: 500;
+}
+
+.quality-template.good-article .quality-banner {
+    color: #0c5460;
+}
+
+/* Date Format Template Styles */
+.date-format-template {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+}
+
+.date-format-notice {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Spelling Template Styles */
+.spelling-template {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+}
+
+.spelling-notice {
+    color: #6c757d;
+    font-style: italic;
+}
+
 /* Sidebar Template Styles */
 .sidebar-template {
     background: #f8f9fa;
@@ -1500,6 +1607,12 @@
     padding: 1rem;
     margin: 1rem 0;
     font-size: 0.9rem;
+}
+
+.sidebar-template.islam-sidebar {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+    border: 2px solid #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
 }
 
 .sidebar-template .sidebar-header h3 {
