@@ -87,6 +87,9 @@ class WikiParser extends MarkdownParser {
         $content = $this->parseCategories($content);
         $content = $this->parseTemplates($content);
         
+        // Handle inline templates before parent parsing
+        $content = $this->handleInlineTemplates($content);
+        
         // Call parent parse method (handles wiki links and markdown)
         $content = parent::parse($content);
         
@@ -730,6 +733,10 @@ class WikiParser extends MarkdownParser {
         $result = preg_replace_callback($pattern, function($matches) {
             $template_content = $matches[1];
             
+            // Check if this is an inline template (good article, etc.)
+            $inline_templates = ['good article'];
+            $template_name = trim(explode('|', $template_content)[0]);
+            
             // Handle MediaWiki-style parser functions like {{#time:format}}
             if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
                 $function_name = trim($func_matches[1]);
@@ -781,7 +788,14 @@ class WikiParser extends MarkdownParser {
                 }
             }
             
-            return $this->template_parser->parseTemplate($template_name, $parameters);
+            $result = $this->template_parser->parseTemplate($template_name, $parameters);
+            
+            // Mark inline templates for special handling
+            if (in_array($template_name, $inline_templates)) {
+                $result = '<!--INLINE_TEMPLATE-->' . $result . '<!--/INLINE_TEMPLATE-->';
+            }
+            
+            return $result;
         }, $content);
         
         // Recursively process any remaining templates in the result
@@ -1407,5 +1421,21 @@ class WikiParser extends MarkdownParser {
         if (!in_array($attribute, $this->allowed_attributes)) {
             $this->allowed_attributes[] = $attribute;
         }
+    }
+    
+    /**
+     * Handle inline templates to prevent them from being wrapped in <p> tags
+     */
+    private function handleInlineTemplates($content) {
+        // Find inline templates and move them to the title area
+        $pattern = '/<!--INLINE_TEMPLATE-->(.*?)<!--\/INLINE_TEMPLATE-->/s';
+        
+        return preg_replace_callback($pattern, function($matches) {
+            $template_content = $matches[1];
+            
+            // For now, just return the template content without wrapping
+            // The parent parse method will handle the rest
+            return $template_content;
+        }, $content);
     }
 }

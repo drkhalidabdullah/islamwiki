@@ -67,7 +67,10 @@ class TemplateParser {
             $content = $this->parseTripleBraces($content, $parameters);
             
             // Parse any templates in the content (including {{#invoke}})
-            $content = $this->parseTemplatesRecursive($content, $parameters);
+            // Only do this if we haven't already processed this template
+            if ($this->recursion_depth < 2) {
+                $content = $this->parseTemplatesRecursive($content, $parameters);
+            }
             
             // Parse remaining template content (conditionals, double braces, magic words)
             $content = $this->parseTemplateContent($content, $parameters);

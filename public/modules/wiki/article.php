@@ -95,6 +95,9 @@ $page_title = $article['title'];
 $parser = new WikiParser('');
 $parsed_content = $parser->parse($article['content']);
 
+// Check if article has good article template
+$has_good_article = strpos($article['content'], '{{good article}}') !== false;
+
 // Update article categories in database
 $categories = $parser->getCategories();
 if (!empty($categories)) {
@@ -146,7 +149,12 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                 <!-- Top Row: Title on left, Tools on right -->
                 <div class="article-header-top<?php echo !$notitle_enabled ? ' with-title' : ''; ?>">
                     <?php if (!$notitle_enabled): ?>
-                        <h1 class="article-title-compact"><?php echo htmlspecialchars($article['title']); ?></h1>
+                        <h1 class="article-title-compact">
+                            <?php echo htmlspecialchars($article['title']); ?>
+                            <?php if ($has_good_article): ?>
+                                <span class="good-article-icon" title="This is a good article. It meets the quality standards for featured content.">★</span>
+                            <?php endif; ?>
+                        </h1>
                     <?php endif; ?>
                     <div class="article-actions-compact">
                         <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
