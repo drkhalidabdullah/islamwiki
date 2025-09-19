@@ -1717,13 +1717,13 @@
     cursor: help;
     vertical-align: middle;
     transition: transform 0.2s ease;
-    filter: hue-rotate(120deg) saturate(1.5) brightness(0.8);
+    text-shadow: 0 0 0 #16a34a;
 }
 
 .move-protection-icon:hover {
     transform: scale(1.2);
     color: #15803d !important;
-    filter: hue-rotate(120deg) saturate(1.8) brightness(0.7);
+    text-shadow: 0 0 0 #15803d;
 }
 
 /* No-protection icon */
