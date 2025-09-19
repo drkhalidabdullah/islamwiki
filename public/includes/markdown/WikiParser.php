@@ -51,8 +51,27 @@ class WikiParser extends MarkdownParser {
         if (isset($GLOBALS['pdo']) && $GLOBALS['pdo']) {
             try {
                 $this->template_parser = new TemplateParser($GLOBALS['pdo']);
+                error_log("TemplateParser initialized successfully with global PDO");
             } catch (Exception $e) {
-                error_log("Failed to initialize TemplateParser: " . $e->getMessage());
+                error_log("Failed to initialize TemplateParser with global PDO: " . $e->getMessage());
+            }
+        } else {
+            // Try to create PDO connection if not available
+            try {
+                if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER') && defined('DB_PASS')) {
+                    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+                    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES => false,
+                    ]);
+                    $this->template_parser = new TemplateParser($pdo);
+                    error_log("TemplateParser initialized successfully with new PDO");
+                } else {
+                    error_log("Database constants not defined");
+                }
+            } catch (Exception $e) {
+                error_log("Failed to create PDO and initialize TemplateParser: " . $e->getMessage());
             }
         }
     }
