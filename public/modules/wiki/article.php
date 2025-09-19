@@ -98,6 +98,9 @@ $parsed_content = $parser->parse($article['content']);
 // Check if article has good article template
 $has_good_article = strpos($article['content'], '{{good article}}') !== false;
 
+// Check if article has semi-protection template
+$has_semi_protection = strpos($article['content'], '{{pp-semi-indef}}') !== false;
+
 // Update article categories in database
 $categories = $parser->getCategories();
 if (!empty($categories)) {
@@ -153,6 +156,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <?php echo htmlspecialchars($article['title']); ?>
                             <?php if ($has_good_article): ?>
                                 <span class="good-article-icon" title="This is a good article. It meets the quality standards for featured content.">★</span>
+                            <?php endif; ?>
+                            <?php if ($has_semi_protection): ?>
+                                <span class="semi-protection-icon" title="This page is semi-protected. Only registered users can edit it.">🔒</span>
                             <?php endif; ?>
                         </h1>
                     <?php endif; ?>

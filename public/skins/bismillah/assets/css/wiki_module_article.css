@@ -1692,6 +1692,22 @@
     color: #d97706;
 }
 
+/* Semi-protection icon */
+.semi-protection-icon {
+    display: inline-block;
+    color: #f59e0b;
+    font-size: 16px;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.semi-protection-icon:hover {
+    transform: scale(1.2);
+    color: #d97706;
+}
+
 /* Template not found styling */
 .template-not-found {
     background: #fef3cd;
