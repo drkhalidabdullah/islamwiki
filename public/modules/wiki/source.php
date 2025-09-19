@@ -13,11 +13,7 @@ if (!$enable_wiki) {
     redirect('/dashboard');
 }
 
-// Check if user is logged in
-if (!is_logged_in()) {
-    show_message('You must be logged in to view source code.', 'error');
-    redirect('/login');
-}
+// Source view is available to everyone (no login required)
 
 $page_title = 'Source Code';
 
@@ -90,6 +86,10 @@ include '../../includes/header.php';
             <?php if (is_logged_in() && is_editor()): ?>
                 <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/edit" class="btn btn-primary">
                     <i class="iw iw-edit"></i> Edit
+                </a>
+            <?php elseif (!is_logged_in()): ?>
+                <a href="/login" class="btn btn-outline">
+                    <i class="iw iw-login"></i> Login to Edit
                 </a>
             <?php endif; ?>
         </div>
