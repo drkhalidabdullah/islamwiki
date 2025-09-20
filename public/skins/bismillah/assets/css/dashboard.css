@@ -410,8 +410,8 @@ body {
 
 /* Feeling/Activity Modal Styles */
 .feeling-activity-container {
-    max-height: 60vh;
-    overflow-y: auto;
+    /* Remove max-height and overflow to prevent double scrollbars */
+    /* Let the parent .modal-body handle scrolling */
 }
 
 .feeling-section, .activity-section, .custom-section {
