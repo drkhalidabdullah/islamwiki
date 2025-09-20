@@ -1941,3 +1941,30 @@ document.addEventListener('click', function(event) {
         event.target.style.display = 'none';
     }
 });
+
+// Close modals with ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        // Close all modals
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (modal.style.display === 'block' || modal.style.display !== 'none') {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Close profile picture viewer if open
+        const profileViewer = document.getElementById('profilePictureViewer');
+        if (profileViewer && profileViewer.style.display === 'block') {
+            profileViewer.style.display = 'none';
+        }
+        
+        // Close any other overlays that might be open
+        const overlays = document.querySelectorAll('.overlay, .search-overlay, .enhanced-search-overlay');
+        overlays.forEach(overlay => {
+            if (overlay.style.display === 'block' || overlay.style.display !== 'none') {
+                overlay.style.display = 'none';
+            }
+        });
+    }
+});
