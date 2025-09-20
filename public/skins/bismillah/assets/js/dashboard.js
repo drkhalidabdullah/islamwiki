@@ -993,6 +993,8 @@ function showToast(message, type = 'info') {
 }
 
 function handlePhotoVideo() {
+    console.log('handlePhotoVideo called'); // Debug log
+    
     // Create file input for photo/video upload
     const input = document.createElement('input');
     input.type = 'file';
@@ -1000,18 +1002,35 @@ function handlePhotoVideo() {
     input.multiple = true;
     
     input.onchange = function(e) {
+        console.log('File input changed, files:', e.target.files); // Debug log
+        
         const files = Array.from(e.target.files);
         const hasImages = files.some(file => file.type.startsWith('image/'));
         
+        console.log('Files selected:', files.length, 'Has images:', hasImages); // Debug log
+        
         // Auto-switch to formatting mode when uploading images
-        if (hasImages && !isFormattingMode) {
-            toggleFormattingBtn.click();
+        if (hasImages) {
+            const editorContainer = document.getElementById('postEditorContainer');
+            const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+            console.log('Editor container found:', !!editorContainer, 'Is formatting mode:', isFormattingMode); // Debug log
+            
+            if (!isFormattingMode) {
+                const toggleFormattingBtn = document.getElementById('toggleFormatting');
+                if (toggleFormattingBtn) {
+                    console.log('Switching to formatting mode'); // Debug log
+                    toggleFormattingBtn.click();
+                }
+            }
         }
         
         files.forEach(file => {
+            console.log('Processing file:', file.name, 'Type:', file.type); // Debug log
             if (file.type.startsWith('image/')) {
+                console.log('Calling handleImageUpload for:', file.name); // Debug log
                 handleImageUpload(file);
             } else if (file.type.startsWith('video/')) {
+                console.log('Calling handleVideoUpload for:', file.name); // Debug log
                 handleVideoUpload(file);
             }
         });
@@ -1044,13 +1063,17 @@ function handleGIF() {
 }
 
 function handleImageUpload(file) {
+    console.log('handleImageUpload called with file:', file.name, 'Size:', file.size); // Debug log
+    
     // Check file size (max 10MB - will be auto-scaled if larger than 2MB)
     if (file.size > 10 * 1024 * 1024) {
+        console.log('File too large:', file.size); // Debug log
         showToast('Image too large. Please choose an image smaller than 10MB.', 'error');
         return;
     }
     
     // Show loading state
+    console.log('Starting image upload...'); // Debug log
     showToast('Uploading image...', 'info');
     
     // Upload image to server first
@@ -1101,9 +1124,13 @@ function createImagePreview(file, imageUrl) {
 }
 
 function insertImagePreview(imageContainer, imageUrl) {
+    console.log('insertImagePreview called with URL:', imageUrl); // Debug log
+    
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
     const editorContainer = document.getElementById('postEditorContainer');
     const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+    
+    console.log('Current input found:', !!currentInput, 'Editor container found:', !!editorContainer, 'Is formatting mode:', isFormattingMode); // Debug log
     
     if (isFormattingMode) {
         // Insert into the editor container
