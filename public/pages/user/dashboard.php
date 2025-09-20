@@ -202,10 +202,12 @@ include "../../includes/header.php";
 ?>
 <script src="/skins/bismillah/assets/js/dashboard.js"></script>
 <script src="/skins/bismillah/assets/js/mentions.js"></script>
+<script src="/skins/bismillah/assets/js/user_profile.js"></script>
 <?php
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/dashboard.css">
 <link rel="stylesheet" href="/skins/bismillah/assets/css/mentions.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/user_profile.css">
 <?php
 ?>
 
@@ -216,14 +218,20 @@ include "../../includes/header.php";
             <!-- User Profile Card -->
             <div class="profile-card">
                 <div class="profile-header">
-                    <div class="profile-avatar">
-                        <?php if (!empty($current_user['avatar'])): ?>
-                            <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile">
-                        <?php else: ?>
-                            <div class="avatar-circle">
-                                <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
+                    <div class="profile-avatar-container">
+                        <div class="profile-picture-wrapper" onclick="openProfilePictureModal()">
+                            <?php if (!empty($current_user['avatar'])): ?>
+                                <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile" class="profile-image">
+                            <?php else: ?>
+                                <div class="profile-initials">
+                                    <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="camera-button">
+                                <i class="iw iw-camera"></i>
                             </div>
-                        <?php endif; ?>
+                            <div class="online-indicator"></div>
+                        </div>
                     </div>
                     <div class="profile-info">
                         <h3><?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?></h3>
@@ -291,7 +299,7 @@ include "../../includes/header.php";
         <div class="dashboard-main">
             <!-- Feed Header -->
             <div class="feed-header">
-                <h1>Your Feed</h1>
+                <h1><?php echo get_personalized_greeting($current_user); ?></h1>
                 <div class="feed-filters">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="posts">Posts</button>
@@ -911,7 +919,147 @@ include "../../includes/header.php";
     </div>
 </div>
 
+<!-- Profile Picture Selection Modal -->
+<div id="profilePictureModal" class="profile-picture-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Choose profile picture</h3>
+            <button class="close-btn" onclick="closeProfilePictureModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Initial Options -->
+            <div id="initialOptions" class="options-container">
+                <div class="option-buttons">
+                    <button class="option-btn primary" onclick="showProfilePictureViewer()">
+                        <i class="iw iw-eye"></i>
+                        See profile picture
+                    </button>
+                    <button class="option-btn secondary" onclick="showPictureSelection()">
+                        <i class="iw iw-camera"></i>
+                        Choose profile picture
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Picture Selection Options -->
+            <div id="pictureSelection" class="selection-container" style="display: none;">
+                <div class="selection-actions">
+                    <button class="action-btn primary" onclick="triggerFileUpload()">
+                        <i class="iw iw-plus"></i>
+                        Upload photo
+                    </button>
+                    <div class="upload-hint">
+                        <small>💡 Hold Shift while clicking to upload directly without adjustment</small>
+                    </div>
+                    <button class="action-btn secondary" onclick="showFrames()">
+                        <i class="iw iw-square"></i>
+                        Add Frame
+                    </button>
+                </div>
+                
+                <div class="photo-sections">
+                    <div class="photo-section">
+                        <h4>Suggested photos</h4>
+                        <div class="photo-grid" id="suggestedPhotos">
+                            <!-- Suggested photos will be loaded here -->
+                        </div>
+                        <button class="see-more-btn" onclick="loadMoreSuggested()">See more</button>
+                    </div>
+                    
+                    <div class="photo-section">
+                        <h4>Uploads</h4>
+                        <div class="photo-grid" id="userUploads">
+                            <!-- User uploads will be loaded here -->
+                        </div>
+                        <button class="see-more-btn" onclick="loadMoreUploads()">See more</button>
+                    </div>
+                    
+                    <div class="photo-section">
+                        <h4>Profile pictures</h4>
+                        <div class="photo-grid" id="profilePictures">
+                            <!-- Profile pictures will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="photo-section">
+                        <h4>Cover photos</h4>
+                        <div class="photo-grid" id="coverPhotos">
+                            <!-- Cover photos will be loaded here -->
+                        </div>
+                        <button class="see-more-btn" onclick="loadMoreCoverPhotos()">See more</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thumbnail Adjustment -->
+            <div id="thumbnailAdjustment" class="adjustment-container" style="display: none;">
+                <div class="adjustment-preview">
+                    <div class="profile-preview">
+                        <img id="adjustmentImage" src="" alt="Profile preview">
+                        <div class="drag-overlay">
+                            <i class="iw iw-arrows-alt"></i>
+                            <span>Drag to Reposition</span>
+                        </div>
+                    </div>
+                    <div class="zoom-controls">
+                        <span class="zoom-label">Zoom</span>
+                        <input type="range" id="zoomSlider" min="0.5" max="2" step="0.1" value="1" oninput="adjustZoom(this.value)">
+                        <div class="zoom-buttons">
+                            <button onclick="adjustZoom(0.5)">-</button>
+                            <button onclick="adjustZoom(2)">+</button>
+                        </div>
+                    </div>
+                    <div class="privacy-info">
+                        <i class="iw iw-globe"></i>
+                        <span>Your profile picture is public.</span>
+                    </div>
+                </div>
+                <div class="adjustment-actions">
+                    <button class="btn-cancel" onclick="cancelThumbnailAdjustment()">Cancel</button>
+                    <button class="btn-save" onclick="saveProfilePicture()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Hidden file input for uploads -->
+<input type="file" id="profilePictureUpload" accept="image/*" style="display: none;" onchange="handleFileUpload(this)">
 
+<!-- Full Screen Profile Picture Viewer -->
+<div id="profilePictureViewer" class="profile-picture-viewer">
+    <div class="viewer-container">
+        <div class="viewer-image-section">
+            <img id="viewerImage" class="viewer-image" src="" alt="Profile Picture">
+        </div>
+        <div class="viewer-comments-section">
+            <div class="viewer-header">
+                <h3>Profile Picture</h3>
+                <div class="viewer-actions">
+                    <div class="options-dropdown">
+                        <button class="options-btn" onclick="toggleOptionsDropdown()">
+                            <i class="iw iw-ellipsis-v"></i>
+                        </button>
+                        <div class="options-menu" id="optionsMenu">
+                            <button class="option-item delete-btn" onclick="deleteCurrentPhoto()">
+                                <i class="iw iw-trash"></i>
+                                Delete Photo
+                            </button>
+                        </div>
+                    </div>
+                    <button class="viewer-close" onclick="closeProfilePictureViewer()">&times;</button>
+                </div>
+            </div>
+            <div class="viewer-comments" id="viewerComments">
+                <!-- Comments will be loaded here -->
+            </div>
+            <div class="comment-form">
+                <textarea class="comment-input" placeholder="Add a comment..." id="commentInput"></textarea>
+                <button class="comment-submit" onclick="submitComment()">Post Comment</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php include "../../includes/footer.php"; ?>

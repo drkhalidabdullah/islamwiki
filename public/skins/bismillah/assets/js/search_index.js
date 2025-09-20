@@ -97,23 +97,23 @@ class EnhancedSearch {
     displayResults(data) {
         const resultsContainer = document.getElementById('searchResultsContent');
         
-        if (!data.success) {
+        if (data.error) {
             this.showError(data.error || 'Search failed');
             return;
         }
 
         // Track search analytics
-        this.trackSearch(data.query, data.total_results);
+        this.trackSearch(this.currentQuery, data.total);
 
-        if (data.total_results === 0) {
-            this.showNoResults(data.query, data.suggestions);
+        if (data.total === 0) {
+            this.showNoResults(this.currentQuery, data.suggestions);
             return;
         }
 
         let html = `
             <div class="search-results-header">
                 <h3>Search Results</h3>
-                <div class="results-count">${data.total_results} results for "${data.query}"</div>
+                <div class="results-count">${data.total} results for "${this.currentQuery}"</div>
             </div>
         `;
 
@@ -450,13 +450,11 @@ class EnhancedSearch {
         if (urlQuery) {
             // Set the search input value from URL parameter
             document.getElementById('searchInput').value = urlQuery;
+            this.currentQuery = urlQuery;
             this.performSearch();
         } else {
-            // Check if there's a value in the search input
-            const query = document.getElementById('searchInput').value.trim();
-            if (query) {
-                this.performSearch();
-            }
+            // Show welcome state with suggestions
+            this.showWelcome();
         }
     }
 }

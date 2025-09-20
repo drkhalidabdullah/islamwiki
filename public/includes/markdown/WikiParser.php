@@ -121,6 +121,7 @@ class WikiParser extends MarkdownParser {
         $content = $this->parseTables($content);
         $content = $this->parseCategories($content);
         $content = $this->parseTemplates($content);
+        $content = $this->parseFileLinks($content);
         
         // Handle inline templates before parent parsing
         $content = $this->handleInlineTemplates($content);
@@ -1554,5 +1555,84 @@ class WikiParser extends MarkdownParser {
             // The parent parse method will handle the rest
             return $template_content;
         }, $content);
+    }
+    
+    /**
+     * Parse wiki file links in the format [[File:filename.jpg|thumb|Caption]]
+     */
+    private function parseFileLinks($content) {
+        // Parse file syntax: [[File:filename.jpg|thumb|Caption]]
+        $content = preg_replace_callback('/\[\[File:([^|\]]+)(?:\|([^|\]]+))?(?:\|([^\]]+))?\]\]/', function($matches) {
+            $filename = trim($matches[1]);
+            $options = isset($matches[2]) ? trim($matches[2]) : '';
+            $caption = isset($matches[3]) ? trim($matches[3]) : '';
+            
+            // Check if file exists in wiki_files table
+            $file = $this->getWikiFile($filename);
+            if (!$file) {
+                return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
+            }
+            
+            $url = '/uploads/wiki/' . $file['filename'];
+            $is_thumb = $options === 'thumb';
+            $is_left = $options === 'left';
+            $is_right = $options === 'right';
+            $is_center = $options === 'center';
+            
+            // Handle different display options
+            $class = 'wiki-image';
+            $style = '';
+            
+            if ($is_thumb) {
+                $class .= ' wiki-thumbnail';
+            } elseif ($is_left) {
+                $class .= ' wiki-image-left';
+                $style = 'float: left; margin-right: 10px;';
+            } elseif ($is_right) {
+                $class .= ' wiki-image-right';
+                $style = 'float: right; margin-left: 10px;';
+            } elseif ($is_center) {
+                $class .= ' wiki-image-center';
+                $style = 'display: block; margin: 0 auto;';
+            }
+            
+            $html = '<div class="' . $class . '"';
+            if ($style) {
+                $html .= ' style="' . $style . '"';
+            }
+            $html .= '>';
+            
+            $html .= '<img src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($caption ?: $filename) . '" class="wiki-image-img" loading="lazy">';
+            
+            if ($caption) {
+                $html .= '<div class="wiki-image-caption">' . htmlspecialchars($caption) . '</div>';
+            }
+            
+            $html .= '</div>';
+            
+            return $html;
+        }, $content);
+        
+        return $content;
+    }
+    
+    /**
+     * Get wiki file information from database
+     */
+    private function getWikiFile($filename) {
+        global $pdo;
+        
+        if (!$pdo) {
+            return false;
+        }
+        
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM wiki_files WHERE filename = ? OR original_name = ?");
+            $stmt->execute([$filename, $filename]);
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            error_log("Error getting wiki file: " . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -4,6 +4,7 @@
 // Include rate limiting and moderation functions
 require_once __DIR__ . '/rate_limiter.php';
 require_once __DIR__ . '/moderation_functions.php';
+require_once __DIR__ . '/search_functions.php';
 
 function sanitize_input($data) {
     $data = trim($data);
@@ -281,6 +282,34 @@ function get_user_profile($user_id) {
     $stmt = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id = ?");
     $stmt->execute([$user_id]);
     return $stmt->fetch();
+}
+
+function get_time_based_greeting() {
+    $hour = (int)date('H');
+    
+    if ($hour >= 5 && $hour < 12) {
+        return 'Good morning';
+    } elseif ($hour >= 12 && $hour < 17) {
+        return 'Good afternoon';
+    } else {
+        return 'Good evening';
+    }
+}
+
+function get_personalized_greeting($user) {
+    $greeting = get_time_based_greeting();
+    
+    // Use first_name if available, otherwise fall back to display_name, then username
+    $name = '';
+    if (!empty($user['first_name'])) {
+        $name = $user['first_name'];
+    } elseif (!empty($user['display_name'])) {
+        $name = $user['display_name'];
+    } else {
+        $name = $user['username'];
+    }
+    
+    return $greeting . ', ' . htmlspecialchars($name) . '.';
 }
 
 function log_activity($action, $description = '', $user_id = null, $metadata = null) {

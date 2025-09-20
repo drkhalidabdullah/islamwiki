@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Test</title>
+</head>
+<body>
+    <h1>Search Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testSearch() {
+            try {
+                const response = await fetch('/search/enhanced-search-api.php?q=islam&type=all');
+                const data = await response.json();
+                
+                document.getElementById('results').innerHTML = `
+                    <h2>Search Results</h2>
+                    <p>Total: ${data.total}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        testSearch();
+    </script>
+</body>
+</html>
+

@@ -1693,3 +1693,98 @@
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 }
+
+/* ========================================
+   WIKI IMAGE STYLES
+   ======================================== */
+
+/* Wiki Image Container */
+.wiki-image {
+    margin: 1rem 0;
+    display: inline-block;
+    max-width: 100%;
+}
+
+/* Wiki Thumbnail */
+.wiki-thumbnail {
+    float: right;
+    margin: 0 0 1rem 1rem;
+    max-width: 300px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-secondary);
+}
+
+.wiki-thumbnail .wiki-image-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.wiki-thumbnail .wiki-image-caption {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Wiki Image Positioning */
+.wiki-image-left {
+    float: left;
+    margin: 0 1rem 1rem 0;
+    max-width: 300px;
+}
+
+.wiki-image-right {
+    float: right;
+    margin: 0 0 1rem 1rem;
+    max-width: 300px;
+}
+
+.wiki-image-center {
+    display: block;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+/* Wiki Image Styling */
+.wiki-image-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.wiki-image-caption {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Missing File Styling */
+.missing-file {
+    color: var(--text-error);
+    background: var(--bg-error);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    border: 1px solid var(--border-error);
+}
+
+/* Responsive Image Handling */
+@media (max-width: 768px) {
+    .wiki-thumbnail,
+    .wiki-image-left,
+    .wiki-image-right {
+        float: none;
+        margin: 1rem auto;
+        max-width: 100%;
+    }
+    
+    .wiki-image-center {
+        margin: 1rem 0;
+    }
+}

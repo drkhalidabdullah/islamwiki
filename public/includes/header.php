@@ -132,7 +132,7 @@ if ($toast_message) {
             
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
-                <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
+                <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="sidebar-item <?php echo (is_logged_in() ? (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) : (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/')) ? 'active' : ''; ?>" title="Home">
                     <i class="iw iw-home"></i>
                 </a>
                 

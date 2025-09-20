@@ -178,18 +178,18 @@ include __DIR__ . "/../includes/header.php";
 
         <!-- Main Search Content -->
         <div class="search-main">
-            <!-- Search Header -->
-            <div class="search-header">
-                <h1>Comprehensive Search</h1>
-                <p>Discover knowledge across articles, users, groups, events, and community content</p>
-            </div>
-
-            <!-- Search Form -->
+            <!-- Search Form Container (Blue Card) -->
             <div class="search-form-container">
                 <form method="GET" class="search-form" id="searchForm">
                     <input type="hidden" name="type" value="<?php echo htmlspecialchars($content_type); ?>">
                     <input type="hidden" name="category" value="<?php echo htmlspecialchars($category); ?>">
                     <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>">
+                    
+                    <!-- Search Header -->
+                    <div class="search-header">
+                        <h1>Comprehensive Search</h1>
+                        <p>Discover knowledge across articles, users, groups, events, and community content</p>
+                    </div>
                     
                     <div class="search-input-group">
                         <div class="search-input-wrapper">
@@ -251,6 +251,6 @@ include __DIR__ . "/../includes/header.php";
 </div>
 
 <!-- Enhanced Search JavaScript -->
-
+<script src="/skins/bismillah/assets/js/search_index.js"></script>
 
 <?php include __DIR__ . "/../includes/footer.php"; ?>
