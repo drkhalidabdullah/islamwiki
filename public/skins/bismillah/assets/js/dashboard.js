@@ -1040,15 +1040,23 @@ function handlePhotoVideo() {
 }
 
 function handleTagPeople() {
+    console.log('handleTagPeople called'); // Debug log
+    
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
+    
     const text = currentInput.value;
     const cursorPos = currentInput.selectionStart;
+    
+    console.log('Current text:', text, 'Cursor position:', cursorPos); // Debug log
     
     // Insert @ symbol for tagging
     const newText = text.substring(0, cursorPos) + '@' + text.substring(cursorPos);
     currentInput.value = newText;
     currentInput.focus();
     currentInput.setSelectionRange(cursorPos + 1, cursorPos + 1);
+    
+    console.log('Text after @ insertion:', currentInput.value); // Debug log
     
     // Show user search modal
     showUserSearchModal();
@@ -1556,20 +1564,38 @@ function displayUserSearchResults(users) {
 }
 
 function selectUser(username) {
+    console.log('selectUser called with username:', username); // Debug log
+    
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
+    
     const text = currentInput.value;
     const cursorPos = currentInput.selectionStart;
+    
+    console.log('Current text:', text, 'Cursor position:', cursorPos); // Debug log
     
     // Find the @ symbol and replace with @username
     const beforeCursor = text.substring(0, cursorPos);
     const afterCursor = text.substring(cursorPos);
     const atIndex = beforeCursor.lastIndexOf('@');
     
+    console.log('@ symbol found at index:', atIndex); // Debug log
+    
     if (atIndex !== -1) {
         const newText = text.substring(0, atIndex) + '@' + username + ' ' + afterCursor;
         currentInput.value = newText;
         currentInput.focus();
         currentInput.setSelectionRange(atIndex + username.length + 2, atIndex + username.length + 2);
+        
+        console.log('Text after username insertion:', currentInput.value); // Debug log
+    } else {
+        console.log('No @ symbol found, inserting at cursor position'); // Debug log
+        const newText = text.substring(0, cursorPos) + '@' + username + ' ' + text.substring(cursorPos);
+        currentInput.value = newText;
+        currentInput.focus();
+        currentInput.setSelectionRange(cursorPos + username.length + 2, cursorPos + username.length + 2);
+        
+        console.log('Text after username insertion at cursor:', currentInput.value); // Debug log
     }
     
     closeUserSearchModal();
@@ -1779,11 +1805,16 @@ function closeFeelingActivityModal() {
 }
 
 function addFeelingActivity() {
+    console.log('addFeelingActivity called'); // Debug log
+    
     const modal = document.getElementById('feelingActivityModal');
     const selectedFeeling = modal.querySelector('.feeling-btn.active');
     const selectedActivity = modal.querySelector('.activity-btn.active');
     const customFeeling = modal.querySelector('#customFeeling').value.trim();
     const customActivity = modal.querySelector('#customActivity').value.trim();
+    
+    console.log('Selected feeling:', selectedFeeling?.textContent, 'Selected activity:', selectedActivity?.textContent); // Debug log
+    console.log('Custom feeling:', customFeeling, 'Custom activity:', customActivity); // Debug log
     
     let feelingText = '';
     let activityText = '';
@@ -1800,14 +1831,20 @@ function addFeelingActivity() {
         activityText = customActivity;
     }
     
+    console.log('Final feeling text:', feelingText, 'Final activity text:', activityText); // Debug log
+    
     if (!feelingText && !activityText) {
         showToast('Please select or enter a feeling or activity', 'error');
         return;
     }
     
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
+    
     const text = currentInput.value;
     const cursorPos = currentInput.selectionStart;
+    
+    console.log('Current text:', text, 'Cursor position:', cursorPos); // Debug log
     
     let statusText = '';
     if (feelingText && activityText) {
@@ -1818,10 +1855,14 @@ function addFeelingActivity() {
         statusText = activityText;
     }
     
+    console.log('Status text to insert:', statusText); // Debug log
+    
     const newText = text.substring(0, cursorPos) + statusText + ' ' + text.substring(cursorPos);
     currentInput.value = newText;
     currentInput.focus();
     currentInput.setSelectionRange(cursorPos + statusText.length + 1, cursorPos + statusText.length + 1);
+    
+    console.log('Text after insertion:', currentInput.value); // Debug log
     
     // Trigger input change for validation
     currentInput.dispatchEvent(new Event('input'));
