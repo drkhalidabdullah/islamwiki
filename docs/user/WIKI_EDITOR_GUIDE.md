@@ -346,7 +346,7 @@ Creates anchor: `#etymology`
 ---
 
 **Last Updated:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Status:** Production Ready ✅
 
 *This guide covers the basic and advanced features of the IslamWiki Editor. For more detailed technical information, see the [Wiki Editor System Documentation](../features/WIKI_EDITOR_SYSTEM.md).*

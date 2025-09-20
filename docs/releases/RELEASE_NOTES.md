@@ -9,7 +9,7 @@
 
 ## 🎯 Release Overview
 
-Version 0.0.0.17 introduces a **revolutionary wiki editor system** with professional-grade tools and an enhanced reference system that makes all links clickable. This major release focuses on improving the content creation experience with a modern, responsive editor and comprehensive link parsing.
+Version 0.0.0.18 introduces a **revolutionary wiki editor system** with professional-grade tools and an enhanced reference system that makes all links clickable. This major release focuses on improving the content creation experience with a modern, responsive editor and comprehensive link parsing.
 
 ## 🚀 Major Features
 
@@ -129,7 +129,7 @@ Version 0.0.0.17 introduces a **revolutionary wiki editor system** with professi
 - `docs/features/REFERENCE_SYSTEM.md` - Reference system documentation
 - `docs/features/TEMPLATE_SYSTEM.md` - Template system documentation
 - `docs/admin/ADMIN_SYSTEM_COMPREHENSIVE.md` - Admin system documentation
-- `docs/changelogs/v0.0.0.17.md` - Version 0.0.0.17 changelog
+- `docs/changelogs/v0.0.0.18.md` - Version 0.0.0.18 changelog
 
 ## 🚀 Impact
 

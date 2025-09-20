@@ -118,7 +118,7 @@
 - `docs/features/REFERENCE_SYSTEM.md` - Reference system documentation
 - `docs/features/TEMPLATE_SYSTEM.md` - Template system documentation
 - `docs/admin/ADMIN_SYSTEM_COMPREHENSIVE.md` - Admin system documentation
-- `docs/changelogs/v0.0.0.17.md` - Version 0.0.0.17 changelog
+- `docs/changelogs/v0.0.0.18.md` - Version 0.0.0.18 changelog
 
 ## [0.0.0.16] - 2025-09-16
 

@@ -4,7 +4,7 @@
 
 The IslamWiki Editor System is a comprehensive, professional-grade wiki editing interface that provides users with powerful tools for creating and editing wiki content. The system combines a rich text toolbar with live preview capabilities and supports full MediaWiki-style syntax.
 
-## 🎯 Current Version: 0.0.0.17
+## 🎯 Current Version: 0.0.0.18
 
 **Last Updated:** January 2025  
 **Status:** Production Ready ✅
@@ -413,5 +413,5 @@ Enable debug mode by adding `?debug=1` to the URL to see:
 ---
 
 **Last Updated:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Status:** Production Ready ✅

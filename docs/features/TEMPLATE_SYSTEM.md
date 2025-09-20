@@ -4,7 +4,7 @@
 
 The IslamWiki Template System provides comprehensive support for MediaWiki-style templates, enabling users to create reusable content blocks, complex conditional logic, and dynamic content generation. The system supports advanced features like parser functions, switch statements, and template recursion protection.
 
-## 🎯 Current Version: 0.0.0.17
+## 🎯 Current Version: 0.0.0.18
 
 **Last Updated:** January 2025  
 **Status:** Production Ready ✅
@@ -680,5 +680,5 @@ Enable debug mode to see:
 ---
 
 **Last Updated:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Status:** Production Ready ✅

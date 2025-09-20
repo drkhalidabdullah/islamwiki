@@ -4,7 +4,7 @@
 
 The IslamWiki Admin System is a comprehensive administrative interface that provides complete control over the platform's functionality, user management, content moderation, and system configuration. The system features a modern, responsive design with role-based access control and real-time monitoring capabilities.
 
-## 🎯 Current Version: 0.0.0.17
+## 🎯 Current Version: 0.0.0.18
 
 **Last Updated:** January 2025  
 **Status:** Production Ready ✅
@@ -534,5 +534,5 @@ Enable debug mode to see:
 ---
 
 **Last Updated:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Status:** Production Ready ✅

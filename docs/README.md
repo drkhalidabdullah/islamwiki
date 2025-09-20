@@ -96,7 +96,7 @@ Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowl
 
 ### 📝 [Changelogs](changelogs/)
 - **CHANGELOG.md**: Complete version history
-- **v0.0.0.17.md**: Latest release notes (Wiki Editor & Reference System)
+- **v0.0.0.18.md**: Latest release notes (Wiki Editor & Reference System)
 - **v0.0.0.16.md**: Previous release notes (Admin Dashboard & Notifications)
 - **v0.0.0.15.md**: Previous release notes (Documentation Updates)
 - **v0.0.0.14.md**: Previous release notes (UI/UX Enhancements)
@@ -216,7 +216,7 @@ html/
 
 ## 📊 Version History
 
-### v0.0.0.17 (Current) - Wiki Editor & Reference System
+### v0.0.0.18 (Current) - Wiki Editor & Reference System
 - Revolutionary wiki editor with professional toolbar
 - Enhanced reference system with clickable links
 - Improved UI/UX with proper button sizing
@@ -373,8 +373,8 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ---
 
-**IslamWiki v0.0.0.17** - A modern Islamic knowledge platform with enhanced wiki editing and reference systems.
+**IslamWiki v0.0.0.18** - A modern Islamic knowledge platform with enhanced wiki editing and reference systems.
 
 **Last Updated:** January 2025  
-**Documentation Version:** 0.0.0.17  
+**Documentation Version:** 0.0.0.18  
 **Status:** Production Ready ✅

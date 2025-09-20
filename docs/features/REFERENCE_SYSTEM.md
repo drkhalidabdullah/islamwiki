@@ -4,7 +4,7 @@
 
 The IslamWiki Reference System provides comprehensive support for academic-style references with clickable internal and external links. The system automatically parses links within reference content and makes them clickable, enhancing the user experience and providing proper navigation.
 
-## 🎯 Current Version: 0.0.0.17
+## 🎯 Current Version: 0.0.0.18
 
 **Last Updated:** January 2025  
 **Status:** Production Ready ✅
@@ -415,5 +415,5 @@ Enable debug mode to see:
 ---
 
 **Last Updated:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Status:** Production Ready ✅

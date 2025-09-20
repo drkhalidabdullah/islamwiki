@@ -307,7 +307,7 @@ This project is licensed under the AGPL License - see the [LICENSE](LICENSE) fil
 
 ## 🎯 **Roadmap**
 
-### **Version 0.0.0.17** (Current)
+### **Version 0.0.0.18** (Current)
 - Professional wiki editor with rich text toolbar
 - Enhanced reference system with clickable links
 - Improved UI/UX with proper button sizing
