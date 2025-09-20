@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
 <?php
 require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/markdown/WikiParser.php';
 
@@ -13,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['content'] ?? '';
     
     if (!empty($content)) {
+        // Set global PDO for WikiParser
+        $GLOBALS['pdo'] = $pdo;
+        
         $parser = new WikiParser('');
         $html = $parser->parse($content);
         echo $html;

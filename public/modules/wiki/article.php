@@ -110,14 +110,17 @@ $parsed_content = $parser->parse($article['content']);
 // Check if article has good article template
 $has_good_article = strpos($article['content'], '{{good article}}') !== false;
 
+// Check if article has full protection template
+$has_full_protection = strpos($article['content'], '{{pp}}') !== false;
+
 // Check if article has semi-protection template
 $has_semi_protection = strpos($article['content'], '{{pp-semi-indef}}') !== false;
 
 // Check if article has move-protection template
 $has_move_protection = strpos($article['content'], '{{pp-move}}') !== false;
 
-// Check if article has no protection (no semi-protection and no move-protection)
-$has_no_protection = !$has_semi_protection && !$has_move_protection;
+// Check if article has no protection (no full protection, no semi-protection and no move-protection)
+$has_no_protection = !$has_full_protection && !$has_semi_protection && !$has_move_protection;
 
 // Update article categories in database
 $categories = $parser->getCategories();
@@ -155,7 +158,7 @@ include '../../includes/header.php';
 <?php
 
 ?>
-<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_module_article.css">
+<link rel="stylesheet" href="/skins/bismillah/assets/css/wiki_module_article.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="/skins/bismillah/assets/css/wiki.css">
 <?php
 
@@ -174,6 +177,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <?php echo htmlspecialchars($article['title']); ?>
                             <?php if ($has_good_article): ?>
                                 <span class="good-article-icon" title="This is a good article. It meets the quality standards for featured content.">★</span>
+                            <?php endif; ?>
+                            <?php if ($has_full_protection): ?>
+                                <span class="full-protection-icon" title="This page is fully protected. Only administrators can edit it."><i class="iw iw-lock"></i></span>
                             <?php endif; ?>
                             <?php if ($has_semi_protection): ?>
                                 <span class="semi-protection-icon" title="This page is semi-protected. Only registered users can edit it.">🔒</span>
@@ -273,7 +279,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                                         <i class="iw iw-history"></i>
                                         Related changes
                                     </a>
-                                    <a href="/wiki/special/page-info?title=<?php echo urlencode($article['title']); ?>" class="dropdown-item" title="Page information (Alt + Shift + I)">
+                                    <a href="/wiki/special/page-info?slug=<?php echo urlencode($article['slug']); ?>" class="dropdown-item" title="Page information (Alt + Shift + I)">
                                         <i class="iw iw-info-circle"></i>
                                         Page information
                                     </a>

@@ -16,10 +16,9 @@ if (!$slug) {
 
 // Get the article with detailed information
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, u.email, u.created_at as user_created_at, cc.name as category_name, cc.slug as category_slug 
+    SELECT wa.*, u.username, u.display_name, u.email, u.created_at as user_created_at
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id 
     WHERE (wa.slug = ? OR wa.slug = ?) 
     AND wa.status = 'published'
 ");
@@ -436,16 +435,7 @@ include '../../../includes/header.php';
                 <td>Total view count</td>
                 <td><?php echo number_format($article['view_count']); ?> views</td>
             </tr>
-            <?php if ($article['category_name']): ?>
-            <tr>
-                <td>Category</td>
-                <td>
-                    <a href="/wiki/category/<?php echo htmlspecialchars($article['category_slug']); ?>">
-                        <?php echo htmlspecialchars($article['category_name']); ?>
-                    </a>
-                </td>
-            </tr>
-            <?php endif; ?>
+            <!-- Category information removed - categories are handled via junction table -->
             <tr>
                 <td>Article quality score</td>
                 <td>
@@ -459,7 +449,7 @@ include '../../../includes/header.php';
                     if ($links_to_page > 20) $quality_score += 10;
                     if ($article['view_count'] > 100) $quality_score += 10;
                     if ($article['view_count'] > 1000) $quality_score += 10;
-                    if ($article['category_name']) $quality_score += 10;
+                    // Category scoring removed - categories handled via junction table
                     if ($article['excerpt']) $quality_score += 10;
                     
                     $quality_level = 'Poor';

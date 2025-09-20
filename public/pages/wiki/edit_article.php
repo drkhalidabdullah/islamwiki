@@ -205,6 +205,58 @@ include "../../includes/header.php";;
             <label for="content">Content *</label>
             <div class="wiki-editor-container">
                 <div class="wiki-editor-main">
+                    <div class="wiki-toolbar">
+                        <div class="toolbar-group">
+                            <button type="button" class="toolbar-btn" onclick="insertText('**', '**')" title="Bold">
+                                <strong>B</strong>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('*', '*')" title="Italic">
+                                <em>I</em>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('`', '`')" title="Code">
+                                <code>&lt;/&gt;</code>
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-group">
+                            <button type="button" class="toolbar-btn" onclick="insertText('# ', '')" title="Heading 1">
+                                H1
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('## ', '')" title="Heading 2">
+                                H2
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('### ', '')" title="Heading 3">
+                                H3
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-group">
+                            <button type="button" class="toolbar-btn" onclick="insertText('[[', ']]')" title="Wiki Link">
+                                [[ ]]
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('[', '](url)')" title="External Link">
+                                🔗
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-group">
+                            <button type="button" class="toolbar-btn" onclick="insertText('* ', '')" title="Bullet List">
+                                • List
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('1. ', '')" title="Numbered List">
+                                1. List
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertText('> ', '')" title="Quote">
+                                " Quote
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-group">
+                            <button type="button" class="toolbar-btn" onclick="togglePreview()" title="Toggle Preview">
+                                👁️ Preview
+                            </button>
+                        </div>
+                    </div>
                     <textarea id="content" name="content" required 
                               placeholder="Write your article content using Markdown..."><?php echo htmlspecialchars($article['content']); ?></textarea>
                 </div>
@@ -251,6 +303,86 @@ include "../../includes/header.php";;
 
 
 <link rel="stylesheet" href="/skins/bismillah/assets/css/wiki.css">
-<script src="/skins/bismillah/assets/js/wiki-editor.js"></script>
+<script>
+// Global functions for toolbar
+function insertText(before, after) {
+    const contentTextarea = document.getElementById('content');
+    if (!contentTextarea) return;
+    
+    const start = contentTextarea.selectionStart;
+    const end = contentTextarea.selectionEnd;
+    const selectedText = contentTextarea.value.substring(start, end);
+    const replacement = before + (selectedText || 'text') + after;
+    
+    contentTextarea.value = contentTextarea.value.substring(0, start) + replacement + contentTextarea.value.substring(end);
+    contentTextarea.focus();
+    contentTextarea.setSelectionRange(start + before.length, start + before.length + (selectedText || 'text').length);
+    
+    updatePreview();
+}
+
+function togglePreview() {
+    const previewContainer = document.getElementById('preview-container');
+    if (!previewContainer) return;
+    
+    if (previewContainer.style.display === 'none' || previewContainer.style.display === '') {
+        previewContainer.style.display = 'block';
+        updatePreview();
+    } else {
+        previewContainer.style.display = 'none';
+    }
+}
+
+function updatePreview() {
+    const contentTextarea = document.getElementById('content');
+    const previewContent = document.getElementById('preview-content');
+    
+    if (!contentTextarea || !previewContent) return;
+    
+    const content = contentTextarea.value;
+    if (!content.trim()) {
+        previewContent.innerHTML = '<p><em>No content to preview</em></p>';
+        return;
+    }
+    
+    previewContent.innerHTML = '<div class="preview-loading"><i class="iw iw-spinner iw-spin"></i> Parsing content...</div>';
+    
+    fetch('/wiki/preview', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'content=' + encodeURIComponent(content)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.text();
+    })
+    .then(html => {
+        previewContent.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Preview error:', error);
+        previewContent.innerHTML = `<p style="color: red;">Preview error: ${error.message}</p>`;
+    });
+}
+
+// Auto-update preview on content change
+document.addEventListener('DOMContentLoaded', function() {
+    const contentTextarea = document.getElementById('content');
+    const previewContainer = document.getElementById('preview-container');
+    
+    if (contentTextarea && previewContainer) {
+        contentTextarea.addEventListener('input', function() {
+            if (previewContainer.style.display !== 'none') {
+                clearTimeout(window.previewTimeout);
+                window.previewTimeout = setTimeout(updatePreview, 1000);
+            }
+        });
+    }
+});
+</script>
 
 <?php include "../../includes/footer.php";; ?>

@@ -1727,6 +1727,12 @@ html {
     border-color: #f5c6cb;
 }
 
+.protection-template.full-protection {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    border-left: 4px solid #dc2626;
+}
+
 .protection-banner {
     color: #856404;
     font-weight: 500;
@@ -1738,6 +1744,11 @@ html {
 
 .protection-template.move-protection .protection-banner {
     color: #721c24;
+}
+
+.protection-template.full-protection .protection-banner {
+    color: #721c24;
+    font-weight: 600;
 }
 
 /* Quality Template Styles */
@@ -2022,6 +2033,22 @@ html {
     color: #15803d;
 }
 
+/* Full protection icon */
+.full-protection-icon {
+    display: inline-block;
+    color: #dc2626;
+    font-size: 16px;
+    margin-left: 6px;
+    cursor: help;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.full-protection-icon:hover {
+    transform: scale(1.2);
+    color: #b91c1c;
+}
+
 /* Semi-protection icon */
 .semi-protection-icon {
     display: inline-block;
@@ -2041,19 +2068,19 @@ html {
 /* Move-protection icon */
 .move-protection-icon {
     display: inline-block;
-    color: #16a34a !important;
+    color: #dc2626 !important;
     font-size: 16px;
     margin-left: 6px;
     cursor: help;
     vertical-align: middle;
     transition: transform 0.2s ease;
-    text-shadow: 0 0 0 #16a34a;
+    text-shadow: 0 0 0 #dc2626;
 }
 
 .move-protection-icon:hover {
     transform: scale(1.2);
-    color: #15803d !important;
-    text-shadow: 0 0 0 #15803d;
+    color: #b91c1c !important;
+    text-shadow: 0 0 0 #b91c1c;
 }
 
 /* No-protection icon */

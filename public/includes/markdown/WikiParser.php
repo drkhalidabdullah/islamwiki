@@ -1249,13 +1249,46 @@ class WikiParser extends MarkdownParser {
         $html .= '<ol>';
         
         foreach ($this->references as $ref) {
-            $html .= '<li id="ref' . $ref['id'] . '">' . $ref['content'] . '</li>';
+            // Parse links in reference content
+            $parsed_content = $this->parseLinksInReference($ref['content']);
+            $html .= '<li id="ref' . $ref['id'] . '">' . $parsed_content . '</li>';
         }
         
         $html .= '</ol>';
         $html .= '</div>';
         
         return $html;
+    }
+    
+    /**
+     * Parse links within reference content
+     */
+    private function parseLinksInReference($content) {
+        // Parse external links [url] and [url text]
+        $content = preg_replace_callback('/\[(https?:\/\/[^\s\]]+)(?:\s+([^\]]+))?\]/', function($matches) {
+            $url = $matches[1];
+            $text = isset($matches[2]) ? $matches[2] : $url;
+            
+            // Validate URL
+            if ($this->isValidUrl($url)) {
+                return '<a href="' . htmlspecialchars($url) . '" class="external-link" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text) . '</a>';
+            }
+            
+            return $matches[0]; // Return original if invalid
+        }, $content);
+        
+        // Parse wiki links [[page]] and [[page|text]]
+        $content = preg_replace_callback('/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/', function($matches) {
+            $page = trim($matches[1]);
+            $text = isset($matches[2]) ? trim($matches[2]) : $page;
+            
+            // Create slug from page name
+            $slug = $this->createSlug($page);
+            
+            return '<a href="/wiki/' . $slug . '" class="wiki-link">' . htmlspecialchars($text) . '</a>';
+        }, $content);
+        
+        return $content;
     }
     
     /**
