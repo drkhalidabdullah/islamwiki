@@ -13,7 +13,8 @@ RewriteRule ^wiki/Template:([a-zA-Z0-9\-_\s%20]+)/?$ /modules/wiki/template.php?
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+):([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?title=$1:$2 [L,QSA]
 
 # /wiki/article-name -> /modules/wiki/article.php?slug=article-name
-RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
+# /wiki/article-name#section -> /modules/wiki/article.php?slug=article-name (fragment handled by browser)
+RewriteRule ^wiki/([a-zA-Z0-9\-_]+)(#.*)?/?$ /modules/wiki/article.php?slug=$1 [L,QSA]
 
 # /wiki/article-name/history -> /modules/wiki/history.php?slug=article-name
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+)/history/?$ /modules/wiki/history.php?slug=$1 [L,QSA]

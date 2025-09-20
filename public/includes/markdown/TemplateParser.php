@@ -80,6 +80,101 @@ class TemplateParser {
                 return get_hijri_date();
             }
             
+            // Handle Main template with proper slug conversion
+            if (strtolower($template_name) === 'main') {
+                $page_name = $parameters['1'] ?? '';
+                if (empty($page_name)) {
+                    return '<div class="main-article"><strong>Main article:</strong> <span class="error">No page specified</span></div>';
+                }
+                
+                // Convert page name to slug
+                $slug = $this->createSlug($page_name);
+                
+                return '<div class="main-article"><strong>Main article:</strong> <a href="/wiki/' . htmlspecialchars($slug) . '" class="wiki-link">' . htmlspecialchars($page_name) . '</a></div>';
+            }
+            
+            // Handle See also template with proper slug conversion for multiple parameters
+            if (strtolower($template_name) === 'see also') {
+                $links = [];
+                
+                // Process all parameters (1, 2, 3, etc.)
+                for ($i = 1; $i <= 10; $i++) { // Support up to 10 parameters
+                    $param_key = (string)$i;
+                    if (isset($parameters[$param_key]) && !empty(trim($parameters[$param_key]))) {
+                        $page_name = trim($parameters[$param_key]);
+                        
+                        // Check if this is an anchor link (contains #)
+                        if (strpos($page_name, '#') !== false) {
+                            list($main_page, $anchor) = explode('#', $page_name, 2);
+                            $main_page = trim($main_page);
+                            $anchor = trim($anchor);
+                            
+                            // Convert main page name to slug
+                            $slug = $this->createSlug($main_page);
+                            
+                            // Convert anchor to URL-friendly format
+                            $anchor_slug = $this->createSlug($anchor);
+                            
+                            $links[] = '<a href="/wiki/' . htmlspecialchars($slug) . '#' . htmlspecialchars($anchor_slug) . '" class="wiki-link">' . htmlspecialchars($page_name) . '</a>';
+                        } else {
+                            // Regular page link
+                            $slug = $this->createSlug($page_name);
+                            $links[] = '<a href="/wiki/' . htmlspecialchars($slug) . '" class="wiki-link">' . htmlspecialchars($page_name) . '</a>';
+                        }
+                    }
+                }
+                
+                if (empty($links)) {
+                    return '<div class="see-also"><strong>See also:</strong> <span class="error">No pages specified</span></div>';
+                }
+                
+                // Join links with separators
+                $links_html = implode(', ', $links);
+                
+                return '<div class="see-also"><strong>See also:</strong> ' . $links_html . '</div>';
+            }
+            
+            // Handle Further information template with proper slug conversion for multiple parameters
+            if (strtolower($template_name) === 'further information' || strtolower($template_name) === 'further-information') {
+                $links = [];
+                
+                // Process all parameters (1, 2, 3, etc.)
+                for ($i = 1; $i <= 10; $i++) { // Support up to 10 parameters
+                    $param_key = (string)$i;
+                    if (isset($parameters[$param_key]) && !empty(trim($parameters[$param_key]))) {
+                        $page_name = trim($parameters[$param_key]);
+                        
+                        // Check if this is an anchor link (contains #)
+                        if (strpos($page_name, '#') !== false) {
+                            list($main_page, $anchor) = explode('#', $page_name, 2);
+                            $main_page = trim($main_page);
+                            $anchor = trim($anchor);
+                            
+                            // Convert main page name to slug
+                            $slug = $this->createSlug($main_page);
+                            
+                            // Convert anchor to URL-friendly format
+                            $anchor_slug = $this->createSlug($anchor);
+                            
+                            $links[] = '<a href="/wiki/' . htmlspecialchars($slug) . '#' . htmlspecialchars($anchor_slug) . '" class="wiki-link">' . htmlspecialchars($page_name) . '</a>';
+                        } else {
+                            // Regular page link
+                            $slug = $this->createSlug($page_name);
+                            $links[] = '<a href="/wiki/' . htmlspecialchars($slug) . '" class="wiki-link">' . htmlspecialchars($page_name) . '</a>';
+                        }
+                    }
+                }
+                
+                if (empty($links)) {
+                    return '<div class="further-information"><strong>Further information:</strong> <span class="error">No pages specified</span></div>';
+                }
+                
+                // Join links with separators
+                $links_html = implode(', ', $links);
+                
+                return '<div class="further-information"><strong>Further information:</strong> ' . $links_html . '</div>';
+            }
+            
             $template = $this->getTemplate($template_name);
             if (!$template) {
                 return "{{Template not found: $template_name}}";

@@ -35,6 +35,11 @@ $page_title = 'Article';
 $slug = $_GET['slug'] ?? '';
 $title = $_GET['title'] ?? '';
 
+// Handle anchor links - remove #fragment from slug if present
+if (strpos($slug, '#') !== false) {
+    $slug = substr($slug, 0, strpos($slug, '#'));
+}
+
 // Handle namespace titles (e.g., Template:Colored_box)
 if ($title) {
     $parsed_title = parse_wiki_title($title);
@@ -82,6 +87,13 @@ if (!$article) {
         redirect("/wiki/category/" . urlencode($category_slug));
     }
     
+    // For regular articles, redirect to create article page if user is logged in and is an editor
+    if (is_logged_in() && is_editor()) {
+        $article_title = ucfirst(str_replace('-', ' ', $slug));
+        redirect("/pages/wiki/create_article.php?title=" . urlencode($article_title));
+    }
+    
+    // Otherwise, show not found page
     redirect("not_found.php?slug=" . urlencode($slug) . "&title=" . urlencode(ucfirst(str_replace('-', ' ', $slug))));
 }
 

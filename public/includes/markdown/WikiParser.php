@@ -47,16 +47,21 @@ class WikiParser extends MarkdownParser {
     public function __construct($wiki_base_url = 'wiki/') {
         parent::__construct($wiki_base_url);
         
-        // Initialize template parser if PDO is available
+        // Initialize template parser - try multiple methods to get PDO
+        $pdo = null;
+        
+        // Method 1: Check global PDO
         if (isset($GLOBALS['pdo']) && $GLOBALS['pdo']) {
-            try {
-                $this->template_parser = new TemplateParser($GLOBALS['pdo']);
-                error_log("TemplateParser initialized successfully with global PDO");
-            } catch (Exception $e) {
-                error_log("Failed to initialize TemplateParser with global PDO: " . $e->getMessage());
-            }
-        } else {
-            // Try to create PDO connection if not available
+            $pdo = $GLOBALS['pdo'];
+            error_log("Using global PDO for TemplateParser");
+        }
+        // Method 2: Check if PDO is available in global scope
+        elseif (isset($GLOBALS['pdo'])) {
+            $pdo = $GLOBALS['pdo'];
+            error_log("Using global PDO for TemplateParser (fallback)");
+        }
+        // Method 3: Create new PDO connection
+        else {
             try {
                 if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER') && defined('DB_PASS')) {
                     $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
@@ -65,14 +70,25 @@ class WikiParser extends MarkdownParser {
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                         PDO::ATTR_EMULATE_PREPARES => false,
                     ]);
-                    $this->template_parser = new TemplateParser($pdo);
-                    error_log("TemplateParser initialized successfully with new PDO");
+                    error_log("Created new PDO connection for TemplateParser");
                 } else {
                     error_log("Database constants not defined");
                 }
             } catch (Exception $e) {
-                error_log("Failed to create PDO and initialize TemplateParser: " . $e->getMessage());
+                error_log("Failed to create PDO connection: " . $e->getMessage());
             }
+        }
+        
+        // Initialize template parser if we have PDO
+        if ($pdo) {
+            try {
+                $this->template_parser = new TemplateParser($pdo);
+                error_log("TemplateParser initialized successfully");
+            } catch (Exception $e) {
+                error_log("Failed to initialize TemplateParser: " . $e->getMessage());
+            }
+        } else {
+            error_log("No PDO available for TemplateParser");
         }
     }
     
@@ -712,7 +728,7 @@ class WikiParser extends MarkdownParser {
                 'content' => $ref_content
             ];
             
-            return '<sup><a href="#ref' . $ref_id . '" id="ref' . $ref_id . '">[' . $ref_id . ']</a></sup>';
+            return '<sup><a href="#ref' . $ref_id . '" class="reference-link">[' . $ref_id . ']</a></sup>';
         }, $content);
     }
     
@@ -741,97 +757,111 @@ class WikiParser extends MarkdownParser {
      */
     private function parseTemplates($content) {
         if (!$this->template_parser) {
+            error_log("WikiParser: No template parser available");
             return $content;
         }
         
         // First handle includeonly/noinclude tags
         $content = $this->parseIncludeOnlyTags($content);
         
+        // First, process simple templates (no nested braces)
+        $simple_pattern = '/\{\{([^{}]+)\}\}/';
+        $content = preg_replace_callback($simple_pattern, function($matches) {
+            $template_content = $matches[1];
+            return $this->processTemplate($template_content);
+        }, $content);
+        
+        // Then process complex templates (with nested braces)
         $pattern = '/\{\{([^{}]*(?:\{[^}]*\}[^{}]*)*)\}\}/';
         
         $result = preg_replace_callback($pattern, function($matches) {
             $template_content = $matches[1];
+            return $this->processTemplate($template_content);
+        }, $content);
+        
+        return $result;
+    }
+    
+    private function processTemplate($template_content) {
+        // Check if this is an inline template (good article, etc.)
+        $inline_templates = ['good article'];
+        $template_name = trim(explode('|', $template_content)[0]);
+        
+        // Handle MediaWiki-style parser functions like {{#time:format}}
+        if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
+            $function_name = trim($func_matches[1]);
+            $function_params = trim($func_matches[2]);
             
-            // Check if this is an inline template (good article, etc.)
-            $inline_templates = ['good article'];
-            $template_name = trim(explode('|', $template_content)[0]);
-            
-            // Handle MediaWiki-style parser functions like {{#time:format}}
-            if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
-                $function_name = trim($func_matches[1]);
-                $function_params = trim($func_matches[2]);
+            if ($function_name === 'time') {
+                return date($function_params);
+            } elseif ($function_name === 'invoke') {
+                // Handle {{#invoke:Module|function|params}}
+                $invoke_parts = explode('|', $function_params);
+                $module = trim($invoke_parts[0]);
+                $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'main';
                 
-                if ($function_name === 'time') {
-                    return date($function_params);
-                } elseif ($function_name === 'invoke') {
-                    // Handle {{#invoke:Module|function|params}}
-                    $invoke_parts = explode('|', $function_params);
-                    $module = trim($invoke_parts[0]);
-                    $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'main';
-                    
-                    // Parse additional parameters
-                    $params = [];
-                    for ($i = 2; $i < count($invoke_parts); $i++) {
-                        $param = trim($invoke_parts[$i]);
-                        if (strpos($param, '=') !== false) {
-                            list($key, $value) = explode('=', $param, 2);
-                            $params[trim($key)] = trim($value);
-                        } else {
-                            $params[] = $param;
-                        }
+                // Parse additional parameters
+                $params = [];
+                for ($i = 2; $i < count($invoke_parts); $i++) {
+                    $param = trim($invoke_parts[$i]);
+                    if (strpos($param, '=') !== false) {
+                        list($key, $value) = explode('=', $param, 2);
+                        $params[trim($key)] = trim($value);
+                    } else {
+                        $params[] = $param;
                     }
-                    
-                    // Execute the module
-                    if ($this->template_parser) {
-                        return $this->template_parser->parseTemplate($module, $params);
-                    }
-                    
-                    return "{{#invoke:$module|$function}}";
                 }
                 
-                return "{{#$function_name:$function_params}}"; // Return unchanged if not handled
+                // Execute the module
+                if ($this->template_parser) {
+                    return $this->template_parser->parseTemplate($module, $params);
+                }
+                
+                return "{{#invoke:$module|$function}}";
             }
             
-            // Parse template name and parameters, being careful not to split wiki links
-            $parts = $this->parseTemplateParameters($template_content);
-            $template_name = trim(array_shift($parts));
-            $parameters = [];
-            
-            foreach ($parts as $index => $part) {
-                $part = trim($part);
-                if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part, 2);
-                    $parameters[trim($key)] = trim($value);
-                } else {
-                    $parameters[(string)($index + 1)] = $part;
-                }
+            return "{{#$function_name:$function_params}}"; // Return unchanged if not handled
+        }
+        
+        // Parse template name and parameters, being careful not to split wiki links
+        $parts = $this->parseTemplateParameters($template_content);
+        $template_name = trim(array_shift($parts));
+        $parameters = [];
+        
+        foreach ($parts as $index => $part) {
+            $part = trim($part);
+            if (strpos($part, '=') !== false) {
+                list($key, $value) = explode('=', $part, 2);
+                $parameters[trim($key)] = trim($value);
+            } else {
+                $parameters[(string)($index + 1)] = $part;
             }
-            
-            // Create a fresh TemplateParser instance to avoid state issues
-            try {
-                if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER') && defined('DB_PASS')) {
-                    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-                    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                        PDO::ATTR_EMULATE_PREPARES => false,
-                    ]);
-                    $fresh_template_parser = new TemplateParser($pdo);
-                    $result = $fresh_template_parser->parseTemplate($template_name, $parameters);
-                } else {
-                    $result = $this->template_parser->parseTemplate($template_name, $parameters);
-                }
-            } catch (Exception $e) {
+        }
+        
+        // Create a fresh TemplateParser instance to avoid state issues
+        try {
+            if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER') && defined('DB_PASS')) {
+                $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+                $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]);
+                $fresh_template_parser = new TemplateParser($pdo);
+                $result = $fresh_template_parser->parseTemplate($template_name, $parameters);
+            } else {
                 $result = $this->template_parser->parseTemplate($template_name, $parameters);
             }
-            
-            // Mark inline templates for special handling
-            if (in_array($template_name, $inline_templates)) {
-                $result = '<!--INLINE_TEMPLATE-->' . $result . '<!--/INLINE_TEMPLATE-->';
-            }
-            
-            return $result;
-        }, $content);
+        } catch (Exception $e) {
+            $result = $this->template_parser->parseTemplate($template_name, $parameters);
+        }
+        
+        // Mark inline templates for special handling
+        if (in_array($template_name, $inline_templates)) {
+            $result = '<!--INLINE_TEMPLATE-->' . $result . '<!--/INLINE_TEMPLATE-->';
+        }
+        
+        return $result;
         
         // Recursively process any remaining templates in the result
         // Limit recursion depth to prevent infinite loops
@@ -993,7 +1023,8 @@ class WikiParser extends MarkdownParser {
         $content = preg_replace_callback('/^(={1,6})\s*(.+?)\s*\1\s*$/m', function($matches) {
             $level = strlen($matches[1]);
             $text = trim($matches[2]);
-            return "<h$level>$text</h$level>";
+            $id = $this->createHeadingId($text);
+            return "<h$level id=\"$id\">$text</h$level>";
         }, $content);
         
         return $content;
@@ -1359,6 +1390,11 @@ class WikiParser extends MarkdownParser {
      * Check if URL is valid
      */
     private function isValidUrl($url) {
+        // Allow anchor links (fragment identifiers)
+        if (strpos($url, '#') === 0) {
+            return true;
+        }
+        
         // Allow relative URLs
         if (strpos($url, '/') === 0) {
             return true;
