@@ -18,6 +18,33 @@ class TemplateParser {
     }
     
     /**
+     * Parse template content directly without database lookup
+     */
+    public function parseTemplateContent($content, $parameters = []) {
+        // Reset recursion depth if we're starting a new template processing
+        if ($this->recursion_depth <= 0) {
+            $this->recursion_depth = 0;
+        }
+        
+        // Prevent infinite recursion
+        if ($this->recursion_depth >= $this->max_recursion) {
+            return "{{Template recursion limit exceeded}}";
+        }
+        
+        $this->recursion_depth++;
+        
+        try {
+            // Parse the template content
+            $result = $this->parseTemplateContentInternal($content, $parameters);
+            $this->recursion_depth--;
+            return $result;
+        } catch (Exception $e) {
+            $this->recursion_depth--;
+            return "{{Template parsing error: " . $e->getMessage() . "}}";
+        }
+    }
+    
+    /**
      * Parse template with advanced features
      */
     public function parseTemplate($template_name, $parameters = []) {
@@ -78,7 +105,7 @@ class TemplateParser {
             }
             
             // Parse remaining template content (conditionals, double braces, magic words)
-            $content = $this->parseTemplateContent($content, $parameters);
+            $content = $this->parseTemplateContentInternal($content, $parameters);
             
             // Parse wiki links in template content
             $content = $this->parseWikiLinks($content);
@@ -178,7 +205,7 @@ class TemplateParser {
     public function parse($text, $parameters = []) {
         $this->recursion_depth = 0;
         // First parse template content (parameters, conditionals, etc.)
-        $text = $this->parseTemplateContent($text, $parameters);
+        $text = $this->parseTemplateContentInternal($text, $parameters);
         // Then parse any actual templates
         $text = $this->parseTemplatesRecursive($text, $parameters);
         // Finally parse wiki links
@@ -441,17 +468,40 @@ class TemplateParser {
     }
     
     /**
-     * Improved template content parsing
+     * Improved template content parsing (internal)
      */
-    private function parseTemplateContent($content, $parameters) {
-        // Step 1: Parse conditionals
+    private function parseTemplateContentInternal($content, $parameters) {
+        // Step 1: Parse triple brace parameters first
+        $content = $this->parseTripleBraces($content, $parameters);
+        
+        // Step 2: Parse conditionals
         $content = $this->parseConditionalsImproved($content, $parameters);
         
-        // Step 2: Parse remaining double brace parameters
+        // Step 3: Parse parser functions (lc, uc, etc.)
+        $content = $this->parseParserFunctions($content, $parameters);
+        
+        // Step 4: Parse remaining double brace parameters
         $content = $this->parseDoubleBraces($content, $parameters);
         
-        // Step 3: Parse magic words
+        // Step 5: Parse magic words
         $content = $this->parseTemplateMagicWords($content, $parameters);
+        
+        // Step 6: Recursively parse any remaining nested structures
+        $previous_content = '';
+        $iterations = 0;
+        while ($content !== $previous_content && $iterations < 5) {
+            $previous_content = $content;
+            $iterations++;
+            
+            // Parse switches again
+            $content = $this->parseSwitchStatements($content, $parameters);
+            
+            // Parse conditionals again
+            $content = $this->parseConditionalsImproved($content, $parameters);
+            
+            // Parse parser functions again
+            $content = $this->parseParserFunctions($content, $parameters);
+        }
         
         return $content;
     }
@@ -524,11 +574,36 @@ class TemplateParser {
             }
         }, $content);
         
+        // Parse {{#switch:value|case1=result1|case2=result2|#default=default_result}}
+        // Use a more sophisticated approach to handle complex nested structures
+        $content = $this->parseSwitchStatements($content, $parameters);
+        
+        // Parse {{#ifeq:value1|value2|true|false}} syntax
+        $content = preg_replace_callback('/\{\{#ifeq:([^|]+)\|([^|]+)\|([^|]+)\|([^}]+)\}\}/', function($matches) use ($parameters) {
+            $value1 = trim($matches[1]);
+            $value2 = trim($matches[2]);
+            $true_value = trim($matches[3]);
+            $false_value = trim($matches[4]);
+            
+            // Handle nested parameters
+            $value1 = $this->parseNestedParameters($value1, $parameters);
+            $value2 = $this->parseNestedParameters($value2, $parameters);
+            $true_value = $this->parseNestedParameters($true_value, $parameters);
+            $false_value = $this->parseNestedParameters($false_value, $parameters);
+            
+            return ($value1 === $value2) ? $true_value : $false_value;
+        }, $content);
+        
         // Then parse {{#if:condition|true|false}} syntax with more flexible matching
         return preg_replace_callback('/\{\{#if:([^|]+)\|([^|]+)\|([^}]+)\}\}/', function($matches) use ($parameters) {
             $condition = trim($matches[1]);
             $true_value = trim($matches[2]);
             $false_value = trim($matches[3]);
+            
+            // Handle nested parameters
+            $condition = $this->parseNestedParameters($condition, $parameters);
+            $true_value = $this->parseNestedParameters($true_value, $parameters);
+            $false_value = $this->parseNestedParameters($false_value, $parameters);
             
             // Check if condition is a parameter
             if (isset($parameters[$condition])) {
@@ -545,13 +620,18 @@ class TemplateParser {
      * Parse double brace parameters: {{param|default}} and {{param}}
      */
     private function parseDoubleBraces($content, $parameters) {
-        // Parse {{param|default}} syntax - only match if it's not part of a wiki link
+        // Parse {{param|default}} syntax - only match if it's not part of a wiki link or parser function
         $content = preg_replace_callback('/\{\{([^|{}]+)\|([^}]+)\}\}/', function($matches) use ($parameters) {
             $param_name = trim($matches[1]);
             $default_value = trim($matches[2]);
             
             // Skip if this looks like it might be part of a wiki link
             if (strpos($matches[0], '[') !== false || strpos($matches[0], ']') !== false) {
+                return $matches[0];
+            }
+            
+            // Skip if this is a parser function (starts with #)
+            if (strpos($param_name, '#') === 0) {
                 return $matches[0];
             }
             
@@ -569,6 +649,11 @@ class TemplateParser {
             
             // Skip {{#invoke}} syntax
             if (strpos($param_name, '#invoke:') === 0) {
+                return $matches[0];
+            }
+            
+            // Skip if this is a parser function (starts with #)
+            if (strpos($param_name, '#') === 0) {
                 return $matches[0];
             }
             
@@ -630,6 +715,175 @@ class TemplateParser {
             }
             
             return '';
+        }, $content);
+        
+        return $content;
+    }
+    
+    /**
+     * Parse switch statements with proper brace matching
+     */
+    private function parseSwitchStatements($content, $parameters) {
+        $pos = 0;
+        $result = '';
+        
+        while ($pos < strlen($content)) {
+            $switch_start = strpos($content, '{{#switch:', $pos);
+            if ($switch_start === false) {
+                $result .= substr($content, $pos);
+                break;
+            }
+            
+            // Add content before the switch
+            $result .= substr($content, $pos, $switch_start - $pos);
+            
+            // Find the matching closing braces
+            $brace_count = 0;
+            $switch_end = $switch_start;
+            $in_switch = false;
+            
+            for ($i = $switch_start; $i < strlen($content); $i++) {
+                $char = $content[$i];
+                
+                if ($char === '{' && $i + 1 < strlen($content) && $content[$i + 1] === '{') {
+                    $brace_count++;
+                    $i++; // Skip the second brace
+                    $in_switch = true;
+                } elseif ($char === '}' && $i + 1 < strlen($content) && $content[$i + 1] === '}') {
+                    $brace_count--;
+                    $i++; // Skip the second brace
+                    if ($in_switch && $brace_count === 0) {
+                        $switch_end = $i + 1;
+                        break;
+                    }
+                }
+            }
+            
+            if ($switch_end > $switch_start) {
+                $switch_content = substr($content, $switch_start, $switch_end - $switch_start);
+                $parsed_switch = $this->parseSingleSwitch($switch_content, $parameters);
+                $result .= $parsed_switch;
+                $pos = $switch_end;
+            } else {
+                // No matching closing braces found, treat as regular text
+                $result .= substr($content, $switch_start, 10); // "{{#switch:"
+                $pos = $switch_start + 10;
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Parse a single switch statement
+     */
+    private function parseSingleSwitch($switch_content, $parameters) {
+        // Extract the switch value and cases
+        if (!preg_match('/\{\{#switch:([^|{}]+)\|(.*)\}\}/s', $switch_content, $matches)) {
+            return $switch_content; // Return as-is if parsing fails
+        }
+        
+        $value = trim($matches[1]);
+        $cases = $matches[2];
+        
+        // Handle nested parameters in the switch value
+        $value = $this->parseNestedParameters($value, $parameters);
+        
+        // Parse cases - split by | but be careful about nested structures
+        $case_parts = $this->splitSwitchCases($cases);
+        
+        foreach ($case_parts as $case_part) {
+            if (strpos($case_part, '=') === false) {
+                continue; // Skip parts without equals sign
+            }
+            
+            $equals_pos = strpos($case_part, '=');
+            $case_value = trim(substr($case_part, 0, $equals_pos));
+            $case_result = trim(substr($case_part, $equals_pos + 1));
+            
+            // Handle special case for #default
+            if ($case_value === '#default') {
+                // Recursively parse the result for nested templates
+                return $this->parseTemplateContentInternal($case_result, $parameters);
+            }
+            
+            // Handle nested parameters in case values and results
+            $case_value = $this->parseNestedParameters($case_value, $parameters);
+            
+            if ($case_value === $value) {
+                // Recursively parse the result for nested templates
+                return $this->parseTemplateContentInternal($case_result, $parameters);
+            }
+        }
+        
+        return '';
+    }
+    
+    /**
+     * Split switch cases while respecting nested braces
+     */
+    private function splitSwitchCases($cases) {
+        $parts = [];
+        $current_part = '';
+        $brace_count = 0;
+        
+        for ($i = 0; $i < strlen($cases); $i++) {
+            $char = $cases[$i];
+            
+            if ($char === '{' && $i + 1 < strlen($cases) && $cases[$i + 1] === '{') {
+                $brace_count++;
+                $current_part .= $char . $cases[$i + 1];
+                $i++; // Skip the second brace
+            } elseif ($char === '}' && $i + 1 < strlen($cases) && $cases[$i + 1] === '}') {
+                $brace_count--;
+                $current_part .= $char . $cases[$i + 1];
+                $i++; // Skip the second brace
+            } elseif ($char === '|' && $brace_count === 0) {
+                $parts[] = $current_part;
+                $current_part = '';
+            } else {
+                $current_part .= $char;
+            }
+        }
+        
+        if (!empty($current_part)) {
+            $parts[] = $current_part;
+        }
+        
+        return $parts;
+    }
+    
+    /**
+     * Parse parser functions like lc, uc, etc.
+     */
+    private function parseParserFunctions($content, $parameters) {
+        // Handle lc function: {{lc:value}}
+        $content = preg_replace_callback('/\{\{lc:([^}]+)\}\}/', function($matches) use ($parameters) {
+            $value = trim($matches[1]);
+            $value = $this->parseNestedParameters($value, $parameters);
+            return strtolower($value);
+        }, $content);
+        
+        // Handle uc function: {{uc:value}}
+        $content = preg_replace_callback('/\{\{uc:([^}]+)\}\}/', function($matches) use ($parameters) {
+            $value = trim($matches[1]);
+            $value = $this->parseNestedParameters($value, $parameters);
+            return strtoupper($value);
+        }, $content);
+        
+        // Handle nowiki tags: <nowiki>content</nowiki>
+        $content = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/s', function($matches) {
+            return htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+        }, $content);
+        
+        // Handle includeonly tags: <includeonly>content</includeonly>
+        $content = preg_replace_callback('/<includeonly>(.*?)<\/includeonly>/s', function($matches) {
+            return $matches[1]; // Return content without tags
+        }, $content);
+        
+        // Handle noinclude tags: <noinclude>content</noinclude>
+        $content = preg_replace_callback('/<noinclude>(.*?)<\/noinclude>/s', function($matches) {
+            return ''; // Remove noinclude content
         }, $content);
         
         return $content;

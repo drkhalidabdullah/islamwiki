@@ -14,10 +14,14 @@ function togglePreview() {
         previewContainer.style.display = 'block';
         previewBtn.textContent = 'Hide Preview';
         
-        // Parse and render template preview
+        // Show loading state
+        previewContent.innerHTML = '<div class="preview-loading"><i class="iw iw-spinner iw-spin"></i> Parsing template...</div>';
+        
+        // Parse and render template preview using server-side parser
         const templateContent = contentTextarea.value;
-        const preview = renderTemplatePreview(templateContent);
-        previewContent.innerHTML = preview;
+        const templateName = document.getElementById('name').value || 'Preview Template';
+        
+        parseTemplatePreview(templateName, templateContent, previewContent);
         
     } else {
         // Hide preview
@@ -26,7 +30,35 @@ function togglePreview() {
     }
 }
 
-// Render template preview
+// Parse template preview using server-side parser
+function parseTemplatePreview(templateName, templateContent, previewElement) {
+    // Create form data
+    const formData = new FormData();
+    formData.append('name', templateName);
+    formData.append('content', templateContent);
+    
+    // Make AJAX request to parse template
+    fetch('/api/template_preview.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Display parsed content
+            previewElement.innerHTML = '<div class="preview-success">' + data.parsed_content + '</div>';
+        } else {
+            // Display error
+            previewElement.innerHTML = '<div class="preview-error"><strong>Parsing Error:</strong> ' + data.error + '</div>';
+        }
+    })
+    .catch(error => {
+        // Display network error
+        previewElement.innerHTML = '<div class="preview-error"><strong>Network Error:</strong> ' + error.message + '</div>';
+    });
+}
+
+// Fallback template preview (client-side only)
 function renderTemplatePreview(templateContent) {
     // Replace template parameters with sample values
     let preview = templateContent;
@@ -37,7 +69,7 @@ function renderTemplatePreview(templateContent) {
     });
     
     // Replace double brace parameters with sample values
-    preview = preview.replace(/\{\{([^|{}]+)\|([^}]+)\}\}/g, function(match, paramName, defaultValue) {
+    preview = preview.replace(/\{\{([^|{}]+)\|([^|{}]+)\}\}/g, function(match, paramName, defaultValue) {
         return '<span class="template-param" title="Parameter: ' + paramName + '">' + defaultValue + '</span>';
     });
     
@@ -86,6 +118,8 @@ function autoSave() {
 // Initialize editor
 document.addEventListener('DOMContentLoaded', function() {
     const contentTextarea = document.getElementById('content');
+    const previewContainer = document.getElementById('preview-container');
+    const previewContent = document.getElementById('preview-content');
     
     // Add auto-save on content change
     if (contentTextarea) {
@@ -96,6 +130,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contentTextarea) {
         contentTextarea.addEventListener('input', function() {
             highlightTemplateSyntax(this);
+        });
+    }
+    
+    // Add real-time preview update when preview is visible
+    if (contentTextarea && previewContainer && previewContent) {
+        let previewTimeout;
+        contentTextarea.addEventListener('input', function() {
+            // Only update if preview is visible
+            if (previewContainer.style.display !== 'none') {
+                clearTimeout(previewTimeout);
+                previewTimeout = setTimeout(function() {
+                    const templateName = document.getElementById('name').value || 'Preview Template';
+                    const templateContent = contentTextarea.value;
+                    
+                    // Show loading state
+                    previewContent.innerHTML = '<div class="preview-loading"><i class="iw iw-spinner iw-spin"></i> Updating preview...</div>';
+                    
+                    // Parse template
+                    parseTemplatePreview(templateName, templateContent, previewContent);
+                }, 1000); // Wait 1 second after user stops typing
+            }
         });
     }
 });
