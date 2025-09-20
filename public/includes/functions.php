@@ -776,9 +776,71 @@ function get_user_posts_with_markdown($user_id, $limit = 20, $offset = 0, $inclu
 function get_user_photos($user_id, $limit = 20, $offset = 0, $include_metadata = false) {
     global $pdo;
     
-    // For now, return empty array since photos table might not exist
-    // This can be implemented when photos functionality is added
-    return [];
+    try {
+        // Get photos from user_posts table where post_type is 'image'
+        $stmt = $pdo->prepare("
+            SELECT 
+                id,
+                media_url as file_path,
+                content as caption,
+                created_at,
+                likes_count,
+                comments_count,
+                shares_count
+            FROM user_posts 
+            WHERE user_id = ? AND post_type = 'image' AND media_url IS NOT NULL
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$user_id, $limit, $offset]);
+        $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // If metadata is requested, add additional photo information
+        if ($include_metadata) {
+            foreach ($photos as &$photo) {
+                // Get photo dimensions if possible
+                $image_path = $_SERVER['DOCUMENT_ROOT'] . $photo['file_path'];
+                if (file_exists($image_path)) {
+                    $image_info = getimagesize($image_path);
+                    if ($image_info) {
+                        $photo['width'] = $image_info[0];
+                        $photo['height'] = $image_info[1];
+                        $photo['aspect_ratio'] = $image_info[0] / $image_info[1];
+                    }
+                }
+                
+                // Format date
+                $photo['formatted_date'] = date('M j, Y', strtotime($photo['created_at']));
+                $photo['time_ago'] = time_ago($photo['created_at']);
+            }
+        }
+        
+        return $photos;
+        
+    } catch (Exception $e) {
+        error_log("Error fetching user photos: " . $e->getMessage());
+        return [];
+    }
+}
+
+function get_user_photo_count($user_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) as count
+            FROM user_posts 
+            WHERE user_id = ? AND post_type = 'image' AND media_url IS NOT NULL
+        ");
+        $stmt->execute([$user_id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return (int)$result['count'];
+        
+    } catch (Exception $e) {
+        error_log("Error counting user photos: " . $e->getMessage());
+        return 0;
+    }
 }
 
 function get_user_events($user_id, $limit = 20, $offset = 0, $include_details = false) {
