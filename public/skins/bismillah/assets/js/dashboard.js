@@ -1564,6 +1564,17 @@ function showUserSearchModal() {
                 });
             }, 300);
         });
+        
+        // Add Enter key support to select first user
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const firstUser = searchResults.querySelector('.user-result');
+                if (firstUser) {
+                    firstUser.click();
+                }
+            }
+        });
     }
     
     modal.style.display = 'block';
@@ -1705,6 +1716,17 @@ function showGIFSearchModal() {
                 });
             }, 300);
         });
+        
+        // Add Enter key support to select first GIF
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const firstGIF = searchResults.querySelector('.gif-result');
+                if (firstGIF) {
+                    firstGIF.click();
+                }
+            }
+        });
     }
     
     modal.style.display = 'block';
@@ -1827,6 +1849,8 @@ function showFeelingActivityModal() {
         // Add event listeners
         const feelingBtns = modal.querySelectorAll('.feeling-btn');
         const activityBtns = modal.querySelectorAll('.activity-btn');
+        const customFeelingInput = modal.querySelector('#customFeeling');
+        const customActivityInput = modal.querySelector('#customActivity');
         
         feelingBtns.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -1844,6 +1868,29 @@ function showFeelingActivityModal() {
                 // Add active class to clicked button
                 this.classList.add('active');
             });
+        });
+        
+        // Add Enter key support for custom inputs
+        customFeelingInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addFeelingActivity();
+            }
+        });
+        
+        customActivityInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addFeelingActivity();
+            }
+        });
+        
+        // Add Enter key support for the modal itself
+        modal.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.target.matches('input')) {
+                e.preventDefault();
+                addFeelingActivity();
+            }
         });
     }
     
