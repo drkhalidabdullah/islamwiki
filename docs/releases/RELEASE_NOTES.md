@@ -1,5 +1,202 @@
 # Release Notes
 
+## Version 0.0.0.17 - Wiki Editor & Reference System
+
+**Release Date:** January 2025  
+**Version:** 0.0.0.17  
+**Type:** Major Feature Enhancement - Wiki Editor & Reference System  
+**Status:** Production Ready ✅
+
+## 🎯 Release Overview
+
+Version 0.0.0.17 introduces a **revolutionary wiki editor system** with professional-grade tools and an enhanced reference system that makes all links clickable. This major release focuses on improving the content creation experience with a modern, responsive editor and comprehensive link parsing.
+
+## 🚀 Major Features
+
+### 📝 **Revolutionary Wiki Editor System**
+
+#### **Professional Rich Text Toolbar**
+- **Complete Redesign**: Completely redesigned toolbar with properly sized, clickable buttons
+- **Smart Button Sizing**: Each button type has appropriate width and content scaling
+- **Visual Feedback**: Hover effects, animations, and professional styling
+- **Mobile Responsive**: Touch-friendly buttons optimized for mobile devices
+- **Accessibility**: Screen reader support and keyboard navigation
+
+#### **Rich Text Formatting**
+- **Bold Text**: `**text**` formatting with intuitive button
+- **Italic Text**: `*text*` formatting with proper styling
+- **Code Blocks**: `` `code` `` formatting with monospace font
+- **Headings**: H1, H2, H3 support with appropriate sizing
+- **Lists**: Bullet and numbered list support
+- **Quotes**: Blockquote formatting support
+
+#### **Link Support**
+- **Internal Wiki Links**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
+- **External Links**: `[url]` and `[url text]` syntax with validation
+- **Smart Detection**: Existing pages (blue) vs missing pages (red)
+- **Security**: External links open in new tabs with proper security attributes
+
+#### **Live Preview System**
+- **Real-time Parsing**: Server-side wiki syntax parsing for accurate preview
+- **Template Support**: Full support for MediaWiki-style templates
+- **Reference Rendering**: References display with clickable links
+- **Auto-update**: Preview updates automatically as you type (1-second delay)
+
+### 🔗 **Enhanced Reference System**
+
+#### **Clickable Reference Links**
+- **Internal Link Support**: `[[Page Name]]` in references become proper wiki links
+- **External Link Support**: `[url]` in references become clickable external links
+- **Link Validation**: URLs are validated before being made clickable
+- **Security Features**: External links open in new tabs with proper security attributes
+- **Slug Generation**: Internal links use proper slug generation for navigation
+
+#### **Reference Management**
+- **Automatic Numbering**: References are automatically numbered
+- **In-text Citations**: Clickable reference numbers in article text
+- **Reference Section**: Auto-generated references section at bottom of articles
+- **Link Parsing**: Comprehensive parsing of links within reference content
+- **HTML Escaping**: All link text properly escaped for security
+
+### 🎨 **UI/UX Improvements**
+
+#### **Professional Toolbar Design**
+- **Compact Layout**: 32px height buttons with proper content scaling
+- **Button Types**: Different sizing for different button types
+- **Hover Effects**: Smooth animations and visual feedback
+- **Consistent Styling**: Unified design language across all components
+- **Mobile Optimization**: Touch-friendly buttons and responsive layout
+
+#### **Visual Enhancements**
+- **Color Scheme**: Professional color palette with proper contrast
+- **Typography**: Improved font sizing and spacing
+- **Spacing**: Consistent margins and padding throughout
+- **Shadows**: Subtle shadows for depth and visual hierarchy
+- **Transitions**: Smooth transitions for interactive elements
+
+## 🔧 Technical Improvements
+
+### **Server-Side Processing**
+- **WikiParser Enhancements**: New `parseLinksInReference()` method for reference link parsing
+- **URL Validation**: Enhanced URL validation for external links
+- **Slug Generation**: Improved slug generation for internal links
+- **HTML Escaping**: Comprehensive HTML escaping for security
+- **Error Handling**: Better error handling and user feedback
+
+### **Client-Side Improvements**
+- **JavaScript Enhancements**: Simplified global functions for toolbar actions
+- **Event Handling**: Improved event handling and DOM manipulation
+- **Error Handling**: Better error handling and user feedback
+- **Performance**: Optimized JavaScript for better performance
+
+### **API Enhancements**
+- **Preview API**: Enhanced server-side parsing for preview
+- **Database Integration**: Better database integration for template lookups
+- **Error Handling**: Improved error handling and response formatting
+- **Performance**: Optimized parsing for better performance
+
+## 🐛 Bug Fixes
+
+### **Editor Issues**
+- **Toolbar Display**: Fixed toolbar display issues
+- **Button Sizing**: Fixed button sizing and content scaling
+- **Preview Updates**: Fixed preview update functionality
+- **Mobile Layout**: Fixed mobile layout issues
+
+### **Reference Issues**
+- **Link Parsing**: Fixed link parsing in references
+- **HTML Escaping**: Fixed HTML escaping issues
+- **URL Validation**: Fixed URL validation problems
+- **Security Issues**: Fixed security vulnerabilities
+
+### **General Issues**
+- **CSS Conflicts**: Resolved CSS conflicts
+- **JavaScript Errors**: Fixed JavaScript errors
+- **Database Issues**: Fixed database-related issues
+- **Performance Issues**: Resolved performance problems
+
+## 📁 Files Modified
+
+### **Modified Files**
+- `public/pages/wiki/edit_article.php` - Added static toolbar and improved JavaScript
+- `public/skins/bismillah/assets/css/wiki.css` - Redesigned toolbar styling
+- `public/includes/markdown/WikiParser.php` - Added reference link parsing
+- `public/modules/wiki/preview.php` - Enhanced server-side parsing
+- `public/api/template_preview.php` - Improved template preview API
+
+### **New Documentation**
+- `docs/features/WIKI_EDITOR_SYSTEM.md` - Comprehensive wiki editor documentation
+- `docs/features/REFERENCE_SYSTEM.md` - Reference system documentation
+- `docs/features/TEMPLATE_SYSTEM.md` - Template system documentation
+- `docs/admin/ADMIN_SYSTEM_COMPREHENSIVE.md` - Admin system documentation
+- `docs/changelogs/v0.0.0.17.md` - Version 0.0.0.17 changelog
+
+## 🚀 Impact
+
+### **User Experience**
+- **Content Creators**: Professional editing tools with intuitive interface
+- **Readers**: Clickable links in references for better navigation
+- **Mobile Users**: Touch-friendly editor optimized for mobile devices
+- **All Users**: Enhanced content creation and reading experience
+
+### **System Reliability**
+- **Better Performance**: Optimized parsing and rendering
+- **Enhanced Security**: Proper link validation and HTML escaping
+- **Improved Stability**: Better error handling and user feedback
+- **Mobile Support**: Responsive design for all devices
+
+### **Developer Experience**
+- **Comprehensive Documentation**: Complete documentation for all features
+- **Better Code Organization**: Improved code structure and maintainability
+- **Enhanced APIs**: Better API design and error handling
+- **Testing Support**: Improved testing and debugging capabilities
+
+## 🔄 Migration Notes
+
+### **For Developers**
+- All editor functionality is backward compatible
+- New reference parsing is automatic
+- No database changes required
+- CSS and JavaScript files need to be updated
+
+### **For Users**
+- No action required - improvements are automatic
+- Editor interface will have a more professional appearance
+- References will now have clickable links
+- Mobile editing experience will be significantly improved
+
+## 📋 Testing
+
+### **Wiki Editor**
+- ✅ All toolbar buttons work correctly
+- ✅ Live preview updates properly
+- ✅ Mobile responsive design works
+- ✅ Accessibility features function correctly
+
+### **Reference System**
+- ✅ Internal links in references are clickable
+- ✅ External links open in new tabs
+- ✅ Link validation works properly
+- ✅ HTML escaping prevents XSS
+
+## 🎯 Next Steps
+
+### **Planned Features for v0.0.0.18**
+- **Auto-save**: Automatic saving of draft content
+- **Collaborative Editing**: Real-time collaborative editing
+- **Version Comparison**: Side-by-side version comparison
+- **Advanced Templates**: Visual template editor
+- **Plugin System**: Extensible toolbar system
+
+### **Long-term Roadmap**
+- **Multi-language Support**: Support for multiple languages
+- **Advanced Analytics**: Enhanced analytics and reporting
+- **API Improvements**: Better API functionality
+- **Mobile App**: Native mobile application
+- **Plugin System**: Extensible plugin architecture
+
+---
+
 ## Version 0.0.0.16 - Notification System & Admin Dashboard Improvements
 
 **Release Date:** September 16, 2025  
