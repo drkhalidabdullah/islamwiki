@@ -98,14 +98,14 @@ class TemplateParser {
             // Parse triple braces first (parameters)
             $content = $this->parseTripleBraces($content, $parameters);
             
+            // Parse remaining template content (conditionals, double braces, magic words) first
+            $content = $this->parseTemplateContentInternal($content, $parameters);
+            
             // Parse any templates in the content (including {{#invoke}})
             // Only do this if we haven't already processed this template
             if ($this->recursion_depth < 2) {
                 $content = $this->parseTemplatesRecursive($content, $parameters);
             }
-            
-            // Parse remaining template content (conditionals, double braces, magic words)
-            $content = $this->parseTemplateContentInternal($content, $parameters);
             
             // Parse wiki links in template content
             $content = $this->parseWikiLinks($content);
@@ -474,16 +474,19 @@ class TemplateParser {
         // Step 1: Parse triple brace parameters first
         $content = $this->parseTripleBraces($content, $parameters);
         
-        // Step 2: Parse conditionals
+        // Step 2: Parse switch statements
+        $content = $this->parseSwitchStatements($content, $parameters);
+        
+        // Step 3: Parse conditionals
         $content = $this->parseConditionalsImproved($content, $parameters);
         
-        // Step 3: Parse parser functions (lc, uc, etc.)
+        // Step 4: Parse parser functions (lc, uc, etc.)
         $content = $this->parseParserFunctions($content, $parameters);
         
-        // Step 4: Parse remaining double brace parameters
+        // Step 5: Parse remaining double brace parameters
         $content = $this->parseDoubleBraces($content, $parameters);
         
-        // Step 5: Parse magic words
+        // Step 6: Parse magic words
         $content = $this->parseTemplateMagicWords($content, $parameters);
         
         // Step 6: Recursively parse any remaining nested structures
