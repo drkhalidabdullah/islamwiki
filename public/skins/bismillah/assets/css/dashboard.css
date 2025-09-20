@@ -516,6 +516,59 @@ body {
     background: var(--primary-color-dark, #2563eb);
 }
 
+/* Image Preview Styles */
+.image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.image-preview {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.preview-image {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.remove-image-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.simple-image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.temp-image-holder {
+    margin: 5px 0;
+}
+
 .profile-info h3 {
     margin: 0;
     font-size: 1.25rem;

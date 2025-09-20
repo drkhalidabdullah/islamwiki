@@ -1102,11 +1102,11 @@ function createImagePreview(file, imageUrl) {
 
 function insertImagePreview(imageContainer, imageUrl) {
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
-    const isFormattingMode = document.getElementById('postEditorContainer').style.display !== 'none';
+    const editorContainer = document.getElementById('postEditorContainer');
+    const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
     
     if (isFormattingMode) {
         // Insert into the editor container
-        const editorContainer = document.getElementById('postEditorContainer');
         const editor = document.getElementById('postContent');
         
         // Create a temporary div to hold the image
@@ -1118,17 +1118,34 @@ function insertImagePreview(imageContainer, imageUrl) {
         editor.parentNode.insertBefore(tempDiv, editor.nextSibling);
         
         // Store the image URL for later use
+        if (typeof uploadedImages === 'undefined') {
+            window.uploadedImages = [];
+        }
         uploadedImages.push(imageUrl);
         
         // Update preview
         updatePreview();
     } else {
-        // For simple mode, add to the simple image preview area (no textarea modification)
-        const simplePreview = document.getElementById('simpleImagePreview');
+        // For simple mode, add to the simple image preview area
+        let simplePreview = document.getElementById('simpleImagePreview');
+        if (!simplePreview) {
+            // Create simple preview area if it doesn't exist
+            simplePreview = document.createElement('div');
+            simplePreview.id = 'simpleImagePreview';
+            simplePreview.className = 'simple-image-preview';
+            simplePreview.style.display = 'flex';
+            simplePreview.style.flexWrap = 'wrap';
+            simplePreview.style.gap = '10px';
+            simplePreview.style.marginTop = '10px';
+            currentInput.parentNode.insertBefore(simplePreview, currentInput.nextSibling);
+        }
         simplePreview.appendChild(imageContainer);
         simplePreview.style.display = 'flex';
         
         // Store the image URL for later use
+        if (typeof uploadedImages === 'undefined') {
+            window.uploadedImages = [];
+        }
         uploadedImages.push(imageUrl);
     }
     
@@ -1139,18 +1156,31 @@ function insertImagePreview(imageContainer, imageUrl) {
 function removeImagePreview(button) {
     const container = button.closest('.image-preview-container');
     if (container) {
-        const placeholder = container.getAttribute('data-placeholder');
-        if (placeholder) {
-            // Remove placeholder from text
-            const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
-            const text = currentInput.value;
-            const newText = text.replace(placeholder, '');
-            currentInput.value = newText;
-            
-            // Trigger input change for validation
-            currentInput.dispatchEvent(new Event('input'));
+        // Find the image URL from the preview
+        const img = container.querySelector('.preview-image');
+        const imageUrl = img ? img.src : null;
+        
+        // Remove from uploaded images array
+        if (imageUrl && typeof uploadedImages !== 'undefined') {
+            const index = uploadedImages.indexOf(imageUrl);
+            if (index > -1) {
+                uploadedImages.splice(index, 1);
+            }
         }
+        
+        // Remove the container
         container.remove();
+        
+        // Update preview if in formatting mode
+        const editorContainer = document.getElementById('postEditorContainer');
+        const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+        if (isFormattingMode) {
+            updatePreview();
+        }
+        
+        // Trigger input change for validation
+        const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+        currentInput.dispatchEvent(new Event('input'));
     }
 }
 
