@@ -1326,6 +1326,33 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+// Image upload function
+function uploadImageToServer(file) {
+    console.log('uploadImageToServer called with file:', file.name); // Debug log
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    console.log('Sending image upload request to /api/ajax/upload_image.php'); // Debug log
+    
+    return fetch('/api/ajax/upload_image.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Image upload response status:', response.status); // Debug log
+        return response.json();
+    })
+    .then(data => {
+        console.log('Image upload response data:', data); // Debug log
+        return data;
+    })
+    .catch(error => {
+        console.error('Image upload error:', error);
+        return { success: false, message: 'Network error' };
+    });
+}
+
 // Video upload functions
 function uploadVideoToServer(file) {
     console.log('uploadVideoToServer called with file:', file.name); // Debug log
