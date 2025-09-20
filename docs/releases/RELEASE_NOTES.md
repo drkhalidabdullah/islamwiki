@@ -1,9 +1,9 @@
 # Release Notes
 
-## Version 0.0.0.17 - Wiki Editor & Reference System
+## Version 0.0.0.18 - Wiki Editor & Reference System
 
 **Release Date:** January 2025  
-**Version:** 0.0.0.17  
+**Version:** 0.0.0.18  
 **Type:** Major Feature Enhancement - Wiki Editor & Reference System  
 **Status:** Production Ready ✅
 

@@ -2,13 +2,13 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.17
+## 🎯 Current Version: 0.0.0.18
 
 **Latest Release:** January 2025  
 **Status:** Production Ready ✅  
 **Type:** Major Feature Enhancement - Wiki Editor & Reference System
 
-## 🚀 What's New in v0.0.0.17
+## 🚀 What's New in v0.0.0.18
 
 ### 📝 **Revolutionary Wiki Editor System**
 - **Professional Toolbar**: Complete redesign with properly sized, clickable buttons

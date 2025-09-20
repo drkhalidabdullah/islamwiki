@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.0.17] - 2025-01-XX
+## [0.0.0.18] - 2025-01-XX
 
 ### 📝 **Revolutionary Wiki Editor System**
 
