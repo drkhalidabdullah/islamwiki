@@ -24,10 +24,9 @@ if (!$slug) {
 
 // Get article
 $stmt = $pdo->prepare("
-    SELECT wa.*, u.username, u.display_name, cc.name as category_name, cc.slug as category_slug 
+    SELECT wa.*, u.username, u.display_name
     FROM wiki_articles wa 
     JOIN users u ON wa.author_id = u.id 
-    LEFT JOIN content_categories cc ON wa.category_id = cc.id 
     WHERE (wa.slug = ? OR wa.slug = ?) AND wa.status = 'published'
 ");
 $stmt->execute([$slug, ucfirst($slug)]);
@@ -40,7 +39,12 @@ if (!$article) {
 $page_title = 'Talk:' . $article['title'];
 
 // Get or create talk page
-$talk_page = get_talk_page($article['id']);
+try {
+    $talk_page = get_talk_page($article['id']);
+} catch (Exception $e) {
+    error_log("Error getting talk page: " . $e->getMessage());
+    $talk_page = false;
+}
 
 // Handle form submission
 $errors = [];
@@ -54,12 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_logged_in()) {
     }
     
     if (empty($errors)) {
-        $talk_id = create_or_update_talk_page($article['id'], $content, $_SESSION['user_id']);
-        if ($talk_id) {
-            $success = true;
-            $talk_page = get_talk_page($article['id']); // Refresh talk page
-        } else {
-            $errors[] = 'Error saving talk page.';
+        try {
+            $talk_id = create_or_update_talk_page($article['id'], $content, $_SESSION['user_id']);
+            if ($talk_id) {
+                $success = true;
+                $talk_page = get_talk_page($article['id']); // Refresh talk page
+            } else {
+                $errors[] = 'Error saving talk page.';
+            }
+        } catch (Exception $e) {
+            error_log("Error creating/updating talk page: " . $e->getMessage());
+            $errors[] = 'Error saving talk page: ' . $e->getMessage();
         }
     }
 }
@@ -124,7 +133,7 @@ include '../../includes/header.php';
                 
                 <div class="talk-text">
                     <?php 
-                    $parser = new EnhancedMarkdownParser('');
+                    $parser = new MarkdownParser('');
                     echo $parser->parse($talk_page['content']); 
                     ?>
                 </div>
@@ -174,7 +183,7 @@ include '../../includes/header.php';
                     <i class="iw iw-sign-in-alt"></i>
                     <h3>Sign in to participate</h3>
                     <p>You need to be logged in to contribute to discussions.</p>
-                    <a href="/pages/auth/login.php" class="btn btn-primary">Sign In</a>
+                    <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/talk'); ?>" class="btn btn-primary">Sign In</a>
                 </div>
             </div>
         <?php endif; ?>

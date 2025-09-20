@@ -13,7 +13,7 @@ if (empty($requested_title) && !empty($requested_slug)) {
     $requested_title = ucfirst(str_replace('-', ' ', $requested_slug));
 }
 
-include "../../includes/header.php";;
+include "../../includes/header.php";
 
 ?>
 <script src="/skins/bismillah/assets/js/bismillah.js"></script>

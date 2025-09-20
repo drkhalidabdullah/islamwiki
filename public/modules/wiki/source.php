@@ -77,19 +77,80 @@ include '../../includes/header.php';
         </div>
         
         <div class="wiki-actions">
-            <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" class="btn btn-secondary">
-                <i class="iw iw-arrow-left"></i> Back to Article
-            </a>
+            <!-- View Source (current page indicator) -->
+            <span class="btn btn-primary" style="opacity: 0.7;">
+                <i class="iw iw-code"></i> View Source
+            </span>
+            
+            <!-- Edit Source -->
+            <?php if (is_logged_in() && is_editor()): ?>
+                <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/edit" class="btn btn-outline">
+                    <i class="iw iw-edit"></i> Edit Source
+                </a>
+            <?php elseif (!is_logged_in()): ?>
+                <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/edit'); ?>" class="btn btn-outline">
+                    <i class="iw iw-edit"></i> Login to Edit
+                </a>
+            <?php endif; ?>
+            
+            <!-- View History -->
             <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/history" class="btn btn-outline">
                 <i class="iw iw-history"></i> View History
             </a>
-            <?php if (is_logged_in() && is_editor()): ?>
-                <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/edit" class="btn btn-primary">
-                    <i class="iw iw-edit"></i> Edit
+            
+            <!-- Discussion (for logged in users only) -->
+            <?php if (is_logged_in()): ?>
+                <?php if ($talk_page): ?>
+                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/talk" class="btn btn-outline">
+                        <i class="iw iw-comments"></i> Discussion
+                    </a>
+                <?php else: ?>
+                    <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/talk" class="btn btn-outline">
+                        <i class="iw iw-comments"></i> Start Discussion
+                    </a>
+                <?php endif; ?>
+            <?php else: ?>
+                <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/talk'); ?>" class="btn btn-outline">
+                    <i class="iw iw-comments"></i> Login to Discuss
                 </a>
-            <?php elseif (!is_logged_in()): ?>
-                <a href="/login" class="btn btn-outline">
-                    <i class="iw iw-login"></i> Login to Edit
+            <?php endif; ?>
+            
+            <!-- Add to Watchlist (for logged in users) -->
+            <?php if (is_logged_in()): ?>
+                <button class="btn btn-outline" onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">
+                    <i class="iw <?php echo $is_watched ? 'iw-eye-slash' : 'iw-eye'; ?>"></i> 
+                    <?php echo $is_watched ? 'Remove from Watchlist' : 'Add to Watchlist'; ?>
+                </button>
+            <?php endif; ?>
+            
+            <!-- More Actions (for logged in users) -->
+            <?php if (is_logged_in()): ?>
+                <div class="dropdown">
+                    <button class="btn btn-outline dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="iw iw-ellipsis-h"></i> More Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>">
+                            <i class="iw iw-arrow-left"></i> Back to Article
+                        </a></li>
+                        <li><a class="dropdown-item" href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/history">
+                            <i class="iw iw-history"></i> View History
+                        </a></li>
+                        <?php if (is_editor()): ?>
+                            <li><a class="dropdown-item" href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>/edit">
+                                <i class="iw iw-edit"></i> Edit Article
+                            </a></li>
+                        <?php endif; ?>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showReportModal(<?php echo $article['id']; ?>, 'wiki_article')">
+                            <i class="iw iw-flag"></i> Report Content
+                        </a></li>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <!-- For non-logged in users, show back to article button -->
+                <a href="/wiki/<?php echo htmlspecialchars($article['slug']); ?>" class="btn btn-secondary">
+                    <i class="iw iw-arrow-left"></i> Back to Article
                 </a>
             <?php endif; ?>
         </div>
@@ -449,6 +510,55 @@ function toggleLineNumbers() {
         sourceCode.classList.add('with-line-numbers');
         btn.innerHTML = '<i class="iw iw-list"></i> Hide Numbers';
     }
+}
+
+function toggleWatchlist(articleId, button) {
+    const isWatched = button.querySelector('i').classList.contains('iw-eye-slash');
+    const action = isWatched ? 'remove' : 'add';
+    
+    fetch('/api/ajax/watchlist.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            action: action,
+            article_id: articleId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update button appearance
+            const icon = button.querySelector('i');
+            const text = button.querySelector('span') || button.childNodes[2];
+            
+            if (data.watched !== undefined) {
+                if (data.watched) {
+                    icon.className = 'iw iw-eye-slash';
+                    text.textContent = ' Remove from Watchlist';
+                } else {
+                    icon.className = 'iw iw-eye';
+                    text.textContent = ' Add to Watchlist';
+                }
+            }
+            
+            // Show success message
+            if (typeof showMessage === 'function') {
+                showMessage(data.message, 'success');
+            }
+        } else {
+            if (typeof showMessage === 'function') {
+                showMessage(data.message, 'error');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        if (typeof showMessage === 'function') {
+            showMessage('An error occurred while updating watchlist', 'error');
+        }
+    });
 }
 </script>
 

@@ -98,6 +98,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template_type = 'other';
     }
     
+    // Validate and encode parameters as JSON
+    $parameters_json = null;
+    if (!empty($parameters)) {
+        // Try to decode as JSON first to validate
+        $decoded = json_decode($parameters, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // It's already valid JSON
+            $parameters_json = $parameters;
+        } else {
+            // Try to encode as JSON if it's not already
+            $parameters_json = json_encode($parameters);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $errors[] = 'Parameters must be valid JSON format.';
+            }
+        }
+    }
+    
     // Validation
     if (empty($name) || empty($content)) {
         $errors[] = 'Name and content are required.';
@@ -126,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 WHERE id = ?
             ");
             if ($stmt->execute([$name, $slug, $content, $description, $template_type, 
-                               $parameters, $documentation, $_SESSION['user_id'], $template_id])) {
+                               $parameters_json, $documentation, $_SESSION['user_id'], $template_id])) {
                 $success = 'Template updated successfully.';
                 log_activity('template_updated', "Updated template ID: $template_id");
                 

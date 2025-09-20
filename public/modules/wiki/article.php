@@ -175,18 +175,42 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                         </h1>
                     <?php endif; ?>
                     <div class="article-actions-compact">
-                        <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
-                            <i class="iw iw-history"></i>
-                        </a>
+                        <!-- View Source -->
                         <a href="/wiki/<?php echo $article['slug']; ?>/source" class="btn-icon-compact" title="View Source">
                             <i class="iw iw-code"></i>
                         </a>
-                        <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon-compact" title="Discussion">
-                            <i class="iw iw-comments"></i>
-                            <?php if ($talk_page): ?>
-                                <span class="talk-indicator" title="Has discussion"></span>
-                            <?php endif; ?>
+                        
+                        <!-- Edit Source -->
+                        <?php if (is_logged_in() && is_editor()): ?>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="btn-icon-compact" title="Edit Article">
+                                <i class="iw iw-edit"></i>
+                            </a>
+                        <?php elseif (!is_logged_in()): ?>
+                            <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/edit'); ?>" class="btn-icon-compact" title="Login to Edit">
+                                <i class="iw iw-edit"></i>
+                            </a>
+                        <?php endif; ?>
+                        
+                        <!-- View History -->
+                        <a href="/wiki/<?php echo $article['slug']; ?>/history" class="btn-icon-compact" title="View History">
+                            <i class="iw iw-history"></i>
                         </a>
+                        
+                        <!-- Discussion (for logged in users only) -->
+                        <?php if (is_logged_in()): ?>
+                            <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="btn-icon-compact" title="Discussion">
+                                <i class="iw iw-comments"></i>
+                                <?php if ($talk_page): ?>
+                                    <span class="talk-indicator" title="Has discussion"></span>
+                                <?php endif; ?>
+                            </a>
+                        <?php else: ?>
+                            <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/talk'); ?>" class="btn-icon-compact" title="Login to Discuss">
+                                <i class="iw iw-comments"></i>
+                            </a>
+                        <?php endif; ?>
+                        
+                        <!-- Add to Watchlist (for logged in users) -->
                         <?php if (is_logged_in()): ?>
                             <a href="#" class="btn-icon-compact watchlist-btn <?php echo $is_watched ? 'watched' : ''; ?>" 
                                title="<?php echo $is_watched ? 'Remove from watchlist' : 'Add to watchlist'; ?>"
@@ -194,13 +218,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                                 <i class="iw iw-eye"></i>
                             </a>
                         <?php endif; ?>
-                        <?php if (is_logged_in() && is_editor()): ?>
-                            <a href="/wiki/<?php echo $article['slug']; ?>/edit" class="btn-icon-compact" title="Edit Article">
-                                <i class="iw iw-edit"></i>
-                            </a>
-                        <?php endif; ?>
                         
-                        <!-- Dropdown for testing - show for all users temporarily -->
+                        <!-- More Actions (for logged in users) -->
+                        <?php if (is_logged_in()): ?>
                         <div class="article-actions-dropdown">
                             <button class="dropdown-toggle" onclick="toggleDropdown(this, event)" title="More actions" onmouseover="this.querySelector('.three-dots').textContent='⋮'" onmouseout="this.querySelector('.three-dots').textContent='⋯'">
                                 <span class="three-dots">⋯</span>
@@ -248,6 +268,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -381,12 +402,21 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                                 <span>View history</span>
                             </a>
                         </li>
+                        <?php if (is_logged_in()): ?>
                         <li>
                             <a href="/wiki/<?php echo $article['slug']; ?>/talk" class="tool-link">
                                 <i class="iw iw-comments"></i>
                                 <span>Discussion</span>
                             </a>
                         </li>
+                        <?php else: ?>
+                        <li>
+                            <a href="/login?return=<?php echo urlencode('/wiki/' . htmlspecialchars($article['slug']) . '/talk'); ?>" class="tool-link">
+                                <i class="iw iw-comments"></i>
+                                <span>Login to Discuss</span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
                         <?php if (is_logged_in()): ?>
                         <li>
                             <a href="#" class="tool-link" onclick="toggleWatchlist(<?php echo $article['id']; ?>, this)">

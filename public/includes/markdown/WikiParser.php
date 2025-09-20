@@ -866,10 +866,15 @@ class WikiParser extends MarkdownParser {
      * Override parseWikiLinks to handle formatting in display text
      */
     protected function parseWikiLinks($content) {
+        // First, protect existing HTML <a> tags from being processed
+        $content = preg_replace_callback('/<a\s+[^>]*>.*?<\/a>/s', function($matches) {
+            return '<!--PROTECTED_LINK-->' . base64_encode($matches[0]) . '<!--/PROTECTED_LINK-->';
+        }, $content);
+        
         // Pattern to match [[Page Name]] or [[Page Name|Display Text]]
         $pattern = '/\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/';
         
-        return preg_replace_callback($pattern, function($matches) {
+        $content = preg_replace_callback($pattern, function($matches) {
             $page_name = trim($matches[1]);
             $display_text = isset($matches[2]) ? trim($matches[2]) : $page_name;
             
@@ -891,6 +896,13 @@ class WikiParser extends MarkdownParser {
                 $display_text // Don't HTML-encode display text since it may contain HTML
             );
         }, $content);
+        
+        // Restore protected HTML <a> tags
+        $content = preg_replace_callback('/<!--PROTECTED_LINK-->(.*?)<!--\/PROTECTED_LINK-->/s', function($matches) {
+            return base64_decode($matches[1]);
+        }, $content);
+        
+        return $content;
     }
     
     /**
