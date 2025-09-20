@@ -897,20 +897,20 @@
 
 /* Left Sidebar: Table of Contents */
 .wiki-toc {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    padding: 0;
     height: fit-content;
     position: -webkit-sticky !important; /* Safari support */
     position: sticky !important; /* Use sticky positioning */
     top: 70px !important; /* Stick below newsbar (newsbar is ~64px tall) */
     max-height: calc(100vh - 90px) !important; /* Prevent overflow, account for newsbar + top position */
-    overflow-y: auto !important; /* Allow scrolling if content is too tall */
-    border: 1px solid #e9ecef;
+    overflow: hidden !important; /* Hide overflow for clean look */
+    border: 1px solid #e1e5e9;
     z-index: 100 !important; /* Much lower than search popup (10002) and newsbar (10000) */
     will-change: transform !important; /* Optimize for positioning */
     transform: translateZ(0) !important; /* Force hardware acceleration */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* Add shadow for better visibility */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1) !important; /* Enhanced shadow */
     align-self: start !important; /* Start at top of grid cell */
     /* Force sticky behavior */
     -webkit-transform: translateZ(0) !important;
@@ -920,43 +920,106 @@
     /* Prevent overlay - force containment */
     contain: layout style !important;
     isolation: isolate !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .toc-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #dee2e6;
+    padding: 1.25rem 1.5rem 1rem 1.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.toc-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
 }
 
 .toc-header h3 {
     margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #495057;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .toc-toggle {
-    background: none;
-    border: none;
-    color: #6c757d;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: all 0.2s;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toc-toggle:hover {
-    background: #e9ecef;
-    color: #495057;
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.toc-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .toc-content {
     max-height: calc(100vh - 150px) !important; /* Account for header and newsbar */
     overflow-y: auto !important;
-    padding: 0.5rem 0 !important;
+    padding: 0.75rem !important;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Custom scrollbar for TOC */
+.toc-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.toc-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.toc-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.toc-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+/* Firefox scrollbar */
+.toc-content {
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #f1f5f9;
 }
 
 .toc-content.collapsed {
@@ -970,52 +1033,120 @@
 }
 
 .toc-item {
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.125rem !important;
+    position: relative;
 }
 
 .toc-link {
     display: block !important;
-    padding: 0.75rem 1rem !important;
-    color: #495057 !important;
+    padding: 0.625rem 0.75rem !important;
+    color: #2c3e50 !important;
     text-decoration: none !important;
-    border-radius: 6px !important;
-    transition: all 0.2s !important;
-    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.85rem !important;
     line-height: 1.4 !important;
+    position: relative;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin: 0.125rem 0 !important;
+    background: white;
+    border: 1px solid #e1e8ed;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .toc-link:hover {
-    background: #e9ecef !important;
-    color: #007bff !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #1e40af !important;
     text-decoration: none !important;
-    transform: translateX(2px) !important;
+    transform: translateY(-1px) !important;
+    font-weight: 600 !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
 }
 
 .toc-link.active {
-    background: #007bff !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important;
     color: white !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 4px rgba(0,123,255,0.3) !important;
+    font-weight: 700 !important;
+    transform: translateY(-1px) !important;
+    border-color: #1e40af !important;
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25) !important;
 }
 
-.toc-level-1 { font-weight: 600; }
-.toc-level-2 { font-weight: 500; }
-.toc-level-3 { font-weight: 400; }
-.toc-level-4 { font-weight: 400; }
-.toc-level-5 { font-weight: 400; }
-.toc-level-6 { font-weight: 400; }
+.toc-level-1 { 
+    font-weight: 700; 
+    font-size: 0.9rem !important;
+    margin-left: 0 !important;
+    color: #2c3e50 !important;
+}
+
+.toc-level-2 { 
+    font-weight: 600; 
+    font-size: 0.85rem !important;
+    margin-left: 0.5rem !important;
+    color: #34495e !important;
+}
+
+.toc-level-3 { 
+    font-weight: 500; 
+    font-size: 0.8rem !important;
+    margin-left: 1rem !important;
+    color: #495057 !important;
+}
+
+.toc-level-4 { 
+    font-weight: 500; 
+    font-size: 0.8rem !important;
+    margin-left: 1.5rem !important;
+    color: #495057 !important;
+}
+
+.toc-level-5 { 
+    font-weight: 400; 
+    font-size: 0.8rem !important;
+    margin-left: 2rem !important;
+    color: #6c757d !important;
+}
+
+.toc-level-6 { 
+    font-weight: 400; 
+    font-size: 0.8rem !important;
+    margin-left: 2.5rem !important;
+    color: #6c757d !important;
+}
 
 .toc-empty {
-    color: #6c757d;
+    color: #a0aec0;
     font-style: italic;
     text-align: center;
-    padding: 1rem;
+    padding: 2rem 1.5rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    margin: 1rem;
+    border-radius: 8px;
+    border: 1px dashed #e2e8f0;
 }
 
 .toc-loading {
-    color: #6c757d;
+    color: #3b82f6;
     text-align: center;
-    padding: 1rem;
+    padding: 2rem 1.5rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    margin: 1rem;
+    border-radius: 8px;
+    border: 1px dashed #e2e8f0;
+}
+
+.toc-loading i {
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Nested TOC lists */
@@ -1023,14 +1154,22 @@
     list-style: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    margin-left: 1rem !important;
-    border-left: 2px solid #e9ecef !important;
-    padding-left: 0.5rem !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    position: relative;
 }
 
 .toc-sublist .toc-link {
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.85rem !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    margin-left: 0 !important;
+    color: #2c3e50 !important;
+    line-height: 1.4 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: white !important;
+    border: 1px solid #e1e8ed !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
 
 .toc-sublist .toc-item {
@@ -1045,6 +1184,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid #e9ecef;
     min-width: 0; /* Prevent grid overflow */
+    position: relative; /* Allow absolute positioning of sidebar */
 }
 
 /* Right Sidebar: Tools */
@@ -1609,10 +1749,88 @@
     font-size: 0.9rem;
 }
 
+/* Override general sidebar styles for Islam sidebar - Wikipedia style */
 .sidebar-template.islam-sidebar {
-    background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
-    border: 2px solid #667eea;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    float: right !important;
+    width: 300px !important;
+    margin: 0.5em 0 1em 1em !important;
+    clear: right !important;
+    font-size: 0.9rem !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
+    z-index: 1 !important;
+    /* Wikipedia-style infobox positioning */
+    display: table !important;
+    border-collapse: collapse !important;
+}
+
+
+/* Ensure proper text wrapping around floating sidebar - Wikipedia style */
+.article-content {
+    overflow: visible; /* Allow text to flow around sidebar */
+}
+
+/* Wikipedia-style text wrapping - only apply margin to elements that should wrap */
+.article-content > p:first-of-type {
+    margin-right: 320px; /* 300px sidebar width + 20px margin */
+}
+
+.article-content p:not(:first-of-type),
+.article-content ul,
+.article-content ol {
+    margin-right: 0; /* Reset margin for other elements */
+}
+
+/* Wikipedia-style clearfix for floating elements */
+.article-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Ensure sidebar doesn't interfere with other elements */
+.wiki-main-content {
+    /* Removed padding-right to allow proper text wrapping */
+}
+
+/* Reset margin for elements that should span full width */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6,
+.article-content .sidebar-template,
+.article-content .about-template,
+.article-content .protection-template,
+.article-content .quality-template,
+.article-content .date-format-template,
+.article-content .spelling-template,
+.article-content .further-information {
+    margin-right: 0;
+}
+
+/* Responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    .sidebar-template.islam-sidebar {
+        float: none;
+        width: 100%;
+        margin: 1rem 0;
+        clear: both;
+    }
+    
+    /* Reset margins on smaller screens */
+    .article-content p,
+    .article-content ul,
+    .article-content ol,
+    .article-content div {
+        margin-right: 0;
+    }
 }
 
 .sidebar-template .sidebar-header h3 {
@@ -1625,55 +1843,112 @@
     padding-bottom: 0.5rem;
 }
 
-.sidebar-template .sidebar-image {
-    text-align: center;
-    margin-bottom: 1rem;
+.sidebar-template.islam-sidebar .sidebar-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 1.5rem 1rem !important;
+    border-radius: 8px 8px 0 0 !important;
+    text-align: center !important;
+    position: relative !important;
+    border: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.sidebar-template .sidebar-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.sidebar-template.islam-sidebar .sidebar-header h3 {
+    color: white !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
 }
 
-.sidebar-template .sidebar-caption {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-top: 0.5rem;
-    font-style: italic;
+.sidebar-template.islam-sidebar .sidebar-image {
+    text-align: center !important;
+    margin-bottom: 1rem !important;
+    padding: 0 1rem !important;
 }
 
-.sidebar-template .sidebar-section {
-    margin-bottom: 1rem;
+.sidebar-template.islam-sidebar .sidebar-image img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    width: 100% !important;
 }
 
-.sidebar-template .sidebar-section h4 {
-    margin: 0 0 0.5rem 0;
-    color: #495057;
-    font-size: 0.95rem;
-    font-weight: 600;
-    background: #e9ecef;
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
+.sidebar-template.islam-sidebar .sidebar-caption {
+    font-size: 0.8rem !important;
+    color: #6c757d !important;
+    margin-top: 0.5rem !important;
+    font-style: italic !important;
+    text-align: center !important;
 }
 
-.sidebar-template .sidebar-content {
-    padding-left: 0.5rem;
+.sidebar-template.islam-sidebar .sidebar-section {
+    margin-bottom: 1rem !important;
+    padding: 0 !important;
 }
 
-.sidebar-template .sidebar-content ul {
-    margin: 0;
-    padding-left: 1.2rem;
+.sidebar-template.islam-sidebar .sidebar-section h4 {
+    background: #f8f9fa !important;
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    padding: 0.75rem 1rem !important;
+    border-left: 4px solid #3b82f6 !important;
+    margin: 0 0 1rem 0 !important;
+    border-radius: 0 4px 4px 0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    border: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.sidebar-template .sidebar-content li {
-    margin-bottom: 0.2rem;
-    font-size: 0.85rem;
+.sidebar-template.islam-sidebar .sidebar-content {
+    padding: 0 1rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.sidebar-template .sidebar-content strong {
-    color: #495057;
+.sidebar-template.islam-sidebar .sidebar-content ul {
+    margin: 0 0 1rem 0 !important;
+    padding-left: 1.5rem !important;
+    list-style: disc !important;
+}
+
+.sidebar-template.islam-sidebar .sidebar-content li {
+    margin-bottom: 0.5rem !important;
+    color: #2c3e50 !important;
+    line-height: 1.4 !important;
+    font-size: 0.85rem !important;
+}
+
+.sidebar-template.islam-sidebar .sidebar-content strong {
+    color: #1a365d !important;
+    font-weight: 600 !important;
+}
+
+.sidebar-template.islam-sidebar .sidebar-content a {
+    color: #3b82f6 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.sidebar-template.islam-sidebar .sidebar-content a:hover {
+    color: #1e40af !important;
+    text-decoration: underline !important;
+    background: #f0f4ff !important;
+    padding: 0.1rem 0.2rem !important;
+    border-radius: 3px !important;
 }
 
 /* Good article icon */
