@@ -2,178 +2,76 @@
 
 Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowledge platform built with PHP.
 
-## 🎯 Current Version: 0.0.0.15
+## 🎯 Current Version: 0.0.0.17
 
-**Latest Release:** September 15, 2025  
+**Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Feature Enhancement - Enhanced Messaging System & Documentation
+**Type:** Major Feature Enhancement - Wiki Editor & Reference System
 
-## 🚀 What's New in v0.0.0.15
+## 🚀 What's New in v0.0.0.17
 
-### 📚 **Comprehensive Documentation Updates**
-- **Complete Documentation Overhaul**: Updated all documentation files to reflect current features
-- **Version Management**: Centralized version management system with automatic updates
-- **Release Notes**: Comprehensive release notes for all versions
-- **Changelog System**: Detailed changelog tracking for all releases
-- **API Documentation**: Enhanced API documentation with examples
-- **User Guides**: Updated user guides with latest features
+### 📝 **Revolutionary Wiki Editor System**
+- **Professional Toolbar**: Complete redesign with properly sized, clickable buttons
+- **Rich Text Formatting**: Bold, italic, code, headings with intuitive toolbar
+- **Wiki Link Support**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
+- **External Link Support**: `[url]` and `[url text]` syntax with proper validation
+- **Live Preview**: Real-time preview with server-side wiki syntax parsing
+- **Mobile Responsive**: Optimized toolbar for mobile and desktop devices
+- **Smart Button Sizing**: Content properly scales to fill button areas
 
-### 🔧 **Technical Improvements**
-- **Version Consistency**: All files now reference the same version number
-- **Documentation Structure**: Organized documentation with clear navigation
-- **Release Management**: Streamlined release process with proper versioning
-- **Code Documentation**: Enhanced inline documentation and comments
+### 🔗 **Enhanced Reference System**
+- **Clickable Reference Links**: References now parse internal and external links as clickable
+- **Internal Link Support**: `[[Page Name]]` in references become proper wiki links
+- **External Link Support**: `[url]` in references become clickable external links
+- **Security Features**: External links open in new tabs with proper security attributes
+- **Slug Generation**: Internal links use proper slug generation for navigation
+- **HTML Escaping**: All link text properly escaped for security
 
-## 🚀 What's New in v0.0.0.13
+### 🎨 **UI/UX Improvements**
+- **Professional Toolbar Design**: Clean, modern toolbar with proper spacing
+- **Button Hover Effects**: Smooth animations and visual feedback
+- **Consistent Styling**: Unified design language across all editor components
+- **Accessibility**: Better contrast, keyboard navigation, and screen reader support
+- **Mobile Optimization**: Touch-friendly buttons and responsive layout
 
-### 💬 **Revolutionary Messaging System**
-- **Facebook Messenger-Style Interface**: Complete redesign matching Facebook's messaging experience
-- **Three-Column Layout**: Sidebar | Chat Interface | Info Box (toggleable)
-- **Real-Time Messaging**: Instant message delivery with AJAX-powered updates
-- **Comprehensive Info Box**: Profile, Mute, and Search tabs with modern styling
-- **Profile Integration**: Direct links to user profiles from conversations
-- **Advanced Search**: Real-time conversation search with highlighted results
-- **Mute Functionality**: Multiple duration options with overlay dialogs
-- **Modern UI/UX**: Gradient backgrounds, smooth animations, and professional styling
+### 🔧 **Technical Enhancements**
+- **Server-Side Parsing**: References processed through comprehensive link parser
+- **Template System**: Enhanced template parsing for complex wiki syntax
+- **Error Handling**: Improved error handling and user feedback
+- **Performance**: Optimized parsing and rendering for better performance
+- **Code Quality**: Enhanced code organization and documentation
 
-### 🎨 **Enhanced User Interface**
-- **Full-Width Design**: Messaging interface uses complete viewport width
-- **Responsive Layout**: Adapts perfectly to different screen sizes
-- **Interactive Elements**: Hover effects, animations, and micro-interactions
-- **Card-Based Design**: Modern card layouts with shadows and gradients
-- **Professional Styling**: Consistent design language throughout the interface
+## 🚀 What's New in v0.0.0.16
 
-### 🔧 **Technical Improvements**
-- **Session Management**: Fixed session handling for proper authentication
-- **Web Server Consolidation**: Resolved conflicts between Apache and PHP-FPM
-- **Database Optimization**: Enhanced message storage and retrieval
-- **Error Handling**: Comprehensive error logging and user feedback
-- **Performance**: Optimized AJAX calls and real-time updates
+### 🎨 **Admin Dashboard Improvements**
+- **Simplified Color Scheme**: Implemented consistent CSS variables across admin interface
+- **Modern Design**: Replaced complex gradients with clean, professional colors
+- **Better Accessibility**: Improved contrast and readability throughout admin panels
+- **Unified Theming**: All admin components now use the same color variables for consistency
 
-## 🚀 What's New in v0.0.0.12
-
-### 🎨 **Revolutionary Wiki Experience**
-- **Three-Column Wiki Layout**: Contents sidebar (left), main content (center), and Tools sidebar (right)
-- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
-- **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
-- **Comprehensive Tools Panel**: What links here, Page information, Cite this page, and Download as PDF
-- **Full-Width Design**: Removed constraining containers for true full-width wiki experience
-
-### 🔍 **Enhanced Search & Navigation**
-- **Search Overlay System**: Full-screen search with proper z-index layering and backdrop effects
-- **Keyboard Shortcuts**: Press `/` to quickly open search overlay from anywhere on the page
-- **ESC Key Support**: All modals (search, citation, report) can be closed with ESC key
-- **Smart Z-Index Management**: Dynamic z-index control ensures search overlay appears above all content
-
-### 📚 **Wikipedia-Style Special Pages**
-- **"What Links Here" Page**: Comprehensive page showing all articles that link to a specific page
-  - Advanced filtering options (hide transclusions, links, redirects)
-  - Namespace filtering and sorting options
-  - Professional pagination system
-- **"Page Information" Page**: Detailed metadata and statistics about wiki articles
-  - Creator information and edit history
-  - Page protection status and properties
-  - Word count, character count, and reading time
-
-### 📖 **Citation System Enhancement**
-- **Multiple Citation Formats**: Support for MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE
-- **APA 7th Edition Default**: Updated to current academic standards
-- **Professional Modal**: Clean interface with format selection and copy functionality
-
-## 🚀 What's New in v0.0.0.11
-
-### 🎨 **Revolutionary News Feed Dashboard**
-- **3-Column Responsive Layout**: Modern social media-style dashboard with left sidebar, main feed, and right sidebar
-- **Unified Content Feed**: Single feed displaying posts and articles with smart filtering
-- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
-- **Image Upload System**: Copy/paste image support with automatic scaling and preview
-- **Social Engagement**: Like, comment, and share functionality for posts
-- **Content Management**: Personal content sections (My Content, Watchlist, Following)
-
-## 🚀 What's New in v0.0.0.10
-
-### Critical Bug Fixes
-- **Fixed create_post.php 500 Error**: Resolved internal server error when creating posts
-- **Fixed create_article.php Draft Status**: Resolved 500 error when creating draft articles
-- **Fixed Profile Posts Display**: Resolved issue where user posts weren't showing in profiles
-- **Fixed Markdown Parsing**: Resolved regex error preventing markdown rendering
-
-### New Features & Enhancements
-- **Side-by-Side Live Preview**: Real-time markdown preview for create_post page
-- **User Watchlist System**: Complete watchlist functionality for tracking article changes
-- **Article History Timestamps**: Added detailed timestamps with relative time display
-- **Enhanced Error Handling**: Better user feedback throughout the application
-
-### Technical Improvements
-- **Enhanced Database Functions**: Added comprehensive user post management
-- **Markdown Parser Improvements**: Enhanced markdown processing capabilities
-- **Responsive Design**: Improved mobile and tablet experience
-- **Better Error Handling**: Comprehensive error logging and debugging
-
-## 🚀 What's New in v0.0.0.9
-
-### Enhanced User Interface & Experience
-- **Sidebar Navigation Improvements**: Added visual separators between navigation sections
-- **Search Popup Enhancement**: Full-screen search overlay with real-time suggestions
-- **Dropdown Menu Positioning**: Fixed sidebar dropdown positioning to eliminate gaps
-- **Search Results Optimization**: Made entire result containers clickable for better UX
-- **Article Page Redesign**: Transparent content containers for cleaner appearance
-- **Category Button Fixes**: Ensured category buttons are properly clickable
-
-### Search System Enhancements
-- **Search Popup Integration**: Inline search popup with AJAX-powered suggestions
-- **Search Results Layout**: Improved horizontal alignment of icons and titles
-- **Content Type Filters**: Converted radio buttons to clean link-based filters
-- **Search Page Styling**: Consolidated conflicting CSS files into organized structure
-- **Real-time Suggestions**: Enhanced search suggestions with proper API endpoints
-
-### Bug Fixes & Improvements
-- **URL Routing**: Fixed all navigation links and clean URL implementation
-- **PHP Path Issues**: Corrected include paths using `__DIR__` for better reliability
-- **CSS Conflicts**: Resolved multiple CSS file conflicts affecting styling
-- **Mobile Responsiveness**: Improved mobile experience across all components
-- **Error Handling**: Enhanced error handling for better user experience
-
-## 🚀 What's New in v0.0.0.6
-
-### Complete File Restructuring
-- **Industry-standard directory layout** with organized file structure
-- **Modular architecture** with pages/, modules/, api/, config/, includes/ directories
-- **Better code maintainability** and developer experience
-- **Improved separation of concerns** for future development
-
-### Clean URL Implementation
-- **Full clean URL system** via .htaccess rewrite rules
-- **No more .php extensions** in user-facing URLs
-- **SEO-friendly URLs** for better search engine optimization
-- **25+ clean URL routes** implemented across the application
-
-### Enhanced User Experience
-- **Conditional navigation** showing/hiding based on login status
-- **Professional chat options dropdown** with toggle switches
-- **Improved header design** with better icon organization
-- **Smart navigation highlighting** based on current page
-
-### Comprehensive Route Management
-- **Authentication routes**: /login, /register
-- **User routes**: /dashboard, /profile, /settings, /user/{username}
-- **Social routes**: /friends, /friends/requests, /friends/suggestions, /friends/all, /friends/lists, /messages, /create_post
-- **Wiki routes**: /wiki, /wiki/search, /wiki/{slug}, /create_article, /edit_article, /delete_article, /restore_version, /manage_categories
-- **Admin routes**: /admin, /manage_users, /system_settings
-- **API routes**: /ajax/{endpoint}
+### 🔔 **Notification System Fixes**
+- **500 Error Resolution**: Fixed critical server errors in notifications API that prevented loading
+- **Error Handling**: Added comprehensive try-catch blocks for all database queries
+- **Graceful Degradation**: System continues working even when individual queries fail
+- **Better Debugging**: Enhanced error logging and debug features for troubleshooting
+- **Session Handling**: Fixed session cookie transmission in API requests
+- **Improved UX**: Better error messages and fallback behavior for users
 
 ## 📚 Documentation Structure
 
-### 📖 [User Guides](guides/)
+### 📖 [User Guides](user/)
 - **Installation Guide**: Step-by-step installation instructions
 - **User Guide**: How to use IslamWiki features
-- **Admin Guide**: Administrative functions and settings
-- **Wiki Guide**: Creating and editing wiki content
+- **Wiki Editor Guide**: Complete guide to the wiki editing system
+- **Reference System Guide**: How to use the reference system
+- **Template Guide**: Creating and using templates
 
 ### 🔧 [API Documentation](api/)
 - **API Reference**: Complete API endpoint documentation
 - **Authentication**: API authentication methods
 - **Rate Limiting**: API usage limits and guidelines
+- **Search API**: Search functionality documentation
+- **Template API**: Template preview and management
 
 ### 🏗️ [Architecture](architecture/)
 - **Architecture Overview**: System design and components
@@ -182,9 +80,28 @@ Welcome to the comprehensive documentation for IslamWiki, a modern Islamic knowl
 - **Performance Guide**: Optimization and performance tips
 - **Deployment Guide**: Production deployment instructions
 
+### 🚀 [Features](features/)
+- **Wiki Editor System**: Complete wiki editing documentation
+- **Reference System**: Reference and citation system
+- **Template System**: MediaWiki-style template system
+- **Search System**: Advanced search capabilities
+- **Social Features**: Social networking and community features
+- **Admin System**: Administrative interface and tools
+
+### 🔐 [Security](security/)
+- **Permission System**: Role-based access control
+- **Security Features**: Security implementation details
+- **Best Practices**: Security recommendations
+- **Audit Logging**: Security monitoring and logging
+
 ### 📝 [Changelogs](changelogs/)
 - **CHANGELOG.md**: Complete version history
-- **v0.0.0.12.md**: Latest release notes (Enhanced Wiki Experience & Search System)
+- **v0.0.0.17.md**: Latest release notes (Wiki Editor & Reference System)
+- **v0.0.0.16.md**: Previous release notes (Admin Dashboard & Notifications)
+- **v0.0.0.15.md**: Previous release notes (Documentation Updates)
+- **v0.0.0.14.md**: Previous release notes (UI/UX Enhancements)
+- **v0.0.0.13.md**: Previous release notes (Admin System Overhaul)
+- **v0.0.0.12.md**: Previous release notes (Enhanced Wiki Experience)
 - **v0.0.0.11.md**: Previous release notes (News Feed Dashboard)
 - **v0.0.0.10.md**: Previous release notes (Bug Fixes & Enhancements)
 - **v0.0.0.9.md**: Previous release notes (UI/UX Improvements)
@@ -215,15 +132,31 @@ html/
 │   │   └── admin/           # Administrative pages
 │   ├── modules/             # Modular components
 │   │   ├── wiki/           # Wiki module
-│   │   └── friends/        # Friends module
+│   │   ├── friends/        # Friends module
+│   │   └── messages/       # Messaging module
 │   ├── api/                # API endpoints
-│   │   └── ajax/          # AJAX endpoints
+│   │   ├── ajax/          # AJAX endpoints
+│   │   ├── search/        # Search API
+│   │   └── template_preview.php # Template preview API
 │   ├── config/             # Configuration files
 │   ├── includes/           # Shared includes
+│   │   └── markdown/      # Markdown and Wiki parsers
 │   ├── assets/             # Static assets
+│   ├── skins/              # Theme system
+│   │   └── bismillah/     # Default theme
 │   └── .htaccess          # URL rewriting rules
 ├── docs/                   # Documentation
-├── database_migration_*.sql # Database migration files
+│   ├── admin/             # Admin system documentation
+│   ├── api/               # API documentation
+│   ├── architecture/      # System architecture
+│   ├── changelogs/        # Version changelogs
+│   ├── features/          # Feature documentation
+│   ├── releases/          # Release notes
+│   ├── security/          # Security documentation
+│   └── user/              # User guides
+├── database/              # Database migrations
+├── scripts/               # Utility scripts
+├── backups/               # Backup files
 └── README.md              # Project overview
 ```
 
@@ -233,6 +166,8 @@ html/
 - **Real-Time Features**: Messaging and notifications with AJAX
 - **Social Networking**: Friends system with requests and suggestions
 - **Wiki System**: Complete wiki functionality with version control
+- **Template System**: MediaWiki-style template system
+- **Reference System**: Academic-style reference system with clickable links
 - **Admin Panel**: Comprehensive administrative tools
 - **Responsive Design**: Mobile-friendly interface
 - **Security**: Proper authentication and authorization
@@ -248,13 +183,13 @@ html/
 ### Installation
 1. **Clone or download** the project files
 2. **Upload to web server** in the appropriate directory
-3. **Configure database** connection in `public/config/config.php`
+3. **Configure database** connection in `public/config/database.php`
 4. **Run database migrations** using the provided SQL files
 5. **Set proper permissions** for uploads and cache directories
 6. **Test all routes** to ensure proper functionality
 
 ### Configuration
-- **Database settings**: Update `public/config/config.php`
+- **Database settings**: Update `public/config/database.php`
 - **Site settings**: Configure in admin panel after installation
 - **File permissions**: Ensure web server can read/write to necessary directories
 
@@ -263,7 +198,7 @@ html/
 ### File Organization
 - **Pages**: All page files in `public/pages/` organized by category
 - **Modules**: Reusable components in `public/modules/`
-- **API**: AJAX endpoints in `public/api/ajax/`
+- **API**: AJAX endpoints in `public/api/`
 - **Config**: Configuration files in `public/config/`
 - **Includes**: Shared PHP files in `public/includes/`
 
@@ -281,7 +216,23 @@ html/
 
 ## 📊 Version History
 
-### v0.0.0.15 (Current) - Enhanced Messaging System & Documentation
+### v0.0.0.17 (Current) - Wiki Editor & Reference System
+- Revolutionary wiki editor with professional toolbar
+- Enhanced reference system with clickable links
+- Improved UI/UX with proper button sizing
+- Mobile responsive design improvements
+- Server-side parsing enhancements
+- Template system improvements
+- Security enhancements for link handling
+
+### v0.0.0.16 - Admin Dashboard & Notifications
+- Admin dashboard improvements with consistent theming
+- Notification system fixes and error handling
+- Better debugging and error logging
+- Session handling improvements
+- Enhanced user experience
+
+### v0.0.0.15 - Documentation & Version Management
 - Comprehensive documentation updates across all files
 - Centralized version management system implementation
 - Complete changelog and release notes overhaul
@@ -291,17 +242,23 @@ html/
 - Version consistency across all components
 - Improved code documentation and comments
 
-### v0.0.0.13 - Facebook Messenger-Style Messaging System
-- Facebook Messenger-style messaging interface with three-column layout
-- Comprehensive info box with Profile, Mute, and Search functionality
-- Real-time messaging with AJAX-powered updates and polling
-- Advanced conversation search with highlighted results
-- Mute functionality with multiple duration options
-- Profile integration with direct user profile links
-- Modern UI/UX with gradients, animations, and professional styling
-- Full-width responsive design for optimal messaging experience
-- Session management and web server consolidation fixes
-- Enhanced error handling and performance optimizations
+### v0.0.0.14 - Enhanced User Interface & Authentication
+- Modern login/register pages with professional design
+- Enhanced user menu with better hover effects
+- Improved visual design with consistent branding
+- Better responsive design for all devices
+- Centralized styling with reduced code duplication
+- Version management system implementation
+
+### v0.0.0.13 - Comprehensive Admin System Overhaul
+- Unified admin dashboard with organized sections
+- Feature toggle system for core system features
+- System health monitoring with real-time indicators
+- Permission management with role-based access control
+- Maintenance control with comprehensive system monitoring
+- Modern UI with toast notifications and hover effects
+- Tab persistence and form processing improvements
+- Visual improvements and boolean handling fixes
 
 ### v0.0.0.12 - Enhanced Wiki Experience & Search System
 - Three-column wiki layout with sticky sidebars
@@ -393,7 +350,7 @@ html/
 ### Code Organization
 - **Pages**: Place new pages in appropriate category directory
 - **Modules**: Create reusable components in modules directory
-- **API**: Add new AJAX endpoints in api/ajax directory
+- **API**: Add new AJAX endpoints in api directory
 - **Assets**: Organize CSS/JS files in assets directory
 
 ## 📞 Support
@@ -416,8 +373,8 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ---
 
-**IslamWiki v0.0.0.12** - A modern Islamic knowledge platform with enhanced wiki experience and advanced search capabilities.
+**IslamWiki v0.0.0.17** - A modern Islamic knowledge platform with enhanced wiki editing and reference systems.
 
-**Last Updated:** September 11, 2025  
-**Documentation Version:** 0.0.0.12  
+**Last Updated:** January 2025  
+**Documentation Version:** 0.0.0.17  
 **Status:** Production Ready ✅

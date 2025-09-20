@@ -1,17 +1,50 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.16-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.17-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.16
+## 🎯 Current Version: 0.0.0.17
 
-**Latest Release:** September 16, 2025  
+**Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Bug Fixes + UI Improvements - Notification System & Admin Dashboard
+**Type:** Major Feature Enhancement - Wiki Editor & Reference System
+
+## 🚀 What's New in v0.0.0.17
+
+### 📝 **Revolutionary Wiki Editor System**
+- **Professional Toolbar**: Complete redesign with properly sized, clickable buttons
+- **Rich Text Formatting**: Bold, italic, code, headings with intuitive toolbar
+- **Wiki Link Support**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
+- **External Link Support**: `[url]` and `[url text]` syntax with proper validation
+- **Live Preview**: Real-time preview with server-side wiki syntax parsing
+- **Mobile Responsive**: Optimized toolbar for mobile and desktop devices
+- **Smart Button Sizing**: Content properly scales to fill button areas
+
+### 🔗 **Enhanced Reference System**
+- **Clickable Reference Links**: References now parse internal and external links as clickable
+- **Internal Link Support**: `[[Page Name]]` in references become proper wiki links
+- **External Link Support**: `[url]` in references become clickable external links
+- **Security Features**: External links open in new tabs with proper security attributes
+- **Slug Generation**: Internal links use proper slug generation for navigation
+- **HTML Escaping**: All link text properly escaped for security
+
+### 🎨 **UI/UX Improvements**
+- **Professional Toolbar Design**: Clean, modern toolbar with proper spacing
+- **Button Hover Effects**: Smooth animations and visual feedback
+- **Consistent Styling**: Unified design language across all editor components
+- **Accessibility**: Better contrast, keyboard navigation, and screen reader support
+- **Mobile Optimization**: Touch-friendly buttons and responsive layout
+
+### 🔧 **Technical Enhancements**
+- **Server-Side Parsing**: References processed through comprehensive link parser
+- **Template System**: Enhanced template parsing for complex wiki syntax
+- **Error Handling**: Improved error handling and user feedback
+- **Performance**: Optimized parsing and rendering for better performance
+- **Code Quality**: Enhanced code organization and documentation
 
 ## 🚀 What's New in v0.0.0.16
 
@@ -29,198 +62,23 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Session Handling**: Fixed session cookie transmission in API requests
 - **Improved UX**: Better error messages and fallback behavior for users
 
-### 🛠️ **Technical Improvements**
-- **Database Query Protection**: All notification queries wrapped in individual error handling
-- **API Reliability**: Notifications API now returns 200 OK even with partial failures
-- **Enhanced Debugging**: Added `window.debugNotifications()` function for development
-- **Code Quality**: Improved CSS organization and JavaScript error handling
+## 🚀 Features
 
-## 🚀 What's New in v0.0.0.15
-
-### 📚 **Comprehensive Documentation Updates**
-- **Complete Documentation Overhaul**: Updated all documentation files to reflect current features
-- **Version Management**: Centralized version management system with automatic updates
-- **Release Notes**: Comprehensive release notes for all versions
-- **Changelog System**: Detailed changelog tracking for all releases
-- **API Documentation**: Enhanced API documentation with examples
-- **User Guides**: Updated user guides with latest features
-
-### 🔧 **Technical Improvements**
-- **Version Consistency**: All files now reference the same version number
-- **Documentation Structure**: Organized documentation with clear navigation
-- **Release Management**: Streamlined release process with proper versioning
-- **Code Documentation**: Enhanced inline documentation and comments
-
-## 🚀 What's New in v0.0.0.14
-
-### 🎨 **Enhanced User Interface & Authentication Experience**
-- **Modern Login/Register Pages**: Professional, clean design with gradient accents and improved typography
-- **Enhanced User Menu**: Better hover effects, improved accessibility, and updated text ("Create Account")
-- **Improved Visual Design**: Consistent branding, better spacing, and enhanced typography
-- **Better Responsive Design**: Works seamlessly on all devices and screen sizes
-- **Centralized Styling**: Reduced code duplication and improved maintainability
-- **Version Management System**: Centralized version control with automated updates
-
-## 🚀 Previous Release: v0.0.0.13
-
-### 🚀 **Comprehensive Admin System Overhaul**
-- **Unified Admin Dashboard**: Merged Quick Actions and Admin Tools into organized, categorized sections
-- **Feature Toggle System**: Complete control over core system features (registration, comments, wiki, social, analytics, notifications)
-- **System Health Monitoring**: Real-time health indicators for database, storage, memory, and PHP version
-- **Permission Management**: Role-based access control with granular permission management
-- **Maintenance Control**: Primary operational control center with comprehensive system monitoring
-- **Modern UI**: Toast notifications, hover effects, and responsive design throughout admin interface
-
-### 🔧 **System Settings Enhancement**
-- **Tab Persistence**: Maintains current tab after saving changes instead of reverting to General
-- **Form Processing**: Fixed cross-form interference and improved form section identification
-- **Visual Improvements**: Perfect alignment of permission checkboxes and system health indicators
-- **Boolean Handling**: Proper maintenance mode boolean type handling and storage
-
-### 🎨 **User Experience Improvements**
-- **Toast Notifications**: Replaced all flash messages with modern toast notifications
-- **Better Navigation**: Back buttons and improved navigation flow
-- **Mobile Optimization**: Responsive design for all admin interfaces
-- **Accessibility**: Improved contrast, text visibility, and keyboard navigation
-
-## 🚀 What's New in v0.0.0.12
-
-### 🎨 **Revolutionary Wiki Experience**
-- **Three-Column Wiki Layout**: Contents sidebar (left), main content (center), and Tools sidebar (right)
+### 📚 **Advanced Wiki System**
+- **Three-Column Layout**: Contents sidebar, main content, and Tools sidebar for enhanced navigation
 - **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
 - **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
-- **Comprehensive Tools Panel**: What links here, Page information, Cite this page, and Download as PDF
-- **Full-Width Design**: Removed constraining containers for true full-width wiki experience
-
-### 🔍 **Enhanced Search & Navigation**
-- **Search Overlay System**: Full-screen search with proper z-index layering and backdrop effects
-- **Keyboard Shortcuts**: Press `/` to quickly open search overlay from anywhere on the page
-- **ESC Key Support**: All modals (search, citation, report) can be closed with ESC key
-- **Smart Z-Index Management**: Dynamic z-index control ensures search overlay appears above all content
-
-### 📚 **Wikipedia-Style Special Pages**
-- **"What Links Here" Page**: Comprehensive page showing all articles that link to a specific page
-  - Advanced filtering options (hide transclusions, links, redirects)
-  - Namespace filtering and sorting options
-  - Professional pagination system
-- **"Page Information" Page**: Detailed metadata and statistics about wiki articles
-  - Creator information and edit history
-  - Page protection status and properties
-  - Word count, character count, and reading time
-
-### 📖 **Citation System Enhancement**
-- **Multiple Citation Formats**: Support for MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE
-- **APA 7th Edition Default**: Updated to current academic standards
-- **Professional Modal**: Clean interface with format selection and copy functionality
-
-## 🚀 What's New in v0.0.0.11
-
-### 🎨 **Revolutionary News Feed Dashboard**
-- **3-Column Responsive Layout**: Modern social media-style dashboard with left sidebar, main feed, and right sidebar
-- **Unified Content Feed**: Single feed displaying posts and articles with smart filtering
-- **Interactive Post Creation**: Inline post creation with markdown editor and live preview
-- **Image Upload System**: Copy/paste image support with automatic scaling and preview
-- **Social Engagement**: Like, comment, and share functionality for posts
-- **Content Management**: Personal content sections (My Content, Watchlist, Following)
-
-### 📱 **Enhanced User Experience**
-- **Real-time Interactions**: AJAX-powered likes, comments, and social features
-- **Smart Content Filtering**: All, Posts, Articles, and Following filters with state persistence
-- **Visual Trending Section**: Interactive trending topics with visual indicators
-- **Quick Actions Panel**: Streamlined access to common actions (New Article, New Post, etc.)
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Toast Notifications**: Real-time feedback for user actions
-
-### 🔧 **Technical Improvements**
-- **Markdown Parser Enhancement**: Server-side and client-side markdown processing
-- **Image Processing**: Automatic image scaling and optimization for uploads
-- **Database Optimization**: Enhanced queries with proper joins and indexing
-- **JavaScript Architecture**: Modular, maintainable frontend code structure
-- **API Endpoints**: RESTful APIs for all social interactions
-- **Error Handling**: Comprehensive error handling and user feedback
-
-### 🐛 **Bug Fixes & Stability**
-- **Image Upload Fixes**: Resolved persistent image upload failures
-- **JavaScript Scope Issues**: Fixed variable scope problems in complex functions
-- **Markdown Rendering**: Fixed markdown display in content previews
-- **UI Layout Fixes**: Resolved button truncation and hover effects
-- **Content Filtering**: Fixed Following filter to show only followed users' content
-
-## 🚀 What's New in v0.0.0.10
-
-### 🐛 **Critical Bug Fixes**
-- **Fixed create_post.php 500 Error**: Resolved internal server error when creating posts
-- **Fixed create_article.php Draft Status**: Resolved 500 error when creating draft articles
-- **Fixed Profile Posts Display**: Resolved issue where user posts weren't showing in profiles
-- **Fixed Markdown Parsing**: Resolved regex error preventing markdown rendering
-
-### ✨ **New Features & Enhancements**
-- **Side-by-Side Live Preview**: Real-time markdown preview for create_post page
-- **User Watchlist System**: Complete watchlist functionality for tracking article changes
-- **Article History Timestamps**: Added detailed timestamps with relative time display
-- **Enhanced Error Handling**: Better user feedback throughout the application
-
-### 🔧 **Technical Improvements**
-- **Enhanced Database Functions**: Added comprehensive user post management
-- **Markdown Parser Improvements**: Enhanced markdown processing capabilities
-- **Responsive Design**: Improved mobile and tablet experience
-- **Better Error Handling**: Comprehensive error logging and debugging
-
-## 🚀 What's New in v0.0.0.9
-
-### 🎨 **Enhanced User Interface & Experience**
-- **Sidebar Navigation Improvements**: Added visual separators between navigation sections
-- **Search Popup Enhancement**: Full-screen search overlay with real-time suggestions
-- **Dropdown Menu Positioning**: Fixed sidebar dropdown positioning to eliminate gaps
-- **Search Results Optimization**: Made entire result containers clickable for better UX
-- **Article Page Redesign**: Transparent content containers for cleaner appearance
-- **Category Button Fixes**: Ensured category buttons are properly clickable
-
-### 🔍 **Search System Enhancements**
-- **Search Popup Integration**: Inline search popup with AJAX-powered suggestions
-- **Search Results Layout**: Improved horizontal alignment of icons and titles
-- **Content Type Filters**: Converted radio buttons to clean link-based filters
-- **Search Page Styling**: Consolidated conflicting CSS files into organized structure
-- **Real-time Suggestions**: Enhanced search suggestions with proper API endpoints
-
-### 🐛 **Bug Fixes & Improvements**
-- **URL Routing**: Fixed all navigation links and clean URL implementation
-- **PHP Path Issues**: Corrected include paths using `__DIR__` for better reliability
-- **CSS Conflicts**: Resolved multiple CSS file conflicts affecting styling
-- **Mobile Responsiveness**: Improved mobile experience across all components
-- **Error Handling**: Enhanced error handling for better user experience
-
-## 🚀 What's New in v0.0.0.8
-
-### 👥 **Community Groups & Events System**
-- **Community Groups**: Create and join public, private, or restricted groups
-- **Group Management**: Admin, moderator, and member roles with proper permissions
-- **Community Events**: Organize online, offline, and hybrid events
-- **Event Attendance**: Track and manage event attendees
-- **Group Posts**: Share content within specific community groups
-
-### 🔍 **Enhanced Search Engine**
-- **Multi-Content Search**: Search across Wiki Pages, Posts, People, Groups, Events, and Ummah content
-- **Advanced Filtering**: Left sidebar with content type filters and category selection
-- **Smart Suggestions**: Popular searches and trending topics in sidebar
-- **Search Analytics**: Comprehensive search query tracking and optimization
-- **Professional Interface**: Modern design with rich result previews
-
-### 🎨 **Improved User Experience**
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Smart No-Results**: Helpful suggestions when no results found
-- **Search History**: Track and display recent searches for logged-in users
-- **Content Type Icons**: Visual icons for each content type in search results
-- **Rich Result Previews**: Detailed result cards with metadata and engagement metrics
-
-### 🏗️ **Technical Improvements**
-- **New Database Schema**: Groups, events, and enhanced search analytics tables
-- **Full-Text Search**: Optimized database indexes for better search performance
-- **AJAX Integration**: Real-time search with debounced input and instant results
-- **Performance Optimization**: Efficient queries with proper indexing and caching
-- **Enhanced Security**: Improved input validation and SQL injection protection
-
-## 🚀 Features
+- **Wikipedia-Style Special Pages**: "What Links Here" and "Page Information" pages with advanced filtering
+- **Multiple Citation Formats**: MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE citation support
+- **Professional Wiki Editor**: Rich text editor with comprehensive toolbar and live preview
+- **Wiki-Style Linking**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
+- **Reference System**: Clickable internal and external links in references
+- **Version Control**: Complete article history and restoration
+- **Smart Link Detection**: Existing pages (blue) vs missing pages (red)
+- **Clean URLs**: SEO-friendly URLs like `/wiki/Islam` instead of `/wiki/article.php?slug=islam`
+- **Template System**: Support for complex MediaWiki-style templates
+- **Magic Words**: Support for `__NOTITLE__`, `__NOCAT__`, and other magic words
+- **Category System**: Full category management with automatic categorization
 
 ### 🔍 **Advanced Search System**
 - **Universal Search**: Search across articles, users, messages, and all content types
@@ -234,25 +92,12 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Professional Interface**: Clean, responsive design with advanced search options
 - **Search Analytics**: Track popular searches and optimize content discovery
 
-### 📚 **Advanced Wiki System**
-- **Three-Column Layout**: Contents sidebar, main content, and Tools sidebar for enhanced navigation
-- **Sticky Sidebar Navigation**: Contents and Tools sidebars scroll with content and stick to viewport
-- **Table of Contents (TOC)**: Auto-generated TOC with smooth scrolling and active section highlighting
-- **Wikipedia-Style Special Pages**: "What Links Here" and "Page Information" pages with advanced filtering
-- **Multiple Citation Formats**: MLA 9th, APA 7th, Chicago 17th, Harvard, and IEEE citation support
-- **Markdown-First Editing**: Rich text editor with comprehensive toolbar
-- **Wiki-Style Linking**: `[[Page Name]]` and `[[Page Name|Display Text]]` syntax
-- **Live Preview**: Real-time markdown rendering
-- **Version Control**: Complete article history and restoration
-- **Smart Link Detection**: Existing pages (blue) vs missing pages (red)
-- **Clean URLs**: SEO-friendly URLs like `/wiki/Islam` instead of `/wiki/article.php?slug=islam`
-
 ### 👥 **Social Networking Features**
 - **News Feed Dashboard**: Modern 3-column social media-style dashboard
 - **Interactive Post Creation**: Inline post creation with markdown editor and live preview
 - **Image Upload System**: Copy/paste image support with automatic scaling and preview
 - **Social Engagement**: Like, comment, and share functionality for posts
-- **Real-Time Messaging**: Instant messaging with live updates
+- **Real-Time Messaging**: Facebook Messenger-style interface with three-column layout
 - **Friends System**: Add friends, send requests, and manage connections
 - **Friend Suggestions**: AI-powered friend recommendations
 - **Social Posts**: Create and share posts with the community
@@ -269,6 +114,8 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Accessibility**: Screen reader support, keyboard navigation, and high contrast options
 - **Dark/Light Themes**: User preference-based theme switching
 - **Progressive Web App**: Offline capabilities and app-like experience
+- **Professional Toolbar**: Rich text editor with properly sized, clickable buttons
+- **Live Preview**: Real-time content preview with server-side parsing
 
 ### 🔐 **Security & Performance**
 - **Secure Authentication**: Robust user authentication and session management
@@ -277,6 +124,19 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Rate Limiting**: Protection against spam and abuse
 - **Database Optimization**: Efficient queries and proper indexing
 - **Caching System**: Redis-based caching for improved performance
+- **Link Security**: External links open in new tabs with proper security attributes
+- **Input Validation**: Comprehensive input validation and sanitization
+
+### 🛠️ **Admin System**
+- **Comprehensive Admin Dashboard**: Unified admin interface with organized sections
+- **Feature Toggle System**: Complete control over core system features
+- **System Health Monitoring**: Real-time health indicators for database, storage, memory
+- **Permission Management**: Role-based access control with granular permissions
+- **User Management**: Complete user administration with role assignment
+- **Content Moderation**: Tools for moderating posts, articles, and user content
+- **Analytics Dashboard**: Comprehensive analytics and reporting
+- **System Settings**: Centralized configuration management
+- **Maintenance Mode**: System-wide maintenance control
 
 ## 🛠️ **Technical Stack**
 
@@ -307,15 +167,18 @@ islamwiki/
 │   ├── api/               # API endpoints
 │   │   ├── ajax/          # AJAX handlers
 │   │   ├── messages/      # Message API
-│   │   └── notifications/ # Notification API
+│   │   ├── notifications/ # Notification API
+│   │   └── search/        # Search API
 │   ├── assets/            # Static assets
 │   │   ├── css/           # Stylesheets
 │   │   ├── js/            # JavaScript files
 │   │   └── images/        # Images and icons
 │   ├── config/            # Configuration files
 │   ├── includes/          # Shared PHP includes
+│   │   └── markdown/      # Markdown and Wiki parsers
 │   ├── modules/           # Feature modules
 │   │   ├── friends/       # Friends system
+│   │   ├── messages/      # Messaging system
 │   │   └── wiki/          # Wiki functionality
 │   ├── pages/             # Page controllers
 │   │   ├── admin/         # Admin pages
@@ -324,14 +187,18 @@ islamwiki/
 │   │   ├── user/          # User management
 │   │   └── wiki/          # Wiki pages
 │   ├── search/            # Search functionality
+│   ├── skins/             # Theme system
+│   │   └── bismillah/     # Default theme
 │   └── uploads/           # User uploads
 ├── database/              # Database migrations
 ├── docs/                  # Documentation
 │   ├── api/               # API documentation
 │   ├── architecture/      # System architecture
 │   ├── changelogs/        # Version changelogs
-│   ├── guides/            # User guides
-│   └── releases/          # Release notes
+│   ├── features/          # Feature documentation
+│   ├── releases/          # Release notes
+│   ├── security/          # Security documentation
+│   └── user/              # User guides
 ├── scripts/               # Utility scripts
 ├── backups/               # Backup files
 └── README.md              # This file
@@ -386,25 +253,36 @@ islamwiki/
 
 - **[API Documentation](docs/api/)** - Complete API reference
 - **[Architecture Guide](docs/architecture/)** - System design and structure
-- **[User Guides](docs/guides/)** - How-to guides and tutorials
+- **[User Guides](docs/user/)** - How-to guides and tutorials
+- **[Feature Documentation](docs/features/)** - Detailed feature explanations
+- **[Security Guide](docs/security/)** - Security features and best practices
 - **[Changelog](docs/changelogs/CHANGELOG.md)** - Version history
 - **[Release Notes](docs/releases/RELEASE_NOTES.md)** - Detailed release information
 
-## 🔍 **Search System**
+## 🔍 **Wiki Editor Features**
 
-### **Search Features**
-- **Universal Search**: Search across all content types
-- **Advanced Filters**: Content type, category, date, author filtering
-- **Smart Suggestions**: Real-time search suggestions
-- **Result Highlighting**: Highlight search terms in results
-- **Search History**: Track recent searches
-- **Mobile Optimized**: Touch-friendly search interface
+### **Rich Text Toolbar**
+- **Formatting**: Bold, italic, code with properly sized buttons
+- **Headings**: H1, H2, H3 with appropriate sizing
+- **Links**: Wiki links `[[Page]]` and external links `[url]`
+- **Lists**: Bullet and numbered lists with proper formatting
+- **Quotes**: Blockquote formatting
+- **Preview**: Live preview with server-side parsing
 
-### **Search API**
-- **RESTful Endpoints**: Clean API for search functionality
-- **AJAX Support**: Real-time search suggestions
-- **JSON Responses**: Structured search results
-- **Error Handling**: Comprehensive error responses
+### **Wiki Syntax Support**
+- **Internal Links**: `[[Page Name]]` and `[[Page Name|Display Text]]`
+- **External Links**: `[url]` and `[url text]`
+- **Templates**: `{{Template Name}}` with parameter support
+- **References**: `<ref>content</ref>` with clickable links
+- **Categories**: `[[Category:Name]]` for article categorization
+- **Magic Words**: `__NOTITLE__`, `__NOCAT__`, etc.
+
+### **Reference System**
+- **Clickable Links**: All links in references are clickable
+- **Internal Links**: `[[Page]]` becomes proper wiki navigation
+- **External Links**: `[url]` opens in new tab with security attributes
+- **Link Validation**: URLs are validated before being made clickable
+- **Security**: Proper HTML escaping and security attributes
 
 ## 🤝 **Contributing**
 
@@ -429,17 +307,18 @@ This project is licensed under the AGPL License - see the [LICENSE](LICENSE) fil
 
 ## 🎯 **Roadmap**
 
-### **Version 0.0.0.8** (Released)
-- Community groups and events system
-- Enhanced search engine with multi-content support
-- Advanced filtering and search analytics
-- Improved mobile experience and responsive design
+### **Version 0.0.0.17** (Current)
+- Professional wiki editor with rich text toolbar
+- Enhanced reference system with clickable links
+- Improved UI/UX with proper button sizing
+- Mobile responsive design improvements
 
 ### **Version 0.1.0** (Future)
 - Multi-language support
 - Advanced analytics
 - API improvements
 - Plugin system
+- Mobile app development
 
 ---
 
