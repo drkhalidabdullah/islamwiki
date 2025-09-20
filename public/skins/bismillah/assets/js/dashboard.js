@@ -1031,26 +1031,16 @@ function handleTagPeople() {
     currentInput.focus();
     currentInput.setSelectionRange(cursorPos + 1, cursorPos + 1);
     
-    showToast('Type username after @ to tag someone', 'info');
+    // Show user search modal
+    showUserSearchModal();
 }
 
 function handleFeeling() {
-    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
-    const text = currentInput.value;
-    const cursorPos = currentInput.selectionStart;
-    
-    // Insert feeling/activity text
-    const feeling = prompt('What are you feeling or doing?');
-    if (feeling) {
-        const newText = text.substring(0, cursorPos) + `Feeling ${feeling}` + text.substring(cursorPos);
-        currentInput.value = newText;
-        currentInput.focus();
-        currentInput.setSelectionRange(cursorPos + feeling.length + 8, cursorPos + feeling.length + 8);
-    }
+    showFeelingActivityModal();
 }
 
 function handleGIF() {
-    showToast('GIF functionality coming soon!', 'info');
+    showGIFSearchModal();
 }
 
 function handleImageUpload(file) {
@@ -1194,23 +1184,33 @@ function clearImagePreviews() {
 }
 
 function handleVideoUpload(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
-        const text = currentInput.value;
-        const cursorPos = currentInput.selectionStart;
-        
-        // Insert video markdown
-        const videoMarkdown = `![${file.name}](${e.target.result})\n`;
-        const newText = text.substring(0, cursorPos) + videoMarkdown + text.substring(cursorPos);
-        currentInput.value = newText;
-        currentInput.focus();
-        currentInput.setSelectionRange(cursorPos + videoMarkdown.length, cursorPos + videoMarkdown.length);
-        
-        // Trigger input change for validation
-        currentInput.dispatchEvent(new Event('input'));
-    };
-    reader.readAsDataURL(file);
+    // Check file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+        showToast('Video too large. Please choose a video smaller than 50MB.', 'error');
+        return;
+    }
+    
+    // Show loading state
+    showToast('Uploading video...', 'info');
+    
+    // Upload video to server
+    uploadVideoToServer(file).then(uploadResult => {
+        if (uploadResult.success) {
+            // Create video preview with server URL
+            const videoContainer = createVideoPreview(file, uploadResult.url);
+            
+            // Insert video preview into editor
+            insertVideoPreview(videoContainer, uploadResult.url);
+            
+            showToast('Video uploaded successfully', 'success');
+        } else {
+            console.error('Video upload failed:', uploadResult);
+            showToast('Failed to upload video: ' + uploadResult.message, 'error');
+        }
+    }).catch(error => {
+        console.error('Video upload error:', error);
+        showToast('Failed to upload video', 'error');
+    });
 }
 
 function openPostModal(type) {
@@ -1264,3 +1264,472 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
+
+// Video upload functions
+function uploadVideoToServer(file) {
+    const formData = new FormData();
+    formData.append('video', file);
+    
+    return fetch('/api/ajax/upload_video.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .catch(error => {
+        console.error('Video upload error:', error);
+        return { success: false, message: 'Network error' };
+    });
+}
+
+function createVideoPreview(file, videoUrl) {
+    const container = document.createElement('div');
+    container.className = 'video-preview-container';
+    container.innerHTML = `
+        <div class="video-preview">
+            <video controls class="preview-video">
+                <source src="${videoUrl}" type="${file.type}">
+                Your browser does not support the video tag.
+            </video>
+            <button type="button" class="remove-video-btn" onclick="removeVideoPreview(this)">
+                <i class="iw iw-times"></i>
+            </button>
+        </div>
+    `;
+    return container;
+}
+
+function insertVideoPreview(videoContainer, videoUrl) {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const isFormattingMode = document.getElementById('postEditorContainer').style.display !== 'none';
+    
+    if (isFormattingMode) {
+        // Insert into the editor container
+        const editorContainer = document.getElementById('postEditorContainer');
+        const editor = document.getElementById('postContent');
+        
+        // Create a temporary div to hold the video
+        const tempDiv = document.createElement('div');
+        tempDiv.className = 'temp-video-holder';
+        tempDiv.appendChild(videoContainer);
+        
+        // Insert after the textarea
+        editor.parentNode.insertBefore(tempDiv, editor.nextSibling);
+        
+        // Store the video URL for later use
+        if (typeof uploadedVideos === 'undefined') {
+            window.uploadedVideos = [];
+        }
+        uploadedVideos.push(videoUrl);
+        
+        // Update preview
+        updatePreview();
+    } else {
+        // For simple mode, add to the simple video preview area
+        let simplePreview = document.getElementById('simpleVideoPreview');
+        if (!simplePreview) {
+            simplePreview = document.createElement('div');
+            simplePreview.id = 'simpleVideoPreview';
+            simplePreview.style.display = 'flex';
+            simplePreview.style.flexWrap = 'wrap';
+            simplePreview.style.gap = '10px';
+            simplePreview.style.marginTop = '10px';
+            currentInput.parentNode.insertBefore(simplePreview, currentInput.nextSibling);
+        }
+        simplePreview.appendChild(videoContainer);
+        simplePreview.style.display = 'flex';
+        
+        // Store the video URL for later use
+        if (typeof uploadedVideos === 'undefined') {
+            window.uploadedVideos = [];
+        }
+        uploadedVideos.push(videoUrl);
+    }
+    
+    // Trigger input change for validation
+    currentInput.dispatchEvent(new Event('input'));
+}
+
+function removeVideoPreview(button) {
+    const container = button.closest('.video-preview-container');
+    if (container) {
+        container.remove();
+    }
+}
+
+// User search modal for tagging
+function showUserSearchModal() {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('userSearchModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'userSearchModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Tag People</h3>
+                    <button class="close-btn" onclick="closeUserSearchModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-container">
+                        <input type="text" id="userSearchInput" placeholder="Search for users..." autocomplete="off">
+                        <div id="userSearchResults" class="search-results"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Add search functionality
+        const searchInput = document.getElementById('userSearchInput');
+        const searchResults = document.getElementById('userSearchResults');
+        
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchUsers(query).then(users => {
+                    displayUserSearchResults(users);
+                }).catch(error => {
+                    console.error('User search error:', error);
+                    searchResults.innerHTML = '<div class="no-results">Error searching users</div>';
+                });
+            }, 300);
+        });
+    }
+    
+    modal.style.display = 'block';
+    document.getElementById('userSearchInput').focus();
+}
+
+function closeUserSearchModal() {
+    const modal = document.getElementById('userSearchModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function searchUsers(query) {
+    return fetch(`/api/ajax/search_users.php?q=${encodeURIComponent(query)}&limit=10`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                return data.users;
+            } else {
+                throw new Error(data.message);
+            }
+        });
+}
+
+function displayUserSearchResults(users) {
+    const searchResults = document.getElementById('userSearchResults');
+    
+    if (users.length === 0) {
+        searchResults.innerHTML = '<div class="no-results">No users found</div>';
+        return;
+    }
+    
+    searchResults.innerHTML = users.map(user => `
+        <div class="user-result" onclick="selectUser('${user.username}')">
+            <div class="user-avatar">
+                ${user.avatar ? 
+                    `<img src="${user.avatar}" alt="${user.display_name}">` : 
+                    `<div class="avatar-circle">${user.display_name.charAt(0).toUpperCase()}</div>`
+                }
+            </div>
+            <div class="user-info">
+                <div class="user-name">${user.display_name}</div>
+                <div class="user-username">@${user.username}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectUser(username) {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const text = currentInput.value;
+    const cursorPos = currentInput.selectionStart;
+    
+    // Find the @ symbol and replace with @username
+    const beforeCursor = text.substring(0, cursorPos);
+    const afterCursor = text.substring(cursorPos);
+    const atIndex = beforeCursor.lastIndexOf('@');
+    
+    if (atIndex !== -1) {
+        const newText = text.substring(0, atIndex) + '@' + username + ' ' + afterCursor;
+        currentInput.value = newText;
+        currentInput.focus();
+        currentInput.setSelectionRange(atIndex + username.length + 2, atIndex + username.length + 2);
+    }
+    
+    closeUserSearchModal();
+}
+
+// GIF search modal
+function showGIFSearchModal() {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('gifSearchModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'gifSearchModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add GIF</h3>
+                    <button class="close-btn" onclick="closeGIFSearchModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-container">
+                        <input type="text" id="gifSearchInput" placeholder="Search for GIFs..." autocomplete="off">
+                        <div id="gifSearchResults" class="gif-results"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Add search functionality
+        const searchInput = document.getElementById('gifSearchInput');
+        const searchResults = document.getElementById('gifSearchResults');
+        
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchGIFs(query).then(gifs => {
+                    displayGIFSearchResults(gifs);
+                }).catch(error => {
+                    console.error('GIF search error:', error);
+                    searchResults.innerHTML = '<div class="no-results">Error searching GIFs</div>';
+                });
+            }, 300);
+        });
+    }
+    
+    modal.style.display = 'block';
+    document.getElementById('gifSearchInput').focus();
+}
+
+function closeGIFSearchModal() {
+    const modal = document.getElementById('gifSearchModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function searchGIFs(query) {
+    return fetch(`/api/ajax/search_gifs.php?q=${encodeURIComponent(query)}&limit=20`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                return data.gifs;
+            } else {
+                throw new Error(data.message);
+            }
+        });
+}
+
+function displayGIFSearchResults(gifs) {
+    const searchResults = document.getElementById('gifSearchResults');
+    
+    if (gifs.length === 0) {
+        searchResults.innerHTML = '<div class="no-results">No GIFs found</div>';
+        return;
+    }
+    
+    searchResults.innerHTML = gifs.map(gif => `
+        <div class="gif-result" onclick="selectGIF('${gif.url}', '${gif.title}')">
+            <img src="${gif.preview}" alt="${gif.title}" loading="lazy">
+        </div>
+    `).join('');
+}
+
+function selectGIF(gifUrl, title) {
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const text = currentInput.value;
+    const cursorPos = currentInput.selectionStart;
+    
+    // Insert GIF markdown
+    const gifMarkdown = `![${title}](${gifUrl})\n`;
+    const newText = text.substring(0, cursorPos) + gifMarkdown + text.substring(cursorPos);
+    currentInput.value = newText;
+    currentInput.focus();
+    currentInput.setSelectionRange(cursorPos + gifMarkdown.length, cursorPos + gifMarkdown.length);
+    
+    // Trigger input change for validation
+    currentInput.dispatchEvent(new Event('input'));
+    
+    closeGIFSearchModal();
+}
+
+// Feeling/Activity modal
+function showFeelingActivityModal() {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('feelingActivityModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'feelingActivityModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Feeling/Activity</h3>
+                    <button class="close-btn" onclick="closeFeelingActivityModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="feeling-activity-container">
+                        <div class="feeling-section">
+                            <h4>How are you feeling?</h4>
+                            <div class="feeling-options">
+                                <button class="feeling-btn" data-feeling="happy">😊 Happy</button>
+                                <button class="feeling-btn" data-feeling="excited">🤩 Excited</button>
+                                <button class="feeling-btn" data-feeling="grateful">🙏 Grateful</button>
+                                <button class="feeling-btn" data-feeling="blessed">🙌 Blessed</button>
+                                <button class="feeling-btn" data-feeling="loved">❤️ Loved</button>
+                                <button class="feeling-btn" data-feeling="proud">😎 Proud</button>
+                                <button class="feeling-btn" data-feeling="accomplished">🏆 Accomplished</button>
+                                <button class="feeling-btn" data-feeling="motivated">💪 Motivated</button>
+                                <button class="feeling-btn" data-feeling="peaceful">😌 Peaceful</button>
+                                <button class="feeling-btn" data-feeling="hopeful">🌟 Hopeful</button>
+                            </div>
+                        </div>
+                        <div class="activity-section">
+                            <h4>What are you doing?</h4>
+                            <div class="activity-options">
+                                <button class="activity-btn" data-activity="working">💼 Working</button>
+                                <button class="activity-btn" data-activity="studying">📚 Studying</button>
+                                <button class="activity-btn" data-activity="exercising">🏃 Exercising</button>
+                                <button class="activity-btn" data-activity="cooking">👨‍🍳 Cooking</button>
+                                <button class="activity-btn" data-activity="traveling">✈️ Traveling</button>
+                                <button class="activity-btn" data-activity="reading">📖 Reading</button>
+                                <button class="activity-btn" data-activity="gaming">🎮 Gaming</button>
+                                <button class="activity-btn" data-activity="watching">📺 Watching</button>
+                                <button class="activity-btn" data-activity="listening">🎵 Listening</button>
+                                <button class="activity-btn" data-activity="creating">🎨 Creating</button>
+                            </div>
+                        </div>
+                        <div class="custom-section">
+                            <h4>Custom</h4>
+                            <input type="text" id="customFeeling" placeholder="How are you feeling?" maxlength="50">
+                            <input type="text" id="customActivity" placeholder="What are you doing?" maxlength="50">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeFeelingActivityModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="addFeelingActivity()">Add to Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        const feelingBtns = modal.querySelectorAll('.feeling-btn');
+        const activityBtns = modal.querySelectorAll('.activity-btn');
+        
+        feelingBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all feeling buttons
+                feelingBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+            });
+        });
+        
+        activityBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all activity buttons
+                activityBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+            });
+        });
+    }
+    
+    modal.style.display = 'block';
+}
+
+function closeFeelingActivityModal() {
+    const modal = document.getElementById('feelingActivityModal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Reset selections
+        modal.querySelectorAll('.feeling-btn, .activity-btn').forEach(btn => btn.classList.remove('active'));
+        modal.querySelector('#customFeeling').value = '';
+        modal.querySelector('#customActivity').value = '';
+    }
+}
+
+function addFeelingActivity() {
+    const modal = document.getElementById('feelingActivityModal');
+    const selectedFeeling = modal.querySelector('.feeling-btn.active');
+    const selectedActivity = modal.querySelector('.activity-btn.active');
+    const customFeeling = modal.querySelector('#customFeeling').value.trim();
+    const customActivity = modal.querySelector('#customActivity').value.trim();
+    
+    let feelingText = '';
+    let activityText = '';
+    
+    if (selectedFeeling) {
+        feelingText = selectedFeeling.textContent;
+    } else if (customFeeling) {
+        feelingText = customFeeling;
+    }
+    
+    if (selectedActivity) {
+        activityText = selectedActivity.textContent;
+    } else if (customActivity) {
+        activityText = customActivity;
+    }
+    
+    if (!feelingText && !activityText) {
+        showToast('Please select or enter a feeling or activity', 'error');
+        return;
+    }
+    
+    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    const text = currentInput.value;
+    const cursorPos = currentInput.selectionStart;
+    
+    let statusText = '';
+    if (feelingText && activityText) {
+        statusText = `${feelingText} and ${activityText}`;
+    } else if (feelingText) {
+        statusText = feelingText;
+    } else {
+        statusText = activityText;
+    }
+    
+    const newText = text.substring(0, cursorPos) + statusText + ' ' + text.substring(cursorPos);
+    currentInput.value = newText;
+    currentInput.focus();
+    currentInput.setSelectionRange(cursorPos + statusText.length + 1, cursorPos + statusText.length + 1);
+    
+    // Trigger input change for validation
+    currentInput.dispatchEvent(new Event('input'));
+    
+    closeFeelingActivityModal();
+    showToast('Feeling/Activity added to post', 'success');
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+});

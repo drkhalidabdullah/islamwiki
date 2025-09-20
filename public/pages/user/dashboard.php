@@ -217,9 +217,9 @@ include "../../includes/header.php";
         <div class="dashboard-sidebar">
             <!-- User Profile Card -->
             <div class="profile-card">
-                <div class="profile-header">
+                <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>" class="profile-header">
                     <div class="profile-avatar-container">
-                        <div class="profile-picture-wrapper" onclick="openProfilePictureModal()">
+                        <div class="profile-picture-wrapper">
                             <?php if (!empty($current_user['avatar'])): ?>
                                 <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile" class="profile-image">
                             <?php else: ?>
@@ -227,7 +227,7 @@ include "../../includes/header.php";
                                     <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
                                 </div>
                             <?php endif; ?>
-                            <div class="camera-button">
+                            <div class="camera-button" onclick="event.stopPropagation(); openProfilePictureModal();">
                                 <i class="iw iw-camera"></i>
                             </div>
                             <div class="online-indicator"></div>
@@ -237,7 +237,7 @@ include "../../includes/header.php";
                         <h3><?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?></h3>
                         <p>@<?php echo htmlspecialchars($current_user['username']); ?></p>
                     </div>
-                </div>
+                </a>
                 <div class="profile-stats">
                     <div class="stat">
                         <span class="stat-number"><?php echo number_format($user_stats['articles_count']); ?></span>

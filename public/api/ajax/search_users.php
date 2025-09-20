@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
@@ -6,67 +7,67 @@ header('Content-Type: application/json');
 
 // Check if user is logged in
 if (!is_logged_in()) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Authentication required']);
-    exit;
+    echo json_encode(['success' => false, 'message' => 'Authentication required']);
+    exit();
 }
 
-$query = trim($_GET['q'] ?? '');
-$limit = min((int)($_GET['limit'] ?? 10), 20); // Max 20 results
-
-if (empty($query) || strlen($query) < 2) {
-    echo json_encode(['users' => []]);
-    exit;
+if (!isset($_GET['q']) || empty(trim($_GET['q']))) {
+    echo json_encode(['success' => false, 'message' => 'Search query required']);
+    exit();
 }
+
+$query = trim($_GET['q']);
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 try {
     // Search for users by username or display name
-    $search_term = '%' . $query . '%';
     $stmt = $pdo->prepare("
-        SELECT id, username, display_name, avatar
+        SELECT id, username, display_name, avatar, first_name, last_name
         FROM users 
-        WHERE (username LIKE ? OR display_name LIKE ?) 
-        AND id != ? 
+        WHERE (username LIKE ? OR display_name LIKE ? OR first_name LIKE ? OR last_name LIKE ?)
+        AND id != ?
         ORDER BY 
             CASE 
                 WHEN username LIKE ? THEN 1
                 WHEN display_name LIKE ? THEN 2
-                ELSE 3
+                WHEN first_name LIKE ? THEN 3
+                ELSE 4
             END,
             username ASC
         LIMIT ?
     ");
     
-    $exact_match = $query . '%';
+    $search_term = "%{$query}%";
+    $user_id = $_SESSION['user_id'];
+    
     $stmt->execute([
-        $search_term, 
-        $search_term, 
-        $_SESSION['user_id'],
-        $exact_match,
-        $exact_match,
-        $limit
+        $search_term, $search_term, $search_term, $search_term, $user_id,
+        $search_term, $search_term, $search_term, $limit
     ]);
     
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format the results for autocomplete
+    // Format the response
     $formatted_users = [];
     foreach ($users as $user) {
         $formatted_users[] = [
             'id' => $user['id'],
             'username' => $user['username'],
-            'display_name' => $user['display_name'],
+            'display_name' => $user['display_name'] ?: $user['username'],
             'avatar' => $user['avatar'],
-            'label' => $user['display_name'] ? $user['display_name'] . ' (@' . $user['username'] . ')' : '@' . $user['username'],
-            'value' => '@' . $user['username']
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name']
         ];
     }
     
-    echo json_encode(['users' => $formatted_users]);
+    echo json_encode([
+        'success' => true,
+        'users' => $formatted_users,
+        'total' => count($formatted_users)
+    ]);
     
-} catch (Exception $e) {
+} catch (PDOException $e) {
     error_log("User search error: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['error' => 'Search failed']);
+    echo json_encode(['success' => false, 'message' => 'Database error occurred']);
 }
 ?>
