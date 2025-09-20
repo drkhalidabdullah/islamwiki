@@ -1042,7 +1042,14 @@ function handlePhotoVideo() {
 function handleTagPeople() {
     console.log('handleTagPeople called'); // Debug log
     
-    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    // Check which textarea is currently visible
+    const postContent = document.getElementById('postContent');
+    const postContentSimple = document.getElementById('postContentSimple');
+    
+    console.log('postContent visible:', postContent && postContent.style.display !== 'none');
+    console.log('postContentSimple visible:', postContentSimple && postContentSimple.style.display !== 'none');
+    
+    const currentInput = postContent && postContent.style.display !== 'none' ? postContent : postContentSimple;
     console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
     
     const text = currentInput.value;
@@ -1566,7 +1573,14 @@ function displayUserSearchResults(users) {
 function selectUser(username) {
     console.log('selectUser called with username:', username); // Debug log
     
-    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    // Check which textarea is currently visible
+    const postContent = document.getElementById('postContent');
+    const postContentSimple = document.getElementById('postContentSimple');
+    
+    console.log('postContent visible:', postContent && postContent.style.display !== 'none');
+    console.log('postContentSimple visible:', postContentSimple && postContentSimple.style.display !== 'none');
+    
+    const currentInput = postContent && postContent.style.display !== 'none' ? postContent : postContentSimple;
     console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
     
     const text = currentInput.value;
@@ -1838,7 +1852,14 @@ function addFeelingActivity() {
         return;
     }
     
-    const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
+    // Check which textarea is currently visible
+    const postContent = document.getElementById('postContent');
+    const postContentSimple = document.getElementById('postContentSimple');
+    
+    console.log('postContent visible:', postContent && postContent.style.display !== 'none');
+    console.log('postContentSimple visible:', postContentSimple && postContentSimple.style.display !== 'none');
+    
+    const currentInput = postContent && postContent.style.display !== 'none' ? postContent : postContentSimple;
     console.log('Current input found:', !!currentInput, 'ID:', currentInput?.id); // Debug log
     
     const text = currentInput.value;
