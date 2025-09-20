@@ -1042,6 +1042,19 @@ function handlePhotoVideo() {
 function handleTagPeople() {
     console.log('handleTagPeople called'); // Debug log
     
+    // Auto-switch to formatting mode for tagging
+    const editorContainer = document.getElementById('postEditorContainer');
+    const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+    console.log('Editor container found:', !!editorContainer, 'Is formatting mode:', isFormattingMode); // Debug log
+    
+    if (!isFormattingMode) {
+        const toggleFormattingBtn = document.getElementById('toggleFormatting');
+        if (toggleFormattingBtn) {
+            console.log('Switching to formatting mode for tagging'); // Debug log
+            toggleFormattingBtn.click();
+        }
+    }
+    
     // Check which textarea is currently visible
     const postContent = document.getElementById('postContent');
     const postContentSimple = document.getElementById('postContentSimple');
@@ -1070,10 +1083,40 @@ function handleTagPeople() {
 }
 
 function handleFeeling() {
+    console.log('handleFeeling called'); // Debug log
+    
+    // Auto-switch to formatting mode for feelings/activities
+    const editorContainer = document.getElementById('postEditorContainer');
+    const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+    console.log('Editor container found:', !!editorContainer, 'Is formatting mode:', isFormattingMode); // Debug log
+    
+    if (!isFormattingMode) {
+        const toggleFormattingBtn = document.getElementById('toggleFormatting');
+        if (toggleFormattingBtn) {
+            console.log('Switching to formatting mode for feelings/activities'); // Debug log
+            toggleFormattingBtn.click();
+        }
+    }
+    
     showFeelingActivityModal();
 }
 
 function handleGIF() {
+    console.log('handleGIF called'); // Debug log
+    
+    // Auto-switch to formatting mode for GIFs
+    const editorContainer = document.getElementById('postEditorContainer');
+    const isFormattingMode = editorContainer && editorContainer.style.display !== 'none';
+    console.log('Editor container found:', !!editorContainer, 'Is formatting mode:', isFormattingMode); // Debug log
+    
+    if (!isFormattingMode) {
+        const toggleFormattingBtn = document.getElementById('toggleFormatting');
+        if (toggleFormattingBtn) {
+            console.log('Switching to formatting mode for GIFs'); // Debug log
+            toggleFormattingBtn.click();
+        }
+    }
+    
     showGIFSearchModal();
 }
 
