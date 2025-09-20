@@ -1241,13 +1241,17 @@ function clearImagePreviews() {
 }
 
 function handleVideoUpload(file) {
+    console.log('handleVideoUpload called with file:', file.name, 'Size:', file.size, 'Type:', file.type); // Debug log
+    
     // Check file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
+        console.log('Video file too large:', file.size); // Debug log
         showToast('Video too large. Please choose a video smaller than 50MB.', 'error');
         return;
     }
     
     // Show loading state
+    console.log('Starting video upload...'); // Debug log
     showToast('Uploading video...', 'info');
     
     // Upload video to server
@@ -1324,14 +1328,25 @@ function showToast(message, type = 'info') {
 
 // Video upload functions
 function uploadVideoToServer(file) {
+    console.log('uploadVideoToServer called with file:', file.name); // Debug log
+    
     const formData = new FormData();
     formData.append('video', file);
+    
+    console.log('Sending video upload request to /api/ajax/upload_video.php'); // Debug log
     
     return fetch('/api/ajax/upload_video.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Video upload response status:', response.status); // Debug log
+        return response.json();
+    })
+    .then(data => {
+        console.log('Video upload response data:', data); // Debug log
+        return data;
+    })
     .catch(error => {
         console.error('Video upload error:', error);
         return { success: false, message: 'Network error' };
@@ -1356,8 +1371,12 @@ function createVideoPreview(file, videoUrl) {
 }
 
 function insertVideoPreview(videoContainer, videoUrl) {
+    console.log('insertVideoPreview called with URL:', videoUrl); // Debug log
+    
     const currentInput = document.getElementById('postContent') || document.getElementById('postContentSimple');
     const isFormattingMode = document.getElementById('postEditorContainer').style.display !== 'none';
+    
+    console.log('Current input found:', !!currentInput, 'Is formatting mode:', isFormattingMode); // Debug log
     
     if (isFormattingMode) {
         // Insert into the editor container
