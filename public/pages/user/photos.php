@@ -27,6 +27,10 @@ if (!can_view_profile($current_user_id, $profile_user['id'])) {
     exit();
 }
 
+// Get complete profile data for header
+$profile_data = get_user_profile_complete($profile_user['id']);
+$user_stats = get_user_stats($profile_user['id']);
+
 // Get user photos with metadata
 $photos = get_user_photos($profile_user['id'], $limit, $offset, true);
 $total_photos = get_user_photo_count($profile_user['id']);
@@ -37,6 +41,9 @@ $is_following = false;
 if ($current_user_id && $current_user_id != $profile_user['id']) {
     $is_following = is_following($current_user_id, $profile_user['id']);
 }
+
+// Set active tab for navigation
+$active_tab = 'photos';
 
 $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s Photos";
 ?>
@@ -60,69 +67,7 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s P
         
         <div class="content-area">
             <div class="photos-page">
-                <!-- Profile Header -->
-                <div class="profile-header">
-                    <div class="profile-cover">
-                        <?php if (!empty($profile_user['cover_photo'])): ?>
-                            <img src="<?php echo htmlspecialchars($profile_user['cover_photo']); ?>" alt="Cover Photo">
-                        <?php else: ?>
-                            <div class="cover-placeholder">
-                                <i class="fas fa-image"></i>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="profile-info">
-                        <div class="profile-avatar">
-                            <?php if (!empty($profile_user['avatar'])): ?>
-                                <img src="<?php echo htmlspecialchars($profile_user['avatar']); ?>" alt="Profile Picture">
-                            <?php else: ?>
-                                <div class="avatar-placeholder">
-                                    <?php echo strtoupper(substr($profile_user['display_name'] ?: $profile_user['username'], 0, 2)); ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <div class="profile-details">
-                            <h1><?php echo htmlspecialchars($profile_user['display_name'] ?: $profile_user['username']); ?></h1>
-                            <p>@<?php echo htmlspecialchars($profile_user['username']); ?></p>
-                            <div class="profile-stats">
-                                <span><strong><?php echo number_format($total_photos); ?></strong> Photos</span>
-                                <span><strong><?php echo number_format($profile_user['followers_count'] ?? 0); ?></strong> Followers</span>
-                                <span><strong><?php echo number_format($profile_user['following_count'] ?? 0); ?></strong> Following</span>
-                            </div>
-                        </div>
-                        
-                        <?php if ($current_user_id && $current_user_id != $profile_user['id']): ?>
-                            <div class="profile-actions">
-                                <button class="btn btn-primary follow-btn" data-user-id="<?php echo $profile_user['id']; ?>" data-following="<?php echo $is_following ? 'true' : 'false'; ?>">
-                                    <?php echo $is_following ? 'Following' : 'Follow'; ?>
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                
-                <!-- Profile Navigation -->
-                <div class="card">
-                    <nav class="nav-tabs">
-                        <a href="/user/<?php echo $profile_user['username']; ?>" class="nav-tab">
-                            Posts
-                        </a>
-                        <a href="/user/<?php echo $profile_user['username']; ?>/photos" class="nav-tab active">
-                            Photos
-                        </a>
-                        <a href="/user/<?php echo $profile_user['username']; ?>/events" class="nav-tab">
-                            Events
-                        </a>
-                        <a href="/user/<?php echo $profile_user['username']; ?>/about" class="nav-tab">
-                            About
-                        </a>
-                        <a href="/user/<?php echo $profile_user['username']; ?>/activity" class="nav-tab">
-                            Activity
-                        </a>
-                    </nav>
-                </div>
+                <?php include '../../includes/profile_header.php'; ?>
                 
                 <!-- Photos Gallery -->
                 <div class="photos-section">
