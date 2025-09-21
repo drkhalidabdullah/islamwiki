@@ -34,7 +34,6 @@ try {
             // Update contact information in user_profiles
             $location = trim($_POST['location'] ?? '');
             $website = trim($_POST['website'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
             
             // Check if profile exists
             $stmt = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
@@ -42,11 +41,11 @@ try {
             $profile = $stmt->fetch();
             
             if ($profile) {
-                $stmt = $pdo->prepare("UPDATE user_profiles SET location = ?, website = ?, phone = ? WHERE user_id = ?");
-                $stmt->execute([$location, $website, $phone, $user_id]);
+                $stmt = $pdo->prepare("UPDATE user_profiles SET location = ?, website = ? WHERE user_id = ?");
+                $stmt->execute([$location, $website, $user_id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, website, phone) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$user_id, $location, $website, $phone]);
+                $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, website) VALUES (?, ?, ?)");
+                $stmt->execute([$user_id, $location, $website]);
             }
             break;
             
@@ -57,11 +56,11 @@ try {
             $gender = trim($_POST['gender'] ?? '');
             $interests = trim($_POST['interests'] ?? '');
             
-            // Update users table
+            // Update users table for bio
             $stmt = $pdo->prepare("UPDATE users SET bio = ? WHERE id = ?");
             $stmt->execute([$bio, $user_id]);
             
-            // Update user_profiles table
+            // Update user_profiles table for other personal info
             $stmt = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
             $stmt->execute([$user_id]);
             $profile = $stmt->fetch();

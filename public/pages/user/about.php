@@ -136,10 +136,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                                 <?php endif; ?>
                             </span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-label">Phone</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['phone'] ?: 'Not specified'); ?></span>
-                        </div>
                     </div>
                 </div>
 
@@ -261,10 +257,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <div class="form-group">
                             <label for="website">Website</label>
                             <input type="url" id="website" name="website" value="<?php echo htmlspecialchars($profile_data['website']); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($profile_data['phone']); ?>">
                         </div>
                     </div>
 
