@@ -124,16 +124,6 @@ if ($toast_message) {
             <div class="sidebar-separator"></div>
             
             <!-- Main Navigation -->
-            <div class="search-container">
-                <a href="#" class="sidebar-item search-trigger <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/search') === 0) ? 'active' : ''; ?>" title="Search" onclick="openSearch(); return false;">
-                    <i class="iw iw-search"></i>
-                </a>
-            </div>
-            
-            <!-- Separator -->
-            <div class="sidebar-separator"></div>
-            
-            <!-- Main Navigation -->
             <div class="sidebar-main-nav">
                 <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="sidebar-item <?php echo (is_logged_in() ? (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) : (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/')) ? 'active' : ''; ?>" title="Home">
                     <i class="iw iw-home"></i>
@@ -154,31 +144,6 @@ if ($toast_message) {
         </div>
         
         <?php if (is_logged_in()): ?>
-        <!-- Create Dropdown -->
-        <div class="sidebar-dropdown sidebar-create">
-            <div class="user-icon-dropdown">
-                <a href="#" class="sidebar-item user-icon-trigger" title="Create">
-                    <i class="iw iw-plus"></i>
-                </a>
-                <div class="user-dropdown-menu">
-                    <a href="/create_post" class="dropdown-item">
-                        <i class="iw iw-edit"></i>
-                        <span>Create Post</span>
-                    </a>
-                    <?php if ($enable_wiki): ?>
-                    <a href="/pages/wiki/create_article.php" class="dropdown-item">
-                        <i class="iw iw-file-alt"></i>
-                        <span>Create Article</span>
-                    </a>
-                    <a href="/wiki/upload" class="dropdown-item">
-                        <i class="iw iw-upload"></i>
-                        <span>Upload File</span>
-                    </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        
         <?php if ($enable_social): ?>
         <!-- Messages Dropdown -->
         <?php
@@ -202,28 +167,6 @@ if ($toast_message) {
         $isFriendsActive = strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0;
         createSidebarDropdown('friends', 'Friends', 'iw iw-users', $friendsItems, $isFriendsActive);
         ?>
-        
-        <!-- Notifications Dropdown -->
-        <div class="sidebar-dropdown sidebar-notifications">
-            <div class="user-icon-dropdown">
-                <a href="#" class="sidebar-item user-icon-trigger" title="Notifications">
-                    <i class="iw iw-bell"></i>
-                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                </a>
-                <div class="user-dropdown-menu" id="notificationsMenu">
-                    <div class="notification-header">
-                        <h3>Recent Notifications</h3>
-                        <button class="mark-all-read" id="markAllRead">Mark all read</button>
-                    </div>
-                    <div class="notification-content" id="notificationContent">
-                        <div class="notification-loading">Loading notifications...</div>
-                    </div>
-                    <div class="notification-footer">
-                        <a href="/notifications" class="view-all-notifications">View all notifications</a>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <?php endif; ?>
         
