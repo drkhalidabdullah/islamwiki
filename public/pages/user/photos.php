@@ -62,22 +62,18 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s P
 <body>
     <?php include '../../includes/header.php'; ?>
     
-    <div class="main-container">
-        <?php include '../../includes/sidebar.php'; ?>
-        
-        <div class="content-area">
-            <div class="photos-page">
-                <?php include '../../includes/profile_header.php'; ?>
-                
-                <!-- Photos Gallery -->
-                <div class="photos-section">
+    <?php include '../../includes/profile_template.php'; ?>
+    
+    <!-- Photos Gallery - Full Width -->
+    <div class="photos-section">
                     <div class="photos-header">
                         <h2>Photos</h2>
                         <div class="photos-count"><?php echo number_format($total_photos); ?> photos</div>
                     </div>
                     
-                    <?php if (!empty($photos)): ?>
-                        <div class="photos-grid" id="photosGrid">
+                    <div class="photos-content">
+                        <?php if (!empty($photos)): ?>
+                            <div class="photos-grid" id="photosGrid">
                             <?php foreach ($photos as $photo): ?>
                                 <div class="photo-item" data-photo-id="<?php echo $photo['id']; ?>" data-index="<?php echo array_search($photo, $photos); ?>">
                                     <div class="photo-container">
@@ -148,18 +144,16 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s P
                             </div>
                         <?php endif; ?>
                         
-                    <?php else: ?>
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-images"></i>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-images"></i>
+                                </div>
+                                <h3>No Photos Yet</h3>
+                                <p><?php echo htmlspecialchars($profile_user['display_name'] ?: $profile_user['username']); ?> hasn't shared any photos yet.</p>
                             </div>
-                            <h3>No Photos Yet</h3>
-                            <p><?php echo htmlspecialchars($profile_user['display_name'] ?: $profile_user['username']); ?> hasn't shared any photos yet.</p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+                        <?php endif; ?>
+                    </div>
     </div>
     
     <!-- Photo Modal Viewer -->

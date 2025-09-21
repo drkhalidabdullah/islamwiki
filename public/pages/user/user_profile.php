@@ -78,13 +78,13 @@ include "../../includes/header.php";
 
 <?php 
 $active_tab = $tab;
-include "../../includes/profile_header.php"; 
+include "../../includes/profile_template.php"; 
 ?>
 
 <!-- Profile Content -->
-<div class="card">
-    <?php switch ($tab): 
-        case 'posts': ?>
+<?php switch ($tab): 
+    case 'posts': ?>
+        <div class="card">
             <h2>Posts</h2>
             <?php if (!empty($content)): ?>
                 <div class="posts-section">
@@ -161,134 +161,180 @@ include "../../includes/profile_header.php";
                     <p>No posts yet.</p>
                 </div>
             <?php endif; ?>
+        </div>
         <?php break; 
         
         case 'photos': ?>
-            <h2>Photos</h2>
-            <?php if (!empty($content)): ?>
-                <div class="photos-grid">
-                    <?php foreach ($content as $photo): ?>
-                        <div class="photo-item">
-                            <img src="<?php echo htmlspecialchars($photo['file_path']); ?>" alt="<?php echo htmlspecialchars($photo['caption'] ?: 'Photo'); ?>">
-                            <?php if (!empty($photo['caption'])): ?>
-                                <div class="photo-caption"><?php echo htmlspecialchars($photo['caption']); ?></div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="empty-state">
-                    <p>No photos yet.</p>
-                </div>
-            <?php endif; ?>
+            <!-- Photos section will be rendered outside container -->
+            <div class="placeholder-for-full-width"></div>
         <?php break; 
         
         case 'events': ?>
-            <h2>Events</h2>
-            <?php if (!empty($content)): ?>
-                <div class="events-section">
-                    <?php foreach ($content as $event): ?>
-                        <div class="event-item">
-                            <div class="event-date">
-                                <span class="month"><?php echo date('M', strtotime($event['start_date'])); ?></span>
-                                <span class="day"><?php echo date('j', strtotime($event['start_date'])); ?></span>
-                            </div>
-                            <div class="event-details">
-                                <h3><?php echo htmlspecialchars($event['title']); ?></h3>
-                                <?php if (!empty($event['description'])): ?>
-                                    <p><?php echo htmlspecialchars($event['description']); ?></p>
-                                <?php endif; ?>
-                                <?php if (!empty($event['location'])): ?>
-                                    <p class="event-location">📍 <?php echo htmlspecialchars($event['location']); ?></p>
-                                <?php endif; ?>
-                                <p class="event-time"><?php echo format_date($event['start_date'], 'M j, Y \a\t g:i A'); ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="empty-state">
-                    <p>No events yet.</p>
-                </div>
-            <?php endif; ?>
+            <!-- Events section will be rendered outside container -->
+            <div class="placeholder-for-full-width"></div>
         <?php break; 
         
         case 'about': ?>
-            <h2>About</h2>
-            <div class="about-content">
-                <?php if (!empty($content['profile']['interests'])): ?>
-                    <div class="about-item">
-                        <h3>Interests</h3>
-                        <p><?php echo htmlspecialchars($content['profile']['interests']); ?></p>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($content['profile']['education'])): ?>
-                    <div class="about-item">
-                        <h3>Education</h3>
-                        <p><?php echo htmlspecialchars($content['profile']['education']); ?></p>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($content['profile']['profession'])): ?>
-                    <div class="about-item">
-                        <h3>Profession</h3>
-                        <p><?php echo htmlspecialchars($content['profile']['profession']); ?></p>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($content['profile']['expertise_areas'])): ?>
-                    <div class="about-item">
-                        <h3>Areas of Expertise</h3>
-                        <p><?php echo htmlspecialchars($content['profile']['expertise_areas']); ?></p>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($content['achievements'])): ?>
-                    <div class="about-item">
-                        <h3>Achievements</h3>
-                        <div class="achievements-list">
-                            <?php foreach ($content['achievements'] as $achievement): ?>
-                                <div class="achievement-item">
-                                    <span class="achievement-icon"><?php echo htmlspecialchars($achievement['icon']); ?></span>
-                                    <div class="achievement-details">
-                                        <h4><?php echo htmlspecialchars($achievement['title']); ?></h4>
-                                        <p><?php echo htmlspecialchars($achievement['description']); ?></p>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
+            <!-- About section will be rendered outside container -->
+            <div class="placeholder-for-full-width"></div>
         <?php break; 
         
         case 'activity': ?>
-            <h2>Activity</h2>
-            <?php if (!empty($content)): ?>
-                <div class="activity-section">
-                    <?php foreach ($content as $activity): ?>
-                        <div class="activity-item">
-                            <div class="activity-icon">📝</div>
-                            <div class="activity-details">
-                                <div class="activity-description">
-                                    <?php echo htmlspecialchars($activity['description'] ?: ucfirst(str_replace('_', ' ', $activity['action']))); ?>
-                                </div>
-                                <div class="activity-time">
-                                    <?php echo format_date($activity['created_at'], 'M j, Y \a\t g:i A'); ?>
-                                </div>
+            <!-- Activity section will be rendered outside container -->
+            <div class="placeholder-for-full-width"></div>
+        <?php break; ?>
+    <?php endswitch; ?>
+
+<?php if ($tab == 'photos'): ?>
+<!-- Photos Gallery - Full Width -->
+<div class="photos-section">
+    <div class="photos-header">
+        <h2>Photos</h2>
+    </div>
+    <div class="photos-content">
+        <?php if (!empty($content)): ?>
+            <div class="photos-grid">
+                <?php foreach ($content as $photo): ?>
+                    <div class="photo-item">
+                        <img src="<?php echo htmlspecialchars($photo['file_path']); ?>" alt="<?php echo htmlspecialchars($photo['caption'] ?: 'Photo'); ?>">
+                        <?php if (!empty($photo['caption'])): ?>
+                            <div class="photo-caption"><?php echo htmlspecialchars($photo['caption']); ?></div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <p>No photos yet.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if ($tab == 'events'): ?>
+<!-- Events Gallery - Full Width -->
+<div class="events-section">
+    <div class="events-header">
+        <h2>Events</h2>
+    </div>
+    <div class="events-content">
+        <?php if (!empty($content)): ?>
+            <div class="events-list">
+                <?php foreach ($content as $event): ?>
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="month"><?php echo date('M', strtotime($event['start_date'])); ?></span>
+                            <span class="day"><?php echo date('j', strtotime($event['start_date'])); ?></span>
+                        </div>
+                        <div class="event-details">
+                            <h3><?php echo htmlspecialchars($event['title']); ?></h3>
+                            <?php if (!empty($event['description'])): ?>
+                                <p><?php echo htmlspecialchars($event['description']); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($event['location'])): ?>
+                                <p class="event-location">📍 <?php echo htmlspecialchars($event['location']); ?></p>
+                            <?php endif; ?>
+                            <p class="event-time"><?php echo format_date($event['start_date'], 'M j, Y \a\t g:i A'); ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <p>No events yet.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if ($tab == 'about'): ?>
+<!-- About Section - Full Width -->
+<div class="about-section">
+    <div class="about-header">
+        <h2>About</h2>
+    </div>
+    <div class="about-content">
+        <?php if (!empty($content['profile']['interests'])): ?>
+            <div class="about-item">
+                <h3>Interests</h3>
+                <p><?php echo htmlspecialchars($content['profile']['interests']); ?></p>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($content['profile']['education'])): ?>
+            <div class="about-item">
+                <h3>Education</h3>
+                <p><?php echo htmlspecialchars($content['profile']['education']); ?></p>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($content['profile']['profession'])): ?>
+            <div class="about-item">
+                <h3>Profession</h3>
+                <p><?php echo htmlspecialchars($content['profile']['profession']); ?></p>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($content['profile']['expertise_areas'])): ?>
+            <div class="about-item">
+                <h3>Areas of Expertise</h3>
+                <p><?php echo htmlspecialchars($content['profile']['expertise_areas']); ?></p>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($content['achievements'])): ?>
+            <div class="about-item">
+                <h3>Achievements</h3>
+                <div class="achievements-list">
+                    <?php foreach ($content['achievements'] as $achievement): ?>
+                        <div class="achievement-item">
+                            <span class="achievement-icon"><?php echo htmlspecialchars($achievement['icon']); ?></span>
+                            <div class="achievement-details">
+                                <h4><?php echo htmlspecialchars($achievement['title']); ?></h4>
+                                <p><?php echo htmlspecialchars($achievement['description']); ?></p>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-            <?php else: ?>
-                <div class="empty-state">
-                    <p>No recent activity.</p>
-                </div>
-            <?php endif; ?>
-        <?php break; ?>
-    <?php endswitch; ?>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
+<?php endif; ?>
+
+<?php if ($tab == 'activity'): ?>
+<!-- Activity Section - Full Width -->
+<div class="activity-section">
+    <div class="activity-header">
+        <h2>Activity</h2>
+    </div>
+    <div class="activity-content">
+        <?php if (!empty($content)): ?>
+            <div class="activity-list">
+                <?php foreach ($content as $activity): ?>
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-details">
+                            <div class="activity-description">
+                                <?php echo htmlspecialchars($activity['description'] ?: ucfirst(str_replace('_', ' ', $activity['action']))); ?>
+                            </div>
+                            <div class="activity-time">
+                                <?php echo format_date($activity['created_at'], 'M j, Y \a\t g:i A'); ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <p>No recent activity.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Profile Picture Selection Modal -->
 <div id="profilePictureModal" class="profile-picture-modal">

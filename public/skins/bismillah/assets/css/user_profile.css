@@ -5,6 +5,45 @@
     margin-bottom: 1rem;
 }
 
+/* Full-width sections */
+.photos-section,
+.events-section,
+.about-section,
+.activity-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+.photos-header,
+.events-header,
+.about-header,
+.activity-header {
+    padding: 1.5rem 2rem;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 0;
+}
+
+.photos-header h2,
+.events-header h2,
+.about-header h2,
+.activity-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.photos-content,
+.events-list,
+.about-content,
+.activity-list {
+    padding: 2rem;
+    background: white;
+}
+
 .cover-photo {
     height: 200px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
