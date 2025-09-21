@@ -99,6 +99,27 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 
         <!-- Right Side Group -->
         <div class="header-right-group">
+            <!-- Notifications Icon -->
+            <?php if (is_logged_in() && $enable_notifications): ?>
+            <div class="utility-dropdown">
+                <button class="utility-btn" title="Notifications" onclick="toggleNotificationsDropdown()">
+                    <i class="iw iw-bell"></i>
+                    <span class="notification-badge">5</span>
+                </button>
+                <div class="utility-dropdown-menu" id="notificationsDropdown">
+                    <div class="dropdown-header">
+                        <h4>Notifications</h4>
+                        <button class="mark-all-read" onclick="markAllNotificationsRead()">Mark All Read</button>
+                    </div>
+                    <div class="dropdown-content" id="notificationsContent">
+                        <div class="loading-notifications">Loading notifications...</div>
+                        <div class="dropdown-footer">
+                            <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- User Menu -->
             <div class="header-user-menu">
@@ -276,6 +297,10 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeNewsbarState();
     }
     
+    // Load initial data for notifications
+    if (document.getElementById('notificationsDropdown')) {
+        loadNotificationsData();
+    }
 });
 
 function initializeLeftSidebarState() {
@@ -618,6 +643,91 @@ function performHeaderSearch() {
     
     if (query) {
         window.location.href = '/search?q=' + encodeURIComponent(query);
+    }
+}
+
+// Notifications dropdown functionality
+function toggleNotificationsDropdown() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const isOpen = dropdown.classList.contains('show');
+    
+    // Close all utility dropdowns
+    document.querySelectorAll('.utility-dropdown-menu').forEach(d => {
+        d.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (!isOpen) {
+        loadNotificationsData();
+        dropdown.classList.add('show');
+    }
+}
+
+// Mark all notifications as read
+function markAllNotificationsRead() {
+    console.log('Marking all notifications as read');
+    // This would typically make an AJAX call to mark all notifications as read
+    document.getElementById('notificationsDropdown').classList.remove('show');
+}
+
+// Load real notifications data
+async function loadNotificationsData() {
+    try {
+        const response = await fetch('/api/ajax/get_sidebar_notifications.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            const notificationsContent = document.getElementById('notificationsContent');
+            const notifications = data.notifications;
+            
+            if (notifications.length === 0) {
+                notificationsContent.innerHTML = `
+                    <div class="no-notifications">No recent notifications</div>
+                    <div class="dropdown-footer">
+                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                    </div>
+                `;
+            } else {
+                let notificationsHtml = '';
+                notifications.forEach(notif => {
+                    notificationsHtml += `
+                        <div class="notification-item" onclick="window.location.href='${notif.url}'">
+                            <i class="${notif.icon}"></i>
+                            <div class="notification-info">
+                                <span class="notification-text">${notif.text}</span>
+                                <span class="notification-time">${notif.time}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                notificationsContent.innerHTML = notificationsHtml + `
+                    <div class="dropdown-footer">
+                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                    </div>
+                `;
+            }
+            
+            // Update badge count
+            updateNotificationsBadge(data.unread_count);
+        } else {
+            console.error('Failed to load notifications:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+    }
+}
+
+// Update notifications badge count
+function updateNotificationsBadge(count) {
+    const badge = document.querySelector('.utility-btn[title="Notifications"] .notification-badge');
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
     }
 }
 

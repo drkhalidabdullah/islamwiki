@@ -14,15 +14,6 @@ if (!is_logged_in() || !$enable_social) return;
     </div>
     <?php endif; ?>
     
-    <!-- Notifications Icon -->
-    <?php if (is_logged_in() && $enable_notifications): ?>
-    <div class="right-sidebar-item">
-        <button class="sidebar-icon-btn" title="Notifications" onclick="toggleNotificationsDropdown()">
-            <i class="iw iw-bell"></i>
-            <span class="notification-badge">5</span>
-        </button>
-    </div>
-    <?php endif; ?>
     
     <!-- Friends Profile Pictures -->
     <div class="right-sidebar-section">
@@ -48,21 +39,6 @@ if (!is_logged_in() || !$enable_social) return;
 </div>
 <?php endif; ?>
 
-<!-- Notifications Dropdown -->
-<?php if (is_logged_in() && $enable_notifications): ?>
-<div class="right-sidebar-dropdown" id="notificationsDropdown">
-    <div class="dropdown-header">
-        <h4>Notifications</h4>
-        <button class="mark-all-read" onclick="markAllNotificationsRead()">Mark All Read</button>
-    </div>
-    <div class="dropdown-content" id="notificationsContent">
-        <div class="loading-notifications">Loading notifications...</div>
-        <div class="dropdown-footer">
-            <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
 
 <!-- Dropdowns moved to header dashboard -->
 
@@ -446,29 +422,6 @@ function toggleMessagesDropdown() {
     }
 }
 
-// Notifications dropdown functionality
-function toggleNotificationsDropdown() {
-    const dropdown = document.getElementById('notificationsDropdown');
-    const isOpen = dropdown.classList.contains('show');
-    
-    // Close all right sidebar dropdowns
-    document.querySelectorAll('.right-sidebar-dropdown').forEach(d => {
-        d.classList.remove('show');
-    });
-    
-    // Toggle current dropdown
-    if (!isOpen) {
-        loadNotificationsData();
-        dropdown.classList.add('show');
-    }
-}
-
-// Mark all notifications as read
-function markAllNotificationsRead() {
-    console.log('Marking all notifications as read');
-    // This would typically make an AJAX call to mark all notifications as read
-    document.getElementById('notificationsDropdown').classList.remove('show');
-}
 
 // Load real messages data
 async function loadMessagesData() {
@@ -522,53 +475,6 @@ async function loadMessagesData() {
     }
 }
 
-// Load real notifications data
-async function loadNotificationsData() {
-    try {
-        const response = await fetch('/api/ajax/get_sidebar_notifications.php');
-        const data = await response.json();
-        
-        if (data.success) {
-            const notificationsContent = document.getElementById('notificationsContent');
-            const notifications = data.notifications;
-            
-            if (notifications.length === 0) {
-                notificationsContent.innerHTML = `
-                    <div class="no-notifications">No recent notifications</div>
-                    <div class="dropdown-footer">
-                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
-                    </div>
-                `;
-            } else {
-                let notificationsHtml = '';
-                notifications.forEach(notif => {
-                    notificationsHtml += `
-                        <div class="notification-item" onclick="window.location.href='${notif.url}'">
-                            <i class="${notif.icon}"></i>
-                            <div class="notification-info">
-                                <span class="notification-text">${notif.text}</span>
-                                <span class="notification-time">${notif.time}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                notificationsContent.innerHTML = notificationsHtml + `
-                    <div class="dropdown-footer">
-                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
-                    </div>
-                `;
-            }
-            
-            // Update badge count
-            updateNotificationsBadge(data.unread_count);
-        } else {
-            console.error('Failed to load notifications:', data.message);
-        }
-    } catch (error) {
-        console.error('Error loading notifications:', error);
-    }
-}
 
 // Update messages badge count
 function updateMessagesBadge(count) {
@@ -583,18 +489,6 @@ function updateMessagesBadge(count) {
     }
 }
 
-// Update notifications badge count
-function updateNotificationsBadge(count) {
-    const badge = document.querySelector('.sidebar-icon-btn[title="Notifications"] .notification-badge');
-    if (badge) {
-        if (count > 0) {
-            badge.textContent = count;
-            badge.style.display = 'block';
-        } else {
-            badge.style.display = 'none';
-        }
-    }
-}
 
 // Close dropdowns when clicking outside
 document.addEventListener('click', function(e) {
@@ -609,12 +503,9 @@ document.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
     loadFriendsProfiles();
     
-    // Load initial data for messages and notifications
+    // Load initial data for messages
     if (document.getElementById('messagesDropdown')) {
         loadMessagesData();
-    }
-    if (document.getElementById('notificationsDropdown')) {
-        loadNotificationsData();
     }
 });
 </script>
