@@ -22,17 +22,17 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 <!-- Header Dashboard -->
 <div class="header-dashboard" id="headerDashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2c3e50 !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: 100vw !important; box-sizing: border-box !important;">
     <div class="header-dashboard-container">
-        <!-- News Toggle & Search Bar -->
+        <!-- Search Bar -->
         <div class="header-search-container">
                    <!-- Left Sidebar Toggle Button -->
                    <button class="sidebar-toggle-btn" id="leftSidebarToggleBtn" title="Toggle Left Sidebar">
                        <i class="iw iw-bars"></i>
                    </button>
             
-            <!-- News Toggle Button -->
-            <button class="news-toggle-btn" id="newsToggleBtn" title="Toggle News Bar">
-                <i class="iw iw-bullhorn"></i>
-            </button>
+            <!-- Site Logo -->
+            <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="header-logo" title="<?php echo get_site_name(); ?> <?php echo is_logged_in() ? 'Dashboard' : 'Home'; ?>">
+                <i class="iw iw-moon"></i>
+            </a>
             
             <!-- Search Input Wrapper -->
             <div class="search-input-wrapper">
@@ -44,12 +44,19 @@ $enable_notifications = get_system_setting('enable_notifications', true);
             </div>
         </div>
 
-        <!-- Create Button -->
-        <?php if (is_logged_in()): ?>
-        <div class="header-create-container">
+        <!-- News Toggle and Create Button -->
+        <div class="header-center-container">
+            <!-- News Toggle Button -->
+            <button class="news-toggle-btn" id="newsToggleBtn" title="Toggle News Bar">
+                <i class="iw iw-bullhorn"></i>
+            </button>
+            
+            <!-- Create Button -->
+            <?php if (is_logged_in()): ?>
+            <div class="header-create-container">
             <div class="create-dropdown">
                 <button class="create-btn" id="createBtn">
-                    <i class="iw iw-video"></i>
+                    <i class="iw iw-plus"></i>
                     <span>Create</span>
                     <i class="iw iw-chevron-down"></i>
                 </button>
@@ -88,6 +95,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
             </div>
         </div>
         <?php endif; ?>
+        </div>
 
         <!-- Right Side Group -->
         <div class="header-right-group">
@@ -113,7 +121,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                     </div>
                 </div>
                 <?php endif; ?>
-                <?php if ($enable_notifications): ?>
+                <?php if (is_logged_in() && $enable_notifications): ?>
                 <div class="utility-dropdown">
                     <button class="utility-btn" title="Notifications" onclick="toggleNotificationsDropdown()">
                         <i class="iw iw-bell"></i>
@@ -266,8 +274,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const leftSidebarToggleBtn = document.getElementById('leftSidebarToggleBtn');
     if (leftSidebarToggleBtn) {
         console.log('Left sidebar toggle button found');
-        leftSidebarToggleBtn.addEventListener('click', function() {
-            console.log('Left sidebar toggle clicked');
+        leftSidebarToggleBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('Left sidebar toggle clicked - calling toggleLeftSidebarVisibility');
             toggleLeftSidebarVisibility();
         });
         
@@ -329,12 +339,19 @@ function initializeLeftSidebarState() {
     console.log('Left sidebar element found:', !!leftSidebar);
     console.log('Left sidebar toggle button found:', !!leftSidebarToggleBtn);
     
+    // Only hide sidebar if user explicitly set it to hidden (not on first visit)
     if (leftSidebarHidden === 'true') {
         // Left sidebar should be hidden
         if (leftSidebar) {
-            leftSidebar.style.display = 'none';
-            leftSidebar.style.transform = 'translateX(-100%)';
-            console.log('Left sidebar set to hidden on init');
+            // Check if we're on mobile (screen width <= 768px)
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                leftSidebar.style.transform = 'translateX(-100%)';
+                leftSidebar.classList.remove('open');
+            } else {
+                leftSidebar.style.setProperty('display', 'none', 'important');
+            }
+            console.log('Left sidebar set to hidden on init (mobile:', isMobile, ')');
         }
         
         if (leftSidebarToggleBtn) {
@@ -351,7 +368,7 @@ function initializeLeftSidebarState() {
     } else {
         // Left sidebar should be visible (default state)
         if (leftSidebar) {
-            leftSidebar.style.display = 'block';
+            leftSidebar.style.setProperty('display', 'flex', 'important');
             leftSidebar.style.transform = 'translateX(0)';
             console.log('Left sidebar set to visible on init');
         }
@@ -371,6 +388,7 @@ function initializeLeftSidebarState() {
 }
 
 function toggleLeftSidebarVisibility() {
+    console.log('=== toggleLeftSidebarVisibility START ===');
     const leftSidebar = document.querySelector('.left-sidebar');
     const leftSidebarToggleBtn = document.getElementById('leftSidebarToggleBtn');
     const mainContent = document.querySelector('.main-content');
@@ -385,42 +403,84 @@ function toggleLeftSidebarVisibility() {
         return;
     }
     
-    // Toggle left sidebar visibility
-    const isHidden = leftSidebar.style.display === 'none' || leftSidebar.style.transform === 'translateX(-100%)';
-    if (isHidden) {
-        leftSidebar.style.display = 'block';
-        leftSidebar.style.transform = 'translateX(0)';
-    } else {
-        leftSidebar.style.display = 'none';
-        leftSidebar.style.transform = 'translateX(-100%)';
-    }
-    console.log('Left sidebar visibility toggled, is now:', isHidden ? 'visible' : 'hidden');
+    // Log current sidebar state before toggle
+    console.log('Current sidebar styles:');
+    console.log('- display:', leftSidebar.style.display);
+    console.log('- transform:', leftSidebar.style.transform);
+    console.log('- classList:', leftSidebar.classList.toString());
+    console.log('- computed display:', window.getComputedStyle(leftSidebar).display);
+    console.log('- computed transform:', window.getComputedStyle(leftSidebar).transform);
     
-    // Update button appearance
+    // Toggle left sidebar visibility
+    const isMobile = window.innerWidth <= 768;
+    const isCurrentlyHidden = (isMobile ? leftSidebar.style.transform === 'translateX(-100%)' || !leftSidebar.classList.contains('open') : leftSidebar.style.display === 'none');
+    
+    console.log('Current sidebar state - isHidden:', isCurrentlyHidden, 'isMobile:', isMobile);
+    
+    if (isCurrentlyHidden) {
+        // Show sidebar
+        if (isMobile) {
+            leftSidebar.style.transform = 'translateX(0)';
+            leftSidebar.classList.add('open');
+            console.log('Mobile: Showing sidebar with transform and open class');
+        } else {
+            leftSidebar.style.setProperty('display', 'flex', 'important');
+            leftSidebar.style.transform = 'translateX(0)';
+            console.log('Desktop: Showing sidebar with display flex');
+        }
+        console.log('Sidebar shown');
+    } else {
+        // Hide sidebar
+        if (isMobile) {
+            leftSidebar.style.transform = 'translateX(-100%)';
+            leftSidebar.classList.remove('open');
+            console.log('Mobile: Hiding sidebar with transform and removing open class');
+        } else {
+            leftSidebar.style.setProperty('display', 'none', 'important');
+            console.log('Desktop: Hiding sidebar with display none');
+        }
+        console.log('Sidebar hidden');
+    }
+    
+    // Log sidebar state after toggle
+    console.log('After toggle sidebar styles:');
+    console.log('- display:', leftSidebar.style.display);
+    console.log('- transform:', leftSidebar.style.transform);
+    console.log('- classList:', leftSidebar.classList.toString());
+    console.log('- computed display:', window.getComputedStyle(leftSidebar).display);
+    console.log('- computed transform:', window.getComputedStyle(leftSidebar).transform);
+    
+    // Update button appearance based on NEW state
     const icon = leftSidebarToggleBtn.querySelector('i');
-    if (leftSidebar.style.display === 'none' || leftSidebar.style.transform === 'translateX(-100%)') {
+    const newStateIsHidden = (isMobile ? leftSidebar.style.transform === 'translateX(-100%)' || !leftSidebar.classList.contains('open') : leftSidebar.style.display === 'none');
+    
+    console.log('Button state update - newStateIsHidden:', newStateIsHidden);
+    
+    if (newStateIsHidden) {
         // Left sidebar is hidden - show inactive state
         leftSidebarToggleBtn.classList.add('inactive');
-        icon.style.opacity = '0.5';
+        if (icon) {
+            icon.style.opacity = '0.5';
+        }
         leftSidebarToggleBtn.title = 'Show Left Sidebar';
-        
-        // No need to adjust positioning - layout is now fixed
         
         // Save state to localStorage
         localStorage.setItem('left-sidebar-hidden', 'true');
-        console.log('Left sidebar hidden, saved to localStorage');
+        console.log('Button set to inactive (hidden state)');
     } else {
         // Left sidebar is visible - show active state
         leftSidebarToggleBtn.classList.remove('inactive');
-        icon.style.opacity = '1';
+        if (icon) {
+            icon.style.opacity = '1';
+        }
         leftSidebarToggleBtn.title = 'Hide Left Sidebar';
-        
-        // No need to adjust positioning - layout is now fixed
         
         // Save state to localStorage
         localStorage.setItem('left-sidebar-hidden', 'false');
-        console.log('Left sidebar visible, saved to localStorage');
+        console.log('Button set to active (visible state)');
     }
+    
+    console.log('=== toggleLeftSidebarVisibility END ===');
 }
 
 function initializeRightSidebarState() {

@@ -115,14 +115,6 @@ if ($toast_message) {
     <nav class="sidebar left-sidebar">
         <!-- Top Section -->
         <div class="sidebar-top">
-            <!-- Logo at top -->
-            <a href="/" class="sidebar-item" title="<?php echo get_site_name(); ?> Home">
-                <i class="iw iw-book-open"></i>
-            </a>
-            
-            <!-- Separator -->
-            <div class="sidebar-separator"></div>
-            
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
                 <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="sidebar-item <?php echo (is_logged_in() ? (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) : (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/')) ? 'active' : ''; ?>" title="Home">

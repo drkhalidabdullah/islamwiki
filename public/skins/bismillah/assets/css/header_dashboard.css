@@ -62,6 +62,33 @@ body .header-dashboard,
     gap: 12px;
 }
 
+/* Site Logo in Search Container */
+.header-search-container .header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #34495e;
+    border: none;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.header-search-container .header-logo:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.header-search-container .header-logo i {
+    font-size: 18px;
+}
+
 /* News Toggle Button */
 .news-toggle-btn {
     background: #34495e;
@@ -231,6 +258,46 @@ body .header-dashboard,
 
 .header-search-btn:hover {
     background: #2563eb;
+}
+
+/* ========================================
+   CENTER CONTAINER
+   ======================================== */
+.header-center-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   HEADER LOGO
+   ======================================== */
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #34495e;
+    border: none;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.header-logo:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.header-logo i {
+    font-size: 18px;
 }
 
 /* ========================================
@@ -623,14 +690,14 @@ body .header-dashboard,
 }
 
 .user-dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
+    position: fixed;
+    top: 60px;
+    right: 0.7rem;
     background: #34495e;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
+    z-index: 10002;
     min-width: 200px;
     opacity: 0;
     visibility: hidden;

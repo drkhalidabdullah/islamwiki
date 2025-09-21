@@ -123,6 +123,7 @@
 .iw-chevron-left::before { content: "\f053"; }
 .iw-chevron-up::before { content: "\f077"; }
 .iw-circle::before { content: "\f111"; }
+.iw-moon::before { content: "\f186"; }
 .iw-clock::before { content: "\f017"; }
 .iw-cogs::before { content: "\f085"; }
 .iw-cubes::before { content: "\f1b3"; }

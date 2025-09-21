@@ -254,30 +254,6 @@ include "../../includes/header.php";
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions-card">
-                <h4>Quick Actions</h4>
-                <div class="action-buttons">
-                    <a href="/pages/social/create_post.php" class="action-btn">
-                        <i class="iw iw-edit"></i>
-                        <span>Create Post</span>
-                    </a>
-                    <?php if (is_editor()): ?>
-                    <a href="/pages/wiki/create_article.php" class="action-btn">
-                        <i class="iw iw-file-alt"></i>
-                        <span>New Article</span>
-                    </a>
-                    <?php endif; ?>
-                    <a href="/search" class="action-btn">
-                        <i class="iw iw-search"></i>
-                        <span>Search</span>
-                    </a>
-                    <a href="/pages/user/settings.php" class="action-btn">
-                        <i class="iw iw-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </div>
-        </div>
         
             <!-- Trending Topics -->
             <div class="trending-card">
@@ -304,7 +280,6 @@ include "../../includes/header.php";
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="posts">Posts</button>
                     <button class="filter-btn" data-filter="articles">Articles</button>
-                    <button class="filter-btn" data-filter="following">Following</button>
         </div>
     </div>
     
@@ -827,33 +802,6 @@ include "../../includes/header.php";
     <?php endif; ?>
             </div>
 
-            <!-- Following -->
-            <div class="following-card">
-                <div class="card-header">
-                    <h4>Following</h4>
-                    <a href="/pages/social/friends.php" class="view-all-link">View All</a>
-                </div>
-                <?php if (!empty($following)): ?>
-                <div class="following-list">
-                    <?php foreach (array_slice($following, 0, 5) as $user): ?>
-                    <div class="following-item">
-                        <img src="/assets/images/default-avatar.svg" alt="User" class="user-avatar">
-                        <div class="user-info">
-                            <a href="/pages/user/user_profile.php?username=<?php echo urlencode($user['username']); ?>" class="user-name">
-                                <?php echo htmlspecialchars($user['display_name'] ?: $user['username']); ?>
-                            </a>
-                            <span class="user-handle">@<?php echo htmlspecialchars($user['username']); ?></span>
-                        </div>
-                        <button class="unfollow-btn" onclick="unfollowUser(<?php echo $user['following_id']; ?>)">
-                            <i class="iw iw-user-times"></i>
-                        </button>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php else: ?>
-                <p class="empty-state">Not following anyone yet. <a href="/search">Find people to follow</a></p>
-                <?php endif; ?>
-            </div>
         </div>
     </div>
 </div>

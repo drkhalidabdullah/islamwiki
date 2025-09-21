@@ -4,15 +4,12 @@ if (!is_logged_in() || !$enable_social) return;
 ?>
 
 <div class="right-sidebar" id="rightSidebar" style="background: #2c3e50 !important; z-index: 10001 !important;">
-    <!-- Friends Icon -->
+    <!-- Friends Profile Pictures -->
     <div class="right-sidebar-section">
-        <div class="right-sidebar-item" title="Friends" onclick="window.location.href='/pages/social/friends.php'">
-            <i class="iw iw-users"></i>
-            <span class="notification-badge">4</span>
+        <div class="friends-profiles" id="friendsProfiles">
+            <div class="loading-friends">Loading friends...</div>
         </div>
     </div>
-    
-    <!-- Right sidebar now only contains friends icon -->
 </div>
 
 <!-- Dropdowns moved to header dashboard -->
@@ -45,45 +42,64 @@ if (!is_logged_in() || !$enable_social) return;
 
 .right-sidebar-section {
     position: relative;
-    margin-bottom: 15px;
+    width: 100%;
+    padding: 0 10px;
 }
 
-.right-sidebar-item {
+
+.friends-profiles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.friend-profile {
     width: 40px;
     height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.friend-profile:hover {
+    transform: scale(1.1);
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.friend-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.friend-profile .default-avatar {
+    width: 100%;
+    height: 100%;
+    background: #34495e;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #34495e;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
+    color: #ecf0f1;
+    font-size: 16px;
 }
 
-.right-sidebar-item:hover {
-    background: #3498db;
-    transform: scale(1.05);
-}
-
-.right-sidebar-item i {
-    font-size: 18px;
-    color: #fff;
-}
-
-.notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff4444;
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 10px;
-    min-width: 16px;
+.loading-friends {
+    color: #bdc3c7;
+    font-size: 11px;
     text-align: center;
-    line-height: 1.2;
+    font-style: italic;
+}
+
+.no-friends {
+    color: #bdc3c7;
+    font-size: 11px;
+    text-align: center;
+    font-style: italic;
 }
 
 /* Dropdown Styles */
@@ -277,6 +293,44 @@ if (!is_logged_in() || !$enable_social) return;
 </style>
 
 <script>
-       // Right sidebar now only contains friends icon
-       // Messages and notifications moved to header dashboard
-       </script>
+// Load friends profiles
+async function loadFriendsProfiles() {
+    try {
+        const response = await fetch('/api/ajax/get_friends_profiles.php');
+        const data = await response.json();
+        
+        const friendsProfiles = document.getElementById('friendsProfiles');
+        
+        if (data.success) {
+            const friends = data.friends;
+            
+            if (friends.length === 0) {
+                friendsProfiles.innerHTML = '<div class="no-friends">No friends yet</div>';
+            } else {
+                let friendsHtml = '';
+                friends.forEach(friend => {
+                    friendsHtml += `
+                        <div class="friend-profile" title="${friend.display_name}" onclick="window.location.href='/user/${friend.username}'">
+                            ${friend.avatar ? 
+                                `<img src="${friend.avatar}" alt="${friend.display_name}" onerror="this.parentElement.innerHTML='<div class=&quot;default-avatar&quot;><i class=&quot;iw iw-user&quot;></i></div>'">` :
+                                `<div class="default-avatar"><i class="iw iw-user"></i></div>`
+                            }
+                        </div>
+                    `;
+                });
+                friendsProfiles.innerHTML = friendsHtml;
+            }
+        } else {
+            friendsProfiles.innerHTML = '<div class="no-friends">Failed to load friends</div>';
+        }
+    } catch (error) {
+        console.error('Error loading friends profiles:', error);
+        document.getElementById('friendsProfiles').innerHTML = '<div class="no-friends">Error loading friends</div>';
+    }
+}
+
+// Load friends on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadFriendsProfiles();
+});
+</script>

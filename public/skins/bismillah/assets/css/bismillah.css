@@ -493,6 +493,8 @@ body {
     margin-top: var(--spacing-xl);
     margin-left: 60px; /* Align with main content */
     width: calc(100% - 60px); /* Match main content width */
+    position: relative;
+    z-index: 10003; /* Above sidebars */
 }
 
 .footer-content {
