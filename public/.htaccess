@@ -62,6 +62,7 @@ RewriteRule ^logout/?$ /logout.php [L,QSA]
 RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]
 RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
+RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
 
 # Search pages

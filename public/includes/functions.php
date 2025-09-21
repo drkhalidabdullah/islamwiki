@@ -777,42 +777,71 @@ function get_user_photos($user_id, $limit = 20, $offset = 0, $include_metadata =
     global $pdo;
     
     try {
-        // Get photos from user_posts table where post_type is 'image'
+        // Get all posts from user that might contain images
         $stmt = $pdo->prepare("
             SELECT 
                 id,
-                media_url as file_path,
-                content as caption,
+                content,
                 created_at,
                 likes_count,
                 comments_count,
                 shares_count
             FROM user_posts 
-            WHERE user_id = ? AND post_type = 'image' AND media_url IS NOT NULL
+            WHERE user_id = ? AND (post_type = 'image' OR content LIKE '%![]%' OR content LIKE '%!\[%')
             ORDER BY created_at DESC
             LIMIT ? OFFSET ?
         ");
-        $stmt->execute([$user_id, $limit, $offset]);
-        $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([$user_id, $limit * 3, $offset]); // Get more posts to account for filtering
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // If metadata is requested, add additional photo information
-        if ($include_metadata) {
-            foreach ($photos as &$photo) {
-                // Get photo dimensions if possible
-                $image_path = $_SERVER['DOCUMENT_ROOT'] . $photo['file_path'];
-                if (file_exists($image_path)) {
-                    $image_info = getimagesize($image_path);
-                    if ($image_info) {
-                        $photo['width'] = $image_info[0];
-                        $photo['height'] = $image_info[1];
-                        $photo['aspect_ratio'] = $image_info[0] / $image_info[1];
+        $photos = [];
+        $photo_count = 0;
+        
+        foreach ($posts as $post) {
+            // If it's a direct image post
+            if ($post['content'] === '' || $post['content'] === null) {
+                continue;
+            }
+            
+            // Extract images from markdown content
+            $image_urls = extract_images_from_markdown($post['content']);
+            
+            foreach ($image_urls as $image_url) {
+                if ($photo_count >= $limit) break;
+                
+                $photo = [
+                    'id' => $post['id'] . '_' . $photo_count, // Unique ID for each image
+                    'file_path' => $image_url,
+                    'caption' => extract_caption_from_markdown($post['content'], $image_url),
+                    'created_at' => $post['created_at'],
+                    'likes_count' => $post['likes_count'],
+                    'comments_count' => $post['comments_count'],
+                    'shares_count' => $post['shares_count']
+                ];
+                
+                // If metadata is requested, add additional photo information
+                if ($include_metadata) {
+                    // Get photo dimensions if possible
+                    $image_path = $_SERVER['DOCUMENT_ROOT'] . $image_url;
+                    if (file_exists($image_path)) {
+                        $image_info = getimagesize($image_path);
+                        if ($image_info) {
+                            $photo['width'] = $image_info[0];
+                            $photo['height'] = $image_info[1];
+                            $photo['aspect_ratio'] = $image_info[0] / $image_info[1];
+                        }
                     }
+                    
+                    // Format date
+                    $photo['formatted_date'] = date('M j, Y', strtotime($photo['created_at']));
+                    $photo['time_ago'] = time_ago($photo['created_at']);
                 }
                 
-                // Format date
-                $photo['formatted_date'] = date('M j, Y', strtotime($photo['created_at']));
-                $photo['time_ago'] = time_ago($photo['created_at']);
+                $photos[] = $photo;
+                $photo_count++;
             }
+            
+            if ($photo_count >= $limit) break;
         }
         
         return $photos;
@@ -823,19 +852,75 @@ function get_user_photos($user_id, $limit = 20, $offset = 0, $include_metadata =
     }
 }
 
+function extract_images_from_markdown($content) {
+    $images = [];
+    
+    // Match markdown image syntax: ![alt](url)
+    preg_match_all('/!\[.*?\]\(([^)]+)\)/', $content, $matches);
+    
+    if (!empty($matches[1])) {
+        foreach ($matches[1] as $url) {
+            // Convert localhost URLs to relative paths
+            if (strpos($url, 'http://localhost') === 0) {
+                $url = str_replace('http://localhost', '', $url);
+            }
+            
+            // Only include local images (starting with /uploads/)
+            if (strpos($url, '/uploads/') === 0) {
+                $images[] = $url;
+            }
+        }
+    }
+    
+    return $images;
+}
+
+function extract_caption_from_markdown($content, $image_url) {
+    // Try to find text around the image
+    $lines = explode("\n", $content);
+    $caption = '';
+    
+    foreach ($lines as $line) {
+        if (strpos($line, $image_url) !== false) {
+            // Found the line with the image, look for text before or after
+            $line = preg_replace('/!\[.*?\]\([^)]+\)/', '', $line);
+            $line = trim($line);
+            if (!empty($line)) {
+                $caption = $line;
+                break;
+            }
+        }
+    }
+    
+    return $caption;
+}
+
 function get_user_photo_count($user_id) {
     global $pdo;
     
     try {
+        // Get all posts that might contain images
         $stmt = $pdo->prepare("
-            SELECT COUNT(*) as count
+            SELECT content
             FROM user_posts 
-            WHERE user_id = ? AND post_type = 'image' AND media_url IS NOT NULL
+            WHERE user_id = ? AND (post_type = 'image' OR content LIKE '%![]%' OR content LIKE '%!\[%')
         ");
         $stmt->execute([$user_id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        return (int)$result['count'];
+        $total_photos = 0;
+        
+        foreach ($posts as $post) {
+            if ($post['content'] === '' || $post['content'] === null) {
+                continue;
+            }
+            
+            // Count images in markdown content
+            $image_urls = extract_images_from_markdown($post['content']);
+            $total_photos += count($image_urls);
+        }
+        
+        return $total_photos;
         
     } catch (Exception $e) {
         error_log("Error counting user photos: " . $e->getMessage());
