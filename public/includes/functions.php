@@ -640,55 +640,55 @@ function get_user_profile_complete($user_id) {
 function get_user_stats($user_id) {
     global $pdo;
     
-    // Get basic stats
-    $stats = [
-        'posts_count' => 0,
-        'followers_count' => 0,
-        'following_count' => 0,
-        'articles_count' => 0
-    ];
-    
-    // Count posts (if posts table exists)
     try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM posts WHERE user_id = ?");
+        // Count user posts
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_posts WHERE user_id = ? AND is_public = 1");
         $stmt->execute([$user_id]);
         $result = $stmt->fetch();
-        $stats['posts_count'] = $result['count'] ?? 0;
-    } catch (Exception $e) {
-        // Posts table might not exist yet
-    }
-    
-    // Count followers
-    try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE following_id = ? AND status = 'accepted'");
+        $posts_count = $result['count'] ?? 0;
+        
+        // Count followers
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE following_id = ?");
         $stmt->execute([$user_id]);
         $result = $stmt->fetch();
-        $stats['followers_count'] = $result['count'] ?? 0;
-    } catch (Exception $e) {
-        // user_follows table might not exist yet
-    }
-    
-    // Count following
-    try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE follower_id = ? AND status = 'accepted'");
+        $followers_count = $result['count'] ?? 0;
+        
+        // Count following
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM user_follows WHERE follower_id = ?");
         $stmt->execute([$user_id]);
         $result = $stmt->fetch();
-        $stats['following_count'] = $result['count'] ?? 0;
-    } catch (Exception $e) {
-        // user_follows table might not exist yet
-    }
-    
-    // Count articles (if articles table exists)
-    try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM articles WHERE author_id = ?");
+        $following_count = $result['count'] ?? 0;
+        
+        // Count published articles
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM wiki_articles WHERE author_id = ? AND status = 'published'");
         $stmt->execute([$user_id]);
         $result = $stmt->fetch();
-        $stats['articles_count'] = $result['count'] ?? 0;
+        $articles_count = $result['count'] ?? 0;
+        
+        return [
+            'followers' => $followers_count,
+            'following' => $following_count,
+            'posts' => [
+                'total_posts' => $posts_count
+            ],
+            'articles' => [
+                'published_articles' => $articles_count
+            ]
+        ];
+        
     } catch (Exception $e) {
-        // Articles table might not exist yet
+        error_log("Error getting user stats: " . $e->getMessage());
+        return [
+            'followers' => 0,
+            'following' => 0,
+            'posts' => [
+                'total_posts' => 0
+            ],
+            'articles' => [
+                'published_articles' => 0
+            ]
+        ];
     }
-    
-    return $stats;
 }
 
 // User content functions
