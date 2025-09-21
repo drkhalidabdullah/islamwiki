@@ -462,15 +462,15 @@ document.addEventListener("DOMContentLoaded", function() {
         const banner = document.querySelector('.maintenance-banner');
         if (banner) {
             banner.style.display = 'none';
-            // Adjust newsbar position
+            // Adjust newsbar position - keep it below header-dashboard
             const newsbar = document.querySelector('.newsbar');
             if (newsbar) {
-                newsbar.style.top = '0';
+                newsbar.style.top = '60px'; // Position below header-dashboard
             }
-            // Adjust main content padding
+            // Adjust main content padding - account for header-dashboard + newsbar
             const mainContent = document.querySelector('.main-content');
             if (mainContent) {
-                mainContent.style.paddingTop = '60px';
+                mainContent.style.paddingTop = '120px'; // 60px header-dashboard + 60px newsbar
             }
         }
     }
