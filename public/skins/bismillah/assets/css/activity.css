@@ -52,9 +52,9 @@
 }
 
 .filter-btn {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1e40af;
+    border: 2px solid rgba(255, 255, 255, 0.8);
     padding: 0.875rem 1.75rem;
     border-radius: 30px;
     font-size: 0.875rem;
@@ -69,6 +69,7 @@
     overflow: hidden;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .filter-btn::before {
@@ -78,7 +79,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
     transition: left 0.5s;
 }
 
@@ -87,22 +88,24 @@
 }
 
 .filter-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 1);
+    color: #1d4ed8;
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 1);
 }
 
 .filter-btn:active {
     transform: translateY(-1px) scale(1.02);
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .filter-btn.active {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-    color: #1e40af;
-    border-color: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border-color: #3b82f6;
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
     font-weight: 700;
 }
 
@@ -113,15 +116,17 @@
 .filter-btn i {
     font-size: 0.875rem;
     transition: transform 0.3s ease;
+    color: inherit;
 }
 
 .filter-btn:hover i {
     transform: scale(1.1);
+    color: #1d4ed8;
 }
 
 .filter-btn.active i {
     transform: scale(1.1);
-    color: #1e40af;
+    color: white;
 }
 
 .activity-content {
