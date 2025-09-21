@@ -928,12 +928,27 @@ function get_user_photo_count($user_id) {
     }
 }
 
-function get_user_events($user_id, $limit = 20, $offset = 0, $include_details = false) {
+function get_user_events($user_id, $limit = 20, $offset = 0) {
     global $pdo;
     
-    // For now, return empty array since events table might not exist
-    // This can be implemented when events functionality is added
-    return [];
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                e.*,
+                COUNT(ea.user_id) as attendees_count
+            FROM user_events e
+            LEFT JOIN event_attendees ea ON e.id = ea.event_id
+            WHERE e.user_id = ?
+            GROUP BY e.id
+            ORDER BY e.start_date DESC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$user_id, $limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching user events: " . $e->getMessage());
+        return [];
+    }
 }
 
 function get_user_achievements($user_id) {
@@ -973,29 +988,6 @@ function update_privacy_setting($user_id, $section, $visibility) {
     } catch (Exception $e) {
         error_log("Error updating privacy setting: " . $e->getMessage());
         return false;
-    }
-}
-
-function get_user_events($user_id, $limit = 20, $offset = 0) {
-    global $pdo;
-    
-    try {
-        $stmt = $pdo->prepare("
-            SELECT 
-                e.*,
-                COUNT(ea.user_id) as attendees_count
-            FROM user_events e
-            LEFT JOIN event_attendees ea ON e.id = ea.event_id
-            WHERE e.user_id = ?
-            GROUP BY e.id
-            ORDER BY e.start_date DESC
-            LIMIT ? OFFSET ?
-        ");
-        $stmt->execute([$user_id, $limit, $offset]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (Exception $e) {
-        error_log("Error fetching user events: " . $e->getMessage());
-        return [];
     }
 }
 
