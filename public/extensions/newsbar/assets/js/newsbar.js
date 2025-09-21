@@ -2,77 +2,68 @@
  * News Bar Extension JavaScript
  */
 
-// Newsbar functionality
-window.toggleNewsbar = function() {
-        const newsbar = document.querySelector('.newsbar');
-        const pauseBtn = document.querySelector('.newsbar-pause i');
-        
-        if (!newsbar || !pauseBtn) return;
-        
-        newsbar.classList.toggle('paused');
-        
-        if (newsbar.classList.contains('paused')) {
-            pauseBtn.className = 'iw iw-play';
-        } else {
-            pauseBtn.className = 'iw iw-pause';
-        }
+// Newsbar pause functionality (separate from show/hide)
+window.toggleNewsbarPause = function() {
+    const newsbar = document.querySelector('.newsbar');
+    const pauseBtn = document.querySelector('.newsbar-pause i');
+    
+    if (!newsbar || !pauseBtn) return;
+    
+    newsbar.classList.toggle('paused');
+    
+    if (newsbar.classList.contains('paused')) {
+        pauseBtn.className = 'iw iw-play';
+    } else {
+        pauseBtn.className = 'iw iw-pause';
+    }
 };
 
 window.closeNewsbar = function() {
-        const newsbar = document.querySelector('.newsbar');
-        const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
-        const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-floating-close i');
-        
-        if (!newsbar) {
-            console.log('Newsbar element not found');
-            return;
-        }
-        
-        console.log('Toggling newsbar, current classes:', newsbar.className);
-        
-        newsbar.classList.toggle('hidden');
-        
-        // Adjust main content padding based on newsbar visibility
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent) {
-            if (newsbar.classList.contains('hidden')) {
-                mainContent.style.paddingTop = '60px'; // Only header-dashboard
-            } else {
-                mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
-            }
-        }
-        
-        // Update button icon and title
+    const newsbar = document.querySelector('.newsbar');
+    const closeBtn = document.querySelector('.newsbar-controls .newsbar-close i');
+    const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-floating-close i');
+    
+    if (!newsbar) {
+        console.log('Newsbar element not found');
+        return;
+    }
+    
+    console.log('Toggling newsbar, current classes:', newsbar.className);
+    
+    newsbar.classList.toggle('hidden');
+    
+    // Adjust main content padding based on newsbar visibility
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
         if (newsbar.classList.contains('hidden')) {
-            console.log('Newsbar is now hidden, showing arrow');
-            if (floatingCloseBtn) {
-                floatingCloseBtn.className = 'iw iw-arrow-down';
-                floatingCloseBtn.parentElement.title = 'Show Newsbar';
-                console.log('Updated floating close button to arrow');
-            }
-            localStorage.setItem('newsbar-hidden', 'true');
+            mainContent.style.paddingTop = '60px'; // Only header-dashboard
         } else {
-            console.log('Newsbar is now visible, hiding arrow');
-            if (closeBtn) {
-                closeBtn.className = 'iw iw-times';
-                closeBtn.parentElement.title = 'Close';
-                console.log('Updated close button to X');
-            }
-            if (floatingCloseBtn) {
-                floatingCloseBtn.className = 'iw iw-arrow-down';
-                floatingCloseBtn.parentElement.title = 'Show Newsbar';
-                console.log('Updated floating close button to arrow');
-            }
-            localStorage.setItem('newsbar-hidden', 'false');
+            mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
         }
     }
     
-    // Ensure main content has proper padding
-    const newsbar = document.querySelector('.newsbar');
-    const mainContent = document.querySelector('.main-content');
-    if (newsbar && mainContent && !newsbar.classList.contains('hidden')) {
-        mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
-    }
+    // Update button icon and title
+    if (newsbar.classList.contains('hidden')) {
+        console.log('Newsbar is now hidden, showing arrow');
+        if (floatingCloseBtn) {
+            floatingCloseBtn.className = 'iw iw-arrow-down';
+            floatingCloseBtn.parentElement.title = 'Show Newsbar';
+            console.log('Updated floating close button to arrow');
+        }
+        localStorage.setItem('newsbar-hidden', 'true');
+    } else {
+        console.log('Newsbar is now visible, hiding arrow');
+        if (closeBtn) {
+            closeBtn.className = 'iw iw-times';
+            closeBtn.parentElement.title = 'Close';
+            console.log('Updated close button to X');
+        }
+        if (floatingCloseBtn) {
+            floatingCloseBtn.className = 'iw iw-arrow-down';
+            floatingCloseBtn.parentElement.title = 'Show Newsbar';
+            console.log('Updated floating close button to arrow');
+        }
+        localStorage.setItem('newsbar-hidden', 'false');
     }
 };
 
@@ -165,4 +156,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-

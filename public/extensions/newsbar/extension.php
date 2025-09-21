@@ -77,7 +77,7 @@ class NewsBarExtension {
         echo '</div>';
         echo '<div class="newsbar-right">';
         echo '<div class="newsbar-controls">';
-        echo '<button class="newsbar-pause" onclick="toggleNewsbar()" title="Pause/Resume">';
+        echo '<button class="newsbar-pause" onclick="toggleNewsbarPause()" title="Pause/Resume">';
         echo '<i class="iw iw-pause"></i>';
         echo '</button>';
         echo '</div>';

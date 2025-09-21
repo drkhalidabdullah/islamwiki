@@ -61,10 +61,10 @@ if (!is_logged_in() || !$enable_social) return;
 <style>
 .right-sidebar {
     position: fixed !important;
-    top: 0 !important;
+    top: 60px !important;
     right: 0 !important;
     width: 60px !important;
-    height: 100vh !important;
+    height: calc(100vh - 60px) !important;
     background: #2c3e50 !important;
     border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
     z-index: 10001 !important;
@@ -75,6 +75,13 @@ if (!is_logged_in() || !$enable_social) return;
     box-sizing: border-box !important;
     visibility: visible !important;
     opacity: 1 !important;
+}
+
+/* Ensure right sidebar is visible on desktop by default */
+@media (min-width: 769px) {
+    .right-sidebar {
+        display: flex !important;
+    }
 }
 
 .right-sidebar-section {

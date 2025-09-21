@@ -112,7 +112,7 @@ if ($toast_message) {
     <div class="sidebar-overlay" onclick="closeSidebar()"></div>
     
     <!-- Left Sidebar Navigation -->
-    <nav class="sidebar">
+    <nav class="sidebar left-sidebar">
         <!-- Top Section -->
         <div class="sidebar-top">
             <!-- Logo at top -->
