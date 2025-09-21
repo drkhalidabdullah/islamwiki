@@ -11,7 +11,7 @@
     position: fixed;
     top: 60px !important; /* Position below header-dashboard */
     left: 60px;
-    z-index: 10000;
+    z-index: 10002;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     width: calc(100vw - 60px);
     max-width: calc(100vw - 60px);

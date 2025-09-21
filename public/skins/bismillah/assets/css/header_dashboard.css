@@ -3,18 +3,41 @@
    Modern dark-themed header similar to screenshot
    ======================================== */
 
+/* Force header-dashboard to be visible - override any conflicting rules */
+html body .header-dashboard,
+body .header-dashboard,
 .header-dashboard {
-    position: fixed;
-    top: 0;
-    left: 60px;
-    right: 0;
-    z-index: 10001;
-    height: 60px;
-    background: #1a1a1a;
-    border-bottom: 1px solid #333;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    width: calc(100vw - 60px);
-    box-sizing: border-box;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 60px !important;
+    right: 0 !important;
+    z-index: 10001 !important;
+    height: 60px !important;
+    background: #1a1a1a !important;
+    border-bottom: 1px solid #333 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    width: calc(100vw - 60px) !important;
+    box-sizing: border-box !important;
+}
+
+.header-dashboard {
+    position: fixed !important;
+    top: 0 !important;
+    left: 60px !important;
+    right: 0 !important;
+    z-index: 10001 !important;
+    height: 60px !important;
+    background: #1a1a1a !important;
+    border-bottom: 1px solid #333 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    width: calc(100vw - 60px) !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .header-dashboard-container {
@@ -43,7 +66,7 @@
 .news-toggle-btn {
     background: #374151;
     border: none;
-    color: #9ca3af;
+    color: #ffffff;
     padding: 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -59,17 +82,21 @@
 
 .news-toggle-btn:hover {
     background: #4b5563;
-    color: #ffffff;
     transform: translateY(-1px);
 }
 
-.news-toggle-btn.active {
-    background: #8b5cf6;
+.news-toggle-btn.inactive {
+    background: #2a2a2a;
+    color: #9ca3af;
+}
+
+.news-toggle-btn.inactive:hover {
+    background: #374151;
     color: #ffffff;
 }
 
-.news-toggle-btn.active:hover {
-    background: #7c3aed;
+.news-toggle-btn i {
+    transition: opacity 0.2s ease;
 }
 
 .search-input-wrapper {
@@ -440,6 +467,7 @@
         width: 40px;
         height: 40px;
         padding: 10px;
+        font-size: 14px;
     }
     
     .user-info {

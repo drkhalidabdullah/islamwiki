@@ -1031,7 +1031,7 @@ div.section-header .view-all-link:hover {
 }
 
 /* High contrast mode - using basic media query for better compatibility */
-@media (prefers-contrast: high) {
+@media (prefers-color-scheme: light) {
     :root {
         --border-color: #000000;
         --text-secondary: #000000;
@@ -3492,4 +3492,24 @@ html body:has(.newsbar:not(.hidden)) .main-content {
     font-size: 0.875rem;
     color: #6b7280;
     margin-top: 0.5rem;
+}
+
+
+/* EMERGENCY HEADER-DASHBOARD FIX */
+.header-dashboard {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 60px !important;
+    right: 0 !important;
+    z-index: 10001 !important;
+    height: 60px !important;
+    background: #1a1a1a !important;
+    border-bottom: 1px solid #333 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    width: calc(100vw - 60px) !important;
+    box-sizing: border-box !important;
+}
 }

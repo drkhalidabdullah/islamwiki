@@ -20,7 +20,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 ?>
 
 <!-- Header Dashboard -->
-<div class="header-dashboard">
+<div class="header-dashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 60px !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2a2a2a !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: calc(100vw - 60px) !important; box-sizing: border-box !important;">
     <div class="header-dashboard-container">
         <!-- News Toggle & Search Bar -->
         <div class="header-search-container">
@@ -225,5 +225,51 @@ function performHeaderSearch() {
     if (query) {
         window.location.href = '/search?q=' + encodeURIComponent(query);
     }
+}
+
+function toggleNewsbar() {
+    const newsbar = document.querySelector('.newsbar');
+    const newsToggleBtn = document.getElementById('newsToggleBtn');
+    const mainContent = document.querySelector('.main-content');
+    
+    console.log('toggleNewsbar called');
+    console.log('newsbar:', newsbar);
+    console.log('newsToggleBtn:', newsToggleBtn);
+    
+    if (!newsbar || !newsToggleBtn) {
+        console.log('Missing elements - newsbar:', !!newsbar, 'newsToggleBtn:', !!newsToggleBtn);
+        return;
+    }
+    
+    // Toggle newsbar visibility
+    newsbar.classList.toggle('hidden');
+    console.log('Newsbar classes after toggle:', newsbar.className);
+    
+    // Update button appearance
+    const icon = newsToggleBtn.querySelector('i');
+    if (newsbar.classList.contains('hidden')) {
+        // Newsbar is hidden - show inactive state
+        newsToggleBtn.classList.add('inactive');
+        icon.style.opacity = '0.5';
+        newsToggleBtn.title = 'Show News Bar';
+        
+        // Adjust main content padding
+        if (mainContent) {
+            mainContent.style.paddingTop = '60px'; // Only header-dashboard
+        }
+    } else {
+        // Newsbar is visible - show active state
+        newsToggleBtn.classList.remove('inactive');
+        icon.style.opacity = '1';
+        newsToggleBtn.title = 'Hide News Bar';
+        
+        // Adjust main content padding
+        if (mainContent) {
+            mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
+        }
+    }
+    
+    // Save state to localStorage
+    localStorage.setItem('newsbar-hidden', newsbar.classList.contains('hidden'));
 }
 </script>
