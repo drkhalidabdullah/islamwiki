@@ -6,20 +6,20 @@
  * Update this file to change the version across the entire site.
  * 
  * @package IslamWiki
- * @version 0.0.0.18
- * @since 0.0.0.18
+ * @version 0.0.0.19
+ * @since 0.0.0.19
  */
 
 // Main version constants
-define('SITE_VERSION', '0.0.0.18');
+define('SITE_VERSION', '0.0.0.19');
 define('SITE_VERSION_MAJOR', '0');
 define('SITE_VERSION_MINOR', '0');
-define('SITE_VERSION_PATCH', '18');
-define('SITE_VERSION_FULL', '0.0.0.18');
+define('SITE_VERSION_PATCH', '19');
+define('SITE_VERSION_FULL', '0.0.0.19');
 
 // Version metadata
-define('SITE_VERSION_NAME', 'Wiki Editor & Reference System');
-define('SITE_VERSION_TYPE', 'Major Feature Enhancement - Wiki Editor & Reference System');
+define('SITE_VERSION_NAME', 'Header Dashboard & Sidebar System');
+define('SITE_VERSION_TYPE', 'Major UI Enhancement - Header Dashboard & Sidebar System');
 define('SITE_VERSION_STATUS', 'Production Ready');
 define('SITE_VERSION_DATE', 'January 2025');
 

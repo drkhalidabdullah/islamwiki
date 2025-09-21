@@ -1,19 +1,36 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.18-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.19-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.18
+## 🎯 Current Version: 0.0.0.19
 
 **Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Major Feature Enhancement - Wiki Editor & Reference System
+**Type:** Major UI Enhancement - Header Dashboard & Sidebar System
 
-## 🚀 What's New in v0.0.0.18
+## 🚀 What's New in v0.0.0.19
+
+### 🎯 **Header Dashboard & Sidebar System**
+- **Modern Header Dashboard**: Fixed header with integrated search, create button, and user menu
+- **Smart Sidebar Management**: Toggle-able left and right sidebars with state persistence
+- **Enhanced Navigation**: Site logo, news toggle, and friends profile display
+- **Mobile Responsive**: Optimized for all screen sizes with touch-friendly controls
+- **State Persistence**: User preferences saved using localStorage
+- **Z-Index Management**: Proper layering of all UI elements
+
+### 🔧 **Technical Improvements**
+- **CSS Architecture**: Complete framework for new header system
+- **JavaScript State Management**: localStorage integration for user preferences
+- **PHP Backend**: New API endpoints for friends profiles and sidebar data
+- **Mobile Detection**: Screen size detection for responsive behavior
+- **Event Handling**: Proper event listeners with preventDefault and stopPropagation
+
+## 🚀 Previous Release: v0.0.0.18
 
 ### 📝 **Revolutionary Wiki Editor System**
 - **Professional Toolbar**: Complete redesign with properly sized, clickable buttons
