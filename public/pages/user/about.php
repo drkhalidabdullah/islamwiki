@@ -81,14 +81,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <h3><i class="fas fa-user"></i> Basic Information</h3>
                         <div class="section-controls">
                             <?php if ($current_user_id == $profile_user['id']): ?>
-                                <div class="privacy-toggle" data-section="basic">
-                                    <select class="privacy-select" onchange="updatePrivacy('basic', this.value)">
-                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'public' ? 'selected' : ''; ?>>Public</option>
-                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'community' ? 'selected' : ''; ?>>Community</option>
-                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'followers' ? 'selected' : ''; ?>>Followers</option>
-                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'private' ? 'selected' : ''; ?>>Private</option>
-                                    </select>
-                                </div>
                                 <button class="edit-section-btn" onclick="editSection('basic')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -98,23 +90,73 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                     <div class="about-card-content">
                         <div class="info-item">
                             <span class="info-label">First Name</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_user['first_name'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_user['first_name'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('first_name', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'first_name') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'first_name') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'first_name') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'first_name') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Last Name</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_user['last_name'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_user['last_name'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('last_name', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'last_name') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'last_name') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'last_name') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'last_name') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Username</span>
-                            <span class="info-value">@<?php echo htmlspecialchars($profile_user['username']); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value">@<?php echo htmlspecialchars($profile_user['username']); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('username', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'username') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'username') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'username') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'username') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Email</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_user['email']); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_user['email']); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('email', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'email') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'email') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'email') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'email') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Member Since</span>
-                            <span class="info-value"><?php echo format_date($profile_user['created_at']); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo format_date($profile_user['created_at']); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('member_since', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'member_since') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'member_since') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'member_since') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'member_since') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,14 +167,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <h3><i class="fas fa-address-book"></i> Contact Information</h3>
                         <div class="section-controls">
                             <?php if ($current_user_id == $profile_user['id']): ?>
-                                <div class="privacy-toggle" data-section="contact">
-                                    <select class="privacy-select" onchange="updatePrivacy('contact', this.value)">
-                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'public' ? 'selected' : ''; ?>>Public</option>
-                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'community' ? 'selected' : ''; ?>>Community</option>
-                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'followers' ? 'selected' : ''; ?>>Followers</option>
-                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'private' ? 'selected' : ''; ?>>Private</option>
-                                    </select>
-                                </div>
                                 <button class="edit-section-btn" onclick="editSection('contact')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -142,23 +176,53 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                     <div class="about-card-content">
                         <div class="info-item">
                             <span class="info-label">Location</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['location'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['location'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('location', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'location') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'location') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'location') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'location') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Website</span>
-                            <span class="info-value">
-                                <?php if (!empty($profile_data['website'])): ?>
-                                    <a href="<?php echo htmlspecialchars($profile_data['website']); ?>" target="_blank" rel="noopener">
-                                        <?php echo htmlspecialchars($profile_data['website']); ?>
-                                    </a>
-                                <?php else: ?>
-                                    Not specified
+                            <div class="info-item-controls">
+                                <span class="info-value">
+                                    <?php if (!empty($profile_data['website'])): ?>
+                                        <a href="<?php echo htmlspecialchars($profile_data['website']); ?>" target="_blank" rel="noopener">
+                                            <?php echo htmlspecialchars($profile_data['website']); ?>
+                                        </a>
+                                    <?php else: ?>
+                                        Not specified
+                                    <?php endif; ?>
+                                </span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('website', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'website') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'website') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'website') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'website') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
                                 <?php endif; ?>
-                            </span>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Phone</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['phone'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['phone'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('phone', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'phone') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'phone') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'phone') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'phone') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,14 +233,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <h3><i class="fas fa-heart"></i> Personal Information</h3>
                         <div class="section-controls">
                             <?php if ($current_user_id == $profile_user['id']): ?>
-                                <div class="privacy-toggle" data-section="personal">
-                                    <select class="privacy-select" onchange="updatePrivacy('personal', this.value)">
-                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'public' ? 'selected' : ''; ?>>Public</option>
-                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'community' ? 'selected' : ''; ?>>Community</option>
-                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'followers' ? 'selected' : ''; ?>>Followers</option>
-                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'private' ? 'selected' : ''; ?>>Private</option>
-                                    </select>
-                                </div>
                                 <button class="edit-section-btn" onclick="editSection('personal')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -186,19 +242,59 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                     <div class="about-card-content">
                         <div class="info-item">
                             <span class="info-label">Bio</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_user['bio'] ?: 'No bio provided'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_user['bio'] ?: 'No bio provided'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('bio', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'bio') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'bio') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'bio') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'bio') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Date of Birth</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['date_of_birth'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['date_of_birth'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('date_of_birth', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'date_of_birth') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'date_of_birth') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'date_of_birth') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'date_of_birth') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Gender</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['gender'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['gender'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('gender', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'gender') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'gender') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'gender') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'gender') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Interests</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['interests'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['interests'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('interests', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'interests') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'interests') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'interests') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'interests') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -209,14 +305,6 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <h3><i class="fas fa-graduation-cap"></i> Education & Work</h3>
                         <div class="section-controls">
                             <?php if ($current_user_id == $profile_user['id']): ?>
-                                <div class="privacy-toggle" data-section="education">
-                                    <select class="privacy-select" onchange="updatePrivacy('education', this.value)">
-                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'public' ? 'selected' : ''; ?>>Public</option>
-                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'community' ? 'selected' : ''; ?>>Community</option>
-                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'followers' ? 'selected' : ''; ?>>Followers</option>
-                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'private' ? 'selected' : ''; ?>>Private</option>
-                                    </select>
-                                </div>
                                 <button class="edit-section-btn" onclick="editSection('education')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -226,15 +314,45 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                     <div class="about-card-content">
                         <div class="info-item">
                             <span class="info-label">Education</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['education'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['education'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('education', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Profession</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['profession'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['profession'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('profession', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'profession') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'profession') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'profession') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'profession') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Areas of Expertise</span>
-                            <span class="info-value"><?php echo htmlspecialchars($profile_data['expertise_areas'] ?: 'Not specified'); ?></span>
+                            <div class="info-item-controls">
+                                <span class="info-value"><?php echo htmlspecialchars($profile_data['expertise_areas'] ?: 'Not specified'); ?></span>
+                                <?php if ($current_user_id == $profile_user['id']): ?>
+                                    <select class="privacy-select" onchange="updatePrivacy('expertise_areas', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'expertise_areas') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'expertise_areas') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'expertise_areas') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'expertise_areas') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
