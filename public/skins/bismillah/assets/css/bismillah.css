@@ -150,9 +150,9 @@ body {
 
 /* Main content area */
 .main-content {
-    margin-top: 60px;
+    margin-top: 0;
     margin-left: 60px;
-    min-height: calc(100vh - 60px);
+    min-height: 100vh;
     padding: 0;
     background: #f9fafb;
     width: calc(100% - 60px);
@@ -2342,16 +2342,42 @@ html, body {
     margin-top: 0 !important;
 }
 
-/* When newsbar is present, add additional padding */
+/* When newsbar is present, add additional padding - more specific selectors */
+body:has(.newsbar) .main-content,
 .newsbar + .main-content,
 .header-dashboard + .newsbar + .main-content {
     padding-top: 120px !important; /* 60px header-dashboard + 60px newsbar */
 }
 
 /* When newsbar is hidden, only account for header-dashboard */
+body:has(.newsbar.hidden) .main-content,
 .newsbar.hidden + .main-content,
 .header-dashboard + .newsbar.hidden + .main-content {
     padding-top: 60px !important; /* Only 60px header-dashboard */
+}
+
+/* Fallback: Force main content below newsbar */
+body .main-content {
+    padding-top: 60px !important; /* Default: header-dashboard only */
+}
+
+body:has(.newsbar:not(.hidden)) .main-content {
+    padding-top: 120px !important; /* When newsbar is visible */
+}
+
+/* Ultra-specific rule to force main content below newsbar */
+html body .main-content {
+    padding-top: 60px !important; /* Default: header-dashboard only */
+}
+
+html body:has(.newsbar:not(.hidden)) .main-content {
+    padding-top: 120px !important; /* When newsbar is visible */
+}
+
+/* Ensure main content appears above newsbar */
+.main-content {
+    position: relative;
+    z-index: 10001 !important; /* Higher than newsbar (10000) */
 }
 
 /* When maintenance banner is present with header-dashboard and newsbar */
