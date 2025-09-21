@@ -1022,6 +1022,8 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
     global $pdo;
     
     try {
+        $all_activities = [];
+        
         // Get posts activity
         $posts_stmt = $pdo->prepare("
             SELECT 
@@ -1033,14 +1035,15 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
                 comments_count,
                 shares_count,
                 NULL as target_user_id,
-                NULL as target_username
+                NULL as target_username,
+                'user_posts' as source_table
             FROM user_posts 
             WHERE user_id = ? AND is_public = 1
             ORDER BY created_at DESC
-            LIMIT ? OFFSET ?
         ");
-        $posts_stmt->execute([$user_id, $limit, $offset]);
+        $posts_stmt->execute([$user_id]);
         $posts = $posts_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $all_activities = array_merge($all_activities, $posts);
         
         // Get comments activity
         $comments_stmt = $pdo->prepare("
@@ -1053,16 +1056,17 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
                 NULL as comments_count,
                 NULL as shares_count,
                 up.user_id as target_user_id,
-                u.username as target_username
+                u.username as target_username,
+                'post_comments' as source_table
             FROM post_comments pc
             JOIN user_posts up ON pc.post_id = up.id
             JOIN users u ON up.user_id = u.id
             WHERE pc.user_id = ?
             ORDER BY pc.created_at DESC
-            LIMIT ? OFFSET ?
         ");
-        $comments_stmt->execute([$user_id, $limit, $offset]);
+        $comments_stmt->execute([$user_id]);
         $comments = $comments_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $all_activities = array_merge($all_activities, $comments);
         
         // Get likes activity
         $likes_stmt = $pdo->prepare("
@@ -1075,37 +1079,39 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
                 up.comments_count,
                 up.shares_count,
                 up.user_id as target_user_id,
-                u.username as target_username
+                u.username as target_username,
+                'post_interactions' as source_table
             FROM post_interactions pi
             JOIN user_posts up ON pi.post_id = up.id
             JOIN users u ON up.user_id = u.id
             WHERE pi.user_id = ? AND pi.interaction_type = 'like'
             ORDER BY pi.created_at DESC
-            LIMIT ? OFFSET ?
         ");
-        $likes_stmt->execute([$user_id, $limit, $offset]);
+        $likes_stmt->execute([$user_id]);
         $likes = $likes_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $all_activities = array_merge($all_activities, $likes);
         
         // Get follows activity
         $follows_stmt = $pdo->prepare("
             SELECT 
                 'follow' as type,
                 NULL as post_id,
-                NULL as content,
+                CONCAT('Started following ', u.display_name, ' (@', u.username, ')') as content,
                 uf.created_at,
                 NULL as likes_count,
                 NULL as comments_count,
                 NULL as shares_count,
                 uf.following_id as target_user_id,
-                u.username as target_username
+                u.username as target_username,
+                'user_follows' as source_table
             FROM user_follows uf
             JOIN users u ON uf.following_id = u.id
             WHERE uf.follower_id = ?
             ORDER BY uf.created_at DESC
-            LIMIT ? OFFSET ?
         ");
-        $follows_stmt->execute([$user_id, $limit, $offset]);
+        $follows_stmt->execute([$user_id]);
         $follows = $follows_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $all_activities = array_merge($all_activities, $follows);
         
         // Get articles activity
         $articles_stmt = $pdo->prepare("
@@ -1118,25 +1124,23 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
                 NULL as comments_count,
                 NULL as shares_count,
                 NULL as target_user_id,
-                NULL as target_username
+                NULL as target_username,
+                'wiki_articles' as source_table
             FROM wiki_articles wa
             WHERE wa.author_id = ? AND wa.status = 'published'
             ORDER BY wa.created_at DESC
-            LIMIT ? OFFSET ?
         ");
-        $articles_stmt->execute([$user_id, $limit, $offset]);
+        $articles_stmt->execute([$user_id]);
         $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Combine all activities
-        $all_activities = array_merge($posts, $comments, $likes, $follows, $articles);
+        $all_activities = array_merge($all_activities, $articles);
         
         // Sort by created_at descending
         usort($all_activities, function($a, $b) {
             return strtotime($b['created_at']) - strtotime($a['created_at']);
         });
         
-        // Limit results
-        return array_slice($all_activities, 0, $limit);
+        // Apply limit and offset
+        return array_slice($all_activities, $offset, $limit);
         
     } catch (Exception $e) {
         error_log("Error fetching user activity: " . $e->getMessage());
@@ -1176,37 +1180,54 @@ function get_activity_icon($type) {
 
 function format_activity_text($item, $profile_user) {
     $username = $profile_user['display_name'] ?: $profile_user['username'];
+    $username_link = '<a href="/user/' . $profile_user['username'] . '">' . htmlspecialchars($username) . '</a>';
     
     switch ($item['type']) {
         case 'post':
-            return "<strong>{$username}</strong> created a new post";
+            return "{$username_link} created a new post";
         case 'comment':
-            $target = $item['target_username'] ? " on <strong>{$item['target_username']}</strong>'s post" : '';
-            return "<strong>{$username}</strong> commented{$target}";
+            $target = $item['target_username'] ? ' on <a href="/user/' . $item['target_username'] . '">' . htmlspecialchars($item['target_username']) . '</a>\'s post' : '';
+            return "{$username_link} commented{$target}";
         case 'like':
-            $target = $item['target_username'] ? " <strong>{$item['target_username']}</strong>'s post" : ' a post';
-            return "<strong>{$username}</strong> liked{$target}";
+            $target = $item['target_username'] ? ' <a href="/user/' . $item['target_username'] . '">' . htmlspecialchars($item['target_username']) . '</a>\'s post' : ' a post';
+            return "{$username_link} liked{$target}";
         case 'follow':
-            return "<strong>{$username}</strong> started following <strong>{$item['target_username']}</strong>";
+            $target_link = '<a href="/user/' . $item['target_username'] . '">' . htmlspecialchars($item['target_username']) . '</a>';
+            return "{$username_link} started following {$target_link}";
         case 'article':
-            return "<strong>{$username}</strong> published a new article";
+            return "{$username_link} published a new article";
         default:
-            return "<strong>{$username}</strong> performed an action";
+            return "{$username_link} performed an action";
     }
 }
 
 function format_activity_preview($item) {
     $content = $item['content'];
     
-    // Truncate content
-    if (strlen($content) > 150) {
-        $content = substr($content, 0, 150) . '...';
+    // Handle different content types
+    if ($item['type'] === 'follow') {
+        return $content; // Already formatted in the query
+    }
+    
+    // Truncate content based on type
+    $max_length = $item['type'] === 'article' ? 100 : 150;
+    if (strlen($content) > $max_length) {
+        $content = substr($content, 0, $max_length) . '...';
     }
     
     // Convert markdown to HTML for preview
     $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
     $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
     $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+    
+    // Convert @mentions to links
+    $content = preg_replace('/@([a-zA-Z0-9_]+)/', '<a href="/user/$1" class="mention">@$1</a>', $content);
+    
+    // Convert #hashtags to links
+    $content = preg_replace('/#([a-zA-Z0-9_]+)/', '<a href="/search?q=%23$1" class="hashtag">#$1</a>', $content);
+    
+    // Convert URLs to links
+    $content = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" rel="noopener">$1</a>', $content);
     
     return $content;
 }

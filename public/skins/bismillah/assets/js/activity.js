@@ -4,6 +4,7 @@
 function filterActivities(type) {
     const activityItems = document.querySelectorAll('.activity-item');
     const filterButtons = document.querySelectorAll('.filter-btn');
+    const timeline = document.querySelector('.activity-timeline');
     
     // Update active filter button
     filterButtons.forEach(btn => {
@@ -13,14 +14,65 @@ function filterActivities(type) {
         }
     });
     
-    // Show/hide activity items
-    activityItems.forEach(item => {
-        if (type === 'all' || item.dataset.type === type) {
-            item.classList.remove('hidden');
-        } else {
-            item.classList.add('hidden');
-        }
+    // Add loading state
+    if (timeline) {
+        timeline.style.opacity = '0.7';
+        timeline.style.pointerEvents = 'none';
+    }
+    
+    // Show/hide activity items with animation
+    let visibleCount = 0;
+    activityItems.forEach((item, index) => {
+        const shouldShow = type === 'all' || item.dataset.type === type;
+        
+        setTimeout(() => {
+            if (shouldShow) {
+                item.classList.remove('hidden');
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                // Animate in
+                setTimeout(() => {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 50);
+                
+                visibleCount++;
+            } else {
+                item.style.transition = 'all 0.3s ease';
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    item.classList.add('hidden');
+                }, 300);
+            }
+        }, index * 50); // Stagger animation
     });
+    
+    // Remove loading state
+    setTimeout(() => {
+        if (timeline) {
+            timeline.style.opacity = '1';
+            timeline.style.pointerEvents = 'auto';
+        }
+        
+        // Show no activity message if no items are visible
+        const noActivityDiv = document.querySelector('.no-activity');
+        if (visibleCount === 0 && noActivityDiv) {
+            noActivityDiv.style.display = 'block';
+            noActivityDiv.style.opacity = '0';
+            noActivityDiv.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                noActivityDiv.style.transition = 'all 0.3s ease';
+                noActivityDiv.style.opacity = '1';
+                noActivityDiv.style.transform = 'translateY(0)';
+            }, 100);
+        } else if (noActivityDiv) {
+            noActivityDiv.style.display = 'none';
+        }
+    }, activityItems.length * 50 + 300);
 }
 
 // Initialize filter buttons
@@ -34,15 +86,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add hover effects to activity items
+    // Add enhanced hover effects to activity items
     const activityItems = document.querySelectorAll('.activity-item');
     activityItems.forEach(item => {
         item.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = '#f9fafb';
+            this.style.backgroundColor = '#f8fafc';
+            this.style.transform = 'translateX(4px)';
+            this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+            
+            // Animate icon
+            const icon = this.querySelector('.activity-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.1)';
+            }
         });
         
         item.addEventListener('mouseleave', function() {
             this.style.backgroundColor = 'transparent';
+            this.style.transform = 'translateX(0)';
+            this.style.boxShadow = 'none';
+            
+            // Reset icon
+            const icon = this.querySelector('.activity-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1)';
+            }
         });
     });
     
