@@ -22,8 +22,14 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 <!-- Header Dashboard -->
 <div class="header-dashboard">
     <div class="header-dashboard-container">
-        <!-- Search Bar -->
+        <!-- News Toggle & Search Bar -->
         <div class="header-search-container">
+            <!-- News Toggle Button -->
+            <button class="news-toggle-btn" id="newsToggleBtn" title="Toggle News Bar">
+                <i class="iw iw-bullhorn"></i>
+            </button>
+            
+            <!-- Search Input Wrapper -->
             <div class="search-input-wrapper">
                 <i class="iw iw-search search-icon"></i>
                 <input type="text" class="header-search-input" placeholder="Search" id="headerSearchInput">
@@ -200,6 +206,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Enter') {
                 performHeaderSearch();
             }
+        });
+    }
+
+    // News toggle functionality
+    const newsToggleBtn = document.getElementById('newsToggleBtn');
+    if (newsToggleBtn) {
+        newsToggleBtn.addEventListener('click', function() {
+            toggleNewsbar();
         });
     }
 });
