@@ -64,11 +64,30 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
         <div class="activity-header">
             <h2>Activity</h2>
             <div class="activity-filters">
-                <button class="filter-btn active" data-filter="all">All Activity</button>
-                <button class="filter-btn" data-filter="posts">Posts</button>
-                <button class="filter-btn" data-filter="comments">Comments</button>
-                <button class="filter-btn" data-filter="likes">Likes</button>
-                <button class="filter-btn" data-filter="follows">Follows</button>
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-list"></i>
+                    All Activity
+                </button>
+                <button class="filter-btn" data-filter="post">
+                    <i class="fas fa-edit"></i>
+                    Posts
+                </button>
+                <button class="filter-btn" data-filter="comment">
+                    <i class="fas fa-comment"></i>
+                    Comments
+                </button>
+                <button class="filter-btn" data-filter="like">
+                    <i class="fas fa-heart"></i>
+                    Likes
+                </button>
+                <button class="filter-btn" data-filter="follow">
+                    <i class="fas fa-user-plus"></i>
+                    Follows
+                </button>
+                <button class="filter-btn" data-filter="article">
+                    <i class="fas fa-file-alt"></i>
+                    Articles
+                </button>
             </div>
         </div>
         

@@ -52,30 +52,76 @@
 }
 
 .filter-btn {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0.875rem 1.75rem;
+    border-radius: 30px;
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.filter-btn:hover::before {
+    left: 100%;
 }
 
 .filter-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.filter-btn:active {
+    transform: translateY(-1px) scale(1.02);
 }
 
 .filter-btn.active {
-    background: rgba(255, 255, 255, 0.9);
-    color: #3b82f6;
-    border-color: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    color: #1e40af;
+    border-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    font-weight: 700;
+}
+
+.filter-btn.active::before {
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+}
+
+.filter-btn i {
+    font-size: 0.875rem;
+    transition: transform 0.3s ease;
+}
+
+.filter-btn:hover i {
+    transform: scale(1.1);
+}
+
+.filter-btn.active i {
+    transform: scale(1.1);
+    color: #1e40af;
 }
 
 .activity-content {
@@ -412,16 +458,76 @@
     overflow: hidden;
 }
 
+/* Filter button ripple effect */
+.filter-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.filter-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Smooth transitions for all filter states */
+.filter-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced focus states for accessibility */
+.filter-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.filter-btn:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .activity-header {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         flex-direction: column;
         align-items: stretch;
+        text-align: center;
+    }
+    
+    .activity-header h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
     }
     
     .activity-filters {
         justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.8rem;
+        border-radius: 25px;
+        min-width: 120px;
+        justify-content: center;
+    }
+    
+    .filter-btn i {
+        font-size: 0.8rem;
     }
     
     .activity-content {
@@ -429,13 +535,24 @@
     }
     
     .activity-item {
-        padding: 1rem 0;
+        padding: 1.5rem 1rem;
+        gap: 1rem;
     }
     
     .activity-icon {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
         font-size: 1rem;
+    }
+    
+    .activity-text {
+        font-size: 0.9rem;
+    }
+    
+    .activity-preview {
+        font-size: 0.8rem;
+        padding: 0.75rem;
+        max-height: 100px;
     }
     
     .activity-actions {
@@ -445,7 +562,7 @@
     
     .action-btn {
         font-size: 0.75rem;
-        padding: 0.25rem;
+        padding: 0.5rem 0.75rem;
     }
 }
 

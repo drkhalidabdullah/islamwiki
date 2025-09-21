@@ -14,10 +14,41 @@ function filterActivities(type) {
         }
     });
     
+    // Add visual feedback to the clicked button
+    const activeButton = document.querySelector(`[data-filter="${type}"]`);
+    if (activeButton) {
+        activeButton.style.transform = 'translateY(-3px) scale(1.05)';
+        setTimeout(() => {
+            activeButton.style.transform = '';
+        }, 200);
+    }
+    
     // Add loading state
     if (timeline) {
         timeline.style.opacity = '0.7';
         timeline.style.pointerEvents = 'none';
+        
+        // Add loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'filter-loading';
+        loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Filtering...';
+        loadingIndicator.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #1e40af;
+        `;
+        timeline.appendChild(loadingIndicator);
     }
     
     // Show/hide activity items with animation
@@ -56,6 +87,12 @@ function filterActivities(type) {
         if (timeline) {
             timeline.style.opacity = '1';
             timeline.style.pointerEvents = 'auto';
+            
+            // Remove loading indicator
+            const loadingIndicator = timeline.querySelector('.filter-loading');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
         }
         
         // Show no activity message if no items are visible
@@ -80,9 +117,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     
     filterButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Add click animation
+            this.style.transform = 'translateY(-1px) scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+            
             const filterType = this.dataset.filter;
             filterActivities(filterType);
+        });
+        
+        // Add keyboard support
+        btn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
         });
     });
     
