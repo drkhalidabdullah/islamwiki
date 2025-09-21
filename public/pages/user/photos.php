@@ -103,17 +103,25 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s P
                     </div>
                 </div>
                 
-                <!-- Navigation Tabs -->
-                <div class="profile-nav">
-                    <a href="/user/<?php echo htmlspecialchars($profile_user['username']); ?>" class="nav-item">
-                        <i class="fas fa-user"></i> Posts
-                    </a>
-                    <a href="/user/<?php echo htmlspecialchars($profile_user['username']); ?>/photos" class="nav-item active">
-                        <i class="fas fa-images"></i> Photos
-                    </a>
-                    <a href="/user/<?php echo htmlspecialchars($profile_user['username']); ?>?tab=about" class="nav-item">
-                        <i class="fas fa-info-circle"></i> About
-                    </a>
+                <!-- Profile Navigation -->
+                <div class="card">
+                    <nav class="nav-tabs">
+                        <a href="/user/<?php echo $profile_user['username']; ?>" class="nav-tab">
+                            Posts
+                        </a>
+                        <a href="/user/<?php echo $profile_user['username']; ?>/photos" class="nav-tab active">
+                            Photos
+                        </a>
+                        <a href="/user/<?php echo $profile_user['username']; ?>/events" class="nav-tab">
+                            Events
+                        </a>
+                        <a href="/user/<?php echo $profile_user['username']; ?>/about" class="nav-tab">
+                            About
+                        </a>
+                        <a href="/user/<?php echo $profile_user['username']; ?>/activity" class="nav-tab">
+                            Activity
+                        </a>
+                    </nav>
                 </div>
                 
                 <!-- Photos Gallery -->
@@ -247,5 +255,5 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s P
     
     <script src="/skins/bismillah/assets/js/photos.js"></script>
     <script src="/skins/bismillah/assets/js/user_profile.js"></script>
-</body>
-</html>
+    
+    <?php include '../../includes/footer.php'; ?>
