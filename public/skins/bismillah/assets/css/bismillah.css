@@ -2336,16 +2336,26 @@ html, body {
     padding: 0 !important;
 }
 
-/* Add top padding to main content to account for fixed newsbar and maintenance banner */
+/* Add top padding to main content to account for fixed header-dashboard, newsbar and maintenance banner */
 .main-content {
-    padding-top: 60px !important;
+    padding-top: 120px !important; /* 60px header-dashboard + 60px newsbar */
     margin-top: 0 !important;
 }
 
-/* When both maintenance banner and newsbar are present */
-.maintenance-banner + .newsbar + .main-content,
-.maintenance-banner + .main-content {
-    padding-top: 120px !important;
+/* When maintenance banner is present with header-dashboard and newsbar */
+.maintenance-banner + .header-dashboard + .newsbar + .main-content,
+.maintenance-banner + .header-dashboard + .main-content {
+    padding-top: 180px !important; /* 60px maintenance + 60px header-dashboard + 60px newsbar */
+}
+
+/* When only header-dashboard is present (no newsbar) */
+.header-dashboard + .main-content {
+    padding-top: 60px !important;
+}
+
+/* When only newsbar is present (no header-dashboard) */
+.newsbar + .main-content {
+    padding-top: 60px !important;
 }
 
 /* When sidebar and newsbar are hidden during maintenance mode */

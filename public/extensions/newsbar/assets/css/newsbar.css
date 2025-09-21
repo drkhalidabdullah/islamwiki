@@ -1,6 +1,6 @@
 /* News Bar Extension Styles */
 
-/* Newsbar Styles - positioned at absolute top, accounting for sidebar */
+/* Newsbar Styles - positioned below header-dashboard, accounting for sidebar */
 .newsbar {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -9,7 +9,7 @@
     border-radius: 0;
     overflow: hidden;
     position: fixed;
-    top: 0;
+    top: 60px; /* Position below header-dashboard */
     left: 60px;
     z-index: 10000;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);

@@ -97,6 +97,9 @@ if ($toast_message) {
     
     <!-- Load search overlay CSS for all pages -->
     <link rel="stylesheet" href="/skins/bismillah/assets/css/search.css">
+    
+    <!-- Load header dashboard CSS -->
+    <link rel="stylesheet" href="/skins/bismillah/assets/css/header_dashboard.css">
 </head>
 <body>
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
@@ -271,6 +274,11 @@ if ($toast_message) {
         ?>
         <?php endif; ?>
     </nav>
+    <?php endif; ?>
+    
+    <!-- Header Dashboard -->
+    <?php if (!is_maintenance_mode() || is_logged_in()): ?>
+    <?php include __DIR__ . '/header_dashboard.php'; ?>
     <?php endif; ?>
     
     <!-- Maintenance Mode Banner (for admins) -->
