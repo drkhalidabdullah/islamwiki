@@ -65,6 +65,7 @@ RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/about/?$ /pages/user/about.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/events/?$ /pages/user/events.php?username=$1 [L,QSA]
+RewriteRule ^user/([a-zA-Z0-9\-_]+)/activity/?$ /pages/user/activity.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
 
 # Search pages

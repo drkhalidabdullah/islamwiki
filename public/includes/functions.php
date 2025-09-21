@@ -1018,6 +1018,199 @@ function is_event_attendee($user_id, $event_id) {
     }
 }
 
+function get_user_activity($user_id, $limit = 50, $offset = 0) {
+    global $pdo;
+    
+    try {
+        // Get posts activity
+        $posts_stmt = $pdo->prepare("
+            SELECT 
+                'post' as type,
+                id as post_id,
+                content,
+                created_at,
+                likes_count,
+                comments_count,
+                shares_count,
+                NULL as target_user_id,
+                NULL as target_username
+            FROM user_posts 
+            WHERE user_id = ? AND is_public = 1
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $posts_stmt->execute([$user_id, $limit, $offset]);
+        $posts = $posts_stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get comments activity
+        $comments_stmt = $pdo->prepare("
+            SELECT 
+                'comment' as type,
+                pc.id as comment_id,
+                pc.content,
+                pc.created_at,
+                pc.likes_count,
+                NULL as comments_count,
+                NULL as shares_count,
+                up.user_id as target_user_id,
+                u.username as target_username
+            FROM post_comments pc
+            JOIN user_posts up ON pc.post_id = up.id
+            JOIN users u ON up.user_id = u.id
+            WHERE pc.user_id = ?
+            ORDER BY pc.created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $comments_stmt->execute([$user_id, $limit, $offset]);
+        $comments = $comments_stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get likes activity
+        $likes_stmt = $pdo->prepare("
+            SELECT 
+                'like' as type,
+                pi.post_id,
+                up.content,
+                pi.created_at,
+                up.likes_count,
+                up.comments_count,
+                up.shares_count,
+                up.user_id as target_user_id,
+                u.username as target_username
+            FROM post_interactions pi
+            JOIN user_posts up ON pi.post_id = up.id
+            JOIN users u ON up.user_id = u.id
+            WHERE pi.user_id = ? AND pi.interaction_type = 'like'
+            ORDER BY pi.created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $likes_stmt->execute([$user_id, $limit, $offset]);
+        $likes = $likes_stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get follows activity
+        $follows_stmt = $pdo->prepare("
+            SELECT 
+                'follow' as type,
+                NULL as post_id,
+                NULL as content,
+                uf.created_at,
+                NULL as likes_count,
+                NULL as comments_count,
+                NULL as shares_count,
+                uf.following_id as target_user_id,
+                u.username as target_username
+            FROM user_follows uf
+            JOIN users u ON uf.following_id = u.id
+            WHERE uf.follower_id = ?
+            ORDER BY uf.created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $follows_stmt->execute([$user_id, $limit, $offset]);
+        $follows = $follows_stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get articles activity
+        $articles_stmt = $pdo->prepare("
+            SELECT 
+                'article' as type,
+                wa.id as article_id,
+                wa.title as content,
+                wa.created_at,
+                wa.views_count as likes_count,
+                NULL as comments_count,
+                NULL as shares_count,
+                NULL as target_user_id,
+                NULL as target_username
+            FROM wiki_articles wa
+            WHERE wa.author_id = ? AND wa.status = 'published'
+            ORDER BY wa.created_at DESC
+            LIMIT ? OFFSET ?
+        ");
+        $articles_stmt->execute([$user_id, $limit, $offset]);
+        $articles = $articles_stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Combine all activities
+        $all_activities = array_merge($posts, $comments, $likes, $follows, $articles);
+        
+        // Sort by created_at descending
+        usort($all_activities, function($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        });
+        
+        // Limit results
+        return array_slice($all_activities, 0, $limit);
+        
+    } catch (Exception $e) {
+        error_log("Error fetching user activity: " . $e->getMessage());
+        return [];
+    }
+}
+
+function format_activity_date($date) {
+    $today = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    
+    if ($date === $today) {
+        return 'Today';
+    } elseif ($date === $yesterday) {
+        return 'Yesterday';
+    } else {
+        return date('F j, Y', strtotime($date));
+    }
+}
+
+function get_activity_icon($type) {
+    switch ($type) {
+        case 'post':
+            return '<i class="fas fa-edit"></i>';
+        case 'comment':
+            return '<i class="fas fa-comment"></i>';
+        case 'like':
+            return '<i class="fas fa-heart"></i>';
+        case 'follow':
+            return '<i class="fas fa-user-plus"></i>';
+        case 'article':
+            return '<i class="fas fa-file-alt"></i>';
+        default:
+            return '<i class="fas fa-circle"></i>';
+    }
+}
+
+function format_activity_text($item, $profile_user) {
+    $username = $profile_user['display_name'] ?: $profile_user['username'];
+    
+    switch ($item['type']) {
+        case 'post':
+            return "<strong>{$username}</strong> created a new post";
+        case 'comment':
+            $target = $item['target_username'] ? " on <strong>{$item['target_username']}</strong>'s post" : '';
+            return "<strong>{$username}</strong> commented{$target}";
+        case 'like':
+            $target = $item['target_username'] ? " <strong>{$item['target_username']}</strong>'s post" : ' a post';
+            return "<strong>{$username}</strong> liked{$target}";
+        case 'follow':
+            return "<strong>{$username}</strong> started following <strong>{$item['target_username']}</strong>";
+        case 'article':
+            return "<strong>{$username}</strong> published a new article";
+        default:
+            return "<strong>{$username}</strong> performed an action";
+    }
+}
+
+function format_activity_preview($item) {
+    $content = $item['content'];
+    
+    // Truncate content
+    if (strlen($content) > 150) {
+        $content = substr($content, 0, 150) . '...';
+    }
+    
+    // Convert markdown to HTML for preview
+    $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
+    $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
+    $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+    
+    return $content;
+}
+
 function is_post_liked($user_id, $post_id) {
     global $pdo;
     
