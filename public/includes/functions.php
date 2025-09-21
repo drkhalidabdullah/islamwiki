@@ -1114,7 +1114,7 @@ function get_user_activity($user_id, $limit = 50, $offset = 0) {
                 wa.id as article_id,
                 wa.title as content,
                 wa.created_at,
-                wa.views_count as likes_count,
+                wa.view_count as likes_count,
                 NULL as comments_count,
                 NULL as shares_count,
                 NULL as target_user_id,
