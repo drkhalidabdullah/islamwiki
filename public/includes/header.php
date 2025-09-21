@@ -224,6 +224,11 @@ if ($toast_message) {
     <?php include __DIR__ . '/header_dashboard.php'; ?>
     <?php endif; ?>
     
+    <!-- Right Sidebar - Friends and Messages -->
+    <?php if (is_logged_in() && $enable_social): ?>
+    <?php include __DIR__ . '/right_sidebar_simple.php'; ?>
+    <?php endif; ?>
+    
     <!-- Maintenance Mode Banner (for admins) -->
     <?php if (should_show_maintenance_banner()): ?>
     <div class="maintenance-banner">

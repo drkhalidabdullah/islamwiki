@@ -152,6 +152,7 @@ body {
 .main-content {
     margin-top: 0;
     margin-left: 60px;
+    margin-right: 0;
     min-height: 100vh;
     padding: 0;
     background: #f9fafb;
@@ -2400,6 +2401,20 @@ html body:has(.newsbar:not(.hidden)) .main-content {
 .main-content.maintenance-mode {
     padding-top: 0 !important;
     margin-left: 0 !important;
+}
+
+/* Right Sidebar Adjustments */
+body:has(.right-sidebar) .main-content {
+    margin-right: 60px !important;
+    width: calc(100% - 120px) !important; /* 60px left sidebar + 60px right sidebar */
+}
+
+/* Responsive adjustments for right sidebar */
+@media (max-width: 768px) {
+    body:has(.right-sidebar) .main-content {
+        margin-right: 0 !important;
+        width: calc(100% - 60px) !important; /* Only left sidebar on mobile */
+    }
 }
 
 /* Maintenance Banner Styles */

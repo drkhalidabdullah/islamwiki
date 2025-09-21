@@ -13,8 +13,8 @@
     left: 60px;
     z-index: 10002;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    width: calc(100vw - 60px);
-    max-width: calc(100vw - 60px);
+    width: calc(100vw - 120px);
+    max-width: calc(100vw - 120px);
     box-sizing: border-box;
     margin-top: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;

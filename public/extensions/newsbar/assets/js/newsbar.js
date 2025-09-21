@@ -65,13 +65,14 @@ window.closeNewsbar = function() {
             }
             localStorage.setItem('newsbar-hidden', 'false');
         }
-    } else {
-        // Newsbar is visible, ensure main content has proper padding
-        const newsbar = document.querySelector('.newsbar');
-        const mainContent = document.querySelector('.main-content');
-        if (newsbar && mainContent && !newsbar.classList.contains('hidden')) {
-            mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
-        }
+    }
+    
+    // Ensure main content has proper padding
+    const newsbar = document.querySelector('.newsbar');
+    const mainContent = document.querySelector('.main-content');
+    if (newsbar && mainContent && !newsbar.classList.contains('hidden')) {
+        mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
+    }
     }
 };
 
