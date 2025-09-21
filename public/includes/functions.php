@@ -976,6 +976,56 @@ function update_privacy_setting($user_id, $section, $visibility) {
     }
 }
 
+function get_user_events($user_id, $limit = 20, $offset = 0) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                e.*,
+                COUNT(ea.user_id) as attendees_count
+            FROM user_events e
+            LEFT JOIN event_attendees ea ON e.id = ea.event_id
+            WHERE e.user_id = ?
+            GROUP BY e.id
+            ORDER BY e.start_date DESC
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$user_id, $limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log("Error fetching user events: " . $e->getMessage());
+        return [];
+    }
+}
+
+function format_event_time($start_date, $end_date = null) {
+    $start = new DateTime($start_date);
+    $start_formatted = $start->format('M j, Y');
+    
+    if ($end_date && $end_date != $start_date) {
+        $end = new DateTime($end_date);
+        $end_formatted = $end->format('M j, Y');
+        return $start_formatted . ' - ' . $end_formatted;
+    }
+    
+    return $start_formatted;
+}
+
+function is_event_attendee($user_id, $event_id) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM event_attendees WHERE user_id = ? AND event_id = ?");
+        $stmt->execute([$user_id, $event_id]);
+        $result = $stmt->fetch();
+        return $result['count'] > 0;
+    } catch (Exception $e) {
+        error_log("Error checking event attendance: " . $e->getMessage());
+        return false;
+    }
+}
+
 function is_post_liked($user_id, $post_id) {
     global $pdo;
     

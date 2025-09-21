@@ -64,6 +64,7 @@ RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/about/?$ /pages/user/about.php?username=$1 [L,QSA]
+RewriteRule ^user/([a-zA-Z0-9\-_]+)/events/?$ /pages/user/events.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
 
 # Search pages
@@ -76,6 +77,8 @@ RewriteRule ^api/ajax/send_message/?$ /api/ajax/send_message.php [L,QSA]
 RewriteRule ^api/ajax/get_messages/?$ /api/ajax/get_messages.php [L,QSA]
 RewriteRule ^api/ajax/update_about/?$ /api/ajax/update_about.php [L,QSA]
 RewriteRule ^api/ajax/update_privacy/?$ /api/ajax/update_privacy.php [L,QSA]
+RewriteRule ^api/ajax/create_event/?$ /api/ajax/create_event.php [L,QSA]
+RewriteRule ^api/ajax/toggle_event_attendance/?$ /api/ajax/toggle_event_attendance.php [L,QSA]
 
 # Social pages
 RewriteRule ^feed/?$ /pages/social/feed.php [L,QSA]
