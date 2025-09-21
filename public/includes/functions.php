@@ -944,6 +944,38 @@ function get_user_achievements($user_id) {
     return [];
 }
 
+function get_privacy_setting($user_id, $section) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("SELECT visibility FROM user_privacy_settings WHERE user_id = ? AND section_name = ?");
+        $stmt->execute([$user_id, $section]);
+        $result = $stmt->fetch();
+        
+        return $result ? $result['visibility'] : 'community'; // Default to community
+    } catch (Exception $e) {
+        error_log("Error getting privacy setting: " . $e->getMessage());
+        return 'community';
+    }
+}
+
+function update_privacy_setting($user_id, $section, $visibility) {
+    global $pdo;
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO user_privacy_settings (user_id, section_name, visibility) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE visibility = ?
+        ");
+        $stmt->execute([$user_id, $section, $visibility, $visibility]);
+        return true;
+    } catch (Exception $e) {
+        error_log("Error updating privacy setting: " . $e->getMessage());
+        return false;
+    }
+}
+
 function is_post_liked($user_id, $post_id) {
     global $pdo;
     

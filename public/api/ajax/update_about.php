@@ -34,6 +34,7 @@ try {
             // Update contact information in user_profiles
             $location = trim($_POST['location'] ?? '');
             $website = trim($_POST['website'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
             
             // Check if profile exists
             $stmt = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
@@ -41,11 +42,11 @@ try {
             $profile = $stmt->fetch();
             
             if ($profile) {
-                $stmt = $pdo->prepare("UPDATE user_profiles SET location = ?, website = ? WHERE user_id = ?");
-                $stmt->execute([$location, $website, $user_id]);
+                $stmt = $pdo->prepare("UPDATE user_profiles SET location = ?, website = ?, phone = ? WHERE user_id = ?");
+                $stmt->execute([$location, $website, $phone, $user_id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, website) VALUES (?, ?, ?)");
-                $stmt->execute([$user_id, $location, $website]);
+                $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, website, phone) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$user_id, $location, $website, $phone]);
             }
             break;
             

@@ -94,6 +94,30 @@ document.getElementById('editAboutForm').addEventListener('submit', function(e) 
     });
 });
 
+// Update privacy setting
+function updatePrivacy(section, visibility) {
+    const formData = new FormData();
+    formData.append('section', section);
+    formData.append('visibility', visibility);
+    
+    fetch('/api/ajax/update_privacy.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`Privacy setting updated for ${section} section`, 'success');
+        } else {
+            showNotification(data.message || 'Failed to update privacy setting', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred while updating privacy setting', 'error');
+    });
+}
+
 // Show notification
 function showNotification(message, type = 'info') {
     // Remove existing notifications

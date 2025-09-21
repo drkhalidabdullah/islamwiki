@@ -79,11 +79,21 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                 <div class="about-card">
                     <div class="about-card-header">
                         <h3><i class="fas fa-user"></i> Basic Information</h3>
-                        <?php if ($current_user_id == $profile_user['id']): ?>
-                            <button class="edit-section-btn" onclick="editSection('basic')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        <?php endif; ?>
+                        <div class="section-controls">
+                            <?php if ($current_user_id == $profile_user['id']): ?>
+                                <div class="privacy-toggle" data-section="basic">
+                                    <select class="privacy-select" onchange="updatePrivacy('basic', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'basic') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                </div>
+                                <button class="edit-section-btn" onclick="editSection('basic')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="about-card-content">
                         <div class="info-item">
@@ -113,11 +123,21 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                 <div class="about-card">
                     <div class="about-card-header">
                         <h3><i class="fas fa-address-book"></i> Contact Information</h3>
-                        <?php if ($current_user_id == $profile_user['id']): ?>
-                            <button class="edit-section-btn" onclick="editSection('contact')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        <?php endif; ?>
+                        <div class="section-controls">
+                            <?php if ($current_user_id == $profile_user['id']): ?>
+                                <div class="privacy-toggle" data-section="contact">
+                                    <select class="privacy-select" onchange="updatePrivacy('contact', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'contact') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                </div>
+                                <button class="edit-section-btn" onclick="editSection('contact')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="about-card-content">
                         <div class="info-item">
@@ -136,6 +156,10 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                                 <?php endif; ?>
                             </span>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value"><?php echo htmlspecialchars($profile_data['phone'] ?: 'Not specified'); ?></span>
+                        </div>
                     </div>
                 </div>
 
@@ -143,11 +167,21 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                 <div class="about-card">
                     <div class="about-card-header">
                         <h3><i class="fas fa-heart"></i> Personal Information</h3>
-                        <?php if ($current_user_id == $profile_user['id']): ?>
-                            <button class="edit-section-btn" onclick="editSection('personal')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        <?php endif; ?>
+                        <div class="section-controls">
+                            <?php if ($current_user_id == $profile_user['id']): ?>
+                                <div class="privacy-toggle" data-section="personal">
+                                    <select class="privacy-select" onchange="updatePrivacy('personal', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'personal') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                </div>
+                                <button class="edit-section-btn" onclick="editSection('personal')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="about-card-content">
                         <div class="info-item">
@@ -173,11 +207,21 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                 <div class="about-card">
                     <div class="about-card-header">
                         <h3><i class="fas fa-graduation-cap"></i> Education & Work</h3>
-                        <?php if ($current_user_id == $profile_user['id']): ?>
-                            <button class="edit-section-btn" onclick="editSection('education')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        <?php endif; ?>
+                        <div class="section-controls">
+                            <?php if ($current_user_id == $profile_user['id']): ?>
+                                <div class="privacy-toggle" data-section="education">
+                                    <select class="privacy-select" onchange="updatePrivacy('education', this.value)">
+                                        <option value="public" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'public' ? 'selected' : ''; ?>>Public</option>
+                                        <option value="community" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'community' ? 'selected' : ''; ?>>Community</option>
+                                        <option value="followers" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'followers' ? 'selected' : ''; ?>>Followers</option>
+                                        <option value="private" <?php echo get_privacy_setting($profile_user['id'], 'education') == 'private' ? 'selected' : ''; ?>>Private</option>
+                                    </select>
+                                </div>
+                                <button class="edit-section-btn" onclick="editSection('education')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="about-card-content">
                         <div class="info-item">
@@ -257,6 +301,10 @@ $page_title = $profile_user['display_name'] ?: $profile_user['username'] . "'s A
                         <div class="form-group">
                             <label for="website">Website</label>
                             <input type="url" id="website" name="website" value="<?php echo htmlspecialchars($profile_data['website']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($profile_data['phone']); ?>">
                         </div>
                     </div>
 
