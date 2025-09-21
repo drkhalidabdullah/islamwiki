@@ -141,6 +141,11 @@
     animation-play-state: paused;
 }
 
+/* Hidden state */
+.newsbar.hidden {
+    display: none;
+}
+
 /* Animation */
 @keyframes scroll {
     0% {

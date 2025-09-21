@@ -2336,10 +2336,22 @@ html, body {
     padding: 0 !important;
 }
 
-/* Add top padding to main content to account for fixed header-dashboard, newsbar and maintenance banner */
+/* Add top padding to main content to account for fixed header-dashboard */
 .main-content {
-    padding-top: 120px !important; /* 60px header-dashboard + 60px newsbar */
+    padding-top: 60px !important; /* 60px header-dashboard */
     margin-top: 0 !important;
+}
+
+/* When newsbar is present, add additional padding */
+.newsbar + .main-content,
+.header-dashboard + .newsbar + .main-content {
+    padding-top: 120px !important; /* 60px header-dashboard + 60px newsbar */
+}
+
+/* When newsbar is hidden, only account for header-dashboard */
+.newsbar.hidden + .main-content,
+.header-dashboard + .newsbar.hidden + .main-content {
+    padding-top: 60px !important; /* Only 60px header-dashboard */
 }
 
 /* When maintenance banner is present with header-dashboard and newsbar */

@@ -32,6 +32,16 @@ window.closeNewsbar = function() {
         
         newsbar.classList.toggle('hidden');
         
+        // Adjust main content padding based on newsbar visibility
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            if (newsbar.classList.contains('hidden')) {
+                mainContent.style.paddingTop = '60px'; // Only header-dashboard
+            } else {
+                mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
+            }
+        }
+        
         // Update button icon and title
         if (newsbar.classList.contains('hidden')) {
             console.log('Newsbar is now hidden, showing arrow');
@@ -55,6 +65,14 @@ window.closeNewsbar = function() {
             }
             localStorage.setItem('newsbar-hidden', 'false');
         }
+    } else {
+        // Newsbar is visible, ensure main content has proper padding
+        const newsbar = document.querySelector('.newsbar');
+        const mainContent = document.querySelector('.main-content');
+        if (newsbar && mainContent && !newsbar.classList.contains('hidden')) {
+            mainContent.style.paddingTop = '120px'; // Header-dashboard + newsbar
+        }
+    }
 };
 
 // Check if newsbar should be hidden on page load
@@ -69,6 +87,12 @@ document.addEventListener("DOMContentLoaded", function() {
         if (newsbar) {
             newsbar.classList.add('hidden');
             console.log('Added hidden class to newsbar');
+            
+            // Adjust main content padding when newsbar is hidden
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.style.paddingTop = '60px'; // Only header-dashboard
+            }
             
             // Update button icons to show arrow
             const floatingCloseBtn = document.querySelector('.newsbar-floating-controls .newsbar-floating-close i');
