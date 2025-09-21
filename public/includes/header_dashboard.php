@@ -20,7 +20,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 ?>
 
 <!-- Header Dashboard -->
-<div class="header-dashboard" id="headerDashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2a2a2a !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: 100vw !important; box-sizing: border-box !important;">
+<div class="header-dashboard" id="headerDashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2c3e50 !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: 100vw !important; box-sizing: border-box !important;">
     <div class="header-dashboard-container">
         <!-- News Toggle & Search Bar -->
         <div class="header-search-container">
@@ -89,21 +89,54 @@ $enable_notifications = get_system_setting('enable_notifications', true);
         </div>
         <?php endif; ?>
 
-        <!-- Utility Icons -->
-        <div class="header-utilities">
-            <div class="utility-separator"></div>
-            <button class="utility-btn" title="Settings" onclick="window.location.href='/settings'">
-                <i class="iw iw-cog"></i>
-            </button>
-            <?php if ($enable_notifications): ?>
-            <button class="utility-btn" title="Notifications" onclick="window.location.href='/pages/notifications.php'">
-                <i class="iw iw-bell"></i>
-            </button>
-            <?php endif; ?>
-        </div>
+        <!-- Right Side Group -->
+        <div class="header-right-group">
+            <!-- Utility Icons -->
+            <div class="header-utilities">
+                <?php if (is_logged_in() && $enable_social): ?>
+                <div class="utility-dropdown">
+                    <button class="utility-btn" title="Messages" onclick="toggleMessagesDropdown()">
+                        <i class="iw iw-comment"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="utility-dropdown-menu" id="messagesDropdown">
+                        <div class="dropdown-header">
+                            <h4>Recent Messages</h4>
+                            <a href="/pages/social/messages.php" class="view-all">View All</a>
+                        </div>
+                        <div class="dropdown-content" id="messagesContent">
+                            <div class="loading-messages">Loading messages...</div>
+                            <div class="dropdown-footer">
+                                <a href="/pages/social/messages.php?action=compose" class="dropdown-link">New Message</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if ($enable_notifications): ?>
+                <div class="utility-dropdown">
+                    <button class="utility-btn" title="Notifications" onclick="toggleNotificationsDropdown()">
+                        <i class="iw iw-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </button>
+                    <div class="utility-dropdown-menu" id="notificationsDropdown">
+                        <div class="dropdown-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" onclick="markAllNotificationsRead()">Mark All Read</button>
+                        </div>
+                        <div class="dropdown-content" id="notificationsContent">
+                            <div class="loading-notifications">Loading notifications...</div>
+                            <div class="dropdown-footer">
+                                <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
 
-        <!-- User Menu -->
-        <div class="header-user-menu">
+            <!-- User Menu -->
+            <div class="header-user-menu">
             <?php if (is_logged_in()): ?>
                 <div class="user-dropdown">
                     <button class="user-profile-btn" id="userProfileBtn">
@@ -165,16 +198,17 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                     <a href="/register" class="btn-register">Sign Up</a>
                 </div>
             <?php endif; ?>
-        </div>
+            </div>
 
-        <!-- Right Sidebar Toggle -->
-        <?php if (is_logged_in() && $enable_social): ?>
-        <div class="header-right-sidebar-toggle">
-            <button class="right-sidebar-toggle-btn" id="rightSidebarToggleBtn" title="Toggle Right Sidebar">
-                <i class="iw iw-users"></i>
-            </button>
+            <!-- Right Sidebar Toggle -->
+            <?php if (is_logged_in() && $enable_social): ?>
+            <div class="header-right-sidebar-toggle">
+                <button class="right-sidebar-toggle-btn" id="rightSidebarToggleBtn" title="Toggle Right Sidebar">
+                    <i class="iw iw-users"></i>
+                </button>
+            </div>
+            <?php endif; ?>
         </div>
-        <?php endif; ?>
     </div>
 </div>
 
@@ -210,6 +244,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (userDropdown && !userProfileBtn.contains(e.target)) {
             userDropdown.classList.remove('show');
+        }
+        if (!e.target.closest('.utility-dropdown')) {
+            document.querySelectorAll('.utility-dropdown-menu').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
         }
     });
 
@@ -268,6 +307,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initialize newsbar state on page load
         initializeNewsbarState();
+    }
+    
+    // Load initial data for messages and notifications
+    if (document.getElementById('messagesDropdown')) {
+        loadMessagesData();
+    }
+    if (document.getElementById('notificationsDropdown')) {
+        loadNotificationsData();
     }
 });
 
@@ -561,6 +608,173 @@ function performHeaderSearch() {
     
     if (query) {
         window.location.href = '/search?q=' + encodeURIComponent(query);
+    }
+}
+
+// Messages dropdown functionality
+function toggleMessagesDropdown() {
+    const dropdown = document.getElementById('messagesDropdown');
+    const isOpen = dropdown.classList.contains('show');
+    
+    // Close all utility dropdowns
+    document.querySelectorAll('.utility-dropdown-menu').forEach(d => {
+        d.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (!isOpen) {
+        loadMessagesData();
+        dropdown.classList.add('show');
+    }
+}
+
+// Notifications dropdown functionality
+function toggleNotificationsDropdown() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const isOpen = dropdown.classList.contains('show');
+    
+    // Close all utility dropdowns
+    document.querySelectorAll('.utility-dropdown-menu').forEach(d => {
+        d.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (!isOpen) {
+        loadNotificationsData();
+        dropdown.classList.add('show');
+    }
+}
+
+// Mark all notifications as read
+function markAllNotificationsRead() {
+    console.log('Marking all notifications as read');
+    // This would typically make an AJAX call to mark all notifications as read
+    document.getElementById('notificationsDropdown').classList.remove('show');
+}
+
+// Load real messages data
+async function loadMessagesData() {
+    try {
+        const response = await fetch('/api/ajax/get_sidebar_messages.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            const messagesContent = document.getElementById('messagesContent');
+            const conversations = data.conversations;
+            
+            if (conversations.length === 0) {
+                messagesContent.innerHTML = `
+                    <div class="no-messages">No recent messages</div>
+                    <div class="dropdown-footer">
+                        <a href="/pages/social/messages.php?action=compose" class="dropdown-link">New Message</a>
+                    </div>
+                `;
+            } else {
+                let messagesHtml = '';
+                conversations.forEach(conv => {
+                    messagesHtml += `
+                        <div class="message-item" onclick="window.location.href='/pages/social/messages.php?conversation=${conv.id}'">
+                            <div class="message-avatar">
+                                <img src="${conv.avatar}" alt="${conv.display_name}">
+                                ${conv.unread_count > 0 ? `<div class="unread-badge">${conv.unread_count}</div>` : ''}
+                            </div>
+                            <div class="message-info">
+                                <span class="sender-name">${conv.display_name}</span>
+                                <span class="message-preview">${conv.last_message}</span>
+                                <span class="message-time">${conv.time}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                messagesContent.innerHTML = messagesHtml + `
+                    <div class="dropdown-footer">
+                        <a href="/pages/social/messages.php?action=compose" class="dropdown-link">New Message</a>
+                    </div>
+                `;
+            }
+            
+            // Update badge count
+            updateMessagesBadge(data.total_unread);
+        } else {
+            console.error('Failed to load messages:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+// Load real notifications data
+async function loadNotificationsData() {
+    try {
+        const response = await fetch('/api/ajax/get_sidebar_notifications.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            const notificationsContent = document.getElementById('notificationsContent');
+            const notifications = data.notifications;
+            
+            if (notifications.length === 0) {
+                notificationsContent.innerHTML = `
+                    <div class="no-notifications">No recent notifications</div>
+                    <div class="dropdown-footer">
+                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                    </div>
+                `;
+            } else {
+                let notificationsHtml = '';
+                notifications.forEach(notif => {
+                    notificationsHtml += `
+                        <div class="notification-item" onclick="window.location.href='${notif.url}'">
+                            <i class="${notif.icon}"></i>
+                            <div class="notification-info">
+                                <span class="notification-text">${notif.text}</span>
+                                <span class="notification-time">${notif.time}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                notificationsContent.innerHTML = notificationsHtml + `
+                    <div class="dropdown-footer">
+                        <a href="/pages/notifications.php" class="dropdown-link">View All Notifications</a>
+                    </div>
+                `;
+            }
+            
+            // Update badge count
+            updateNotificationsBadge(data.unread_count);
+        } else {
+            console.error('Failed to load notifications:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+    }
+}
+
+// Update messages badge count
+function updateMessagesBadge(count) {
+    const badge = document.querySelector('.utility-btn[title="Messages"] .notification-badge');
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+// Update notifications badge count
+function updateNotificationsBadge(count) {
+    const badge = document.querySelector('.utility-btn[title="Notifications"] .notification-badge');
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
     }
 }
 
