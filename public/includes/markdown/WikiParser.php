@@ -122,6 +122,7 @@ class WikiParser extends MarkdownParser {
         $content = $this->parseCategories($content);
         $content = $this->parseTemplates($content);
         $content = $this->parseFileLinks($content);
+        $content = $this->parseExternalLinks($content);
         
         // Handle inline templates before parent parsing
         $content = $this->handleInlineTemplates($content);
@@ -807,21 +808,42 @@ class WikiParser extends MarkdownParser {
     }
     
     /**
-     * Parse references: <ref>content</ref>
+     * Parse references: <ref>content</ref> or <ref name="name">content</ref>
      */
     private function parseReferences($content) {
-        $pattern = '/<ref>(.*?)<\/ref>/s';
+        // Pattern to match both <ref>content</ref> and <ref name="name">content</ref>
+        $pattern = '/<ref(?:\s+name=["\']([^"\']*)["\'])?>(.*?)<\/ref>/s';
         
         return preg_replace_callback($pattern, function($matches) {
-            $ref_content = $matches[1];
-            $ref_id = count($this->references) + 1;
+            $ref_name = isset($matches[1]) ? trim($matches[1]) : null;
+            $ref_content = $matches[2];
             
-            $this->references[] = [
-                'id' => $ref_id,
-                'content' => $ref_content
-            ];
+            // Check if this is a named reference that already exists
+            $existing_ref_id = null;
+            if ($ref_name) {
+                foreach ($this->references as $existing_ref) {
+                    if (isset($existing_ref['name']) && $existing_ref['name'] === $ref_name) {
+                        $existing_ref_id = $existing_ref['id'];
+                        break;
+                    }
+                }
+            }
             
-            return '<sup><a href="#ref' . $ref_id . '" class="reference-link">[' . $ref_id . ']</a></sup>';
+            if ($existing_ref_id) {
+                // Return link to existing reference
+                return '<sup><a href="#ref' . $existing_ref_id . '" class="reference-link">[' . $existing_ref_id . ']</a></sup>';
+            } else {
+                // Create new reference
+                $ref_id = count($this->references) + 1;
+                
+                $this->references[] = [
+                    'id' => $ref_id,
+                    'name' => $ref_name,
+                    'content' => $ref_content
+                ];
+                
+                return '<sup><a href="#ref' . $ref_id . '" class="reference-link">[' . $ref_id . ']</a></sup>';
+            }
         }, $content);
     }
     
@@ -1075,11 +1097,13 @@ class WikiParser extends MarkdownParser {
      * Parse wiki formatting: '''bold''', ''italic'', etc.
      */
     private function parseWikiFormatting($content) {
-        // Bold: '''text''' - use non-greedy matching to handle apostrophes
+        // Bold: '''text''' (MediaWiki) and **text** (Markdown) - use non-greedy matching
         $content = preg_replace('/\'\'\'(.*?)\'\'\'/s', '<strong>$1</strong>', $content);
+        $content = preg_replace('/\*\*(.*?)\*\*/s', '<strong>$1</strong>', $content);
         
-        // Italic: ''text'' - use non-greedy matching to handle apostrophes
+        // Italic: ''text'' (MediaWiki) and *text* (Markdown) - use non-greedy matching
         $content = preg_replace('/\'\'(.*?)\'\'/s', '<em>$1</em>', $content);
+        $content = preg_replace('/\*(.*?)\*/s', '<em>$1</em>', $content);
         
         // Underline: <u>text</u>
         $content = preg_replace('/<u>([^<]+)<\/u>/', '<u>$1</u>', $content);
@@ -1087,7 +1111,7 @@ class WikiParser extends MarkdownParser {
         // Strikethrough: <s>text</s>
         $content = preg_replace('/<s>([^<]+)<\/s>/', '<s>$1</s>', $content);
         
-        // Code: <code>text</code>
+        // Code: <code>text</code> only (remove backtick parsing as it conflicts with Arabic transliteration)
         $content = preg_replace('/<code>([^<]+)<\/code>/', '<code>$1</code>', $content);
         
         return $content;
@@ -1103,7 +1127,7 @@ class WikiParser extends MarkdownParser {
         // Parse basic formatting
         $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
         $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
-        $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+        // Removed backtick parsing as it conflicts with Arabic transliteration
         
         return $content;
     }
@@ -1379,6 +1403,26 @@ class WikiParser extends MarkdownParser {
             $slug = $this->createSlug($page);
             
             return '<a href="/wiki/' . $slug . '" class="wiki-link">' . htmlspecialchars($text) . '</a>';
+        }, $content);
+        
+        return $content;
+    }
+    
+    /**
+     * Parse external links in main content [url] and [url text]
+     */
+    private function parseExternalLinks($content) {
+        // Parse external links [url] and [url text]
+        $content = preg_replace_callback('/\[(https?:\/\/[^\s\]]+)(?:\s+([^\]]+))?\]/', function($matches) {
+            $url = $matches[1];
+            $text = isset($matches[2]) ? $matches[2] : $url;
+            
+            // Validate URL
+            if ($this->isValidUrl($url)) {
+                return '<a href="' . htmlspecialchars($url) . '" class="external-link" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text) . '</a>';
+            }
+            
+            return $matches[0]; // Return original if invalid
         }, $content);
         
         return $content;
@@ -1676,6 +1720,14 @@ class WikiParser extends MarkdownParser {
                     $bracket_count--;
                     if ($bracket_count === 0 && $in_file) {
                         $end = $i + 2;
+                        // Continue to consume any consecutive ]] pairs or single ] characters
+                        while ($end < strlen($content) && (substr($content, $end, 2) === ']]' || substr($content, $end, 1) === ']')) {
+                            if (substr($content, $end, 2) === ']]') {
+                                $end += 2;
+                            } else {
+                                $end += 1;
+                            }
+                        }
                         break;
                     }
                 }

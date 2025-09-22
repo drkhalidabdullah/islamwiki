@@ -104,7 +104,7 @@ class MarkdownParser {
         
         // Code blocks
         $content = preg_replace('/```(.*?)```/s', '<pre><code>$1</code></pre>', $content);
-        $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+        // Removed backtick parsing as it conflicts with Arabic transliteration
         
         // Images
         $content = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1" class="post-image" >', $content);

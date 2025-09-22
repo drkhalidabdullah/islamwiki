@@ -5,15 +5,76 @@
 
 .article-header-top {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 2px solid #f3f4f6;
     position: relative;
 }
 
 .article-header-top.with-title {
     justify-content: space-between;
+}
+
+/* Header Separator */
+.article-header-separator {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0.5rem 0;
+}
+
+/* Subtitle Section */
+.article-subtitle-section {
+    width: 100%;
+}
+
+.article-subtitle-section .short-description {
+    font-size: 1rem;
+    color: #6b7280;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1.4;
+}
+
+/* Categories at bottom of content */
+.article-categories-bottom {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.article-categories-bottom h3 {
+    color: #374151;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.article-categories-bottom .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+/* Meta Row */
+.article-header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.article-header-meta .article-subtitle-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.article-header-meta .article-meta-compact {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
 }
 
 .article-header-top::after {
@@ -95,8 +156,23 @@
 
 /* Responsive design for category buttons */
 @media (max-width: 768px) {
+    .article-categories-bottom .categories-list {
+        justify-content: flex-start;
+    }
+    
     .article-categories-top .categories-list {
         justify-content: flex-start;
+    }
+    
+    /* Stack subtitle and meta on mobile */
+    .article-header-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .article-header-meta .article-meta-compact {
+        align-self: flex-end;
     }
     
     .category-button {

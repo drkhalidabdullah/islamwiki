@@ -48,7 +48,18 @@
     align-items: flex-start;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid var(--border-light);
+}
+
+/* Short Description Template */
+.short-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    line-height: 1.4;
 }
 
 .header-left h1 {
@@ -1766,12 +1777,15 @@
 
 /* Missing File Styling */
 .missing-file {
-    color: var(--text-error);
-    background: var(--bg-error);
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.875rem;
-    border: 1px solid var(--border-error);
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 2px solid #ffcdd2;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: inline-block;
+    margin: 2px 0;
 }
 
 /* Responsive Image Handling */

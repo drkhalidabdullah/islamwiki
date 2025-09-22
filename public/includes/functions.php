@@ -1218,7 +1218,7 @@ function format_activity_preview($item) {
     // Convert markdown to HTML for preview
     $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
     $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
-    $content = preg_replace('/`(.*?)`/', '<code>$1</code>', $content);
+    // Removed backtick parsing as it conflicts with Arabic transliteration
     
     // Convert @mentions to links
     $content = preg_replace('/@([a-zA-Z0-9_]+)/', '<a href="/user/$1" class="mention">@$1</a>', $content);

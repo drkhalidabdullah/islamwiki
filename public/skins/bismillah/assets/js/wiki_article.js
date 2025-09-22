@@ -12,6 +12,25 @@ let tocGenerated = false;
 let tocCollapsed = false;
 
 /**
+ * Extract and move short description to subtitle section
+ */
+function extractShortDescription() {
+    const subtitleSection = document.querySelector('.article-subtitle-section');
+    if (!subtitleSection) return;
+    
+    // Find short description in the article content
+    const shortDescription = document.querySelector('.article-content .short-description');
+    if (shortDescription) {
+        // Move the short description to the subtitle section
+        subtitleSection.appendChild(shortDescription);
+        
+        // Remove any empty paragraphs that might be left behind
+        const emptyParagraphs = document.querySelectorAll('.article-content p:empty');
+        emptyParagraphs.forEach(p => p.remove());
+    }
+}
+
+/**
  * Generate table of contents from article headings
  */
 function generateTOC() {
@@ -184,6 +203,9 @@ function toggleTOC() {
  * Initialize TOC when DOM is loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
+    // Extract short description first
+    extractShortDescription();
+    
     // Generate TOC after a short delay to ensure content is loaded
     setTimeout(() => {
         generateTOC();

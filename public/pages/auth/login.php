@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Clear return URL from session after we've captured it
                         unset($_SESSION['return_url']);
                         
-                        redirect($return_url);
+                        // Use the return URL from query parameter if available, otherwise use session
+                        $final_return_url = $_GET['return'] ?? $return_url;
+                        redirect($final_return_url);
                     } else {
                         // Failed login - increment attempts
                         $failed_attempts = $user['failed_login_attempts'] + 1;

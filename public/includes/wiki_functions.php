@@ -785,36 +785,178 @@ class EnhancedMarkdownParser extends MarkdownParser {
     }
     
     private function parseFileLinks($text) {
-        // Parse file syntax: [[File:filename.jpg|thumb|Caption with [[nested]] markup]]
-        $text = preg_replace_callback('/\[\[File:([^|\]]+)(?:\|([^|\]]+))?(?:\|(.*?))?\]\]/', function($matches) {
-            $filename = trim($matches[1]);
-            $options = isset($matches[2]) ? trim($matches[2]) : '';
-            $caption = isset($matches[3]) ? trim($matches[3]) : '';
-            
-            // Check if caption contains nested wiki markup
-            if (strpos($caption, '[[') !== false && strpos($caption, ']]') !== false) {
-                // For captions with nested markup, we need to parse them separately
-                $caption = parseWikiLinks($caption);
-            } else {
-                $caption = htmlspecialchars($caption);
-            }
-            
-            $file = get_wiki_file($filename);
-            if (!$file) {
-                return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
-            }
-            
-            $url = '/uploads/wiki/files/' . $file['filename'];
-            $is_thumb = $options === 'thumb';
-            
-            if ($is_thumb) {
-                return '<div class="wiki-thumbnail"><img src="' . $url . '" alt="' . htmlspecialchars($filename) . '" class="thumb-image"><div class="thumb-caption">' . $caption . '</div></div>';
-            } else {
-                return '<img src="' . $url . '" alt="' . htmlspecialchars($filename) . '">';
-            }
-        }, $text);
+        // Use a proper bracket-matching approach to handle nested [[...]] in captions
+        $pos = 0;
+        $result = '';
         
-        return $text;
+        while (($start = strpos($text, '[[File:', $pos)) !== false) {
+            // Add content before the file link
+            $result .= substr($text, $pos, $start - $pos);
+            
+            // Find the matching closing brackets
+            $bracket_count = 0;
+            $end = $start;
+            $in_file = false;
+            
+            for ($i = $start; $i < strlen($text); $i++) {
+                if (substr($text, $i, 2) === '[[') {
+                    $bracket_count++;
+                    if (substr($text, $i, 7) === '[[File:') {
+                        $in_file = true;
+                    }
+                } elseif (substr($text, $i, 2) === ']]') {
+                    $bracket_count--;
+                    if ($bracket_count === 0 && $in_file) {
+                        $end = $i + 2;
+                        // Continue to consume any consecutive ]] pairs or single ] characters
+                        while ($end < strlen($text) && (substr($text, $end, 2) === ']]' || substr($text, $end, 1) === ']')) {
+                            if (substr($text, $end, 2) === ']]') {
+                                $end += 2;
+                            } else {
+                                $end += 1;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            if ($end > $start) {
+                // Extract the full file link
+                $file_link = substr($text, $start, $end - $start);
+                
+                // Parse the file link
+                $parsed_link = $this->parseSingleFileLink($file_link);
+                $result .= $parsed_link;
+                
+                $pos = $end;
+            } else {
+                // No matching closing bracket found, skip this one
+                $result .= substr($text, $start, 7); // Add "[[File:"
+                $pos = $start + 7;
+            }
+        }
+        
+        // Add remaining content
+        $result .= substr($text, $pos);
+        
+        return $result;
+    }
+    
+    private function parseSingleFileLink($file_link) {
+        $content = substr($file_link, 2, -2);
+        $parts = explode('|', $content);
+        
+        if (count($parts) < 1) {
+            return $file_link;
+        }
+        
+        $filename = trim($parts[0]);
+        if (strpos($filename, 'File:') === 0) {
+            $filename = substr($filename, 5);
+        }
+        
+        $options = '';
+        $caption = '';
+        
+        if (count($parts) >= 2) {
+            $option_parts = [];
+            $caption_start_index = 1;
+            
+            for ($i = 1; $i < count($parts); $i++) {
+                $part = trim($parts[$i]);
+                
+                if (in_array($part, ['thumb', 'left', 'right', 'center']) || 
+                    preg_match('/^\d+px$/', $part) || 
+                    preg_match('/^\d+x\d+$/', $part) ||
+                    preg_match('/^\d+%$/', $part)) {
+                    $option_parts[] = $part;
+                    $caption_start_index = $i + 1;
+                } else {
+                    break;
+                }
+            }
+            
+            $options = implode('|', $option_parts);
+            
+            if ($caption_start_index < count($parts)) {
+                $caption_parts = array_slice($parts, $caption_start_index);
+                $caption = implode('|', $caption_parts);
+            }
+        }
+        
+        // Check if caption contains nested wiki markup
+        if (strpos($caption, '[[') !== false && strpos($caption, ']]') !== false) {
+            // For captions with nested markup, we need to parse them separately
+            $caption = $this->parseWikiLinks($caption);
+        } else {
+            $caption = htmlspecialchars($caption);
+        }
+        
+        $file = get_wiki_file($filename);
+        if (!$file) {
+            return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
+        }
+        
+        $url = '/uploads/wiki/files/' . $file['filename'];
+        
+        $option_array = explode('|', $options);
+        $is_thumb = in_array('thumb', $option_array);
+        $is_left = in_array('left', $option_array);
+        $is_right = in_array('right', $option_array);
+        $is_center = in_array('center', $option_array);
+        
+        $width = '';
+        $height = '';
+        foreach ($option_array as $option) {
+            if (preg_match('/^(\d+)px$/', $option, $matches)) {
+                $width = $matches[1] . 'px';
+            } elseif (preg_match('/^(\d+)x(\d+)$/', $option, $matches)) {
+                $width = $matches[1] . 'px';
+                $height = $matches[2] . 'px';
+            } elseif (preg_match('/^(\d+)%$/', $option, $matches)) {
+                $width = $matches[1] . '%';
+            }
+        }
+        
+        $class = 'wiki-image';
+        $style = '';
+        
+        if ($is_thumb) {
+            $class .= ' wiki-thumbnail';
+        } elseif ($is_left) {
+            $class .= ' wiki-image-left';
+            $style = 'float: left; margin-right: 10px;';
+        } elseif ($is_right) {
+            $class .= ' wiki-image-right';
+            $style = 'float: right; margin-left: 10px;';
+        } elseif ($is_center) {
+            $class .= ' wiki-image-center';
+            $style = 'display: block; margin: 0 auto;';
+        }
+        
+        if ($width) {
+            $style .= ($style ? ' ' : '') . 'width: ' . $width . ';';
+        }
+        if ($height) {
+            $style .= ($style ? ' ' : '') . 'height: ' . $height . ';';
+        }
+        
+        $html = '<div class="' . $class . '"';
+        if ($style) {
+            $html .= ' style="' . $style . '"';
+        }
+        $html .= '>';
+        
+        $html .= '<img src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($filename) . '" class="wiki-image-img" loading="lazy">';
+        
+        if ($caption) {
+            $html .= '<div class="wiki-image-caption">' . $caption . '</div>';
+        }
+        
+        $html .= '</div>';
+        
+        return $html;
     }
     
     private function parseCategories($text) {

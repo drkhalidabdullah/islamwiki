@@ -170,7 +170,7 @@ $is_main_page = ($article['slug'] === 'Main_Page');
         <header class="article-header">
             <!-- Compact Header Layout -->
             <div class="article-header-compact<?php echo $nocat_enabled ? ' no-categories' : ''; ?>">
-                <!-- Top Row: Title on left, Tools on right -->
+                <!-- Top Row: Title on left, Action buttons on right -->
                 <div class="article-header-top<?php echo !$notitle_enabled ? ' with-title' : ''; ?>">
                     <?php if (!$notitle_enabled): ?>
                         <h1 class="article-title-compact">
@@ -187,11 +187,9 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             <?php if ($has_move_protection): ?>
                                 <span class="move-protection-icon" title="This page is move-protected. Only administrators can move it.">⟷</span>
                             <?php endif; ?>
-                            <?php if ($has_no_protection): ?>
-                                <span class="no-protection-icon" title="This page is not protected. Anyone can edit it.">⚠️</span>
-                            <?php endif; ?>
                         </h1>
                     <?php endif; ?>
+                    
                     <div class="article-actions-compact">
                         <!-- View Source -->
                         <a href="/wiki/<?php echo $article['slug']; ?>/source" class="btn-icon-compact" title="View Source">
@@ -287,28 +285,17 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                             </div>
                         </div>
                         <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Categories Section -->
-                <?php if (!empty($article_categories) && !$nocat_enabled): ?>
-                <div class="article-categories-top">
-                    <div class="categories-list">
-                        <?php foreach ($article_categories as $category): ?>
-                        <a href="/wiki/category/<?php echo htmlspecialchars($category['slug']); ?>" 
-                           class="category-button" 
-                           title="<?php echo htmlspecialchars($category['description'] ?? ''); ?>">
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
+                <!-- Separator -->
+                <div class="article-header-separator"></div>
                 
-                <!-- Bottom Row: Date and Views on right -->
-                <div class="article-header-bottom">
-                    <div class="article-category-compact">
-                        <!-- Categories are now displayed at the top as buttons -->
+                <!-- Meta Row: Subtitle on left, Date and Views on right -->
+                <div class="article-header-meta">
+                    <div class="article-subtitle-section">
+                        <!-- Subtitle/Short Description will be parsed from content and displayed here -->
                     </div>
                     <div class="article-meta-compact">
                         <span class="article-date-compact">
@@ -350,6 +337,22 @@ $is_main_page = ($article['slug'] === 'Main_Page');
                 <div class="article-content">
                     <?php echo $parsed_content; ?>
                 </div>
+                
+                <!-- Categories at bottom of content -->
+                <?php if (!empty($article_categories) && !$nocat_enabled): ?>
+                <div class="article-categories-bottom">
+                    <h3>Categories</h3>
+                    <div class="categories-list">
+                        <?php foreach ($article_categories as $category): ?>
+                        <a href="/wiki/category/<?php echo htmlspecialchars($category['slug']); ?>" 
+                           class="category-button" 
+                           title="<?php echo htmlspecialchars($category['description'] ?? ''); ?>">
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </main>
             
             <!-- Right Sidebar: Tools -->

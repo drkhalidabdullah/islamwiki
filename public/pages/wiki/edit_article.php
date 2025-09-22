@@ -260,7 +260,7 @@ include "../../includes/header.php";;
                     <textarea id="content" name="content" required 
                               placeholder="Write your article content using Markdown..."><?php echo htmlspecialchars($article['content']); ?></textarea>
                 </div>
-                <div id="preview-container" style="display: none;">
+                <div id="preview-container" class="hidden">
                     <div id="preview-content"></div>
                 </div>
             </div>
@@ -323,13 +323,18 @@ function insertText(before, after) {
 
 function togglePreview() {
     const previewContainer = document.getElementById('preview-container');
-    if (!previewContainer) return;
+    if (!previewContainer) {
+        console.error('Preview container not found');
+        return;
+    }
     
-    if (previewContainer.style.display === 'none' || previewContainer.style.display === '') {
-        previewContainer.style.display = 'block';
+    if (previewContainer.classList.contains('hidden')) {
+        console.log('Showing preview');
+        previewContainer.classList.remove('hidden');
         updatePreview();
     } else {
-        previewContainer.style.display = 'none';
+        console.log('Hiding preview');
+        previewContainer.classList.add('hidden');
     }
 }
 
@@ -337,7 +342,12 @@ function updatePreview() {
     const contentTextarea = document.getElementById('content');
     const previewContent = document.getElementById('preview-content');
     
-    if (!contentTextarea || !previewContent) return;
+    if (!contentTextarea || !previewContent) {
+        console.error('Content textarea or preview content not found');
+        return;
+    }
+    
+    console.log('Updating preview...');
     
     const content = contentTextarea.value;
     if (!content.trim()) {
@@ -366,8 +376,13 @@ function updatePreview() {
     .catch(error => {
         console.error('Preview error:', error);
         previewContent.innerHTML = `<p style="color: red;">Preview error: ${error.message}</p>`;
+    })
+    .finally(() => {
+        // Heights are handled by flexbox layout
     });
 }
+
+// Heights are now handled by flexbox layout automatically
 
 // Auto-update preview on content change
 document.addEventListener('DOMContentLoaded', function() {
@@ -376,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (contentTextarea && previewContainer) {
         contentTextarea.addEventListener('input', function() {
-            if (previewContainer.style.display !== 'none') {
+            if (!previewContainer.classList.contains('hidden')) {
                 clearTimeout(window.previewTimeout);
                 window.previewTimeout = setTimeout(updatePreview, 1000);
             }
