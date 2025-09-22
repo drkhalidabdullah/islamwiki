@@ -1631,15 +1631,40 @@ class WikiParser extends MarkdownParser {
         if (strpos($filename, 'File:') === 0) {
             $filename = substr($filename, 5);
         }
-        $options = isset($parts[1]) ? trim($parts[1]) : '';
+        
+        // Parse options and caption more intelligently
+        $options = '';
         $caption = '';
         
-        // Join remaining parts as caption (handles nested | characters)
-        if (count($parts) > 2) {
-            $caption_parts = array_slice($parts, 2);
-            $caption = implode('|', $caption_parts);
-        } elseif (count($parts) === 2) {
-            $caption = trim($parts[1]);
+        if (count($parts) >= 2) {
+            // Look for common option patterns to determine where options end and caption begins
+            $option_parts = [];
+            $caption_start_index = 1;
+            
+            // Check each part to see if it's an option or caption
+            for ($i = 1; $i < count($parts); $i++) {
+                $part = trim($parts[$i]);
+                
+                // Common option patterns
+                if (in_array($part, ['thumb', 'left', 'right', 'center']) || 
+                    preg_match('/^\d+px$/', $part) || 
+                    preg_match('/^\d+x\d+$/', $part) ||
+                    preg_match('/^\d+%$/', $part)) {
+                    $option_parts[] = $part;
+                    $caption_start_index = $i + 1;
+                } else {
+                    // This looks like caption content, stop here
+                    break;
+                }
+            }
+            
+            $options = implode('|', $option_parts);
+            
+            // Join remaining parts as caption
+            if ($caption_start_index < count($parts)) {
+                $caption_parts = array_slice($parts, $caption_start_index);
+                $caption = implode('|', $caption_parts);
+            }
         }
         
         // Check if caption contains nested wiki markup
@@ -1657,10 +1682,27 @@ class WikiParser extends MarkdownParser {
         }
         
         $url = '/uploads/wiki/files/' . $file['filename'];
-        $is_thumb = $options === 'thumb';
-        $is_left = $options === 'left';
-        $is_right = $options === 'right';
-        $is_center = $options === 'center';
+        
+        // Parse multiple options
+        $option_array = explode('|', $options);
+        $is_thumb = in_array('thumb', $option_array);
+        $is_left = in_array('left', $option_array);
+        $is_right = in_array('right', $option_array);
+        $is_center = in_array('center', $option_array);
+        
+        // Extract size information
+        $width = '';
+        $height = '';
+        foreach ($option_array as $option) {
+            if (preg_match('/^(\d+)px$/', $option, $matches)) {
+                $width = $matches[1] . 'px';
+            } elseif (preg_match('/^(\d+)x(\d+)$/', $option, $matches)) {
+                $width = $matches[1] . 'px';
+                $height = $matches[2] . 'px';
+            } elseif (preg_match('/^(\d+)%$/', $option, $matches)) {
+                $width = $matches[1] . '%';
+            }
+        }
         
         // Handle different display options
         $class = 'wiki-image';
@@ -1677,6 +1719,14 @@ class WikiParser extends MarkdownParser {
         } elseif ($is_center) {
             $class .= ' wiki-image-center';
             $style = 'display: block; margin: 0 auto;';
+        }
+        
+        // Add size styling
+        if ($width) {
+            $style .= ($style ? ' ' : '') . 'width: ' . $width . ';';
+        }
+        if ($height) {
+            $style .= ($style ? ' ' : '') . 'height: ' . $height . ';';
         }
         
         $html = '<div class="' . $class . '"';
