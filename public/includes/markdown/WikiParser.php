@@ -527,6 +527,12 @@ class WikiParser extends MarkdownParser {
             return str_replace($search, $replace, $string);
         }, $content);
         
+        // Handle #seo functions with proper nested brace handling
+        $content = preg_replace_callback('/\{\{#seo:((?:[^{}]++|\{(?:[^{}]++|\{[^{}]*+\})*+\})*+)\}\}/', function($matches) {
+            $function_params = trim($matches[1]);
+            return $this->processSEOTemplate($function_params);
+        }, $content);
+        
         return $content;
     }
     
@@ -879,7 +885,11 @@ class WikiParser extends MarkdownParser {
         // First handle includeonly/noinclude tags
         $content = $this->parseIncludeOnlyTags($content);
         
-        // First, process simple templates (no nested braces)
+        // First, process parser functions like {{#seo:|...}}
+        // Use a custom function to handle nested braces properly
+        $content = $this->parseParserFunctions($content);
+        
+        // Then process simple templates (no nested braces)
         $simple_pattern = '/\{\{([^{}]+)\}\}/';
         $content = preg_replace_callback($simple_pattern, function($matches) {
             $template_content = $matches[1];
@@ -902,41 +912,7 @@ class WikiParser extends MarkdownParser {
         $inline_templates = ['good article'];
         $template_name = trim(explode('|', $template_content)[0]);
         
-        // Handle MediaWiki-style parser functions like {{#time:format}}
-        if (preg_match('/^#([^:]+):(.+)$/', $template_content, $func_matches)) {
-            $function_name = trim($func_matches[1]);
-            $function_params = trim($func_matches[2]);
-            
-            if ($function_name === 'time') {
-                return date($function_params);
-            } elseif ($function_name === 'invoke') {
-                // Handle {{#invoke:Module|function|params}}
-                $invoke_parts = explode('|', $function_params);
-                $module = trim($invoke_parts[0]);
-                $function = isset($invoke_parts[1]) ? trim($invoke_parts[1]) : 'main';
-                
-                // Parse additional parameters
-                $params = [];
-                for ($i = 2; $i < count($invoke_parts); $i++) {
-                    $param = trim($invoke_parts[$i]);
-                    if (strpos($param, '=') !== false) {
-                        list($key, $value) = explode('=', $param, 2);
-                        $params[trim($key)] = trim($value);
-                    } else {
-                        $params[] = $param;
-                    }
-                }
-                
-                // Execute the module
-                if ($this->template_parser) {
-                    return $this->template_parser->parseTemplate($module, $params);
-                }
-                
-                return "{{#invoke:$module|$function}}";
-            }
-            
-            return "{{#$function_name:$function_params}}"; // Return unchanged if not handled
-        }
+        // Parser functions are now handled in parseTemplates() method
         
         // Parse template name and parameters, being careful not to split wiki links
         $parts = $this->parseTemplateParameters($template_content);
@@ -1909,4 +1885,43 @@ class WikiParser extends MarkdownParser {
             return false;
         }
     }
+    
+    /**
+     * Process SEO template: {{#seo:|param1=value1|param2=value2}}
+     */
+    private function processSEOTemplate($params) {
+        // Parse parameters
+        $seo_params = [];
+        $parts = explode('|', $params);
+        
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (strpos($part, '=') !== false) {
+                list($key, $value) = explode('=', $part, 2);
+                $seo_params[trim($key)] = trim($value);
+            }
+        }
+        
+        // Include the SEO extension
+        $seo_extension_path = __DIR__ . '/../../extensions/seo/extension.php';
+        if (file_exists($seo_extension_path)) {
+            require_once $seo_extension_path;
+            
+            // Initialize SEO extension
+            $seo_extension = new SEOExtension();
+            
+            // Process the SEO template
+            $seo_extension->setSEOData($seo_params);
+            
+            // Store SEO data for later use in header
+            $GLOBALS['seo_meta_tags'] = $seo_extension->generateMetaTags();
+            
+            // Return empty content for article body (SEO tags go in head)
+            return '';
+        }
+        
+        // Fallback if SEO extension not found
+        return '<!-- SEO extension not found -->';
+    }
+    
 }

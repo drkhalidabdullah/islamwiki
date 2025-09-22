@@ -1,0 +1,160 @@
+/**
+ * SEO Extension CSS
+ * 
+ * This file contains styles for SEO-related elements
+ * that might be displayed on the page.
+ */
+
+/* SEO Debug Panel (for development) */
+.seo-debug-panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 12px;
+    max-width: 300px;
+    z-index: 9999;
+    display: none;
+}
+
+.seo-debug-panel.show {
+    display: block;
+}
+
+.seo-debug-panel h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 14px;
+}
+
+.seo-debug-panel .debug-item {
+    margin-bottom: 5px;
+}
+
+.seo-debug-panel .debug-label {
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.seo-debug-panel .debug-value {
+    color: #495057;
+    word-break: break-all;
+}
+
+/* SEO Template Editor (if implemented) */
+.seo-template-editor {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.seo-template-editor h3 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.seo-template-editor .form-group {
+    margin-bottom: 15px;
+}
+
+.seo-template-editor label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.seo-template-editor input,
+.seo-template-editor textarea,
+.seo-template-editor select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.seo-template-editor textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.seo-template-editor .help-text {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.seo-template-editor .btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.seo-template-editor .btn:hover {
+    background: #0056b3;
+}
+
+/* SEO Preview (if implemented) */
+.seo-preview {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.seo-preview h3 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.seo-preview .preview-title {
+    color: #1a0dab;
+    font-size: 18px;
+    text-decoration: none;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.seo-preview .preview-title:hover {
+    text-decoration: underline;
+}
+
+.seo-preview .preview-url {
+    color: #006621;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.seo-preview .preview-description {
+    color: #545454;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .seo-debug-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        max-width: 100%;
+        margin: 10px;
+    }
+    
+    .seo-template-editor,
+    .seo-preview {
+        margin: 10px;
+    }
+}
+

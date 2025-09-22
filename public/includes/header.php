@@ -71,6 +71,11 @@ if ($toast_message) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="site-name" content="<?php echo htmlspecialchars(get_site_name()); ?>">
     <title><?php echo isset($page_title) ? $page_title . ' - ' . get_site_name() : get_site_name(); ?></title>
+    
+    <!-- SEO Meta Tags -->
+    <?php if (isset($GLOBALS['seo_meta_tags']) && !empty($GLOBALS['seo_meta_tags'])): ?>
+    <?php echo $GLOBALS['seo_meta_tags']; ?>
+    <?php endif; ?>
     <!-- Load skin CSS -->
     <?php $skins_manager->loadSkinAssets(); ?>
     
