@@ -680,38 +680,130 @@ class WikiParser extends MarkdownParser {
         
         return preg_replace_callback($pattern, function($matches) {
             $table_content = $matches[1];
-            $rows = explode('|-', $table_content);
             
-            $html = '<table class="wiki-table">';
+            // Parse table attributes
+            $table_attrs = 'class="wiki-table"';
+            if (preg_match('/^([^|\n]+)/', $table_content, $attr_matches)) {
+                $attrs = trim($attr_matches[1]);
+                if (!empty($attrs)) {
+                    $table_attrs = $attrs;
+                }
+            }
             
-            foreach ($rows as $row) {
-                $row = trim($row);
-                if (empty($row)) continue;
+            // Split into lines and process
+            $lines = explode("\n", $table_content);
+            $html = '<table ' . $table_attrs . '>';
+            
+            $in_table = false;
+            $current_row = [];
+            
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line)) continue;
                 
-                if (strpos($row, '|') === 0) {
-                    $row = substr($row, 1);
+                // Skip table attributes line
+                if (preg_match('/^(class=|style=)/', $line)) {
+                    continue;
                 }
                 
-                $cells = explode('|', $row);
-                $is_header = strpos($row, '!') === 0;
-                
-                $html .= '<tr>';
-                foreach ($cells as $cell) {
-                    $cell = trim($cell);
-                    if (empty($cell)) continue;
-                    
-                    $cell = preg_replace('/^[!|]/', '', $cell);
-                    $cell_content = $this->parseInlineWiki($cell);
-                    
-                    $tag = $is_header ? 'th' : 'td';
-                    $html .= "<$tag>$cell_content</$tag>";
+                // Row separator
+                if ($line === '|-') {
+                    if (!empty($current_row)) {
+                        $html .= $this->renderTableRow($current_row);
+                        $current_row = [];
+                    }
+                    continue;
                 }
-                $html .= '</tr>';
+                
+                // Header row (starts with !)
+                if (strpos($line, '!') === 0) {
+                    if (!empty($current_row)) {
+                        $html .= $this->renderTableRow($current_row);
+                        $current_row = [];
+                    }
+                    
+                    // Parse header cells by splitting on !!
+                    $header_line = substr($line, 1); // Remove leading !
+                    $header_cells = explode('!!', $header_line);
+                    
+                    $html .= '<tr>';
+                    foreach ($header_cells as $cell) {
+                        $cell = trim($cell);
+                        if (!empty($cell)) {
+                            $html .= '<th>' . $this->parseInlineWiki($cell) . '</th>';
+                        }
+                    }
+                    $html .= '</tr>';
+                    continue;
+                }
+                
+                // Data row (starts with |)
+                if (strpos($line, '|') === 0) {
+                    // Parse data cells by splitting on | but not ||
+                    $data_line = substr($line, 1); // Remove leading |
+                    $data_cells = preg_split('/\|(?![|])/', $data_line);
+                    
+                    foreach ($data_cells as $cell) {
+                        $cell = trim($cell);
+                        if (!empty($cell)) {
+                            // Remove any trailing | characters
+                            $cell = rtrim($cell, '|');
+                            $current_row[] = $cell;
+                        }
+                    }
+                    continue;
+                }
+            }
+            
+            // Render any remaining row
+            if (!empty($current_row)) {
+                $html .= $this->renderTableRow($current_row);
             }
             
             $html .= '</table>';
             return $html;
         }, $content);
+    }
+    
+    /**
+     * Parse table cells from a line
+     */
+    private function parseTableCells($line, $is_header = false) {
+        $cells = [];
+        
+        // Remove leading ! or |
+        $line = preg_replace('/^[!|]+/', '', $line);
+        
+        // For header cells, split by || (double pipe)
+        // For data cells, split by | (single pipe)
+        if ($is_header) {
+            // Split by || for header cells
+            $parts = preg_split('/\|\|/', $line);
+        } else {
+            // Split by | for data cells, but be careful with || in data
+            $parts = preg_split('/\|(?![|])/', $line);
+        }
+        
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (!empty($part)) {
+                $cells[] = $part;
+            }
+        }
+        
+        return $cells;
+    }
+    
+    /**
+     * Render a table row
+     */
+    private function renderTableRow($cells) {
+        $html = '<tr>';
+        foreach ($cells as $cell) {
+            $html .= '<td>' . $this->parseInlineWiki($cell) . '</td>';
+        }
+        $html .= '</tr>';
+        return $html;
     }
     
     /**
