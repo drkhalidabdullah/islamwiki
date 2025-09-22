@@ -589,7 +589,7 @@ function get_recent_watchlist_changes($user_id, $limit = 10) {
 function upload_wiki_file($file, $user_id, $description = '') {
     global $pdo;
     
-    $upload_dir = '/var/www/html/public/uploads/wiki/';
+    $upload_dir = '/var/www/html/public/uploads/wiki/files/';
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }
@@ -634,7 +634,7 @@ function upload_wiki_file($file, $user_id, $description = '') {
             'success' => true,
             'file_id' => $pdo->lastInsertId(),
             'filename' => $filename,
-            'url' => '/uploads/wiki/' . $filename
+            'url' => '/uploads/wiki/files/' . $filename
         ];
     }
     
@@ -796,7 +796,7 @@ class EnhancedMarkdownParser extends MarkdownParser {
                 return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
             }
             
-            $url = '/uploads/wiki/' . $file['filename'];
+            $url = '/uploads/wiki/files/' . $file['filename'];
             $is_thumb = $options === 'thumb';
             
             if ($is_thumb) {

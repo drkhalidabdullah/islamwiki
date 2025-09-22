@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cleanup_files'])) {
             }
             break;
         case 'uploads':
-            $upload_dir = '/var/www/html/uploads/posts/';
+            $upload_dir = '/var/www/html/uploads/social/posts/';
             if (is_dir($upload_dir)) {
                 $db_files = $pdo->query("SELECT file_path FROM wiki_files")->fetchAll(PDO::FETCH_COLUMN);
                 $db_files = array_map(function($path) {

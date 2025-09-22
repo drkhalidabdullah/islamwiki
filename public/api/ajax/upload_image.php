@@ -175,10 +175,10 @@ if (!in_array($file['type'], $allowed_types)) {
 $max_size = 2 * 1024 * 1024; // 2MB
 $needs_scaling = $file['size'] > $max_size;
 
-// Create user-specific uploads directory
+// Create user-specific social uploads directory
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
-$upload_dir = __DIR__ . "/../../uploads/posts/{$username}/";
+$upload_dir = __DIR__ . "/../../uploads/social/posts/{$username}/";
 
 // Create directory structure if it doesn't exist
 if (!is_dir($upload_dir)) {
@@ -226,7 +226,7 @@ try {
 
 if ($processed) {
     // Generate URL for the uploaded image
-    $image_url = "/uploads/posts/{$username}/" . $filename;
+    $image_url = "/uploads/social/posts/{$username}/" . $filename;
     
     $final_size = filesize($file_path);
     $was_scaled = $needs_scaling;

@@ -57,7 +57,7 @@ if ($file['size'] > $max_size) {
 // Create user-specific uploads directory
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
-$upload_dir = __DIR__ . "/../../uploads/posts/{$username}/videos/";
+$upload_dir = __DIR__ . "/../../uploads/social/posts/{$username}/videos/";
 
 // Create directory structure if it doesn't exist
 if (!is_dir($upload_dir)) {
@@ -83,7 +83,7 @@ $file_path = $upload_dir . $filename;
 // Move uploaded file
 if (move_uploaded_file($file['tmp_name'], $file_path)) {
     // Generate URL for the uploaded video
-    $video_url = "/uploads/posts/{$username}/videos/" . $filename;
+    $video_url = "/uploads/social/posts/{$username}/videos/" . $filename;
     
     echo json_encode([
         'success' => true,

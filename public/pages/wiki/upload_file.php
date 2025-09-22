@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Generate unique filename
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid() . '_' . time() . '.' . $extension;
-            $upload_dir = '../../uploads/';
+            $upload_dir = '../../uploads/wiki/files/';
             $file_path = $upload_dir . $filename;
             
             // Create uploads directory if it doesn't exist
@@ -180,7 +180,7 @@ include '../../includes/header.php';
                     <div class="file-card">
                         <div class="file-preview">
                             <?php if (strpos($file['mime_type'], 'image/') === 0): ?>
-                                <img src="/uploads/<?php echo htmlspecialchars($file['filename']); ?>" 
+                                <img src="/uploads/wiki/files/<?php echo htmlspecialchars($file['filename']); ?>" 
                                      alt="<?php echo htmlspecialchars($file['original_name']); ?>"
                                      >
                             <?php else: ?>
@@ -210,7 +210,7 @@ include '../../includes/header.php';
                             <?php endif; ?>
                             
                             <div class="file-actions">
-                                <a href="/uploads/<?php echo htmlspecialchars($file['filename']); ?>" 
+                                <a href="/uploads/wiki/files/<?php echo htmlspecialchars($file['filename']); ?>" 
                                    target="_blank" class="btn btn-sm btn-primary">View</a>
                                 <button onclick="copyWikiLink('<?php echo htmlspecialchars($file['filename']); ?>')" 
                                         class="btn btn-sm btn-secondary">Copy Wiki Link</button>

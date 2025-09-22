@@ -1573,7 +1573,7 @@ class WikiParser extends MarkdownParser {
                 return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
             }
             
-            $url = '/uploads/wiki/' . $file['filename'];
+            $url = '/uploads/wiki/files/' . $file['filename'];
             $is_thumb = $options === 'thumb';
             $is_left = $options === 'left';
             $is_right = $options === 'right';
