@@ -24,23 +24,29 @@ $enable_notifications = get_system_setting('enable_notifications', true);
     <div class="header-dashboard-container">
         <!-- Search Bar -->
         <div class="header-search-container">
-                   <!-- Left Sidebar Toggle Button -->
-                   <button class="sidebar-toggle-btn" id="leftSidebarToggleBtn" title="Toggle Left Sidebar">
-                       <i class="iw iw-bars"></i>
-                   </button>
+            <!-- Left Sidebar Toggle Button -->
+            <button class="sidebar-toggle-btn" id="leftSidebarToggleBtn" title="Toggle Left Sidebar">
+                <i class="iw iw-bars"></i>
+            </button>
             
-            <!-- Site Logo -->
+            <!-- Search Icon Button -->
+            <button class="search-icon-btn" onclick="openSearchOverlay()" title="Search">
+                <i class="iw iw-search"></i>
+            </button>
+            
+            <!-- Site Logo and Title -->
             <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="header-logo" title="<?php echo get_site_name(); ?> <?php echo is_logged_in() ? 'Dashboard' : 'Home'; ?>">
-                <i class="iw iw-moon"></i>
+                <?php 
+                $site_logo_url = get_site_logo_url();
+                if ($site_logo_url): 
+                ?>
+                    <img src="<?php echo htmlspecialchars($site_logo_url); ?>" alt="<?php echo get_site_name(); ?>" class="site-logo-img">
+                <?php else: ?>
+                    <i class="iw iw-moon"></i>
+                <?php endif; ?>
             </a>
-            
-            <!-- Search Input Wrapper -->
-            <div class="search-input-wrapper">
-                <i class="iw iw-search search-icon"></i>
-                <input type="text" class="header-search-input" placeholder="Search" id="headerSearchInput">
-                <button class="header-search-btn" onclick="performHeaderSearch()">
-                    Search
-                </button>
+            <div class="header-site-title">
+                <?php echo get_site_name(); ?>
             </div>
         </div>
 

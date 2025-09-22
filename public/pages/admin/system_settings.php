@@ -558,6 +558,46 @@ include "../../includes/header.php";
                             <small class="form-help">Custom copyright text. If left empty, will use default format with site name.</small>
                         </div>
                         
+                        <div class="form-group">
+                            <label>Site Logo</label>
+                            <div class="logo-upload-container">
+                                <div class="logo-preview" id="logo-preview">
+                                    <?php 
+                                    $logo_url = get_site_logo_url();
+                                    $logo_data = get_site_logo_data();
+                                    if ($logo_url): 
+                                    ?>
+                                        <img src="<?php echo htmlspecialchars($logo_url); ?>" alt="Site Logo" id="current-logo">
+                                        <div class="logo-info">
+                                            <small>
+                                                <?php echo htmlspecialchars($logo_data['original_name'] ?? 'logo'); ?>
+                                                <?php if (isset($logo_data['dimensions'])): ?>
+                                                    (<?php echo $logo_data['dimensions']['width']; ?>×<?php echo $logo_data['dimensions']['height']; ?>)
+                                                <?php endif; ?>
+                                            </small>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="no-logo">
+                                            <i class="iw iw-image"></i>
+                                            <p>No logo uploaded</p>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="logo-upload-controls">
+                                    <input type="file" id="site_logo_input" name="site_logo" accept="image/*" style="display: none;">
+                                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('site_logo_input').click()">
+                                        <i class="iw iw-upload"></i> <?php echo $logo_url ? 'Change Logo' : 'Upload Logo'; ?>
+                                    </button>
+                                    <?php if ($logo_url): ?>
+                                        <button type="button" class="btn btn-danger" onclick="removeSiteLogo()">
+                                            <i class="iw iw-trash"></i> Remove
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                                <small class="form-help">Upload a logo for your site. Supported formats: JPEG, PNG, GIF, SVG. Max size: 5MB.</small>
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary">
                             <i class="iw iw-save"></i> Save General Settings
                         </button>

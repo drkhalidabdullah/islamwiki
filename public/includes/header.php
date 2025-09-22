@@ -348,6 +348,49 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Make maintenance banner function globally available
     window.closeMaintenanceBanner = closeMaintenanceBanner;
+    
+    // Search overlay functionality
+    function openSearchOverlay() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        if (searchOverlay) {
+            searchOverlay.classList.add('show');
+            // Focus on search input after a short delay to allow animation
+            setTimeout(() => {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }, 100);
+        }
+    }
+    
+    function closeSearchOverlay() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        if (searchOverlay) {
+            searchOverlay.classList.remove('show');
+        }
+    }
+    
+    // Make search functions globally available
+    window.openSearchOverlay = openSearchOverlay;
+    window.closeSearchOverlay = closeSearchOverlay;
+    
+    // Close search overlay when clicking outside
+    document.addEventListener('click', function(e) {
+        const searchOverlay = document.getElementById('searchOverlay');
+        if (searchOverlay && searchOverlay.classList.contains('show')) {
+            if (e.target === searchOverlay || e.target.classList.contains('search-overlay-backdrop')) {
+                closeSearchOverlay();
+            }
+        }
+    });
+    
+    // Close search overlay with escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSearchOverlay();
+        }
+    });
 });
 
 // Global toast notification function

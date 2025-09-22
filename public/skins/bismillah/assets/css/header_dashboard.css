@@ -204,56 +204,32 @@ body .header-dashboard,
     transition: opacity 0.2s ease;
 }
 
-.search-input-wrapper {
-    position: relative;
+/* Search Icon Button */
+.search-icon-btn {
+    background: #34495e;
+    border: none;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
     display: flex;
     align-items: center;
-    background: #34495e;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    transition: all 0.2s ease;
-    flex: 1;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-right: 8px;
 }
 
-.search-input-wrapper:focus-within {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+.search-icon-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
 }
 
-.search-icon {
-    position: absolute;
-    left: 12px;
-    color: #ecf0f1;
-    font-size: 16px;
-    z-index: 1;
-}
-
-.header-search-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 12px 12px 12px 40px;
-    color: #ffffff;
-    font-size: 14px;
-    width: 100%;
-}
-
-.header-search-input::placeholder {
-    color: #ecf0f1;
-}
-
-.header-search-btn {
-    background: #34495e;
-    border: none;
-    color: #ffffff;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    border-radius: 0 6px 6px 0;
+.search-icon-btn i {
+    transition: opacity 0.2s ease;
 }
 
 .header-search-btn:hover {
@@ -298,6 +274,29 @@ body .header-dashboard,
 
 .header-logo i {
     font-size: 18px;
+}
+
+.header-logo .site-logo-img {
+    height: 24px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+/* Site Title */
+.header-site-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 12px;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.header-site-title:hover {
+    color: #ecf0f1;
 }
 
 /* ========================================
@@ -825,6 +824,11 @@ body .header-dashboard,
     
     .utility-separator {
         display: none;
+    }
+    
+    .header-site-title {
+        font-size: 16px;
+        margin-left: 8px;
     }
 }
 

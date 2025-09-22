@@ -119,6 +119,65 @@
     gap: 2rem !important;
 }
 
+/* Site Logo Upload Styles */
+.logo-upload-container {
+    border: 2px dashed var(--admin-border) !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    text-align: center !important;
+    background: var(--admin-bg) !important;
+    transition: all 0.3s ease !important;
+}
+
+.logo-upload-container:hover {
+    border-color: var(--admin-primary) !important;
+    background: rgba(37, 99, 235, 0.05) !important;
+}
+
+.logo-preview {
+    margin-bottom: 1rem !important;
+}
+
+.logo-preview img {
+    max-width: 200px !important;
+    max-height: 100px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    object-fit: contain !important;
+}
+
+.logo-info {
+    margin-top: 0.5rem !important;
+    color: var(--admin-text-light) !important;
+}
+
+.no-logo {
+    color: var(--admin-text-light) !important;
+    padding: 2rem !important;
+}
+
+.no-logo i {
+    font-size: 3rem !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+
+.no-logo p {
+    margin: 0 !important;
+    font-size: 0.9rem !important;
+}
+
+.logo-upload-controls {
+    display: flex !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+}
+
+.logo-upload-controls .btn {
+    min-width: 120px !important;
+}
+
 
 
 

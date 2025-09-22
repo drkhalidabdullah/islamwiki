@@ -379,6 +379,40 @@ function get_copyright_text() {
 }
 
 /**
+ * Get the site logo URL
+ * @return string|null The site logo URL or null if no logo is set
+ */
+function get_site_logo_url() {
+    $logo_data = get_system_setting('site_logo', null);
+    
+    if ($logo_data && is_array($logo_data) && isset($logo_data['filename'])) {
+        $file_path = __DIR__ . '/../uploads/site_logos/' . $logo_data['filename'];
+        if (file_exists($file_path)) {
+            return '/uploads/site_logos/' . $logo_data['filename'];
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Get the site logo data
+ * @return array|null The site logo data or null if no logo is set
+ */
+function get_site_logo_data() {
+    $logo_data = get_system_setting('site_logo', null);
+    
+    if ($logo_data && is_array($logo_data) && isset($logo_data['filename'])) {
+        $file_path = __DIR__ . '/../uploads/site_logos/' . $logo_data['filename'];
+        if (file_exists($file_path)) {
+            return $logo_data;
+        }
+    }
+    
+    return null;
+}
+
+/**
  * Get the first user's email (the person who set up the site)
  * @return string The first user's email or default admin email
  */
