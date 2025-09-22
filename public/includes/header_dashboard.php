@@ -75,22 +75,6 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                         <i class="iw iw-image"></i>
                         <span>Upload Image</span>
                     </a>
-                    <?php if ($enable_social): ?>
-                    <a href="/pages/social/friends.php" class="create-item">
-                        <i class="iw iw-users"></i>
-                        <span>Friends</span>
-                    </a>
-                    <a href="/pages/social/messages.php" class="create-item">
-                        <i class="iw iw-message"></i>
-                        <span>Messages</span>
-                    </a>
-                    <?php endif; ?>
-                    <?php if ($enable_notifications): ?>
-                    <a href="/pages/notifications.php" class="create-item">
-                        <i class="iw iw-bell"></i>
-                        <span>Notifications</span>
-                    </a>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
