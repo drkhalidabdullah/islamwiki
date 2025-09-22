@@ -71,7 +71,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                         <span>Write Article</span>
                     </a>
                     <?php endif; ?>
-                    <a href="/pages/social/create_post.php" class="create-item">
+                    <a href="/pages/social/upload_image.php" class="create-item">
                         <i class="iw iw-image"></i>
                         <span>Upload Image</span>
                     </a>
