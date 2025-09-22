@@ -1558,62 +1558,142 @@ class WikiParser extends MarkdownParser {
     }
     
     /**
-     * Parse wiki file links in the format [[File:filename.jpg|thumb|Caption]]
+     * Parse wiki file links in the format [[File:filename.jpg|thumb|Caption with [[nested]] markup]]
      */
     private function parseFileLinks($content) {
-        // Parse file syntax: [[File:filename.jpg|thumb|Caption]]
-        $content = preg_replace_callback('/\[\[File:([^|\]]+)(?:\|([^|\]]+))?(?:\|([^\]]+))?\]\]/', function($matches) {
-            $filename = trim($matches[1]);
-            $options = isset($matches[2]) ? trim($matches[2]) : '';
-            $caption = isset($matches[3]) ? trim($matches[3]) : '';
-            
-            // Check if file exists in wiki_files table
-            $file = $this->getWikiFile($filename);
-            if (!$file) {
-                return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
-            }
-            
-            $url = '/uploads/wiki/files/' . $file['filename'];
-            $is_thumb = $options === 'thumb';
-            $is_left = $options === 'left';
-            $is_right = $options === 'right';
-            $is_center = $options === 'center';
-            
-            // Handle different display options
-            $class = 'wiki-image';
-            $style = '';
-            
-            if ($is_thumb) {
-                $class .= ' wiki-thumbnail';
-            } elseif ($is_left) {
-                $class .= ' wiki-image-left';
-                $style = 'float: left; margin-right: 10px;';
-            } elseif ($is_right) {
-                $class .= ' wiki-image-right';
-                $style = 'float: right; margin-left: 10px;';
-            } elseif ($is_center) {
-                $class .= ' wiki-image-center';
-                $style = 'display: block; margin: 0 auto;';
-            }
-            
-            $html = '<div class="' . $class . '"';
-            if ($style) {
-                $html .= ' style="' . $style . '"';
-            }
-            $html .= '>';
-            
-            $html .= '<img src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($caption ?: $filename) . '" class="wiki-image-img" loading="lazy">';
-            
-            if ($caption) {
-                $html .= '<div class="wiki-image-caption">' . htmlspecialchars($caption) . '</div>';
-            }
-            
-            $html .= '</div>';
-            
-            return $html;
-        }, $content);
+        // Use a proper bracket-matching approach to handle nested [[...]] in captions
+        $pos = 0;
+        $result = '';
         
-        return $content;
+        while (($start = strpos($content, '[[File:', $pos)) !== false) {
+            // Add content before the file link
+            $result .= substr($content, $pos, $start - $pos);
+            
+            // Find the matching closing brackets
+            $bracket_count = 0;
+            $end = $start;
+            $in_file = false;
+            
+            for ($i = $start; $i < strlen($content); $i++) {
+                if (substr($content, $i, 2) === '[[') {
+                    $bracket_count++;
+                    if (substr($content, $i, 7) === '[[File:') {
+                        $in_file = true;
+                    }
+                } elseif (substr($content, $i, 2) === ']]') {
+                    $bracket_count--;
+                    if ($bracket_count === 0 && $in_file) {
+                        $end = $i + 2;
+                        break;
+                    }
+                }
+            }
+            
+            if ($end > $start) {
+                // Extract the full file link
+                $file_link = substr($content, $start, $end - $start);
+                
+                // Parse the file link
+                $parsed_link = $this->parseSingleFileLink($file_link);
+                $result .= $parsed_link;
+                
+                $pos = $end;
+            } else {
+                // No matching closing bracket found, skip this one
+                $result .= substr($content, $start, 7); // Add "[[File:"
+                $pos = $start + 7;
+            }
+        }
+        
+        // Add remaining content
+        $result .= substr($content, $pos);
+        
+        return $result;
+    }
+    
+    /**
+     * Parse a single file link
+     */
+    private function parseSingleFileLink($file_link) {
+        // Remove the outer brackets
+        $content = substr($file_link, 2, -2); // Remove [[ and ]]
+        
+        // Split by | to get parts
+        $parts = explode('|', $content);
+        
+        if (count($parts) < 1) {
+            return $file_link; // Invalid format
+        }
+        
+        $filename = trim($parts[0]);
+        
+        // Remove "File:" prefix if present
+        if (strpos($filename, 'File:') === 0) {
+            $filename = substr($filename, 5);
+        }
+        $options = isset($parts[1]) ? trim($parts[1]) : '';
+        $caption = '';
+        
+        // Join remaining parts as caption (handles nested | characters)
+        if (count($parts) > 2) {
+            $caption_parts = array_slice($parts, 2);
+            $caption = implode('|', $caption_parts);
+        } elseif (count($parts) === 2) {
+            $caption = trim($parts[1]);
+        }
+        
+        // Check if caption contains nested wiki markup
+        if (strpos($caption, '[[') !== false && strpos($caption, ']]') !== false) {
+            // For captions with nested markup, we need to parse them separately
+            $caption = $this->parseWikiLinks($caption);
+        } else {
+            $caption = htmlspecialchars($caption);
+        }
+        
+        // Check if file exists in wiki_files table
+        $file = $this->getWikiFile($filename);
+        if (!$file) {
+            return '<span class="missing-file">[File not found: ' . htmlspecialchars($filename) . ']</span>';
+        }
+        
+        $url = '/uploads/wiki/files/' . $file['filename'];
+        $is_thumb = $options === 'thumb';
+        $is_left = $options === 'left';
+        $is_right = $options === 'right';
+        $is_center = $options === 'center';
+        
+        // Handle different display options
+        $class = 'wiki-image';
+        $style = '';
+        
+        if ($is_thumb) {
+            $class .= ' wiki-thumbnail';
+        } elseif ($is_left) {
+            $class .= ' wiki-image-left';
+            $style = 'float: left; margin-right: 10px;';
+        } elseif ($is_right) {
+            $class .= ' wiki-image-right';
+            $style = 'float: right; margin-left: 10px;';
+        } elseif ($is_center) {
+            $class .= ' wiki-image-center';
+            $style = 'display: block; margin: 0 auto;';
+        }
+        
+        $html = '<div class="' . $class . '"';
+        if ($style) {
+            $html .= ' style="' . $style . '"';
+        }
+        $html .= '>';
+        
+        $html .= '<img src="' . htmlspecialchars($url) . '" alt="' . htmlspecialchars($filename) . '" class="wiki-image-img" loading="lazy">';
+        
+        if ($caption) {
+            $html .= '<div class="wiki-image-caption">' . $caption . '</div>';
+        }
+        
+        $html .= '</div>';
+        
+        return $html;
     }
     
     /**

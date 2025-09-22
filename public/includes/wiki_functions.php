@@ -785,11 +785,19 @@ class EnhancedMarkdownParser extends MarkdownParser {
     }
     
     private function parseFileLinks($text) {
-        // Parse file syntax: [[File:filename.jpg|thumb|Caption]]
-        $text = preg_replace_callback('/\[\[File:([^|\]]+)(?:\|([^|\]]+))?(?:\|([^\]]+))?\]\]/', function($matches) {
+        // Parse file syntax: [[File:filename.jpg|thumb|Caption with [[nested]] markup]]
+        $text = preg_replace_callback('/\[\[File:([^|\]]+)(?:\|([^|\]]+))?(?:\|(.*?))?\]\]/', function($matches) {
             $filename = trim($matches[1]);
             $options = isset($matches[2]) ? trim($matches[2]) : '';
             $caption = isset($matches[3]) ? trim($matches[3]) : '';
+            
+            // Check if caption contains nested wiki markup
+            if (strpos($caption, '[[') !== false && strpos($caption, ']]') !== false) {
+                // For captions with nested markup, we need to parse them separately
+                $caption = parseWikiLinks($caption);
+            } else {
+                $caption = htmlspecialchars($caption);
+            }
             
             $file = get_wiki_file($filename);
             if (!$file) {
@@ -800,9 +808,9 @@ class EnhancedMarkdownParser extends MarkdownParser {
             $is_thumb = $options === 'thumb';
             
             if ($is_thumb) {
-                return '<div class="wiki-thumbnail"><img src="' . $url . '" alt="' . htmlspecialchars($caption) . '" class="thumb-image"><div class="thumb-caption">' . htmlspecialchars($caption) . '</div></div>';
+                return '<div class="wiki-thumbnail"><img src="' . $url . '" alt="' . htmlspecialchars($filename) . '" class="thumb-image"><div class="thumb-caption">' . $caption . '</div></div>';
             } else {
-                return '<img src="' . $url . '" alt="' . htmlspecialchars($caption) . '">';
+                return '<img src="' . $url . '" alt="' . htmlspecialchars($filename) . '">';
             }
         }, $text);
         
