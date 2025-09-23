@@ -1,19 +1,41 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.19-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.20-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.19
+## 🎯 Current Version: 0.0.0.20
 
 **Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Major UI Enhancement - Header Dashboard & Sidebar System
+**Type:** Feature Enhancement - Site Logo Upload & Z-Index Fixes
 
-## 🚀 What's New in v0.0.0.19
+## 🚀 What's New in v0.0.0.20
+
+### 🎨 **Site Logo Upload System**
+- **Complete Logo Management**: Upload, preview, and remove site logos through admin panel
+- **Dedicated Storage**: Separate `/public/uploads/site_logos/` directory for logo files
+- **File Validation**: Support for JPEG, PNG, GIF, SVG with 5MB size limit
+- **Real-time Preview**: Instant preview with file information display
+- **Header Integration**: Logo automatically appears in header dashboard when uploaded
+- **Fallback System**: Default moon icon when no custom logo is uploaded
+
+### 🔧 **Critical Bug Fixes**
+- **Dashboard Functionality**: Fixed tag people and feeling/activity buttons (z-index conflicts)
+- **User Name Color**: Fixed user name color in header dashboard to display as white
+- **Modal Accessibility**: All modals now properly clickable and accessible
+- **CSS Specificity**: Added !important declarations to ensure proper styling
+
+### 🚀 **Technical Improvements**
+- **New API Endpoints**: Upload, get, and remove logo APIs with admin authentication
+- **Database Integration**: Logo metadata stored in system_settings table
+- **Security Features**: Admin-only access controls and file type validation
+- **Performance**: Optimized image handling and storage
+
+## 🚀 Previous Release: v0.0.0.19
 
 ### 🎯 **Header Dashboard & Sidebar System**
 - **Modern Header Dashboard**: Fixed header with integrated search, create button, and user menu

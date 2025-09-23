@@ -1,5 +1,131 @@
 # Release Notes
 
+## Version 0.0.0.20 - Site Logo System & UI Fixes
+
+**Release Date:** January 2025  
+**Version:** 0.0.0.20  
+**Type:** Feature Enhancement - Site Logo Upload & Z-Index Fixes  
+**Status:** Production Ready ✅
+
+## 🎯 Release Overview
+
+Version 0.0.0.20 introduces a **comprehensive site logo upload system** and fixes critical UI issues that were preventing proper functionality. This release focuses on giving administrators complete control over site branding while resolving z-index conflicts that affected user experience.
+
+## 🚀 Major Features
+
+### 🎨 **Site Logo Upload System**
+
+#### **Complete Logo Management**
+- **Easy Upload**: Drag-and-drop interface for logo uploads
+- **Multiple Formats**: Support for JPEG, PNG, GIF, and SVG files
+- **Real-time Preview**: See your logo instantly in the admin panel
+- **Header Integration**: Logo automatically appears in the header dashboard
+- **Smart Fallback**: Default moon icon when no custom logo is uploaded
+
+#### **Admin Integration**
+- **System Settings**: Logo management in Admin Panel → System Settings → General Tab
+- **File Validation**: 5MB size limit with proper file type checking
+- **Security**: Admin-only access controls and file type validation
+- **Database Storage**: Logo metadata stored in system_settings table
+
+### 🔧 **Critical Bug Fixes**
+
+#### **Dashboard Functionality Restored**
+- **Fixed**: Tag people button now works properly
+- **Fixed**: Feeling/Activity button now opens correctly
+- **Root Cause**: Z-index conflicts between header and modals
+- **Solution**: Updated modal z-index values to appear above header
+
+#### **Visual Improvements**
+- **Fixed**: User name in header dashboard now displays as white
+- **Fixed**: All modals are now properly clickable and accessible
+- **Improved**: Better CSS specificity with proper !important declarations
+
+## 🚀 Technical Highlights
+
+### **New API Endpoints**
+- `POST /api/upload_site_logo.php` - Upload new site logo
+- `GET /api/get_site_logo.php` - Retrieve current logo data  
+- `POST /api/remove_site_logo.php` - Remove existing logo
+
+### **Security Features**
+- Admin-only access controls
+- File type validation
+- Size limit enforcement
+- Secure file handling
+
+### **Performance Optimizations**
+- Optimized image handling
+- Efficient file storage management
+- Clean database integration
+
+## 📱 User Experience Improvements
+
+### **For Administrators:**
+- Intuitive logo management interface
+- Real-time preview and validation
+- Toast notifications for all operations
+- Beautiful drag-and-drop upload experience
+
+### **For All Users:**
+- Fixed dashboard functionality (tag people, feeling/activity)
+- Improved visual consistency
+- Better overall site experience
+- Proper logo display in header
+
+## 🔄 Migration & Compatibility
+
+- **Backward Compatible**: No breaking changes
+- **No Migration Required**: Seamless upgrade from v0.0.0.19
+- **Database**: Uses existing system_settings table
+- **File System**: New dedicated logo storage directory
+
+## 🐛 Bug Fixes Summary
+
+| Issue | Status | Impact |
+|-------|--------|---------|
+| Tag people button not clickable | ✅ Fixed | High |
+| Feeling/Activity button not working | ✅ Fixed | High |
+| User name color in header | ✅ Fixed | Medium |
+| Modal z-index conflicts | ✅ Fixed | High |
+| CSS specificity issues | ✅ Fixed | Medium |
+
+## 📊 Files Changed
+
+### **New Files (4):**
+- `public/api/upload_site_logo.php`
+- `public/api/get_site_logo.php`
+- `public/api/remove_site_logo.php`
+- `docs/changelogs/v0.0.0.20.md`
+
+### **Modified Files (7):**
+- `public/config/version.php`
+- `public/skins/bismillah/assets/css/dashboard.css`
+- `public/skins/bismillah/assets/css/header_dashboard.css`
+- `public/pages/admin/system_settings.php`
+- `public/skins/bismillah/assets/js/admin_system_settings.js`
+- `public/includes/functions.php`
+- `public/includes/header_dashboard.php`
+
+## 🎯 What's Next
+
+We're already working on v0.0.0.21 with additional UI enhancements and feature improvements. Stay tuned for more exciting updates!
+
+## 📞 Support
+
+If you encounter any issues with this release, please:
+1. Check the [documentation](https://github.com/drkhalidabdullah/islamwiki/docs)
+2. Report bugs via [GitHub Issues](https://github.com/drkhalidabdullah/islamwiki/issues)
+3. Contact support for urgent matters
+
+---
+
+**Thank you for using IslamWiki!** 🕌
+
+*This release continues our commitment to providing a modern, user-friendly wiki platform with powerful features and excellent user experience.*
+
+---
+
 ## Version 0.0.0.18 - Wiki Editor & Reference System
 
 **Release Date:** January 2025  

@@ -672,7 +672,7 @@ body .header-dashboard,
 .user-name {
     font-size: 14px;
     font-weight: 600;
-    color: #ffffff;
+    color: #ffffff !important;
     line-height: 1.2;
 }
 

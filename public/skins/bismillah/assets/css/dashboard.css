@@ -230,7 +230,7 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 10002;
     left: 0;
     top: 0;
     width: 100%;
@@ -875,7 +875,7 @@ body {
 .comment-modal {
     display: none;
     position: fixed;
-    z-index: 10000;
+    z-index: 10002;
     left: 0;
     top: 0;
     width: 100%;
@@ -1300,7 +1300,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1000;
+    z-index: 10002;
     background: var(--bg-primary);
     border-radius: 0;
     margin: 0;
@@ -2066,7 +2066,7 @@ body.fullscreen-mode .create-post-card.fullscreen .create-post-actions {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 10002;
     display: none;
     align-items: center;
     justify-content: center;

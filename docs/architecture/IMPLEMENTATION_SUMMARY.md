@@ -4,7 +4,32 @@
 
 All phases of the advanced wiki enhancement have been successfully implemented. Your wiki system now supports comprehensive MediaWiki-style features with enhanced security and performance.
 
-## 🆕 Recent Updates (v0.0.0.19)
+## 🆕 Recent Updates (v0.0.0.20)
+
+### 🎨 Site Logo Upload System
+- **Complete Logo Management**: Full site logo upload, preview, and removal system
+- **Dedicated Storage**: Separate `/public/uploads/site_logos/` directory for logo files
+- **Admin Integration**: Logo management in System Settings → General tab
+- **File Validation**: Support for JPEG, PNG, GIF, SVG with 5MB size limit
+- **Real-time Preview**: Instant preview with file information display
+- **Header Integration**: Logo automatically appears in header dashboard when uploaded
+- **Fallback System**: Default moon icon when no custom logo is uploaded
+
+### 🔧 Critical Bug Fixes
+- **Z-Index Resolution**: Fixed modal z-index conflicts preventing tag/feeling buttons from working
+- **Header Dashboard**: Updated modal z-index from 1000 to 10002 to appear above header
+- **User Name Color**: Fixed user name color in header dashboard to display as white
+- **Modal Accessibility**: All modals now properly clickable and accessible
+- **CSS Specificity**: Added !important declarations to ensure proper styling
+
+### 🚀 Technical Improvements
+- **New API Endpoints**: Upload, get, and remove logo APIs with admin authentication
+- **Database Integration**: Logo metadata stored in system_settings table
+- **Security Features**: Admin-only access controls and file type validation
+- **Performance**: Optimized image handling and storage
+- **Code Quality**: Clean, maintainable code with proper error handling
+
+## 🆕 Previous Updates (v0.0.0.19)
 
 ### 🎯 Header Dashboard & Sidebar System
 - **Modern Header Dashboard**: Complete header system with search, create button, and user menu
