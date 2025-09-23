@@ -281,6 +281,19 @@ class AchievementsExtension {
         ")->fetchColumn();
         $level['total_points'] = $total_points ?: 0;
         
+        // Update the database with correct values
+        $stmt = $this->pdo->prepare("
+            UPDATE user_levels 
+            SET level = ?, total_achievements = ?, total_points = ?
+            WHERE user_id = ?
+        ");
+        $stmt->execute([
+            $level['level'],
+            $level['total_achievements'],
+            $level['total_points'],
+            $user_id
+        ]);
+        
         return $level;
     }
     
