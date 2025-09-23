@@ -273,6 +273,14 @@ class AchievementsExtension {
         ")->fetchColumn();
         $level['total_achievements'] = $achievement_count;
         
+        // Update total points count
+        $total_points = $this->pdo->query("
+            SELECT SUM(a.points) FROM user_achievements ua 
+            JOIN achievements a ON ua.achievement_id = a.id 
+            WHERE ua.user_id = $user_id AND ua.is_completed = 1
+        ")->fetchColumn();
+        $level['total_points'] = $total_points ?: 0;
+        
         return $level;
     }
     
