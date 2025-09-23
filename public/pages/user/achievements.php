@@ -466,6 +466,28 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #adb5bd #f8f9fa;
+}
+
+.achievements-sidebar .achievement-filters::-webkit-scrollbar {
+    width: 6px;
+}
+
+.achievements-sidebar .achievement-filters::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.achievements-sidebar .achievement-filters::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+    border-radius: 3px;
+}
+
+.achievements-sidebar .achievement-filters::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
 }
 
 .achievements-sidebar .achievement-filters h3 {

@@ -622,6 +622,39 @@ class AchievementsExtension {
     }
     
     /**
+     * Award achievement by slug
+     */
+    public function awardAchievement($user_id, $achievement_slug) {
+        // Get achievement by slug
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM achievements WHERE slug = ?
+        ");
+        $stmt->execute([$achievement_slug]);
+        $achievement = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$achievement) {
+            throw new Exception("Achievement not found: $achievement_slug");
+        }
+        
+        // Check if user already has this achievement
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM user_achievements 
+            WHERE user_id = ? AND achievement_id = ?
+        ");
+        $stmt->execute([$user_id, $achievement['id']]);
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($existing && $existing['is_completed']) {
+            throw new Exception("Achievement already completed: $achievement_slug");
+        }
+        
+        // Award the achievement
+        $this->completeAchievement($user_id, $achievement['id']);
+        
+        return true;
+    }
+    
+    /**
      * Update total achievements count
      */
     private function updateTotalAchievements($user_id) {
