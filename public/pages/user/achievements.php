@@ -170,66 +170,131 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
                 <?php endif; ?>
             </div>
 
-            <!-- Achievements Grid -->
-            <div class="achievement-grid">
-        <?php foreach ($user_achievements as $achievement): ?>
-            <div class="achievement-card <?php echo $achievement['is_completed'] ? 'completed' : ($achievement['level_requirement'] > $user_level['level'] ? 'locked' : ''); ?>" 
-                 data-category="<?php echo $achievement['category_id']; ?>"
-                 data-type="<?php echo $achievement['type_id']; ?>"
-                 data-rarity="<?php echo $achievement['rarity']; ?>"
-                 data-achievement-id="<?php echo $achievement['id']; ?>">
-                
-                <div class="achievement-rarity rarity-<?php echo $achievement['rarity']; ?>">
-                    <?php echo ucfirst($achievement['rarity']); ?>
-                </div>
-                
-                <div class="achievement-header">
-                    <div class="achievement-icon <?php echo $achievement['is_completed'] ? 'completed' : ($achievement['level_requirement'] > $user_level['level'] ? 'locked' : ''); ?>">
-                        <i class="<?php echo $achievement['icon']; ?>"></i>
-                    </div>
-                    <div class="achievement-info">
-                        <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
-                        <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
-                    </div>
-                </div>
-                
-                <div class="achievement-description">
-                    <?php echo htmlspecialchars($achievement['description']); ?>
-                </div>
-                
-                <?php if (!$achievement['is_completed'] && $achievement['level_requirement'] <= $user_level['level']): ?>
-                    <div class="achievement-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" data-progress="<?php echo $achievement['progress']; ?>"></div>
+            <!-- Completed Achievements Section -->
+            <?php 
+            $completed_achievements = array_filter($user_achievements, function($achievement) {
+                return $achievement['is_completed'];
+            });
+            ?>
+            <?php if (!empty($completed_achievements)): ?>
+            <div class="achievement-section">
+                <h2 class="section-title">
+                    <i class="fas fa-trophy"></i>
+                    Completed Achievements (<?php echo count($completed_achievements); ?>)
+                </h2>
+                <div class="achievement-grid">
+                    <?php foreach ($completed_achievements as $achievement): ?>
+                        <div class="achievement-card completed" 
+                             data-category="<?php echo $achievement['category_id']; ?>"
+                             data-type="<?php echo $achievement['type_id']; ?>"
+                             data-rarity="<?php echo $achievement['rarity']; ?>"
+                             data-achievement-id="<?php echo $achievement['id']; ?>">
+                            
+                            <div class="achievement-rarity rarity-<?php echo $achievement['rarity']; ?>">
+                                <?php echo ucfirst($achievement['rarity']); ?>
+                            </div>
+                            
+                            <div class="achievement-header">
+                                <div class="achievement-icon completed">
+                                    <i class="<?php echo $achievement['icon']; ?>"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
+                                    <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-description">
+                                <?php echo htmlspecialchars($achievement['description']); ?>
+                            </div>
+                            
+                            <div class="achievement-rewards">
+                                <div class="reward-item">
+                                    <i class="fas fa-star"></i>
+                                    <span><?php echo $achievement['points']; ?> Points</span>
+                                </div>
+                                <div class="reward-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <span><?php echo $achievement['xp_reward']; ?> XP</span>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-completed">
+                                <i class="fas fa-check-circle"></i>
+                                Completed on <?php echo date('M j, Y', strtotime($achievement['completed_at'])); ?>
+                            </div>
                         </div>
-                        <div class="progress-text"><?php echo $achievement['progress']; ?>% Complete</div>
-                    </div>
-                <?php endif; ?>
-                
-                <div class="achievement-rewards">
-                    <div class="reward-item">
-                        <i class="fas fa-star"></i>
-                        <span><?php echo $achievement['points']; ?> Points</span>
-                    </div>
-                    <div class="reward-item">
-                        <i class="fas fa-bolt"></i>
-                        <span><?php echo $achievement['xp_reward']; ?> XP</span>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                
-                <?php if ($achievement['is_completed']): ?>
-                    <div class="achievement-completed">
-                        <i class="fas fa-check-circle"></i>
-                        Completed on <?php echo date('M j, Y', strtotime($achievement['completed_at'])); ?>
-                    </div>
-                <?php elseif ($achievement['level_requirement'] > $user_level['level']): ?>
-                    <div class="achievement-locked">
-                        <i class="fas fa-lock"></i>
-                        Requires Level <?php echo $achievement['level_requirement']; ?>
-                    </div>
-                <?php endif; ?>
             </div>
-            <?php endforeach; ?>
+            <?php endif; ?>
+
+            <!-- Available Achievements Section -->
+            <?php 
+            $available_achievements = array_filter($user_achievements, function($achievement) {
+                return !$achievement['is_completed'];
+            });
+            ?>
+            <div class="achievement-section">
+                <h2 class="section-title">
+                    <i class="fas fa-target"></i>
+                    Available Achievements (<?php echo count($available_achievements); ?>)
+                </h2>
+                <div class="achievement-grid">
+                    <?php foreach ($available_achievements as $achievement): ?>
+                        <div class="achievement-card <?php echo $achievement['level_requirement'] > $user_level['level'] ? 'locked' : ''; ?>" 
+                             data-category="<?php echo $achievement['category_id']; ?>"
+                             data-type="<?php echo $achievement['type_id']; ?>"
+                             data-rarity="<?php echo $achievement['rarity']; ?>"
+                             data-achievement-id="<?php echo $achievement['id']; ?>">
+                            
+                            <div class="achievement-rarity rarity-<?php echo $achievement['rarity']; ?>">
+                                <?php echo ucfirst($achievement['rarity']); ?>
+                            </div>
+                            
+                            <div class="achievement-header">
+                                <div class="achievement-icon <?php echo $achievement['level_requirement'] > $user_level['level'] ? 'locked' : ''; ?>">
+                                    <i class="<?php echo $achievement['icon']; ?>"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
+                                    <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-description">
+                                <?php echo htmlspecialchars($achievement['description']); ?>
+                            </div>
+                            
+                            <?php if ($achievement['level_requirement'] <= $user_level['level']): ?>
+                                <div class="achievement-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" data-progress="<?php echo $achievement['progress']; ?>"></div>
+                                    </div>
+                                    <div class="progress-text"><?php echo $achievement['progress']; ?>% Complete</div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="achievement-rewards">
+                                <div class="reward-item">
+                                    <i class="fas fa-star"></i>
+                                    <span><?php echo $achievement['points']; ?> Points</span>
+                                </div>
+                                <div class="reward-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <span><?php echo $achievement['xp_reward']; ?> XP</span>
+                                </div>
+                            </div>
+                            
+                            <?php if ($achievement['level_requirement'] > $user_level['level']): ?>
+                                <div class="achievement-locked">
+                                    <i class="fas fa-lock"></i>
+                                    Requires Level <?php echo $achievement['level_requirement']; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
 
@@ -480,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 0;
-    max-height: 70vh;
+    max-height: 85vh; /* Increased height for more viewable space */
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #adb5bd #f8f9fa;
@@ -709,6 +774,27 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-bottom: 15px;
     color: #6c757d;
     font-size: 1.1em;
+}
+
+/* Achievement section styles */
+.achievement-section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.section-title i {
+    color: #007bff;
 }
 
 .achievements-main .achievement-grid {
