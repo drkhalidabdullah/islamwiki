@@ -508,113 +508,13 @@ class AchievementsExtension {
         foreach ($achievements as $achievement) {
             if ($achievement['is_completed']) continue;
             
-            if ($this->checkAchievementRequirements($user_id, $achievement['id'])) {
+            if ($this->checkAchievementRequirements($user_id, $achievement)) {
                 $this->completeAchievement($user_id, $achievement['id']);
             }
         }
     }
     
-    /**
-     * Check if achievement requirements are met
-     */
-    private function checkAchievementRequirements($user_id, $achievement_id) {
-        $stmt = $this->pdo->prepare("
-            SELECT * FROM achievement_requirements 
-            WHERE achievement_id = ?
-            ORDER BY sort_order
-        ");
-        $stmt->execute([$achievement_id]);
-        $requirements = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        foreach ($requirements as $requirement) {
-            if (!$this->checkRequirement($user_id, $requirement)) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
     
-    /**
-     * Check individual requirement
-     */
-    private function checkRequirement($user_id, $requirement) {
-        $requirement_data = json_decode($requirement['requirement_value'], true);
-        $operator = $requirement['requirement_operator'];
-        
-        switch ($requirement['requirement_type']) {
-            case 'activity_count':
-                $count = $this->getActivityCount($user_id, $requirement_data['activity_type']);
-                return $this->compareValues($count, $requirement_data['count'], $operator);
-                
-            case 'level':
-                $level = $this->getUserLevel($user_id);
-                return $this->compareValues($level['level'], $requirement_data['level'], $operator);
-                
-            case 'achievement_count':
-                $count = $this->getAchievementCount($user_id, $requirement_data['category_id'] ?? null);
-                return $this->compareValues($count, $requirement_data['count'], $operator);
-                
-            case 'points':
-                $level = $this->getUserLevel($user_id);
-                return $this->compareValues($level['total_points'], $requirement_data['points'], $operator);
-                
-            default:
-                return false;
-        }
-    }
-    
-    /**
-     * Compare values with operator
-     */
-    private function compareValues($actual, $required, $operator) {
-        switch ($operator) {
-            case '>=': return $actual >= $required;
-            case '>': return $actual > $required;
-            case '=': return $actual == $required;
-            case '<=': return $actual <= $required;
-            case '<': return $actual < $required;
-            default: return false;
-        }
-    }
-    
-    /**
-     * Get activity count for user
-     */
-    private function getActivityCount($user_id, $activity_type) {
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) as count 
-            FROM user_activity_log 
-            WHERE user_id = ? AND activity_type = ?
-        ");
-        $stmt->execute([$user_id, $activity_type]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['count'];
-    }
-    
-    /**
-     * Get achievement count for user
-     */
-    private function getAchievementCount($user_id, $category_id = null) {
-        $sql = "
-            SELECT COUNT(*) as count 
-            FROM user_achievements ua
-            JOIN achievements a ON ua.achievement_id = a.id
-            WHERE ua.user_id = ? AND ua.is_completed = 1
-        ";
-        
-        $params = [$user_id];
-        
-        if ($category_id) {
-            $sql .= " AND a.category_id = ?";
-            $params[] = $category_id;
-        }
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result['count'];
-    }
     
     /**
      * Complete achievement
@@ -653,6 +553,93 @@ class AchievementsExtension {
     }
     
     /**
+     * Check if user meets achievement requirements
+     */
+    public function checkAchievementRequirements($user_id, $achievement) {
+        $requirement_type = $achievement['requirement_type'] ?? 'count';
+        $requirement_value = $achievement['requirement_value'] ?? 1;
+        $requirement_data = $achievement['requirement_data'] ?? null;
+        
+        switch ($requirement_type) {
+            case 'achievement_count':
+                $user_level = $this->getUserLevel($user_id);
+                return $user_level['total_achievements'] >= $requirement_value;
+                
+            case 'days_since_join':
+                $stmt = $this->pdo->prepare("
+                    SELECT DATEDIFF(NOW(), created_at) as days_since_join 
+                    FROM users WHERE id = ?
+                ");
+                $stmt->execute([$user_id]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result && $result['days_since_join'] >= $requirement_value;
+                
+            case 'ref_tags':
+                // Check for ref tags in user's content (when implemented)
+                return false; // Not implemented yet
+                
+            case 'bug_reports':
+                // Check bug reports count (when implemented)
+                return false; // Not implemented yet
+                
+            case 'posts_count':
+                $stmt = $this->pdo->prepare("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = ? AND is_public = 1
+                ");
+                $stmt->execute([$user_id]);
+                $count = $stmt->fetchColumn();
+                return $count >= $requirement_value;
+                
+            case 'friends_count':
+                $stmt = $this->pdo->prepare("
+                    SELECT COUNT(*) FROM user_follows WHERE follower_id = ?
+                ");
+                $stmt->execute([$user_id]);
+                $count = $stmt->fetchColumn();
+                return $count >= $requirement_value;
+                
+            case 'profile_complete':
+                $stmt = $this->pdo->prepare("
+                    SELECT username, email, first_name, last_name, bio, display_name, avatar
+                    FROM users WHERE id = ?
+                ");
+                $stmt->execute([$user_id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $fields_filled = 0;
+                foreach (['first_name', 'last_name', 'bio', 'display_name', 'avatar'] as $field) {
+                    if (!empty($user[$field])) $fields_filled++;
+                }
+                return $fields_filled >= $requirement_value;
+                
+            case 'settings_updated':
+                // Check if user has updated settings (when implemented)
+                return false; // Not implemented yet
+                
+            case 'first_login':
+                return true; // Always true if user exists
+                
+            case 'status_count':
+                $stmt = $this->pdo->prepare("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = ? AND post_type = 'text'
+                ");
+                $stmt->execute([$user_id]);
+                $count = $stmt->fetchColumn();
+                return $count >= $requirement_value;
+                
+            case 'article_count':
+                $stmt = $this->pdo->prepare("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = ? AND post_type = 'article_share'
+                ");
+                $stmt->execute([$user_id]);
+                $count = $stmt->fetchColumn();
+                return $count >= $requirement_value;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
      * Award achievement by slug
      */
     public function awardAchievement($user_id, $achievement_slug) {
@@ -665,6 +652,11 @@ class AchievementsExtension {
         
         if (!$achievement) {
             throw new Exception("Achievement not found: $achievement_slug");
+        }
+        
+        // Check if user meets requirements
+        if (!$this->checkAchievementRequirements($user_id, $achievement)) {
+            throw new Exception("User does not meet requirements for achievement: $achievement_slug");
         }
         
         // Check if user already has this achievement
