@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.0.20] - 2025-01-XX
+## [0.0.0.20] - 2025-09-XX
 
 ### 🎨 **Site Logo System & UI Fixes**
 
@@ -41,7 +41,7 @@
 - **Performance**: Optimized image handling and storage
 - **Code Quality**: Clean, maintainable code with proper error handling
 
-## [0.0.0.19] - 2025-01-XX
+## [0.0.0.19] - 2025-09-XX
 
 ### 🎯 **Header Dashboard & Sidebar System**
 

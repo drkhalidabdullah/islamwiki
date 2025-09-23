@@ -2,7 +2,7 @@
 
 ## Version 0.0.0.20 - Site Logo System & UI Fixes
 
-**Release Date:** January 2025  
+**Release Date:** September 2025  
 **Version:** 0.0.0.20  
 **Type:** Feature Enhancement - Site Logo Upload & Z-Index Fixes  
 **Status:** Production Ready ✅
@@ -128,7 +128,7 @@ If you encounter any issues with this release, please:
 
 ## Version 0.0.0.18 - Wiki Editor & Reference System
 
-**Release Date:** January 2025  
+**Release Date:** September 2025  
 **Version:** 0.0.0.18  
 **Type:** Major Feature Enhancement - Wiki Editor & Reference System  
 **Status:** Production Ready ✅

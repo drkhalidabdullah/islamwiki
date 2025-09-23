@@ -9,7 +9,7 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 
 ## 🎯 Current Version: 0.0.0.20
 
-**Latest Release:** January 2025  
+**Latest Release:** September 2025  
 **Status:** Production Ready ✅  
 **Type:** Feature Enhancement - Site Logo Upload & Z-Index Fixes
 

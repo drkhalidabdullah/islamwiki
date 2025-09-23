@@ -21,7 +21,7 @@ define('SITE_VERSION_FULL', '0.0.0.20');
 define('SITE_VERSION_NAME', 'Site Logo System & UI Fixes');
 define('SITE_VERSION_TYPE', 'Feature Enhancement - Site Logo Upload & Z-Index Fixes');
 define('SITE_VERSION_STATUS', 'Production Ready');
-define('SITE_VERSION_DATE', 'January 2025');
+define('SITE_VERSION_DATE', 'September 2025');
 
 // Version information array
 $version_info = [
