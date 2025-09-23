@@ -171,6 +171,48 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
                 <?php endif; ?>
             </div>
 
+            <!-- Badges Section -->
+            <div class="achievement-section">
+                <h2 class="section-title">
+                    <i class="fas fa-medal"></i>
+                    Badges (<?php echo count($user_badges); ?>)
+                </h2>
+                <div class="badges-grid">
+                    <?php foreach ($user_badges as $badge): ?>
+                        <div class="badge-card earned" data-badge-id="<?php echo $badge['id']; ?>">
+                            <div class="badge-rarity rarity-<?php echo $badge['rarity']; ?>">
+                                <?php echo ucfirst($badge['rarity']); ?>
+                            </div>
+                            
+                            <div class="badge-header">
+                                <div class="badge-icon">
+                                    <i class="<?php echo $badge['icon']; ?>"></i>
+                                </div>
+                                <div class="badge-info">
+                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
+                                    <div class="badge-earned">Earned <?php echo date('M j, Y', strtotime($badge['earned_at'])); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="badge-description">
+                                <?php echo htmlspecialchars($badge['description']); ?>
+                            </div>
+                            
+                            <div class="badge-rewards">
+                                <div class="reward-item">
+                                    <i class="fas fa-star"></i>
+                                    <span><?php echo $badge['points']; ?> Points</span>
+                                </div>
+                                <div class="reward-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <span><?php echo $badge['xp_reward']; ?> XP</span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
             <!-- Completed Achievements Section -->
             <?php 
             $completed_achievements = array_filter($user_achievements, function($achievement) {
@@ -293,48 +335,6 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
                                     Requires Level <?php echo $achievement['level_requirement']; ?>
                                 </div>
                             <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <!-- Badges Section -->
-            <div class="achievement-section">
-                <h2 class="section-title">
-                    <i class="fas fa-medal"></i>
-                    Badges (<?php echo count($user_badges); ?>)
-                </h2>
-                <div class="badges-grid">
-                    <?php foreach ($user_badges as $badge): ?>
-                        <div class="badge-card earned" data-badge-id="<?php echo $badge['id']; ?>">
-                            <div class="badge-rarity rarity-<?php echo $badge['rarity']; ?>">
-                                <?php echo ucfirst($badge['rarity']); ?>
-                            </div>
-                            
-                            <div class="badge-header">
-                                <div class="badge-icon">
-                                    <i class="<?php echo $badge['icon']; ?>"></i>
-                                </div>
-                                <div class="badge-info">
-                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
-                                    <div class="badge-earned">Earned <?php echo date('M j, Y', strtotime($badge['earned_at'])); ?></div>
-                                </div>
-                            </div>
-                            
-                            <div class="badge-description">
-                                <?php echo htmlspecialchars($badge['description']); ?>
-                            </div>
-                            
-                            <div class="badge-rewards">
-                                <div class="reward-item">
-                                    <i class="fas fa-star"></i>
-                                    <span><?php echo $badge['points']; ?> Points</span>
-                                </div>
-                                <div class="reward-item">
-                                    <i class="fas fa-bolt"></i>
-                                    <span><?php echo $badge['xp_reward']; ?> XP</span>
-                                </div>
-                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
