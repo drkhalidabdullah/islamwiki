@@ -20,6 +20,7 @@ $achievements_extension = new AchievementsExtension();
 $user_id = $_SESSION['user_id'];
 $user_level = $achievements_extension->getUserLevel($user_id);
 $user_achievements = $achievements_extension->getUserAchievements($user_id);
+$user_badges = $achievements_extension->getUserBadges($user_id);
 $categories = $achievements_extension->getCategories();
 $types = $achievements_extension->getTypes();
 $stats = $achievements_extension->getAchievementStats($user_id);
@@ -292,6 +293,48 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
                                     Requires Level <?php echo $achievement['level_requirement']; ?>
                                 </div>
                             <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Badges Section -->
+            <div class="achievement-section">
+                <h2 class="section-title">
+                    <i class="fas fa-medal"></i>
+                    Badges (<?php echo count($user_badges); ?>)
+                </h2>
+                <div class="badges-grid">
+                    <?php foreach ($user_badges as $badge): ?>
+                        <div class="badge-card earned" data-badge-id="<?php echo $badge['id']; ?>">
+                            <div class="badge-rarity rarity-<?php echo $badge['rarity']; ?>">
+                                <?php echo ucfirst($badge['rarity']); ?>
+                            </div>
+                            
+                            <div class="badge-header">
+                                <div class="badge-icon">
+                                    <i class="<?php echo $badge['icon']; ?>"></i>
+                                </div>
+                                <div class="badge-info">
+                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
+                                    <div class="badge-earned">Earned <?php echo date('M j, Y', strtotime($badge['earned_at'])); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="badge-description">
+                                <?php echo htmlspecialchars($badge['description']); ?>
+                            </div>
+                            
+                            <div class="badge-rewards">
+                                <div class="reward-item">
+                                    <i class="fas fa-star"></i>
+                                    <span><?php echo $badge['points']; ?> Points</span>
+                                </div>
+                                <div class="reward-item">
+                                    <i class="fas fa-bolt"></i>
+                                    <span><?php echo $badge['xp_reward']; ?> XP</span>
+                                </div>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -802,6 +845,113 @@ document.addEventListener('DOMContentLoaded', function() {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
+}
+
+/* Badges grid styles */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.badge-card {
+    background: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-card.earned {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #f8fff9 0%, #ffffff 100%);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.1);
+}
+
+.badge-rarity {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-rarity.rarity-common { background: #6c757d; color: white; }
+.badge-rarity.rarity-uncommon { background: #28a745; color: white; }
+.badge-rarity.rarity-rare { background: #007bff; color: white; }
+.badge-rarity.rarity-epic { background: #6f42c1; color: white; }
+.badge-rarity.rarity-legendary { background: #fd7e14; color: white; }
+
+.badge-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-right: 80px;
+}
+
+.badge-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.5em;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.badge-info {
+    flex: 1;
+}
+
+.badge-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.badge-earned {
+    font-size: 0.9em;
+    color: #28a745;
+    font-weight: 500;
+}
+
+.badge-description {
+    color: #6c757d;
+    font-size: 0.95em;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.badge-rewards {
+    display: flex;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.badge-rewards .reward-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    color: #495057;
+    font-weight: 500;
+}
+
+.badge-rewards .reward-item i {
+    color: #007bff;
 }
 
 /* Right sidebar styles */
