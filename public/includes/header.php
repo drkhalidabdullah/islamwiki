@@ -136,13 +136,16 @@ if ($toast_message) {
                 <?php endif; ?>
                 
                 <?php if (is_logged_in() && $enable_social): ?>
-                <a href="/feed" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/feed') === 0) ? 'active' : ''; ?>" title="Feed">
-                    <i class="iw iw-rss"></i>
+                <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
+                    <i class="iw iw-tachometer-alt"></i>
+                </a>
+                <a href="/friends" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/friends') === 0) ? 'active' : ''; ?>" title="Friends">
+                    <i class="iw iw-users"></i>
                 </a>
                 <?php endif; ?>
                 
                 <?php if (is_logged_in()): ?>
-                <a href="/pages/user/achievements.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/pages/user/achievements.php') !== false) ? 'active' : ''; ?>" title="Achievements">
+                <a href="/achievements" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/achievements') !== false) ? 'active' : ''; ?>" title="Achievements">
                     <i class="iw iw-trophy"></i>
                 </a>
                 <?php endif; ?>

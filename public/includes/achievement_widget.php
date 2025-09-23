@@ -68,7 +68,7 @@ $recent_achievements = array_slice($recent_achievements, 0, 3); // Show only 3 r
     
     <!-- Widget Footer -->
     <div class="widget-footer">
-        <a href="/pages/user/achievements.php" class="btn btn-primary btn-sm">
+        <a href="/achievements" class="btn btn-primary btn-sm">
             <i class="fas fa-trophy"></i> View All
         </a>
     </div>

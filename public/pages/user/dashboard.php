@@ -737,7 +737,7 @@ include "../../includes/header.php";
             <div class="achievements-widget-card">
                 <div class="widget-header">
                     <h4><i class="iw iw-trophy"></i> Achievements</h4>
-                    <a href="/pages/user/achievements.php" class="view-all-link">View All</a>
+                    <a href="/achievements" class="view-all-link">View All</a>
                 </div>
                 <?php
                 try {
@@ -837,7 +837,7 @@ include "../../includes/header.php";
             <div class="watchlist-card">
                 <div class="card-header">
                     <h4>My Watchlist</h4>
-                    <a href="/pages/user/watchlist.php" class="view-all-link">View All</a>
+                    <a href="/watchlist" class="view-all-link">View All</a>
                 </div>
                 <?php if (!empty($watchlist_articles)): ?>
                 <div class="watchlist-list">

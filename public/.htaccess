@@ -62,8 +62,10 @@ RewriteRule ^logout/?$ /logout.php [L,QSA]
 RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]
 RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
+RewriteRule ^achievements/?$ /pages/user/achievements.php [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/about/?$ /pages/user/about.php?username=$1 [L,QSA]
+RewriteRule ^user/([a-zA-Z0-9\-_]+)/achievements/?$ /pages/user/user_profile.php?username=$1&tab=achievements [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/events/?$ /pages/user/events.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/activity/?$ /pages/user/activity.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
@@ -93,6 +95,11 @@ RewriteRule ^messages/?$ /pages/social/messages.php [L,QSA]
 RewriteRule ^messages/sent/?$ /modules/messages/sent.php [L,QSA]
 RewriteRule ^messages/compose/?$ /modules/messages/compose.php [L,QSA]
 RewriteRule ^notifications/?$ /pages/notifications.php [L,QSA]
+
+# Additional clean URLs for pages
+RewriteRule ^watchlist/?$ /pages/user/watchlist.php [L,QSA]
+RewriteRule ^leaderboard/?$ /pages/user/leaderboard.php [L,QSA]
+RewriteRule ^create_post/?$ /pages/social/create_post.php [L,QSA]
 
 # Admin pages
 RewriteRule ^admin/?$ /pages/admin/admin.php [L,QSA]

@@ -67,7 +67,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                     <i class="iw iw-chevron-down"></i>
                 </button>
                 <div class="create-dropdown-menu" id="createDropdown">
-                    <a href="/pages/social/create_post.php" class="create-item">
+                    <a href="/create_post" class="create-item">
                         <i class="iw iw-edit"></i>
                         <span>Create Post</span>
                     </a>
@@ -146,11 +146,11 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                             <i class="iw iw-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
-                        <a href="/pages/user/watchlist.php" class="dropdown-item">
+                        <a href="/watchlist" class="dropdown-item">
                             <i class="iw iw-eye"></i>
                             <span>My Watchlist</span>
                         </a>
-                        <a href="/pages/user/achievements.php" class="dropdown-item">
+                        <a href="/achievements" class="dropdown-item">
                             <i class="iw iw-trophy"></i>
                             <span>Achievements</span>
                         </a>

@@ -114,19 +114,22 @@ $active_tab = $active_tab ?? 'posts';
             <div class="card">
                 <nav class="nav-tabs">
                     <a href="/user/<?php echo $profile_user['username']; ?>" class="nav-tab <?php echo $active_tab == 'posts' ? 'active' : ''; ?>">
-                        Posts
+                        <i class="iw iw-file-alt"></i> Posts
                     </a>
                     <a href="/user/<?php echo $profile_user['username']; ?>/photos" class="nav-tab <?php echo $active_tab == 'photos' ? 'active' : ''; ?>">
-                        Photos
+                        <i class="iw iw-images"></i> Photos
                     </a>
                     <a href="/user/<?php echo $profile_user['username']; ?>/events" class="nav-tab <?php echo $active_tab == 'events' ? 'active' : ''; ?>">
-                        Events
+                        <i class="iw iw-calendar-alt"></i> Events
                     </a>
                     <a href="/user/<?php echo $profile_user['username']; ?>/about" class="nav-tab <?php echo $active_tab == 'about' ? 'active' : ''; ?>">
-                        About
+                        <i class="iw iw-info"></i> About
+                    </a>
+                    <a href="/user/<?php echo $profile_user['username']; ?>/achievements" class="nav-tab <?php echo $active_tab == 'achievements' ? 'active' : ''; ?>">
+                        <i class="iw iw-trophy"></i> Achievements
                     </a>
                     <a href="/user/<?php echo $profile_user['username']; ?>/activity" class="nav-tab <?php echo $active_tab == 'activity' ? 'active' : ''; ?>">
-                        Activity
+                        <i class="iw iw-chart-line"></i> Activity
                     </a>
                 </nav>
             </div>

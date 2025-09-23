@@ -77,6 +77,11 @@
 .iw-download::before { content: "\f019"; }
 .iw-external-link-alt::before { content: "\f35d"; }
 .iw-star::before { content: "\f005"; }
+.iw-trophy::before { content: "\f091"; }
+.iw-medal::before { content: "\f5a2"; }
+.iw-award::before { content: "\f559"; }
+.iw-check-circle::before { content: "\f058"; }
+.iw-lock::before { content: "\f023"; }
 .iw-sync-alt::before { content: "\f2f1"; }
 .iw-calendar::before { content: "\f133"; }
 .iw-save::before { content: "\f0c7"; }
@@ -93,6 +98,10 @@
 .iw-unlink::before { content: "\f127"; }
 .iw-undo::before { content: "\f0e2"; }
 .iw-camera::before { content: "\f030"; }
+.iw-images::before { content: "\f302"; }
+.iw-calendar-alt::before { content: "\f073"; }
+.iw-info::before { content: "\f05a"; }
+.iw-chart-line::before { content: "\f201"; }
 .iw-expand::before { content: "\f065"; }
 .iw-compress::before { content: "\f066"; }
 

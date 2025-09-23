@@ -224,7 +224,7 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
             <div class="leaderboard">
                 <div class="leaderboard-header">
                     <h3>Top Contributors</h3>
-                    <a href="/pages/user/leaderboard.php" class="btn btn-secondary">View Full</a>
+                    <a href="/leaderboard" class="btn btn-secondary">View Full</a>
                 </div>
                 <div class="leaderboard-items">
                     <?php foreach ($leaderboard as $index => $user): ?>
@@ -540,6 +540,98 @@ document.addEventListener('DOMContentLoaded', function() {
     border-radius: 12px;
     padding: 25px;
     margin-bottom: 25px;
+}
+
+/* Level section styles */
+.level-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.level-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    min-width: 100px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.level-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.level-text {
+    font-size: 0.9em;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.level-details {
+    flex: 1;
+}
+
+.level-title {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.level-progress {
+    background: #e9ecef;
+    border-radius: 10px;
+    height: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.level-progress-bar {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.level-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.level-stats span {
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+/* Responsive level section */
+@media (max-width: 768px) {
+    .level-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .level-badge {
+        min-width: auto;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .level-stats {
+        justify-content: center;
+    }
 }
 
 .achievements-main .achievement-stats {

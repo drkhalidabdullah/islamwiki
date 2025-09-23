@@ -53,6 +53,28 @@ switch ($tab) {
             'achievements' => get_user_achievements($profile_user['id'])
         ];
         break;
+    case 'achievements':
+        // Get user achievements data
+        $achievements_enabled = get_system_setting('achievements_enabled', false);
+        if ($achievements_enabled) {
+            try {
+                require_once '../../extensions/achievements/extension.php';
+                $achievements_extension = new AchievementsExtension();
+                $user_level = $achievements_extension->getUserLevel($profile_user['id']);
+                $user_achievements = $achievements_extension->getUserAchievements($profile_user['id']);
+                $stats = $achievements_extension->getAchievementStats($profile_user['id']);
+                $content = [
+                    'user_level' => $user_level,
+                    'user_achievements' => $user_achievements,
+                    'stats' => $stats
+                ];
+            } catch (Exception $e) {
+                $content = ['error' => 'Achievements temporarily unavailable'];
+            }
+        } else {
+            $content = ['error' => 'Achievements system is disabled'];
+        }
+        break;
     case 'activity':
         $stmt = $pdo->prepare("
             SELECT * FROM activity_logs 
@@ -73,6 +95,7 @@ include "../../includes/header.php";
 <?php
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/user_profile.css">
+<link rel="stylesheet" href="/extensions/achievements/assets/css/achievements.css">
 <?php
 ?>
 
@@ -177,6 +200,96 @@ include "../../includes/profile_template.php";
         case 'about': ?>
             <!-- About section will be rendered outside container -->
             <div class="placeholder-for-full-width"></div>
+        <?php break; 
+        
+        case 'achievements': ?>
+            <div class="card">
+                <h2><i class="iw iw-trophy"></i> Achievements</h2>
+                <?php if (isset($content['error'])): ?>
+                    <div class="alert alert-warning">
+                        <?php echo htmlspecialchars($content['error']); ?>
+                    </div>
+                <?php else: ?>
+                    <?php 
+                    $user_level = $content['user_level'];
+                    $user_achievements = $content['user_achievements'];
+                    $stats = $content['stats'];
+                    ?>
+                    
+                    <!-- Level Widget -->
+                    <div class="achievement-widget">
+                        <div class="level-info">
+                            <div class="level-badge">
+                                <div class="level-number"><?php echo $user_level['level']; ?></div>
+                                <div class="level-text">Level</div>
+                            </div>
+                            <div class="level-details">
+                                <div class="level-title">Level <?php echo $user_level['level']; ?></div>
+                                <div class="level-progress">
+                                    <div class="level-progress-bar" style="width: <?php echo $user_level['xp_to_next_level'] > 0 ? ($user_level['current_level_xp'] / ($user_level['current_level_xp'] + $user_level['xp_to_next_level'])) * 100 : 100; ?>%"></div>
+                                </div>
+                                <div class="level-stats">
+                                    <span><?php echo $user_level['current_level_xp']; ?> XP</span>
+                                    <span><?php echo $user_level['total_achievements']; ?> Achievements</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievement Statistics -->
+                    <div class="achievement-stats">
+                        <h3>Achievement Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value"><?php echo $stats['total_achievements']; ?></div>
+                                <div class="stat-label">Total Achievements</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value"><?php echo $user_level['total_xp']; ?></div>
+                                <div class="stat-label">Total XP</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value"><?php echo $user_level['total_points']; ?></div>
+                                <div class="stat-label">Total Points</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value"><?php echo $user_level['level']; ?></div>
+                                <div class="stat-label">Current Level</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Grid -->
+                    <div class="achievement-grid">
+                        <?php foreach ($user_achievements as $achievement): ?>
+                            <div class="achievement-card <?php echo $achievement['is_completed'] ? 'completed' : ($achievement['level_requirement'] > $user_level['level'] ? 'locked' : ''); ?>">
+                                <div class="achievement-icon">
+                                    <i class="<?php echo $achievement['icon']; ?>"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <h4><?php echo htmlspecialchars($achievement['name']); ?></h4>
+                                    <p><?php echo htmlspecialchars($achievement['description']); ?></p>
+                                    <div class="achievement-meta">
+                                        <span class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></span>
+                                        <span class="achievement-rarity rarity-<?php echo $achievement['rarity']; ?>"><?php echo ucfirst($achievement['rarity']); ?></span>
+                                    </div>
+                                    <?php if ($achievement['is_completed']): ?>
+                                        <div class="achievement-completed">
+                                            <i class="iw iw-check-circle"></i>
+                                            Completed on <?php echo date('M j, Y', strtotime($achievement['completed_at'])); ?>
+                                        </div>
+                                    <?php elseif ($achievement['level_requirement'] > $user_level['level']): ?>
+                                        <div class="achievement-locked">
+                                            <i class="iw iw-lock"></i>
+                                            Requires Level <?php echo $achievement['level_requirement']; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         <?php break; 
         
         case 'activity': ?>

@@ -28,7 +28,7 @@ if (!is_logged_in() || !$enable_social) return;
 <div class="right-sidebar-dropdown" id="messagesDropdown">
     <div class="dropdown-header">
         <h4>Recent Messages</h4>
-        <a href="/pages/social/messages.php" class="view-all">View All</a>
+        <a href="/messages" class="view-all">View All</a>
     </div>
     <div class="dropdown-content" id="messagesContent">
         <div class="loading-messages">Loading messages...</div>
@@ -437,14 +437,14 @@ async function loadMessagesData() {
                 messagesContent.innerHTML = `
                     <div class="no-messages">No recent messages</div>
                     <div class="dropdown-footer">
-                        <a href="/pages/social/messages.php?action=compose" class="dropdown-link">New Message</a>
+                        <a href="/messages?action=compose" class="dropdown-link">New Message</a>
                     </div>
                 `;
             } else {
                 let messagesHtml = '';
                 conversations.forEach(conv => {
                     messagesHtml += `
-                        <div class="message-item" onclick="window.location.href='/pages/social/messages.php?conversation=${conv.id}'">
+                        <div class="message-item" onclick="window.location.href='/messages?conversation=${conv.id}'">
                             <div class="message-avatar">
                                 <img src="${conv.avatar}" alt="${conv.display_name}">
                                 ${conv.unread_count > 0 ? `<div class="unread-badge">${conv.unread_count}</div>` : ''}
@@ -460,7 +460,7 @@ async function loadMessagesData() {
                 
                 messagesContent.innerHTML = messagesHtml + `
                     <div class="dropdown-footer">
-                        <a href="/pages/social/messages.php?action=compose" class="dropdown-link">New Message</a>
+                        <a href="/messages?action=compose" class="dropdown-link">New Message</a>
                     </div>
                 `;
             }
