@@ -35,8 +35,8 @@ class AchievementsExtension {
             'notifications_enabled' => true,
             'level_system_enabled' => true,
             'max_level' => 100,
-            'xp_per_level' => 100,
-            'level_scaling' => 1.2
+            'xp_per_level' => 500,
+            'level_scaling' => 1.3
         ];
         
         // Try to load from database if PDO is available
@@ -241,19 +241,11 @@ class AchievementsExtension {
      */
     public function getUserLevel($user_id) {
         $stmt = $this->pdo->prepare("
-            SELECT ul.*, 
-                   CASE WHEN ul.level < ? THEN 
-                       (ul.level + 1) * ? * POW(?, ul.level) - ul.current_level_xp
-                   ELSE 0 END as xp_to_next_level
+            SELECT ul.*
             FROM user_levels ul 
             WHERE ul.user_id = ?
         ");
-        $stmt->execute([
-            $this->settings['max_level'],
-            $this->settings['xp_per_level'],
-            $this->settings['level_scaling'],
-            $user_id
-        ]);
+        $stmt->execute([$user_id]);
         
         $level = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -262,6 +254,24 @@ class AchievementsExtension {
             $this->createUserLevel($user_id);
             return $this->getUserLevel($user_id);
         }
+        
+        // Recalculate level based on total XP
+        $correct_level = $this->calculateLevel($level['total_xp']);
+        
+        // Calculate XP requirements for the correct level
+        $current_level_xp = $this->getXPForLevel($correct_level);
+        $next_level_xp = $this->getXPForLevel($correct_level + 1);
+        
+        $level['level'] = $correct_level;
+        $level['current_level_xp'] = $level['total_xp'] - $current_level_xp;
+        $level['xp_to_next_level'] = max(0, $next_level_xp - $level['total_xp']);
+        
+        // Update total achievements count
+        $achievement_count = $this->pdo->query("
+            SELECT COUNT(*) FROM user_achievements 
+            WHERE user_id = $user_id AND is_completed = 1
+        ")->fetchColumn();
+        $level['total_achievements'] = $achievement_count;
         
         return $level;
     }

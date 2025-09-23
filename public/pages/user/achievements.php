@@ -99,12 +99,26 @@ $leaderboard = $achievements_extension->getLeaderboard(10);
                         <div class="level-text">Level</div>
                     </div>
                     <div class="level-details">
-                        <div class="level-title">Level <?php echo $user_level['level']; ?></div>
+                        <div class="level-title"><?php echo $user_level['xp_to_next_level']; ?> XP till <?php echo $user_level['level'] + 1; ?></div>
                         <div class="level-progress">
-                            <div class="level-progress-bar" style="width: <?php echo $user_level['xp_to_next_level'] > 0 ? ($user_level['current_level_xp'] / ($user_level['current_level_xp'] + $user_level['xp_to_next_level'])) * 100 : 100; ?>%"></div>
+                            <div class="level-progress-bar" style="width: <?php 
+                                $current_level_xp = $user_level['current_level_xp'];
+                                $xp_needed_for_next = $user_level['xp_to_next_level'];
+                                
+                                // Calculate progress percentage
+                                if ($xp_needed_for_next <= 0) {
+                                    // Already at max level or beyond
+                                    $progress_percentage = 100;
+                                } else {
+                                    $total_xp_for_level = $current_level_xp + $xp_needed_for_next;
+                                    $progress_percentage = $total_xp_for_level > 0 ? ($current_level_xp / $total_xp_for_level) * 100 : 0;
+                                }
+                                
+                                echo min(100, max(0, $progress_percentage));
+                            ?>%"></div>
                         </div>
                         <div class="level-stats">
-                            <span><?php echo $user_level['current_level_xp']; ?> XP</span>
+                            <span><?php echo $user_level['total_xp']; ?> Total XP</span>
                             <span><?php echo $user_level['total_achievements']; ?> Achievements</span>
                         </div>
                     </div>
@@ -574,11 +588,12 @@ document.addEventListener('DOMContentLoaded', function() {
 .level-badge {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-radius: 15px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 35px 40px;
     text-align: center;
-    min-width: 100px;
+    min-width: 140px;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
 }
 
 .level-number {
@@ -600,10 +615,11 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .level-title {
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: 600;
-    color: #495057;
-    margin-bottom: 15px;
+    color: #6c757d;
+    margin-bottom: 12px;
+    text-align: center;
 }
 
 .level-progress {
@@ -623,18 +639,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .level-stats {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
 }
 
 .level-stats span {
     background: white;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.9em;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 0.95em;
     font-weight: 600;
     color: #495057;
     border: 1px solid #dee2e6;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    min-width: 90px;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* Responsive level section */
@@ -642,17 +664,28 @@ document.addEventListener('DOMContentLoaded', function() {
     .level-info {
         flex-direction: column;
         text-align: center;
-        gap: 15px;
+        gap: 20px;
     }
     
     .level-badge {
         min-width: auto;
         width: 100%;
-        max-width: 200px;
+        max-width: 250px;
+        padding: 30px 35px;
+    }
+    
+    .level-details {
+        width: 100%;
     }
     
     .level-stats {
         justify-content: center;
+        gap: 10px;
+    }
+    
+    .level-stats span {
+        min-width: 70px;
+        padding: 8px 15px;
     }
 }
 
