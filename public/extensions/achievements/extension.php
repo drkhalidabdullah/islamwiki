@@ -262,21 +262,35 @@ class AchievementsExtension {
         ")->fetchColumn();
         $level['total_achievements'] = $achievement_count;
         
-        // Update total points count
-        $total_points = $this->pdo->query("
+        // Update total points count (achievements + badges)
+        $achievement_points = $this->pdo->query("
             SELECT SUM(a.points) FROM user_achievements ua 
             JOIN achievements a ON ua.achievement_id = a.id 
             WHERE ua.user_id = $user_id AND ua.is_completed = 1
         ")->fetchColumn();
-        $level['total_points'] = $total_points ?: 0;
         
-        // Update total XP count
-        $total_xp = $this->pdo->query("
+        $badge_points = $this->pdo->query("
+            SELECT SUM(b.points) FROM user_badges ub 
+            JOIN badges b ON ub.badge_id = b.id 
+            WHERE ub.user_id = $user_id
+        ")->fetchColumn();
+        
+        $level['total_points'] = ($achievement_points ?: 0) + ($badge_points ?: 0);
+        
+        // Update total XP count (achievements + badges)
+        $achievement_xp = $this->pdo->query("
             SELECT SUM(a.xp_reward) FROM user_achievements ua 
             JOIN achievements a ON ua.achievement_id = a.id 
             WHERE ua.user_id = $user_id AND ua.is_completed = 1
         ")->fetchColumn();
-        $level['total_xp'] = $total_xp ?: 0;
+        
+        $badge_xp = $this->pdo->query("
+            SELECT SUM(b.xp_reward) FROM user_badges ub 
+            JOIN badges b ON ub.badge_id = b.id 
+            WHERE ub.user_id = $user_id
+        ")->fetchColumn();
+        
+        $level['total_xp'] = ($achievement_xp ?: 0) + ($badge_xp ?: 0);
         
         // Calculate level based on actual total XP from achievements
         $correct_level = $this->calculateLevel($level['total_xp']);
@@ -755,6 +769,215 @@ class AchievementsExtension {
             WHERE id = ? AND user_id = ?
         ");
         $stmt->execute([$notification_id, $user_id]);
+    }
+    
+    /**
+     * Check and award badges for a user
+     */
+    public function checkAndAwardBadges($user_id) {
+        // Get all active badges
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM badges WHERE is_active = 1 ORDER BY sort_order
+        ");
+        $stmt->execute();
+        $badges = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $awarded_badges = [];
+        
+        foreach ($badges as $badge) {
+            // Check if user already has this badge
+            $stmt = $this->pdo->prepare("
+                SELECT * FROM user_badges WHERE user_id = ? AND badge_id = ?
+            ");
+            $stmt->execute([$user_id, $badge['id']]);
+            if ($stmt->fetch()) {
+                continue; // User already has this badge
+            }
+            
+            // Check if user meets badge requirements
+            if ($this->checkBadgeRequirements($user_id, $badge)) {
+                $this->awardBadge($user_id, $badge);
+                $awarded_badges[] = $badge;
+            }
+        }
+        
+        return $awarded_badges;
+    }
+    
+    /**
+     * Check if user meets badge requirements
+     */
+    public function checkBadgeRequirements($user_id, $badge) {
+        switch ($badge['slug']) {
+            case 'social-butterfly':
+                $friends_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_follows WHERE follower_id = $user_id
+                ")->fetchColumn();
+                $status_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND post_type = 'text'
+                ")->fetchColumn();
+                return $friends_count >= 5 && $status_count >= 10;
+                
+            case 'community-builder':
+                $friends_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_follows WHERE follower_id = $user_id
+                ")->fetchColumn();
+                $status_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND post_type = 'text'
+                ")->fetchColumn();
+                return $friends_count >= 10 && $status_count >= 20;
+                
+            case 'content-creator':
+                $posts_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND is_public = 1
+                ")->fetchColumn();
+                $articles_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND post_type = 'article_share'
+                ")->fetchColumn();
+                return $posts_count >= 5 && $articles_count >= 1;
+                
+            case 'knowledge-sharer':
+                $posts_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND is_public = 1
+                ")->fetchColumn();
+                $articles_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND post_type = 'article_share'
+                ")->fetchColumn();
+                return $posts_count >= 10 && $articles_count >= 3;
+                
+            case 'profile-master':
+                $profile_complete = $this->checkAchievementRequirements($user_id, [
+                    'requirement_type' => 'profile_complete',
+                    'requirement_value' => 3
+                ]);
+                $friends_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_follows WHERE follower_id = $user_id
+                ")->fetchColumn();
+                return $profile_complete && $friends_count >= 5;
+                
+            case 'public-figure':
+                $profile_complete = $this->checkAchievementRequirements($user_id, [
+                    'requirement_type' => 'profile_complete',
+                    'requirement_value' => 3
+                ]);
+                $friends_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_follows WHERE follower_id = $user_id
+                ")->fetchColumn();
+                $posts_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_posts WHERE user_id = $user_id AND is_public = 1
+                ")->fetchColumn();
+                return $profile_complete && $friends_count >= 10 && $posts_count >= 5;
+                
+            case 'achievement-hunter':
+                $achievement_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_achievements WHERE user_id = $user_id AND is_completed = 1
+                ")->fetchColumn();
+                return $achievement_count >= 10;
+                
+            case 'achievement-master':
+                $achievement_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_achievements WHERE user_id = $user_id AND is_completed = 1
+                ")->fetchColumn();
+                return $achievement_count >= 25;
+                
+            case 'achievement-legend':
+                $achievement_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_achievements WHERE user_id = $user_id AND is_completed = 1
+                ")->fetchColumn();
+                return $achievement_count >= 50;
+                
+            case 'early-adopter':
+                $user_created = $this->pdo->query("
+                    SELECT created_at FROM users WHERE id = $user_id
+                ")->fetchColumn();
+                $days_since_join = $this->pdo->query("
+                    SELECT DATEDIFF(NOW(), '$user_created') as days
+                ")->fetchColumn();
+                $achievement_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_achievements WHERE user_id = $user_id AND is_completed = 1
+                ")->fetchColumn();
+                return $days_since_join <= 30 && $achievement_count >= 1;
+                
+            case 'pioneer':
+                $user_created = $this->pdo->query("
+                    SELECT created_at FROM users WHERE id = $user_id
+                ")->fetchColumn();
+                $days_since_join = $this->pdo->query("
+                    SELECT DATEDIFF(NOW(), '$user_created') as days
+                ")->fetchColumn();
+                $achievement_count = $this->pdo->query("
+                    SELECT COUNT(*) FROM user_achievements WHERE user_id = $user_id AND is_completed = 1
+                ")->fetchColumn();
+                return $days_since_join <= 30 && $achievement_count >= 5;
+                
+            case 'well-rounded':
+                $category_count = $this->pdo->query("
+                    SELECT COUNT(DISTINCT a.category_id) 
+                    FROM user_achievements ua 
+                    JOIN achievements a ON ua.achievement_id = a.id 
+                    WHERE ua.user_id = $user_id AND ua.is_completed = 1
+                ")->fetchColumn();
+                return $category_count >= 3;
+                
+            case 'category-master':
+                $category_count = $this->pdo->query("
+                    SELECT COUNT(DISTINCT a.category_id) 
+                    FROM user_achievements ua 
+                    JOIN achievements a ON ua.achievement_id = a.id 
+                    WHERE ua.user_id = $user_id AND ua.is_completed = 1
+                ")->fetchColumn();
+                return $category_count >= 5;
+                
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Award a badge to a user
+     */
+    public function awardBadge($user_id, $badge) {
+        // Insert user badge
+        $stmt = $this->pdo->prepare("
+            INSERT INTO user_badges (user_id, badge_id) VALUES (?, ?)
+        ");
+        $stmt->execute([$user_id, $badge['id']]);
+        
+        // Add XP and points to user level
+        $stmt = $this->pdo->prepare("
+            UPDATE user_levels 
+            SET total_xp = total_xp + ?, total_points = total_points + ?
+            WHERE user_id = ?
+        ");
+        $stmt->execute([$badge['xp_reward'], $badge['points'], $user_id]);
+        
+        return true;
+    }
+    
+    /**
+     * Get user badges
+     */
+    public function getUserBadges($user_id) {
+        $stmt = $this->pdo->prepare("
+            SELECT b.*, ub.earned_at, ub.is_displayed
+            FROM badges b
+            JOIN user_badges ub ON b.id = ub.badge_id
+            WHERE ub.user_id = ? AND b.is_active = 1
+            ORDER BY ub.earned_at DESC
+        ");
+        $stmt->execute([$user_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Get all badges
+     */
+    public function getAllBadges() {
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM badges WHERE is_active = 1 ORDER BY sort_order
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     /**
