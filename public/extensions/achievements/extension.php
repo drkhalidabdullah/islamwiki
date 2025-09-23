@@ -255,17 +255,6 @@ class AchievementsExtension {
             return $this->getUserLevel($user_id);
         }
         
-        // Recalculate level based on total XP
-        $correct_level = $this->calculateLevel($level['total_xp']);
-        
-        // Calculate XP requirements for the correct level
-        $current_level_xp = $this->getXPForLevel($correct_level);
-        $next_level_xp = $this->getXPForLevel($correct_level + 1);
-        
-        $level['level'] = $correct_level;
-        $level['current_level_xp'] = $level['total_xp'] - $current_level_xp;
-        $level['xp_to_next_level'] = max(0, $next_level_xp - $level['total_xp']);
-        
         // Update total achievements count
         $achievement_count = $this->pdo->query("
             SELECT COUNT(*) FROM user_achievements 
@@ -288,6 +277,17 @@ class AchievementsExtension {
             WHERE ua.user_id = $user_id AND ua.is_completed = 1
         ")->fetchColumn();
         $level['total_xp'] = $total_xp ?: 0;
+        
+        // Calculate level based on actual total XP from achievements
+        $correct_level = $this->calculateLevel($level['total_xp']);
+        
+        // Calculate XP requirements for the correct level
+        $current_level_xp = $this->getXPForLevel($correct_level);
+        $next_level_xp = $this->getXPForLevel($correct_level + 1);
+        
+        $level['level'] = $correct_level;
+        $level['current_level_xp'] = $level['total_xp'] - $current_level_xp;
+        $level['xp_to_next_level'] = max(0, $next_level_xp - $level['total_xp']);
         
         // Update the database with correct values
         $stmt = $this->pdo->prepare("
