@@ -732,6 +732,62 @@ include "../../includes/header.php";
 
         <!-- Right Sidebar -->
         <div class="dashboard-rightbar">
+            <!-- Achievements Widget -->
+            <?php if (get_system_setting('achievements_enabled', false)): ?>
+            <div class="achievements-widget-card">
+                <div class="widget-header">
+                    <h4><i class="iw iw-trophy"></i> Achievements</h4>
+                    <a href="/pages/user/achievements.php" class="view-all-link">View All</a>
+                </div>
+                <?php
+                try {
+                    require_once '../../extensions/achievements/extension.php';
+                    $achievements_extension = new AchievementsExtension();
+                    $user_level = $achievements_extension->getUserLevel($_SESSION['user_id']);
+                    $recent_achievements = $achievements_extension->getUserAchievements($_SESSION['user_id'], true);
+                    $recent_achievements = array_slice($recent_achievements, 0, 3);
+                ?>
+                <div class="level-info">
+                    <div class="level-badge">
+                        <div class="level-number"><?php echo $user_level['level']; ?></div>
+                        <div class="level-text">Level</div>
+                    </div>
+                    <div class="level-details">
+                        <div class="level-title">Level <?php echo $user_level['level']; ?></div>
+                        <div class="level-progress">
+                            <div class="level-progress-bar" style="width: <?php echo $user_level['xp_to_next_level'] > 0 ? ($user_level['current_level_xp'] / ($user_level['current_level_xp'] + $user_level['xp_to_next_level'])) * 100 : 100; ?>%"></div>
+                        </div>
+                        <div class="level-stats">
+                            <span><?php echo $user_level['current_level_xp']; ?> XP</span>
+                            <span><?php echo $user_level['total_achievements']; ?> Achievements</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php if (!empty($recent_achievements)): ?>
+                <div class="recent-achievements">
+                    <h5>Recent Achievements</h5>
+                    <div class="achievement-list">
+                        <?php foreach ($recent_achievements as $achievement): ?>
+                        <div class="achievement-item">
+                            <div class="achievement-icon completed">
+                                <i class="<?php echo $achievement['icon']; ?>"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
+                                <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php } catch (Exception $e) { ?>
+                <p class="error-message">Achievements temporarily unavailable</p>
+                <?php } ?>
+            </div>
+            <?php endif; ?>
+            
             <!-- My Content -->
             <div class="my-content-card">
                 <h4>My Content</h4>

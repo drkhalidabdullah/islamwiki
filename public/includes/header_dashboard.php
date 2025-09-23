@@ -150,6 +150,10 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                             <i class="iw iw-eye"></i>
                             <span>My Watchlist</span>
                         </a>
+                        <a href="/pages/user/achievements.php" class="dropdown-item">
+                            <i class="iw iw-trophy"></i>
+                            <span>Achievements</span>
+                        </a>
                         <a href="/settings" class="dropdown-item">
                             <i class="iw iw-cog"></i>
                             <span>Settings</span>

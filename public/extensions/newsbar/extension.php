@@ -12,35 +12,64 @@ class NewsBarExtension {
     public $settings = [];
     
     public function __construct() {
-        $this->enabled = get_system_setting('extension_newsbar_enabled', false);
+        $this->enabled = function_exists('get_system_setting') ? get_system_setting('extension_newsbar_enabled', false) : false;
         $this->loadSettings();
     }
     
     private function loadSettings() {
-        $this->settings = [
-            'position' => get_system_setting('extension_newsbar_position', 'top'),
-            'animation_speed' => get_system_setting('extension_newsbar_animation_speed', '20'),
-            'auto_pause' => get_system_setting('extension_newsbar_auto_pause', true),
-            'show_controls' => get_system_setting('extension_newsbar_show_controls', true),
-            'news_items' => get_system_setting('extension_newsbar_news_items', json_encode([
-                [
-                    'time' => '2 hours ago',
-                    'text' => 'New Islamic Wiki feature: Enhanced search with AI-powered suggestions'
-                ],
-                [
-                    'time' => '5 hours ago',
-                    'text' => 'Community milestone: 1,000+ articles published on Islamic topics'
-                ],
-                [
-                    'time' => '1 day ago',
-                    'text' => 'Ramadan 2024: Special collection of fasting and prayer articles now available'
-                ],
-                [
-                    'time' => '2 days ago',
-                    'text' => 'New editor tools: Improved article creation and editing experience'
-                ]
-            ]))
-        ];
+        // Check if get_system_setting function exists (database connection available)
+        if (function_exists('get_system_setting')) {
+            $this->settings = [
+                'position' => get_system_setting('extension_newsbar_position', 'top'),
+                'animation_speed' => get_system_setting('extension_newsbar_animation_speed', '20'),
+                'auto_pause' => get_system_setting('extension_newsbar_auto_pause', true),
+                'show_controls' => get_system_setting('extension_newsbar_show_controls', true),
+                'news_items' => get_system_setting('extension_newsbar_news_items', json_encode([
+                    [
+                        'time' => '2 hours ago',
+                        'text' => 'New Islamic Wiki feature: Enhanced search with AI-powered suggestions'
+                    ],
+                    [
+                        'time' => '5 hours ago',
+                        'text' => 'Community milestone: 1,000+ articles published on Islamic topics'
+                    ],
+                    [
+                        'time' => '1 day ago',
+                        'text' => 'Ramadan 2024: Special collection of fasting and prayer articles now available'
+                    ],
+                    [
+                        'time' => '2 days ago',
+                        'text' => 'New editor tools: Improved article creation and editing experience'
+                    ]
+                ]))
+            ];
+        } else {
+            // Default settings when database is not available
+            $this->settings = [
+                'position' => 'top',
+                'animation_speed' => '20',
+                'auto_pause' => true,
+                'show_controls' => true,
+                'news_items' => json_encode([
+                    [
+                        'time' => '2 hours ago',
+                        'text' => 'New Islamic Wiki feature: Enhanced search with AI-powered suggestions'
+                    ],
+                    [
+                        'time' => '5 hours ago',
+                        'text' => 'Community milestone: 1,000+ articles published on Islamic topics'
+                    ],
+                    [
+                        'time' => '1 day ago',
+                        'text' => 'Ramadan 2024: Special collection of fasting and prayer articles now available'
+                    ],
+                    [
+                        'time' => '2 days ago',
+                        'text' => 'New editor tools: Improved article creation and editing experience'
+                    ]
+                ])
+            ];
+        }
     }
     
     public function render() {

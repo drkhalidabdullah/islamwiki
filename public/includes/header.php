@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 
+// Include achievement system integration
+require_once __DIR__ . '/achievement_integration.php';
+
 // Get user data if logged in
 $current_user = null;
 if (is_logged_in()) {
@@ -135,6 +138,12 @@ if ($toast_message) {
                 <?php if (is_logged_in() && $enable_social): ?>
                 <a href="/feed" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/feed') === 0) ? 'active' : ''; ?>" title="Feed">
                     <i class="iw iw-rss"></i>
+                </a>
+                <?php endif; ?>
+                
+                <?php if (is_logged_in()): ?>
+                <a href="/pages/user/achievements.php" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/pages/user/achievements.php') !== false) ? 'active' : ''; ?>" title="Achievements">
+                    <i class="iw iw-trophy"></i>
                 </a>
                 <?php endif; ?>
             </div>

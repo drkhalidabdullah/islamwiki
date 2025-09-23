@@ -985,12 +985,16 @@ function get_user_events($user_id, $limit = 20, $offset = 0) {
     }
 }
 
-function get_user_achievements($user_id) {
-    global $pdo;
+function get_user_achievements($user_id, $completed_only = false) {
+    $achievements_enabled = get_system_setting('achievements_enabled', false);
+    if (!$achievements_enabled) return [];
     
-    // For now, return empty array since achievements table might not exist
-    // This can be implemented when achievements functionality is added
-    return [];
+    try {
+        $achievements_extension = new AchievementsExtension();
+        return $achievements_extension->getUserAchievements($user_id, $completed_only);
+    } catch (Exception $e) {
+        return [];
+    }
 }
 
 function get_privacy_setting($user_id, $section) {

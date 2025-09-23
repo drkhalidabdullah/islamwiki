@@ -15,13 +15,54 @@
 
 // Allow direct access for testing and integration
 
-class SEOExtension {
+class SeoExtension {
+    public $name = 'SEO Extension';
+    public $version = '1.0.0';
+    public $description = 'Comprehensive SEO functionality with meta tags, Open Graph, Twitter Cards, and structured data';
+    public $enabled = false;
+    public $settings = [];
+    
     private $config;
     private $seo_data;
     
     public function __construct() {
         $this->config = $this->loadConfig();
         $this->seo_data = [];
+        $this->loadSettings();
+    }
+    
+    /**
+     * Load extension settings
+     */
+    private function loadSettings() {
+        // Check if get_system_setting function exists (database connection available)
+        if (function_exists('get_system_setting')) {
+            $this->settings = [
+                'enabled' => get_system_setting('seo_enabled', false),
+                'default_site_name' => get_system_setting('seo_default_site_name', 'MuslimWiki'),
+                'default_locale' => get_system_setting('seo_default_locale', 'en_EN'),
+                'enable_open_graph' => get_system_setting('seo_enable_open_graph', true),
+                'enable_twitter_cards' => get_system_setting('seo_enable_twitter_cards', true),
+                'enable_structured_data' => get_system_setting('seo_enable_structured_data', true),
+                'twitter_site' => get_system_setting('seo_twitter_site', '@MuslimWiki'),
+                'facebook_app_id' => get_system_setting('seo_facebook_app_id', ''),
+                'google_analytics_id' => get_system_setting('seo_google_analytics_id', '')
+            ];
+        } else {
+            // Default settings when database is not available
+            $this->settings = [
+                'enabled' => false,
+                'default_site_name' => 'MuslimWiki',
+                'default_locale' => 'en_EN',
+                'enable_open_graph' => true,
+                'enable_twitter_cards' => true,
+                'enable_structured_data' => true,
+                'twitter_site' => '@MuslimWiki',
+                'facebook_app_id' => '',
+                'google_analytics_id' => ''
+            ];
+        }
+        $this->enabled = $this->settings['enabled'];
     }
     
     /**
@@ -283,10 +324,161 @@ class SEOExtension {
             'priority' => $priority
         ];
     }
+    
+    /**
+     * Render extension (called by extension manager)
+     */
+    public function render() {
+        // This method is called when the extension is enabled
+        // We can add any frontend rendering logic here if needed
+    }
+    
+    /**
+     * Load extension assets
+     */
+    public function loadAssets() {
+        if ($this->enabled) {
+            echo '<link rel="stylesheet" href="/extensions/seo/assets/css/seo.css">';
+        }
+    }
+    
+    /**
+     * Load extension scripts
+     */
+    public function loadScripts() {
+        if ($this->enabled) {
+            echo '<script src="/extensions/seo/assets/js/seo.js"></script>';
+        }
+    }
+    
+    /**
+     * Get settings form for admin interface
+     */
+    public function getSettingsForm() {
+        if (!$this->enabled) {
+            return '<p>Enable the extension to configure settings.</p>';
+        }
+        
+        $settings = $this->getAdminSettings();
+        $html = '<div class="extension-settings-form">';
+        
+        foreach ($settings as $key => $setting) {
+            $html .= '<div class="form-group">';
+            $html .= '<label for="' . $key . '">' . htmlspecialchars($setting['label']) . '</label>';
+            
+            if ($setting['type'] === 'boolean') {
+                $checked = $setting['value'] ? 'checked' : '';
+                $html .= '<label class="toggle-switch">';
+                $html .= '<input type="checkbox" name="' . $key . '" value="1" ' . $checked . '>';
+                $html .= '<span class="toggle-slider"></span>';
+                $html .= '</label>';
+            } elseif ($setting['type'] === 'text') {
+                $html .= '<input type="text" name="' . $key . '" value="' . htmlspecialchars($setting['value']) . '">';
+            }
+            
+            if (isset($setting['description'])) {
+                $html .= '<small class="form-help">' . htmlspecialchars($setting['description']) . '</small>';
+            }
+            
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+    
+    /**
+     * Save extension settings
+     */
+    public function saveSettings($data) {
+        $settings_to_save = [
+            'seo_enabled' => isset($data['enabled']) ? (bool)$data['enabled'] : false,
+            'seo_default_site_name' => isset($data['default_site_name']) ? $data['default_site_name'] : 'MuslimWiki',
+            'seo_default_locale' => isset($data['default_locale']) ? $data['default_locale'] : 'en_EN',
+            'seo_enable_open_graph' => isset($data['enable_open_graph']) ? (bool)$data['enable_open_graph'] : true,
+            'seo_enable_twitter_cards' => isset($data['enable_twitter_cards']) ? (bool)$data['enable_twitter_cards'] : true,
+            'seo_enable_structured_data' => isset($data['enable_structured_data']) ? (bool)$data['enable_structured_data'] : true,
+            'seo_twitter_site' => isset($data['twitter_site']) ? $data['twitter_site'] : '@MuslimWiki',
+            'seo_facebook_app_id' => isset($data['facebook_app_id']) ? $data['facebook_app_id'] : '',
+            'seo_google_analytics_id' => isset($data['google_analytics_id']) ? $data['google_analytics_id'] : ''
+        ];
+        
+        $saved = 0;
+        foreach ($settings_to_save as $key => $value) {
+            if (set_system_setting($key, $value)) {
+                $saved++;
+            }
+        }
+        
+        $this->loadSettings(); // Reload settings
+        return $saved > 0;
+    }
+    
+    /**
+     * Get admin settings configuration
+     */
+    public function getAdminSettings() {
+        return [
+            'enabled' => [
+                'type' => 'boolean',
+                'label' => 'Enable SEO Extension',
+                'description' => 'Enable the SEO extension for better search engine optimization',
+                'value' => $this->settings['enabled']
+            ],
+            'default_site_name' => [
+                'type' => 'text',
+                'label' => 'Default Site Name',
+                'description' => 'Default site name for meta tags',
+                'value' => $this->settings['default_site_name']
+            ],
+            'default_locale' => [
+                'type' => 'text',
+                'label' => 'Default Locale',
+                'description' => 'Default locale code (e.g., en_EN)',
+                'value' => $this->settings['default_locale']
+            ],
+            'enable_open_graph' => [
+                'type' => 'boolean',
+                'label' => 'Enable Open Graph',
+                'description' => 'Enable Open Graph tags for social media sharing',
+                'value' => $this->settings['enable_open_graph']
+            ],
+            'enable_twitter_cards' => [
+                'type' => 'boolean',
+                'label' => 'Enable Twitter Cards',
+                'description' => 'Enable Twitter Card tags for enhanced Twitter sharing',
+                'value' => $this->settings['enable_twitter_cards']
+            ],
+            'enable_structured_data' => [
+                'type' => 'boolean',
+                'label' => 'Enable Structured Data',
+                'description' => 'Enable JSON-LD structured data for search engines',
+                'value' => $this->settings['enable_structured_data']
+            ],
+            'twitter_site' => [
+                'type' => 'text',
+                'label' => 'Twitter Site Handle',
+                'description' => 'Twitter handle for the site (e.g., @MuslimWiki)',
+                'value' => $this->settings['twitter_site']
+            ],
+            'facebook_app_id' => [
+                'type' => 'text',
+                'label' => 'Facebook App ID',
+                'description' => 'Facebook App ID for Open Graph (optional)',
+                'value' => $this->settings['facebook_app_id']
+            ],
+            'google_analytics_id' => [
+                'type' => 'text',
+                'label' => 'Google Analytics ID',
+                'description' => 'Google Analytics tracking ID (optional)',
+                'value' => $this->settings['google_analytics_id']
+            ]
+        ];
+    }
 }
 
 // Initialize the extension
-$seo_extension = new SEOExtension();
+$seo_extension = new SeoExtension();
 
 // Hook into the wiki system
 if (function_exists('add_wiki_extension')) {
