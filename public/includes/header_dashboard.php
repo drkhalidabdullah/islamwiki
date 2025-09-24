@@ -177,10 +177,17 @@ $enable_notifications = get_system_setting('enable_notifications', true);
                     </div>
                 </div>
             <?php else: ?>
+                <!-- Hide login/register buttons on login page -->
+                <?php 
+                $current_uri = $_SERVER['REQUEST_URI'] ?? '';
+                $is_login_page = (strpos($current_uri, '/login') !== false || strpos($current_uri, '/register') !== false);
+                if (!$is_login_page): 
+                ?>
                 <div class="guest-actions">
                     <a href="/login" class="btn-login">Log In</a>
                     <a href="/register" class="btn-register">Sign Up</a>
                 </div>
+                <?php endif; ?>
             <?php endif; ?>
             </div>
 
@@ -795,24 +802,29 @@ function toggleNewsbar() {
 </script>
 
 <style>
-/* Logged-out state styling */
-.header-dashboard.logged-out .header-search-container {
-    justify-content: flex-start;
-}
+    /* Logged-out state styling */
+    .header-dashboard.logged-out .header-dashboard-container {
+        justify-content: center !important;
+    }
 
-.header-dashboard.logged-out .header-logo {
-    margin-left: 0;
-}
+    .header-dashboard.logged-out .header-search-container {
+        justify-content: center;
+        flex: 1;
+    }
 
-.header-dashboard.logged-out .header-site-title {
-    margin-left: 0.5rem;
-}
+    .header-dashboard.logged-out .header-logo {
+        margin-left: 0;
+    }
 
-.header-dashboard.logged-out .header-center-container {
-    display: none;
-}
+    .header-dashboard.logged-out .header-site-title {
+        margin-left: 0.5rem;
+    }
 
-.header-dashboard.logged-out .header-right-container {
-    display: none;
-}
+    .header-dashboard.logged-out .header-center-container {
+        display: none;
+    }
+
+    .header-dashboard.logged-out .header-right-container {
+        display: none;
+    }
 </style>
