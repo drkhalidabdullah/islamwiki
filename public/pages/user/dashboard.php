@@ -299,6 +299,20 @@ include "../../includes/header.php";
                 <p class="empty-state">No articles in watchlist. <a href="/search">Find articles to watch</a></p>
     <?php endif; ?>
             </div>
+
+            <!-- Courses -->
+            <div class="courses-card">
+                <div class="card-header">
+                    <h4><i class="iw iw-book-open"></i> Learning Courses</h4>
+                    <a href="/courses" class="view-all-link">View All</a>
+                </div>
+                <div class="courses-preview">
+                    <p class="courses-description">Enhance your Islamic knowledge with our comprehensive learning courses.</p>
+                    <div class="courses-actions">
+                        <a href="/courses" class="btn btn-primary btn-sm">Browse Courses</a>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Main Feed -->
