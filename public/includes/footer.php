@@ -18,37 +18,60 @@
     <?php endif; ?>
     
     <style>
-    /* Footer positioning for logged-out users */
-    .footer.logged-out {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: 60px;
-    }
-    
-    /* Simple layout - no flexbox complications */
+    /* COMPLETE REDESIGN - SIMPLE LAYOUT */
     body.logged-out {
         margin: 0;
         padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #f8f9fa;
     }
     
-    /* Center the form container */
+    /* Main content area */
+    body.logged-out main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    
+    /* Form container - SIMPLE AND CLEAN */
     body.logged-out .form-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
         width: 100%;
         max-width: 400px;
-        padding: 2rem;
-        box-sizing: border-box;
+        border: 1px solid #e9ecef;
     }
     
-    /* Ensure content doesn't go below footer */
-    body.logged-out .form-container {
-        margin-bottom: 60px; /* Space for footer */
+    /* Footer - SIMPLE STICKY */
+    .footer.logged-out {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        margin-top: auto;
+    }
+    
+    .footer.logged-out .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .footer.logged-out .footer-text {
+        text-align: left;
+    }
+    
+    .footer.logged-out .footer-powered {
+        color: white;
+        text-decoration: none;
     }
     </style>
 </body>
