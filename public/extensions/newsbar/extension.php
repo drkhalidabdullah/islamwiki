@@ -78,6 +78,9 @@ class NewsBarExtension {
         // Don't show on maintenance mode unless user is logged in
         if (is_maintenance_mode() && !is_logged_in()) return;
         
+        // Don't show newsbar when logged out (login/register pages)
+        if (!is_logged_in()) return;
+        
         $news_items = is_string($this->settings['news_items']) ? 
             json_decode($this->settings['news_items'], true) : 
             $this->settings['news_items'];
