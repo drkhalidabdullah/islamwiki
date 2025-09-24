@@ -76,6 +76,7 @@ RewriteRule ^user/([a-zA-Z0-9\-_]+)/activity/?$ /pages/user/activity.php?usernam
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/?$ /pages/user/user_profile.php?username=$1 [L,QSA]
 
 # Search pages
+RewriteRule ^search/?$ /search/index.php [L,QSA]
 RewriteRule ^search/advanced/?$ /search/advanced.php [L,QSA]
 
 # API endpoints

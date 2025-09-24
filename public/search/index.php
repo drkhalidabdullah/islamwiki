@@ -5,6 +5,9 @@ require_once __DIR__ . "/../includes/functions.php";
 // Check maintenance mode
 check_maintenance_mode();
 
+// Require login for all site access
+require_login();
+
 // Enforce rate limiting for search queries
 enforce_rate_limit('search_queries');
 

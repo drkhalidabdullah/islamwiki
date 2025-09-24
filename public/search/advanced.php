@@ -3,6 +3,9 @@ require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../includes/functions.php";
 require_once __DIR__ . "/../includes/wiki_functions.php";
 
+// Require login for all site access
+require_login();
+
 $page_title = "Advanced Search";
 $is_search_page = true; // Hide header search
 
