@@ -803,8 +803,52 @@ include "../../includes/header.php";
                     </div>
                 </div>
 
-                <!-- Achievements Section -->
+                <!-- Badges Section -->
                 <?php if (get_system_setting('achievements_enabled', false)): ?>
+                <?php
+                try {
+                    require_once '../../extensions/achievements/extension.php';
+                    $achievements_extension = new AchievementsExtension();
+                    $user_badges = $achievements_extension->getUserBadges($_SESSION['user_id']);
+                    $recent_badges = array_slice($user_badges, 0, 3);
+                ?>
+                <div class="badges-section">
+                    <div class="section-header">
+                        <h4><i class="iw iw-medal"></i> Badges</h4>
+                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
+                    </div>
+                    
+                    <?php if (!empty($recent_badges)): ?>
+                    <div class="recent-badges">
+                        <h5>Recent Badges</h5>
+                        <div class="badge-list">
+                            <?php foreach ($recent_badges as $badge): ?>
+                            <div class="badge-item">
+                                <div class="badge-icon earned">
+                                    <i class="<?php echo $badge['icon']; ?>"></i>
+                                </div>
+                                <div class="badge-info">
+                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
+                                    <div class="badge-rarity"><?php echo ucfirst($badge['rarity']); ?></div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php else: ?>
+                    <p class="empty-state">No badges earned yet</p>
+                    <?php endif; ?>
+                </div>
+                <?php } catch (Exception $e) { ?>
+                <div class="badges-section">
+                    <div class="section-header">
+                        <h4><i class="iw iw-medal"></i> Badges</h4>
+                    </div>
+                    <p class="error-message">Badges temporarily unavailable</p>
+                </div>
+                <?php } ?>
+
+                <!-- Achievements Section -->
                 <div class="achievements-section">
                     <div class="section-header">
                         <h4><i class="iw iw-trophy"></i> Achievements</h4>
@@ -812,8 +856,6 @@ include "../../includes/header.php";
                     </div>
                     <?php
                     try {
-                        require_once '../../extensions/achievements/extension.php';
-                        $achievements_extension = new AchievementsExtension();
                         $user_level = $achievements_extension->getUserLevel($_SESSION['user_id']);
                         $recent_achievements = $achievements_extension->getUserAchievements($_SESSION['user_id'], true);
                         $recent_achievements = array_slice($recent_achievements, 0, 3);
@@ -857,48 +899,6 @@ include "../../includes/header.php";
                     <p class="error-message">Achievements temporarily unavailable</p>
                     <?php } ?>
                 </div>
-
-                <!-- Badges Section -->
-                <?php
-                try {
-                    $user_badges = $achievements_extension->getUserBadges($_SESSION['user_id']);
-                    $recent_badges = array_slice($user_badges, 0, 3);
-                ?>
-                <div class="badges-section">
-                    <div class="section-header">
-                        <h4><i class="iw iw-medal"></i> Badges</h4>
-                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
-                    </div>
-                    
-                    <?php if (!empty($recent_badges)): ?>
-                    <div class="recent-badges">
-                        <h5>Recent Badges</h5>
-                        <div class="badge-list">
-                            <?php foreach ($recent_badges as $badge): ?>
-                            <div class="badge-item">
-                                <div class="badge-icon earned">
-                                    <i class="<?php echo $badge['icon']; ?>"></i>
-                                </div>
-                                <div class="badge-info">
-                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
-                                    <div class="badge-rarity"><?php echo ucfirst($badge['rarity']); ?></div>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <?php else: ?>
-                    <p class="empty-state">No badges earned yet</p>
-                    <?php endif; ?>
-                </div>
-                <?php } catch (Exception $e) { ?>
-                <div class="badges-section">
-                    <div class="section-header">
-                        <h4><i class="iw iw-medal"></i> Badges</h4>
-                    </div>
-                    <p class="error-message">Badges temporarily unavailable</p>
-                </div>
-                <?php } ?>
                 <?php endif; ?>
             </div>
         </div>
