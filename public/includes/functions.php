@@ -17,6 +17,10 @@ function is_logged_in() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
+function get_current_user_id() {
+    return $_SESSION['user_id'] ?? null;
+}
+
 function require_login() {
     if (!is_logged_in()) {
         // Store current URL as return URL
