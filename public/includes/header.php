@@ -149,6 +149,10 @@ if ($toast_message) {
                     <i class="iw iw-trophy"></i>
                 </a>
                 <?php endif; ?>
+                
+                <a href="/courses" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/courses') !== false || strpos($_SERVER['REQUEST_URI'] ?? '', '/course/') !== false) ? 'active' : ''; ?>" title="Courses">
+                    <i class="iw iw-book-open"></i>
+                </a>
             </div>
         </div>
     </nav>
