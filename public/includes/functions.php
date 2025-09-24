@@ -1499,3 +1499,28 @@ function send_mention_notifications($mentioned_usernames, $post_id, $author_id) 
         error_log("Mention notification error: " . $e->getMessage());
     }
 }
+
+/**
+ * Format duration in minutes to human readable format
+ */
+function format_duration($minutes) {
+    if ($minutes < 60) {
+        return $minutes . ' min';
+    } elseif ($minutes < 1440) { // Less than 24 hours
+        $hours = floor($minutes / 60);
+        $remaining_minutes = $minutes % 60;
+        if ($remaining_minutes > 0) {
+            return $hours . 'h ' . $remaining_minutes . 'm';
+        } else {
+            return $hours . 'h';
+        }
+    } else {
+        $days = floor($minutes / 1440);
+        $remaining_hours = floor(($minutes % 1440) / 60);
+        if ($remaining_hours > 0) {
+            return $days . 'd ' . $remaining_hours . 'h';
+        } else {
+            return $days . 'd';
+        }
+    }
+}

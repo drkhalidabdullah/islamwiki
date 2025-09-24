@@ -63,6 +63,11 @@ RewriteRule ^dashboard/?$ /pages/user/dashboard.php [L,QSA]
 RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
 RewriteRule ^achievements/?$ /pages/user/achievements.php [L,QSA]
+
+# Course pages
+RewriteRule ^courses/?$ /pages/courses.php [L,QSA]
+RewriteRule ^course/([a-zA-Z0-9\-_]+)/lesson/([a-zA-Z0-9\-_]+)/?$ /pages/lesson.php?course=$1&lesson=$2 [L,QSA]
+RewriteRule ^course/([a-zA-Z0-9\-_]+)/?$ /pages/course.php?slug=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/about/?$ /pages/user/about.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/achievements/?$ /pages/user/user_profile.php?username=$1&tab=achievements [L,QSA]
