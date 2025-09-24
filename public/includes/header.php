@@ -109,7 +109,7 @@ if ($toast_message) {
     <!-- Load header dashboard CSS -->
     <link rel="stylesheet" href="/skins/bismillah/assets/css/header_dashboard.css">
 </head>
-<body>
+<body class="<?php echo is_logged_in() ? 'logged-in' : 'logged-out'; ?>">
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
     <?php if (is_logged_in()): ?>
     <!-- Mobile Sidebar Toggle -->
