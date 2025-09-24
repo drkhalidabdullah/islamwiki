@@ -91,8 +91,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 0;
     margin-top: 0;
+    padding-top: 0;
 }
 
 .section-header h4 {
@@ -103,6 +104,7 @@ body {
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
+    padding-top: 0;
 }
 
 .section-header h4 i {
@@ -113,13 +115,18 @@ body {
 .achievements-section {
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-light);
+    margin: 0 !important;
 }
 
 .achievements-section .level-info {
     margin-bottom: 20px;
+}
+
+.achievements-section .recent-achievements {
+    margin-top: 0;
 }
 
 .achievements-section .recent-achievements h5 {
@@ -127,6 +134,7 @@ body {
     font-weight: 600;
     color: var(--text-secondary);
     margin: 0 0 12px 0;
+    margin-top: 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -196,9 +204,13 @@ body {
 .badges-section {
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-light);
+    margin: 0 !important;
+}
+
+.badges-section .recent-badges {
     margin-top: 0;
 }
 
@@ -207,6 +219,7 @@ body {
     font-weight: 600;
     color: var(--text-secondary);
     margin: 0 0 12px 0;
+    margin-top: 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }

@@ -2193,7 +2193,7 @@ div.section-header,
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    margin-top: 3rem !important;
+    margin-top: 1rem !important;
     margin-bottom: 1.5rem !important;
     padding-bottom: 0.75rem !important;
     border-bottom: 2px solid #f3f4f6 !important;
