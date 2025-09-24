@@ -815,7 +815,7 @@ include "../../includes/header.php";
                 <div class="badges-section">
                     <div class="section-header">
                         <h4><i class="iw iw-medal"></i> Badges</h4>
-                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
+                        <a href="/achievements" class="view-all-link">View All</a>
                     </div>
                     
                     <?php if (!empty($recent_badges)): ?>
@@ -852,7 +852,7 @@ include "../../includes/header.php";
                 <div class="achievements-section">
                     <div class="section-header">
                         <h4><i class="iw iw-trophy"></i> Achievements</h4>
-                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
+                        <a href="/achievements" class="view-all-link">View All</a>
                     </div>
                     <?php
                     try {
