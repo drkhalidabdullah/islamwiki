@@ -653,34 +653,13 @@ class AchievementsExtension {
                     return $result && !empty($result['avatar']);
                 }
                 
-                // Auto-award achievements that should be given to all users
+                // Only auto-award achievements that should be given to all users
                 $auto_award_achievements = [
-                    'first-steps', 'quran-reader', 'early-bird', 'night-owl', 'daily-devotee', 
-                    'weekly-warrior', 'monthly-master', 'weekend-warrior', 'holiday-hero',
-                    'quran-journey-1', 'quran-journey-2', 'quran-journey-3',
-                    'hadith-collection-1', 'hadith-collection-2', 'hadith-collection-3',
-                    'fiqh-fundamentals', 'aqeedah-master', 'seerah-scholar', 'tafseer-explorer',
-                    'message-master', 'group-creator', 'event-organizer', 'share-champion',
-                    'tag-team', 'notification-ninja', 'social-butterfly-pro', 'grammar-guru',
-                    'fact-checker', 'editors-choice', 'community-favorite', 'educational-contributor',
-                    'research-master', 'translation-hero', 'visual-storyteller', 'content-curator',
-                    'search-savant', 'settings-specialist', 'keyboard-master', 'mobile-maven',
-                    'feature-explorer', 'help-helper', 'feedback-champion', 'tutorial-teacher',
-                    'platform-pioneer', 'milestone-master', 'level-legend', 'point-powerhouse',
-                    'streak-supreme', 'community-champion', 'ramadan-ready', 'eid-celebrator',
-                    'hajj-helper', 'umrah-supporter', 'laylat-al-qadr-seeker', 'ashura-scholar',
-                    'mawlid-celebrator', 'winter-warrior', 'summer-scholar', 'friend-finder-1',
-                    'friend-finder-2', 'friend-finder-3', 'content-creator-2', 'content-creator-3',
-                    'wiki-warrior-1', 'wiki-warrior-2', 'wiki-warrior-3', 'learning-leader-1',
-                    'learning-leader-2', 'learning-leader-3', 'quran-expert', 'hadith-expert',
-                    'fiqh-expert', 'aqeedah-expert', 'seerah-expert', 'tafseer-expert',
-                    'arabic-scholar', 'islamic-history-expert', 'comparative-religion-expert',
-                    'islamic-art-expert', 'mentor', 'moderator', 'event-coordinator',
-                    'discussion-leader', 'knowledge-keeper', 'community-builder', 'visionary', 'legend'
+                    'first-steps' // Only first steps should be auto-awarded
                 ];
                 
                 if (in_array($achievement['slug'], $auto_award_achievements)) {
-                    return true; // Auto-award these achievements to all users
+                    return true; // Auto-award only first steps
                 }
                 
                 return false; // Default for other count-based achievements
