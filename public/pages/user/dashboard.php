@@ -229,6 +229,76 @@ include "../../includes/header.php";
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <!-- My Content -->
+            <div class="my-content-card">
+                <h4>My Content</h4>
+                <div class="content-tabs">
+                    <button class="tab-btn active" data-tab="articles">Articles</button>
+                    <button class="tab-btn" data-tab="posts">Posts</button>
+                </div>
+                
+                <div class="tab-content" id="articles-tab">
+                    <?php if (!empty($my_articles)): ?>
+                    <div class="content-list">
+                        <?php foreach ($my_articles as $article): ?>
+                        <div class="content-item">
+                            <h5><a href="/wiki/<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h5>
+                            <p class="item-meta">
+                                <span class="status-<?php echo $article['status']; ?>"><?php echo ucfirst($article['status']); ?></span>
+                                • <?php echo format_date($article['created_at']); ?>
+                            </p>
+                </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php else: ?>
+                    <p class="empty-state">No articles yet. <a href="/pages/wiki/create_article.php">Create your first article</a></p>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="tab-content" id="posts-tab" style="display: none;">
+                    <?php if (!empty($my_posts)): ?>
+                    <div class="content-list">
+                        <?php foreach ($my_posts as $post): ?>
+                        <div class="content-item">
+                            <div class="post-content preview"><?php 
+                                $parser = new MarkdownParser();
+                                echo $parser->parse($post['content']);
+                            ?></div>
+                            <p class="item-meta"><?php echo format_date($post['created_at']); ?></p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+                    <?php else: ?>
+                    <p class="empty-state">No posts yet. <a href="/create_post">Create your first post</a></p>
+                    <?php endif; ?>
+    </div>
+            </div>
+
+            <!-- Watchlist -->
+            <div class="watchlist-card">
+                <div class="card-header">
+                    <h4>My Watchlist</h4>
+                    <a href="/watchlist" class="view-all-link">View All</a>
+                </div>
+                <?php if (!empty($watchlist_articles)): ?>
+                <div class="watchlist-list">
+                    <?php foreach ($watchlist_articles as $article): ?>
+                    <div class="watchlist-item">
+                        <div class="item-content">
+                            <h5><a href="/wiki/<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h5>
+                            <p class="item-meta"><?php echo format_date($article['updated_at']); ?></p>
+                        </div>
+                        <button class="unwatch-btn" onclick="unwatchArticle(<?php echo $article['id']; ?>)">
+                            <i class="iw iw-times"></i>
+                        </button>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <p class="empty-state">No articles in watchlist. <a href="/search">Find articles to watch</a></p>
+    <?php endif; ?>
+            </div>
         </div>
         
         <!-- Main Feed -->
@@ -831,77 +901,6 @@ include "../../includes/header.php";
                 <?php } ?>
                 <?php endif; ?>
             </div>
-            
-            <!-- My Content -->
-            <div class="my-content-card">
-                <h4>My Content</h4>
-                <div class="content-tabs">
-                    <button class="tab-btn active" data-tab="articles">Articles</button>
-                    <button class="tab-btn" data-tab="posts">Posts</button>
-                </div>
-                
-                <div class="tab-content" id="articles-tab">
-                    <?php if (!empty($my_articles)): ?>
-                    <div class="content-list">
-                        <?php foreach ($my_articles as $article): ?>
-                        <div class="content-item">
-                            <h5><a href="/wiki/<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h5>
-                            <p class="item-meta">
-                                <span class="status-<?php echo $article['status']; ?>"><?php echo ucfirst($article['status']); ?></span>
-                                • <?php echo format_date($article['created_at']); ?>
-                            </p>
-                </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php else: ?>
-                    <p class="empty-state">No articles yet. <a href="/pages/wiki/create_article.php">Create your first article</a></p>
-                    <?php endif; ?>
-                </div>
-                
-                <div class="tab-content" id="posts-tab" style="display: none;">
-                    <?php if (!empty($my_posts)): ?>
-                    <div class="content-list">
-                        <?php foreach ($my_posts as $post): ?>
-                        <div class="content-item">
-                            <div class="post-content preview"><?php 
-                                $parser = new MarkdownParser();
-                                echo $parser->parse($post['content']);
-                            ?></div>
-                            <p class="item-meta"><?php echo format_date($post['created_at']); ?></p>
-            </div>
-            <?php endforeach; ?>
-        </div>
-                    <?php else: ?>
-                    <p class="empty-state">No posts yet. <a href="/create_post">Create your first post</a></p>
-                    <?php endif; ?>
-    </div>
-            </div>
-
-            <!-- Watchlist -->
-            <div class="watchlist-card">
-                <div class="card-header">
-                    <h4>My Watchlist</h4>
-                    <a href="/watchlist" class="view-all-link">View All</a>
-                </div>
-                <?php if (!empty($watchlist_articles)): ?>
-                <div class="watchlist-list">
-                    <?php foreach ($watchlist_articles as $article): ?>
-                    <div class="watchlist-item">
-                        <div class="item-content">
-                            <h5><a href="/wiki/<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h5>
-                            <p class="item-meta"><?php echo format_date($article['updated_at']); ?></p>
-                        </div>
-                        <button class="unwatch-btn" onclick="unwatchArticle(<?php echo $article['id']; ?>)">
-                            <i class="iw iw-times"></i>
-                        </button>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php else: ?>
-                <p class="empty-state">No articles in watchlist. <a href="/search">Find articles to watch</a></p>
-    <?php endif; ?>
-            </div>
-
         </div>
     </div>
 </div>
