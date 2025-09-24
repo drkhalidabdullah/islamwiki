@@ -59,14 +59,16 @@
     
     .footer.logged-out .footer-content {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         max-width: 1200px;
         margin: 0 auto;
+        flex-direction: column;
+        gap: 0.5rem;
     }
     
     .footer.logged-out .footer-text {
-        text-align: left;
+        text-align: center;
     }
     
     .footer.logged-out .footer-powered {
