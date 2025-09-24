@@ -653,16 +653,22 @@ class AchievementsExtension {
                     return $result && !empty($result['avatar']);
                 }
                 
-                // Only auto-award achievements that should be given to all users
-                $auto_award_achievements = [
-                    'first-steps' // Only first steps should be auto-awarded
-                ];
+                return false; // No auto-award achievements
                 
-                if (in_array($achievement['slug'], $auto_award_achievements)) {
-                    return true; // Auto-award only first steps
+            case 'course_completion':
+                // Check if user has completed the required number of courses
+                try {
+                    $stmt = $this->pdo->prepare("
+                        SELECT COUNT(*) FROM user_course_completions 
+                        WHERE user_id = ? AND is_completed = 1
+                    ");
+                    $stmt->execute([$user_id]);
+                    $completed_courses = $stmt->fetchColumn();
+                    return $completed_courses >= $requirement_value;
+                } catch (PDOException $e) {
+                    // Courses table doesn't exist yet, so no courses completed
+                    return false;
                 }
-                
-                return false; // Default for other count-based achievements
                 
             case 'status_count':
                 $stmt = $this->pdo->prepare("
