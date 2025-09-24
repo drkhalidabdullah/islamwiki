@@ -641,6 +641,19 @@ class AchievementsExtension {
             case 'first_login':
                 return true; // Always true if user exists
                 
+            case 'count':
+                // Handle generic count-based achievements
+                if ($achievement['slug'] === 'photo-pioneer') {
+                    // Check if user has uploaded a profile photo
+                    $stmt = $this->pdo->prepare("
+                        SELECT avatar FROM users WHERE id = ? AND avatar IS NOT NULL AND avatar != ''
+                    ");
+                    $stmt->execute([$user_id]);
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    return $result && !empty($result['avatar']);
+                }
+                return false; // Default for other count-based achievements
+                
             case 'status_count':
                 $stmt = $this->pdo->prepare("
                     SELECT COUNT(*) FROM user_posts WHERE user_id = ? AND post_type = 'text'
