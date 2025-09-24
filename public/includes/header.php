@@ -111,6 +111,7 @@ if ($toast_message) {
 </head>
 <body>
     <?php if (!is_maintenance_mode() || is_logged_in()): ?>
+    <?php if (is_logged_in()): ?>
     <!-- Mobile Sidebar Toggle -->
     <button class="sidebar-toggle" onclick="toggleSidebar()">
         <i class="iw iw-bars"></i>
@@ -118,7 +119,9 @@ if ($toast_message) {
     
     <!-- Mobile Sidebar Overlay -->
     <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <?php endif; ?>
     
+    <?php if (is_logged_in()): ?>
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar left-sidebar">
         <!-- Top Section -->
@@ -154,6 +157,7 @@ if ($toast_message) {
             </div>
         </div>
     </nav>
+    <?php endif; ?>
     <?php endif; ?>
     
     <!-- Header Dashboard -->

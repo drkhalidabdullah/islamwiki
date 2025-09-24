@@ -20,10 +20,11 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 ?>
 
 <!-- Header Dashboard -->
-<div class="header-dashboard" id="headerDashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2c3e50 !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: 100vw !important; box-sizing: border-box !important;">
+<div class="header-dashboard <?php echo !is_logged_in() ? 'logged-out' : ''; ?>" id="headerDashboard" style="display: block !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; height: 60px !important; background: #2c3e50 !important; border-bottom: 1px solid #333 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important; width: 100vw !important; box-sizing: border-box !important;">
     <div class="header-dashboard-container">
         <!-- Search Bar -->
         <div class="header-search-container">
+            <?php if (is_logged_in()): ?>
             <!-- Left Sidebar Toggle Button -->
             <button class="sidebar-toggle-btn" id="leftSidebarToggleBtn" title="Toggle Left Sidebar">
                 <i class="iw iw-bars"></i>
@@ -33,6 +34,7 @@ $enable_notifications = get_system_setting('enable_notifications', true);
             <button class="search-icon-btn" onclick="openSearchOverlay()" title="Search">
                 <i class="iw iw-search"></i>
             </button>
+            <?php endif; ?>
             
             <!-- Site Logo and Title -->
             <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="header-logo" title="<?php echo get_site_name(); ?> <?php echo is_logged_in() ? 'Dashboard' : 'Home'; ?>">
@@ -52,10 +54,12 @@ $enable_notifications = get_system_setting('enable_notifications', true);
 
         <!-- News Toggle and Create Button -->
         <div class="header-center-container">
+            <?php if (is_logged_in()): ?>
             <!-- News Toggle Button -->
             <button class="news-toggle-btn" id="newsToggleBtn" title="Toggle News Bar">
                 <i class="iw iw-bullhorn"></i>
             </button>
+            <?php endif; ?>
             
             <!-- Create Button -->
             <?php if (is_logged_in()): ?>
@@ -789,3 +793,26 @@ function toggleNewsbar() {
     }
 }
 </script>
+
+<style>
+/* Logged-out state styling */
+.header-dashboard.logged-out .header-search-container {
+    justify-content: flex-start;
+}
+
+.header-dashboard.logged-out .header-logo {
+    margin-left: 0;
+}
+
+.header-dashboard.logged-out .header-site-title {
+    margin-left: 0.5rem;
+}
+
+.header-dashboard.logged-out .header-center-container {
+    display: none;
+}
+
+.header-dashboard.logged-out .header-right-container {
+    display: none;
+}
+</style>
