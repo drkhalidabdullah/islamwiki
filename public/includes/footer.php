@@ -26,6 +26,7 @@
         display: flex;
         flex-direction: column;
         background: #f8f9fa;
+        overflow-x: hidden;
     }
     
     /* Main content area */
@@ -35,6 +36,8 @@
         align-items: center;
         justify-content: center;
         padding: 2rem;
+        min-height: 0;
+        overflow: hidden;
     }
     
     /* Form container - SIMPLE AND CLEAN */
@@ -55,6 +58,10 @@
         padding: 1rem;
         text-align: center;
         margin-top: auto;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .footer.logged-out .footer-content {
