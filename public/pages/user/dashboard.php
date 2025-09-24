@@ -215,46 +215,6 @@ include "../../includes/header.php";
     <div class="dashboard-layout">
         <!-- Left Sidebar -->
         <div class="dashboard-sidebar">
-            <!-- User Profile Card -->
-            <div class="profile-card">
-                <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>" class="profile-header">
-                    <div class="profile-avatar-container">
-                        <div class="profile-picture-wrapper">
-                            <?php if (!empty($current_user['avatar'])): ?>
-                                <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile" class="profile-image">
-                            <?php else: ?>
-                                <div class="profile-initials">
-                                    <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
-                                </div>
-                            <?php endif; ?>
-                            <div class="camera-button" onclick="event.stopPropagation(); openProfilePictureModal();">
-                                <i class="iw iw-camera"></i>
-                            </div>
-                            <div class="online-indicator"></div>
-                        </div>
-                    </div>
-                    <div class="profile-info">
-                        <h3><?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?></h3>
-                        <p>@<?php echo htmlspecialchars($current_user['username']); ?></p>
-                    </div>
-                </a>
-                <div class="profile-stats">
-                    <div class="stat">
-                        <span class="stat-number"><?php echo number_format($user_stats['articles_count']); ?></span>
-                        <span class="stat-label">Articles</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number"><?php echo number_format($user_stats['posts_count']); ?></span>
-                        <span class="stat-label">Posts</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number"><?php echo number_format($user_stats['followers_count']); ?></span>
-                        <span class="stat-label">Followers</span>
-                    </div>
-                </div>
-            </div>
-
-        
             <!-- Trending Topics -->
             <div class="trending-card">
                 <h4>Trending</h4>
@@ -732,61 +692,145 @@ include "../../includes/header.php";
 
         <!-- Right Sidebar -->
         <div class="dashboard-rightbar">
-            <!-- Achievements Widget -->
-            <?php if (get_system_setting('achievements_enabled', false)): ?>
-            <div class="achievements-widget-card">
-                <div class="widget-header">
-                    <h4><i class="iw iw-trophy"></i> Achievements</h4>
-                    <a href="/achievements" class="view-all-link">View All</a>
+            <!-- User Profile Section -->
+            <div class="user-profile-section">
+                <!-- User Profile Card -->
+                <div class="profile-card">
+                    <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>" class="profile-header">
+                        <div class="profile-avatar-container">
+                            <div class="profile-picture-wrapper">
+                                <?php if (!empty($current_user['avatar'])): ?>
+                                    <img src="<?php echo htmlspecialchars($current_user['avatar']); ?>" alt="Profile" class="profile-image">
+                                <?php else: ?>
+                                    <div class="profile-initials">
+                                        <?php echo strtoupper(substr($current_user['display_name'] ?: $current_user['username'], 0, 2)); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="camera-button" onclick="event.stopPropagation(); openProfilePictureModal();">
+                                    <i class="iw iw-camera"></i>
+                                </div>
+                                <div class="online-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h3><?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?></h3>
+                            <p>@<?php echo htmlspecialchars($current_user['username']); ?></p>
+                        </div>
+                    </a>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <span class="stat-number"><?php echo number_format($user_stats['articles_count']); ?></span>
+                            <span class="stat-label">Articles</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number"><?php echo number_format($user_stats['posts_count']); ?></span>
+                            <span class="stat-label">Posts</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number"><?php echo number_format($user_stats['followers_count']); ?></span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Achievements Section -->
+                <?php if (get_system_setting('achievements_enabled', false)): ?>
+                <div class="achievements-section">
+                    <div class="section-header">
+                        <h4><i class="iw iw-trophy"></i> Achievements</h4>
+                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
+                    </div>
+                    <?php
+                    try {
+                        require_once '../../extensions/achievements/extension.php';
+                        $achievements_extension = new AchievementsExtension();
+                        $user_level = $achievements_extension->getUserLevel($_SESSION['user_id']);
+                        $recent_achievements = $achievements_extension->getUserAchievements($_SESSION['user_id'], true);
+                        $recent_achievements = array_slice($recent_achievements, 0, 3);
+                    ?>
+                    <div class="level-info">
+                        <div class="level-badge">
+                            <div class="level-number"><?php echo $user_level['level']; ?></div>
+                            <div class="level-text">Level</div>
+                        </div>
+                        <div class="level-details">
+                            <div class="level-title">Level <?php echo $user_level['level']; ?></div>
+                            <div class="level-progress">
+                                <div class="level-progress-bar" style="width: <?php echo $user_level['xp_to_next_level'] > 0 ? ($user_level['current_level_xp'] / ($user_level['current_level_xp'] + $user_level['xp_to_next_level'])) * 100 : 100; ?>%"></div>
+                            </div>
+                            <div class="level-stats">
+                                <span><?php echo $user_level['current_level_xp']; ?> XP</span>
+                                <span><?php echo $user_level['total_achievements']; ?> Achievements</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <?php if (!empty($recent_achievements)): ?>
+                    <div class="recent-achievements">
+                        <h5>Recent Achievements</h5>
+                        <div class="achievement-list">
+                            <?php foreach ($recent_achievements as $achievement): ?>
+                            <div class="achievement-item">
+                                <div class="achievement-icon completed">
+                                    <i class="<?php echo $achievement['icon']; ?>"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
+                                    <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php } catch (Exception $e) { ?>
+                    <p class="error-message">Achievements temporarily unavailable</p>
+                    <?php } ?>
+                </div>
+
+                <!-- Badges Section -->
                 <?php
                 try {
-                    require_once '../../extensions/achievements/extension.php';
-                    $achievements_extension = new AchievementsExtension();
-                    $user_level = $achievements_extension->getUserLevel($_SESSION['user_id']);
-                    $recent_achievements = $achievements_extension->getUserAchievements($_SESSION['user_id'], true);
-                    $recent_achievements = array_slice($recent_achievements, 0, 3);
+                    $user_badges = $achievements_extension->getUserBadges($_SESSION['user_id']);
+                    $recent_badges = array_slice($user_badges, 0, 3);
                 ?>
-                <div class="level-info">
-                    <div class="level-badge">
-                        <div class="level-number"><?php echo $user_level['level']; ?></div>
-                        <div class="level-text">Level</div>
+                <div class="badges-section">
+                    <div class="section-header">
+                        <h4><i class="iw iw-medal"></i> Badges</h4>
+                        <a href="/user/<?php echo htmlspecialchars($current_user['username']); ?>/achievements" class="view-all-link">View All</a>
                     </div>
-                    <div class="level-details">
-                        <div class="level-title">Level <?php echo $user_level['level']; ?></div>
-                        <div class="level-progress">
-                            <div class="level-progress-bar" style="width: <?php echo $user_level['xp_to_next_level'] > 0 ? ($user_level['current_level_xp'] / ($user_level['current_level_xp'] + $user_level['xp_to_next_level'])) * 100 : 100; ?>%"></div>
-                        </div>
-                        <div class="level-stats">
-                            <span><?php echo $user_level['current_level_xp']; ?> XP</span>
-                            <span><?php echo $user_level['total_achievements']; ?> Achievements</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <?php if (!empty($recent_achievements)): ?>
-                <div class="recent-achievements">
-                    <h5>Recent Achievements</h5>
-                    <div class="achievement-list">
-                        <?php foreach ($recent_achievements as $achievement): ?>
-                        <div class="achievement-item">
-                            <div class="achievement-icon completed">
-                                <i class="<?php echo $achievement['icon']; ?>"></i>
+                    
+                    <?php if (!empty($recent_badges)): ?>
+                    <div class="recent-badges">
+                        <h5>Recent Badges</h5>
+                        <div class="badge-list">
+                            <?php foreach ($recent_badges as $badge): ?>
+                            <div class="badge-item">
+                                <div class="badge-icon earned">
+                                    <i class="<?php echo $badge['icon']; ?>"></i>
+                                </div>
+                                <div class="badge-info">
+                                    <div class="badge-name"><?php echo htmlspecialchars($badge['name']); ?></div>
+                                    <div class="badge-rarity"><?php echo ucfirst($badge['rarity']); ?></div>
+                                </div>
                             </div>
-                            <div class="achievement-info">
-                                <div class="achievement-name"><?php echo htmlspecialchars($achievement['name']); ?></div>
-                                <div class="achievement-category"><?php echo htmlspecialchars($achievement['category_name']); ?></div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
                     </div>
+                    <?php else: ?>
+                    <p class="empty-state">No badges earned yet</p>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
                 <?php } catch (Exception $e) { ?>
-                <p class="error-message">Achievements temporarily unavailable</p>
+                <div class="badges-section">
+                    <div class="section-header">
+                        <h4><i class="iw iw-medal"></i> Badges</h4>
+                    </div>
+                    <p class="error-message">Badges temporarily unavailable</p>
+                </div>
                 <?php } ?>
+                <?php endif; ?>
             </div>
-            <?php endif; ?>
             
             <!-- My Content -->
             <div class="my-content-card">

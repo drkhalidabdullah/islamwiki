@@ -74,6 +74,202 @@ body {
     min-width: 0;
 }
 
+/* User Profile Section in Right Sidebar */
+.user-profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.user-profile-section .profile-card {
+    margin-bottom: 0;
+}
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.section-header h4 i {
+    color: var(--primary-color);
+}
+
+/* Achievements Section */
+.achievements-section {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+}
+
+.achievements-section .level-info {
+    margin-bottom: 20px;
+}
+
+.achievements-section .recent-achievements h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.achievements-section .achievement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.achievements-section .achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.achievements-section .achievement-item:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+}
+
+.achievements-section .achievement-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.achievements-section .achievement-icon.completed {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.achievements-section .achievement-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievements-section .achievement-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.achievements-section .achievement-category {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Badges Section */
+.badges-section {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+}
+
+.badges-section .recent-badges h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badges-section .badge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.badges-section .badge-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+}
+
+.badges-section .badge-item:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+}
+
+.badges-section .badge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.badges-section .badge-icon.earned {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.badges-section .badge-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.badges-section .badge-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badges-section .badge-rarity {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .profile-card {
     background: var(--bg-primary);
     border-radius: var(--radius-xl);
