@@ -5,6 +5,9 @@ require_once __DIR__ . '/../../includes/wiki_functions.php';
 require_once __DIR__ . '/../../includes/markdown/MarkdownParser.php';
 require_once __DIR__ . '/../../includes/markdown/WikiParser.php';
 
+// Require login for all site access
+require_login();
+
 // Ensure createSlug function is available
 if (!function_exists('createSlug')) {
     function createSlug($text) {

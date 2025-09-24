@@ -7,6 +7,9 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../models/Course.php';
 
+// Require login for all site access
+require_login();
+
 // Initialize course model
 $course_model = new Course($pdo);
 

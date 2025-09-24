@@ -5,6 +5,9 @@ require_once __DIR__ . '/../../includes/functions.php';
 // Check maintenance mode
 check_maintenance_mode();
 
+// Require login for all site access
+require_login();
+
 // Check if wiki is enabled
 $enable_wiki = get_system_setting('enable_wiki', true);
 if (!$enable_wiki) {

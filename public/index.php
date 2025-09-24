@@ -5,6 +5,9 @@ require_once 'includes/functions.php';
 // Check maintenance mode
 check_maintenance_mode();
 
+// Require login for all site access
+require_login();
+
 $page_title = 'Home';
 
 // Get recent wiki articles

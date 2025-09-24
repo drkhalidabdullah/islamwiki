@@ -125,7 +125,7 @@ if ($toast_message) {
         <div class="sidebar-top">
             <!-- Main Navigation -->
             <div class="sidebar-main-nav">
-                <a href="<?php echo is_logged_in() ? '/dashboard' : '/'; ?>" class="sidebar-item <?php echo (is_logged_in() ? (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) : (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/')) ? 'active' : ''; ?>" title="Home">
+                <a href="/" class="sidebar-item <?php echo (basename($_SERVER['PHP_SELF'] ?? '') == 'index.php' || ($_SERVER['REQUEST_URI'] ?? '') == '/') ? 'active' : ''; ?>" title="Home">
                     <i class="iw iw-home"></i>
                 </a>
                 
@@ -135,7 +135,7 @@ if ($toast_message) {
                 </a>
                 <?php endif; ?>
                 
-                <?php if (is_logged_in() && $enable_social): ?>
+                <?php if ($enable_social): ?>
                 <a href="/dashboard" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/dashboard') === 0) ? 'active' : ''; ?>" title="Dashboard">
                     <i class="iw iw-tachometer-alt"></i>
                 </a>
@@ -144,11 +144,9 @@ if ($toast_message) {
                 </a>
                 <?php endif; ?>
                 
-                <?php if (is_logged_in()): ?>
                 <a href="/achievements" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/achievements') !== false) ? 'active' : ''; ?>" title="Achievements">
                     <i class="iw iw-trophy"></i>
                 </a>
-                <?php endif; ?>
                 
                 <a href="/courses" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/courses') !== false || strpos($_SERVER['REQUEST_URI'] ?? '', '/course/') !== false) ? 'active' : ''; ?>" title="Courses">
                     <i class="iw iw-book-open"></i>
