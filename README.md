@@ -1,39 +1,39 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.20-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.21-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
 A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.20
+## 🎯 Current Version: 0.0.0.21
 
 **Latest Release:** September 2025  
 **Status:** Production Ready ✅  
-**Type:** Feature Enhancement - Site Logo Upload & Z-Index Fixes
+**Type:** Feature Enhancement - UI Polish & User Experience
 
-## 🚀 What's New in v0.0.0.20
+## 🚀 What's New in v0.0.0.21
 
-### 🎨 **Site Logo Upload System**
-- **Complete Logo Management**: Upload, preview, and remove site logos through admin panel
-- **Dedicated Storage**: Separate `/public/uploads/site_logos/` directory for logo files
-- **File Validation**: Support for JPEG, PNG, GIF, SVG with 5MB size limit
-- **Real-time Preview**: Instant preview with file information display
-- **Header Integration**: Logo automatically appears in header dashboard when uploaded
-- **Fallback System**: Default moon icon when no custom logo is uploaded
+### 🎨 **Enhanced Authentication Experience**
+- **Clean Login/Register Pages**: Streamlined authentication interface with minimal distractions
+- **Smart UI Hiding**: Navigation elements automatically hidden for non-authenticated users
+- **Centered Branding**: Logo and site name properly centered on authentication pages
+- **Newsbar Management**: Newsbar hidden on login/register pages for cleaner experience
+- **Responsive Design**: Perfect layout on all screen sizes
 
-### 🔧 **Critical Bug Fixes**
-- **Dashboard Functionality**: Fixed tag people and feeling/activity buttons (z-index conflicts)
-- **User Name Color**: Fixed user name color in header dashboard to display as white
-- **Modal Accessibility**: All modals now properly clickable and accessible
-- **CSS Specificity**: Added !important declarations to ensure proper styling
+### 🔧 **UI/UX Improvements**
+- **Footer Layout Fixes**: Fixed footer visibility and positioning issues
+- **Flexbox Redesign**: Complete layout redesign using modern flexbox for better stability
+- **Button State Management**: Fixed login/signup button hiding logic
+- **Overflow Handling**: Prevented horizontal scrolling and content overflow issues
+- **Visual Hierarchy**: Improved spacing and alignment throughout the interface
 
 ### 🚀 **Technical Improvements**
-- **New API Endpoints**: Upload, get, and remove logo APIs with admin authentication
-- **Database Integration**: Logo metadata stored in system_settings table
-- **Security Features**: Admin-only access controls and file type validation
-- **Performance**: Optimized image handling and storage
+- **Courses System Fix**: Fixed missing functions for course functionality
+- **Layout Architecture**: Redesigned footer and header layouts for better maintainability
+- **CSS Optimization**: Cleaner, more maintainable CSS with proper positioning
+- **Error Prevention**: Added proper overflow handling and content containment
 
 ## 🚀 Previous Release: v0.0.0.19
 
@@ -346,11 +346,11 @@ This project is licensed under the AGPL License - see the [LICENSE](LICENSE) fil
 
 ## 🎯 **Roadmap**
 
-### **Version 0.0.0.18** (Current)
-- Professional wiki editor with rich text toolbar
-- Enhanced reference system with clickable links
-- Improved UI/UX with proper button sizing
-- Mobile responsive design improvements
+### **Version 0.0.0.21** (Current)
+- Enhanced authentication experience with clean UI
+- Improved footer and layout architecture
+- Fixed courses system functionality
+- Better responsive design and overflow handling
 
 ### **Version 0.1.0** (Future)
 - Multi-language support

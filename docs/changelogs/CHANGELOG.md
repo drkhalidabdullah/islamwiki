@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.0.0.21] - 2025-09-23
+
+### 🎨 **UI/UX Improvements & Authentication Experience**
+
+#### Enhanced Authentication Experience
+- **Clean Login/Register Pages**: Streamlined authentication interface with minimal distractions
+- **Smart UI Hiding**: Navigation elements automatically hidden for non-authenticated users
+- **Centered Branding**: Logo and site name properly centered on authentication pages
+- **Newsbar Management**: Newsbar hidden on login/register pages for cleaner experience
+- **Responsive Design**: Perfect layout on all screen sizes
+
+#### UI/UX Improvements
+- **Footer Layout Fixes**: Fixed footer visibility and positioning issues
+- **Flexbox Redesign**: Complete layout redesign using modern flexbox for better stability
+- **Button State Management**: Fixed login/signup button hiding logic
+- **Overflow Handling**: Prevented horizontal scrolling and content overflow issues
+- **Visual Hierarchy**: Improved spacing and alignment throughout the interface
+
+#### Technical Improvements
+- **Courses System Fix**: Fixed missing functions for course functionality
+- **Layout Architecture**: Redesigned footer and header layouts for better maintainability
+- **CSS Optimization**: Cleaner, more maintainable CSS with proper positioning
+- **Error Prevention**: Added proper overflow handling and content containment
+
+#### Bug Fixes
+- **Footer Visibility**: Fixed footer being cut off or overlapped by content
+- **Courses System**: Resolved missing function errors preventing course access
+- **Layout Overflow**: Fixed horizontal scrolling issues on mobile devices
+- **Button States**: Fixed login/signup button hiding logic
+- **Header Layout**: Fixed logo and site name positioning on auth pages
+- **Newsbar Display**: Prevented newsbar from showing on login/register pages
+
 ## [0.0.0.20] - 2025-09-XX
 
 ### 🎨 **Site Logo System & UI Fixes**

@@ -1,5 +1,206 @@
 # Release Notes
 
+## Version 0.0.0.21 - UI/UX Improvements & Authentication Experience
+
+**Release Date:** September 23, 2025  
+**Version:** 0.0.0.21  
+**Type:** Feature Enhancement - UI Polish & User Experience  
+**Status:** Production Ready ✅
+
+## 🎯 Release Overview
+
+Version 0.0.0.21 focuses on **polishing the user interface** and **improving the authentication experience** for both logged-in and logged-out users. This release enhances the overall user experience with cleaner layouts, better responsive design, and improved functionality across all pages.
+
+## 🚀 Major Features
+
+### 🎨 **Enhanced Authentication Experience**
+
+#### **Clean Login/Register Pages**
+- **Streamlined Interface**: Removed all distracting navigation elements from authentication pages
+- **Smart UI Management**: Left sidebar toggle, search button, news toggle, and navigation automatically hidden when logged out
+- **Centered Branding**: Logo and site name properly centered for better visual hierarchy
+- **Newsbar Control**: Newsbar completely hidden on login/register pages for cleaner experience
+- **Responsive Design**: Perfect layout adaptation for all screen sizes and devices
+
+#### **Improved Header Layout**
+- **Conditional Display Logic**: Header elements intelligently show/hide based on authentication status
+- **Logo Repositioning**: Site logo and name moved to left side when logged out for better balance
+- **Clean Aesthetics**: Removed unnecessary elements that could confuse non-authenticated users
+- **Consistent Branding**: Maintains strong brand identity while simplifying the interface
+
+### 🔧 **UI/UX Improvements**
+
+#### **Footer Layout Redesign**
+- **Complete Architecture Overhaul**: Implemented modern flexbox layout for better stability and maintainability
+- **Fixed Positioning Issues**: Resolved footer visibility and positioning problems that caused content overlap
+- **Overflow Prevention**: Added proper overflow handling to prevent horizontal scrolling on mobile devices
+- **Content Containment**: Ensured all content stays within the viewable area without being cut off
+- **Visual Hierarchy**: Improved spacing, alignment, and overall visual organization
+
+#### **Layout Architecture**
+- **Flexbox Implementation**: Replaced complex positioning with clean, modern flexbox layout
+- **Natural Content Flow**: Content now flows naturally without fixed positioning issues
+- **Responsive Design**: Better adaptation to different screen sizes and orientations
+- **Maintainable CSS**: Cleaner, more organized CSS structure for easier maintenance
+
+### 🚀 **Technical Improvements**
+
+#### **Courses System Fix**
+- **Missing Function Resolution**: Added `get_current_user_id()` function to functions.php
+- **Syntax Error Correction**: Fixed Course model `getUserCourseProgress` method syntax error
+- **Full Functionality Restoration**: All course features now working properly for authenticated users:
+  - Course listing page (`/courses`) - Browse all available courses
+  - Individual course pages (`/course/{slug}`) - Access specific course content
+  - Course lessons (`/course/{slug}/lesson/{lesson}`) - Navigate through course materials
+  - User progress tracking - Monitor learning progress
+  - Course categories and filtering - Organize and find courses easily
+
+#### **Code Quality Improvements**
+- **Enhanced Error Handling**: Improved error handling throughout the system for better reliability
+- **CSS Optimization**: Cleaner, more maintainable CSS with proper organization and structure
+- **Layout Stability**: More reliable layout system that prevents common UI issues
+- **Performance Optimization**: Optimized rendering and layout calculations for better speed
+
+## 🎯 User Experience Improvements
+
+### **For All Users**
+- **Professional Appearance**: More polished and modern interface design
+- **Better Navigation**: Clearer visual hierarchy and improved user flow
+- **Responsive Design**: Perfect experience across all devices and screen sizes
+- **Faster Loading**: Optimized layout and CSS for improved performance
+
+### **For Non-Authenticated Users**
+- **Focused Experience**: Clean, distraction-free login/register pages
+- **Clear Branding**: Prominent logo and site name for strong brand recognition
+- **Simplified Interface**: Only essential elements visible to reduce confusion
+- **Better Conversion**: Cleaner interface encourages user registration and engagement
+
+### **For Authenticated Users**
+- **Full Functionality**: All features working properly including the complete courses system
+- **Consistent Experience**: Uniform interface behavior across all pages
+- **Better Performance**: Optimized layout and rendering for smoother interactions
+- **Enhanced Usability**: Improved spacing and visual hierarchy for better usability
+
+## 🔧 Technical Details
+
+### **Files Modified**
+- `public/includes/functions.php` - Added missing `get_current_user_id()` function
+- `public/includes/footer.php` - Complete footer layout redesign with modern flexbox
+- `public/includes/header.php` - Enhanced header layout and conditional display logic
+- `public/includes/header_dashboard.php` - Improved authentication page layout and positioning
+- `public/extensions/newsbar/extension.php` - Added logged-out state handling for cleaner auth pages
+
+### **CSS Improvements**
+- **Modern Flexbox Layout**: Reliable, modern layout system for better stability
+- **Overflow Handling**: Proper content containment to prevent layout issues
+- **Responsive Design**: Enhanced mobile and tablet experience with better adaptation
+- **Visual Hierarchy**: Improved spacing, alignment, and overall visual organization
+
+### **JavaScript Enhancements**
+- **Conditional Logic**: Better handling of authentication states and user interactions
+- **Error Prevention**: Improved error handling and user feedback mechanisms
+- **Performance**: Optimized event handling and DOM manipulation for better speed
+
+## 🐛 Bug Fixes
+
+### **Critical Fixes**
+- **Footer Visibility**: Fixed footer being cut off or overlapped by content on various pages
+- **Courses System**: Resolved missing function errors that prevented course access for users
+- **Layout Overflow**: Fixed horizontal scrolling issues on mobile devices and small screens
+- **Button States**: Fixed login/signup button hiding logic for proper authentication flow
+
+### **UI/UX Fixes**
+- **Header Layout**: Fixed logo and site name positioning on authentication pages
+- **Newsbar Display**: Prevented newsbar from showing on login/register pages for cleaner interface
+- **Content Positioning**: Fixed content overlapping footer issues that affected readability
+- **Responsive Design**: Improved mobile and tablet layout for better cross-device experience
+
+### **Technical Fixes**
+- **Function Dependencies**: Added missing utility functions required by various system components
+- **CSS Conflicts**: Resolved layout conflicts and positioning issues that caused visual problems
+- **Error Handling**: Improved error handling throughout the system for better reliability
+- **Performance**: Optimized rendering and layout calculations for better speed and responsiveness
+
+## 📊 Performance Improvements
+
+### **Layout Performance**
+- **Faster Rendering**: Optimized CSS and layout calculations for quicker page loads
+- **Reduced Complexity**: Simplified layout system for better performance and maintainability
+- **Better Caching**: Improved CSS organization for better browser caching
+- **Mobile Optimization**: Enhanced mobile performance and responsiveness
+
+### **User Experience**
+- **Faster Loading**: Optimized layout and CSS loading for better perceived performance
+- **Smoother Interactions**: Better event handling and user feedback for more responsive interface
+- **Consistent Behavior**: Uniform interface behavior across all pages for predictable user experience
+- **Error Prevention**: Better error handling prevents user frustration and improves reliability
+
+## 🎨 Design Improvements
+
+### **Visual Hierarchy**
+- **Better Spacing**: Improved margins, padding, and element spacing throughout the interface
+- **Clear Branding**: Prominent logo and site name positioning for strong brand recognition
+- **Consistent Styling**: Uniform design language across all pages for professional appearance
+- **Professional Appearance**: More polished and modern interface that reflects quality
+
+### **Responsive Design**
+- **Mobile First**: Optimized for mobile devices with progressive enhancement for larger screens
+- **Tablet Support**: Better tablet experience and layout adaptation
+- **Desktop Optimization**: Enhanced desktop interface and usability for power users
+- **Cross-Device Consistency**: Uniform experience across all devices and screen sizes
+
+## 🔮 What's Next
+
+### **Planned for v0.0.0.22**
+- Advanced user dashboard improvements and customization options
+- Enhanced mobile app features and offline capabilities
+- Performance optimizations and speed improvements
+- Additional UI/UX refinements based on user feedback
+
+### **Long-term Roadmap**
+- **v0.1.0**: Advanced features and third-party integrations
+- **v0.2.0**: Community features and collaboration tools
+- **v1.0.0**: Production-ready stable release with enterprise features
+
+## 📈 Impact & Benefits
+
+### **User Experience**
+- **Cleaner Interface**: More professional and polished appearance that builds trust
+- **Better Usability**: Improved navigation and user flow for easier content discovery
+- **Mobile Optimization**: Perfect experience on all devices for accessibility
+- **Faster Performance**: Optimized layout and CSS for better speed and responsiveness
+
+### **Developer Experience**
+- **Maintainable Code**: Cleaner, more organized CSS and JavaScript for easier maintenance
+- **Better Architecture**: Modern layout system that's easier to extend and modify
+- **Error Prevention**: Improved error handling reduces debugging time and issues
+- **Performance**: Optimized code for better development and production performance
+
+### **Business Impact**
+- **Better Conversion**: Cleaner authentication experience encourages user registration
+- **Professional Image**: Polished interface builds trust and credibility
+- **User Retention**: Better user experience leads to higher engagement and retention
+- **Scalability**: Improved architecture supports future growth and feature additions
+
+## 🙏 Acknowledgments
+
+This release represents a **focused effort on user experience and interface polish**. Special thanks to all users who provided feedback on the authentication experience and helped identify areas for improvement. Your input is invaluable in making IslamWiki better for everyone.
+
+## 📞 Support & Resources
+
+- **Documentation**: [User Guide](docs/user/) - Comprehensive guides and tutorials
+- **Issues**: [GitHub Issues](https://github.com/drkhalidabdullah/islamwiki/issues) - Report bugs and request features
+- **Email**: support@islamwiki.org - Direct support and feedback
+- **Community**: [GitHub Discussions](https://github.com/drkhalidabdullah/islamwiki/discussions) - Community discussions and help
+
+---
+
+**IslamWiki v0.0.0.21** - Polished interface, enhanced experience
+
+*"A clean, professional interface that makes Islamic knowledge more accessible to everyone."*
+
+---
+
 ## Version 0.0.0.20 - Site Logo System & UI Fixes
 
 **Release Date:** September 2025  
