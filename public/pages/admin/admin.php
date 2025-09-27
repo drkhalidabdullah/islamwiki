@@ -133,9 +133,7 @@ include "../../includes/header.php";
 
 ?>
 <link rel="stylesheet" href="/skins/bismillah/assets/css/bismillah.css">
-<?php
-
-?>
+<link rel="stylesheet" href="/skins/bismillah/assets/css/admin_dashboard.css">
 <script src="/skins/bismillah/assets/js/admin_dashboard.js"></script>
 <?php
 ?>
@@ -178,35 +176,50 @@ include "../../includes/header.php";
     <div class="dashboard-section system-health-section">
         <h2><i class="iw iw-heartbeat"></i> System Health</h2>
         <div class="health-status">
-            <div class="health-item">
-                <span class="health-label">Database</span>
-                <span class="health-status-indicator status-<?php echo $system_health['database']; ?>">
-                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['database']); ?>
-                </span>
+            <div class="health-item <?php echo $system_health['database']; ?>">
+                <div class="health-icon">
+                    <i class="iw iw-database"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Database</h3>
+                    <p><?php echo ucfirst($system_health['database']); ?></p>
+                </div>
             </div>
-            <div class="health-item">
-                <span class="health-label">Storage</span>
-                <span class="health-status-indicator status-<?php echo $system_health['storage']; ?>">
-                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['storage']); ?>
-                </span>
+            <div class="health-item <?php echo $system_health['storage']; ?>">
+                <div class="health-icon">
+                    <i class="iw iw-hdd"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Storage</h3>
+                    <p><?php echo ucfirst($system_health['storage']); ?></p>
+                </div>
             </div>
-            <div class="health-item">
-                <span class="health-label">Memory</span>
-                <span class="health-status-indicator status-<?php echo $system_health['memory']; ?>">
-                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['memory']); ?>
-                </span>
+            <div class="health-item <?php echo $system_health['memory']; ?>">
+                <div class="health-icon">
+                    <i class="iw iw-memory"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Memory</h3>
+                    <p><?php echo ucfirst($system_health['memory']); ?></p>
+                </div>
             </div>
-            <div class="health-item">
-                <span class="health-label">Uptime</span>
-                <span class="health-status-indicator status-<?php echo $system_health['uptime']; ?>">
-                    <i class="iw iw-circle"></i> <?php echo ucfirst($system_health['uptime']); ?>
-                </span>
+            <div class="health-item <?php echo $system_health['uptime']; ?>">
+                <div class="health-icon">
+                    <i class="iw iw-clock"></i>
+                </div>
+                <div class="health-content">
+                    <h3>Uptime</h3>
+                    <p><?php echo ucfirst($system_health['uptime']); ?></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Statistics Grid -->
-    <div class="stats-grid">
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <div class="dashboard-main">
+            <!-- Main Statistics Grid -->
+            <div class="stats-grid">
         <div class="stat-card stat-users">
             <div class="stat-header">
                 <div class="stat-icon">
@@ -341,18 +354,19 @@ include "../../includes/header.php";
             <!-- Recent Activity -->
             <div class="dashboard-section">
                 <h2><i class="iw iw-clock"></i> Recent Activity</h2>
-                <div class="activity-feed">
+                <div class="activity-list">
                     <?php if (!empty($recent_activity)): ?>
                         <?php foreach ($recent_activity as $activity): ?>
-                        <div class="activity-item">
-                            <div class="activity-icon activity-<?php echo $activity['color']; ?>">
+                        <div class="activity-item <?php echo $activity['type']; ?>">
+                            <div class="activity-icon">
                                 <i class="<?php echo $activity['icon']; ?>"></i>
                             </div>
                             <div class="activity-content">
-                                <div class="activity-title"><?php echo htmlspecialchars($activity['title']); ?></div>
-                                <div class="activity-meta">
-                                    <?php echo ucfirst($activity['type']); ?> • <?php echo format_date($activity['created_at']); ?>
-                                </div>
+                                <h4><?php echo htmlspecialchars($activity['title']); ?></h4>
+                                <p><?php echo ucfirst($activity['type']); ?> • <?php echo format_date($activity['created_at']); ?></p>
+                            </div>
+                            <div class="activity-time">
+                                <?php echo time_ago($activity['created_at']); ?>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -492,8 +506,5 @@ include "../../includes/header.php";
         </div>
     </div>
 </div>
-
-
-
 
 <?php include "../../includes/footer.php"; ?>
