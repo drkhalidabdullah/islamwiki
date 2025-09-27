@@ -96,6 +96,22 @@
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
 }
 
+/* More specific rule to ensure active state is applied */
+.settings-tabs .tab-button.active {
+    background: var(--admin-primary) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+    border-color: var(--admin-primary) !important;
+}
+
+/* Force active state with even higher specificity */
+.admin-container .settings-tabs .tab-button.active {
+    background: var(--admin-primary) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+    border-color: var(--admin-primary) !important;
+}
+
 .tab-content {
     display: none !important;
     opacity: 0 !important;

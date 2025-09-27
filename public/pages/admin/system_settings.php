@@ -98,8 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Store the current tab for after redirect
-        $_SESSION['active_settings_tab'] = $form_section;
-        redirect('/admin/system_settings');
+        $current_tab = $_POST['current_tab'] ?? $form_section;
+        $_SESSION['active_settings_tab'] = $current_tab;
+        redirect('/admin/system_settings?tab=' . $current_tab);
         } elseif ($action === 'toggle_extension') {
             // Toggle extension enabled/disabled
             $extension_name = $_POST['extension_name'] ?? '';
@@ -125,8 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Store the current tab for after redirect
-            $_SESSION['active_settings_tab'] = 'extensions';
-            redirect('/admin/system_settings');
+            $current_tab = $_POST['current_tab'] ?? 'extensions';
+            $_SESSION['active_settings_tab'] = $current_tab;
+            
+            // Debug logging
+            error_log("Extension toggle - current_tab from POST: " . ($_POST['current_tab'] ?? 'not set'));
+            error_log("Extension toggle - setting session to: " . $current_tab);
+            
+            redirect('/admin/system_settings?tab=' . $current_tab);
         } elseif ($action === 'update_extension_settings') {
             // Update extension settings
             $extension_name = $_POST['extension_name'] ?? '';
@@ -147,8 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Store the current tab for after redirect
-            $_SESSION['active_settings_tab'] = 'extensions';
-            redirect('/admin/system_settings');
+            $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'extensions';
+            redirect('/admin/system_settings?tab=' . $current_tab);
         } elseif ($action === 'update_skin_settings') {
             // Update skin settings
             $settings = [];
@@ -174,8 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Store the current tab for after redirect
-            $_SESSION['active_settings_tab'] = 'skins';
-            redirect('/admin/system_settings');
+            $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'skins';
+            redirect('/admin/system_settings?tab=' . $current_tab);
         } elseif ($action === 'activate_skin') {
             // Activate a skin
             $skin_name = $_POST['skin_name'] ?? '';
@@ -197,8 +204,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // Store the current tab for after redirect
-            $_SESSION['active_settings_tab'] = 'skins';
-            redirect('/admin/system_settings');
+            $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'skins';
+            redirect('/admin/system_settings?tab=' . $current_tab);
     } elseif ($action === 'update_security') {
         $settings = [
             'password_min_length' => (int)($_POST['password_min_length'] ?? 8),
@@ -236,8 +243,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Store the current tab for after redirect
-        $_SESSION['active_settings_tab'] = 'security';
-            redirect('/admin/system_settings');
+        $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'security';
+            redirect('/admin/system_settings?tab=' . $current_tab);
     } elseif ($action === 'update_email') {
         $settings = [
             'smtp_host' => sanitize_input($_POST['smtp_host'] ?? ''),
@@ -275,8 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Store the current tab for after redirect
-        $_SESSION['active_settings_tab'] = 'email';
-            redirect('/admin/system_settings');
+        $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'email';
+            redirect('/admin/system_settings?tab=' . $current_tab);
     } elseif ($action === 'test_email') {
         $test_email = sanitize_input($_POST['test_email'] ?? '');
         if (filter_var($test_email, FILTER_VALIDATE_EMAIL)) {
@@ -288,8 +295,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Store the current tab for after redirect
-        $_SESSION['active_settings_tab'] = 'email';
-            redirect('/admin/system_settings');
+        $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'email';
+            redirect('/admin/system_settings?tab=' . $current_tab);
     } elseif ($action === 'clear_cache') {
         // Clear various caches
         $cleared = 0;
@@ -313,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Store the current tab for after redirect (cache clear can be from any tab)
         $_SESSION['active_settings_tab'] = $_POST['current_tab'] ?? 'general';
-        redirect('/admin/system_settings');
+        redirect('/admin/system_settings?tab=' . $current_tab);
     } elseif ($action === 'toggle_module') {
         // Toggle module enabled/disabled
         $module_name = $_POST['module_name'] ?? '';
@@ -332,14 +339,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Store the current tab for after redirect
-        $_SESSION['active_settings_tab'] = 'modules';
-        redirect('/admin/system_settings');
+        $current_tab = $_POST['current_tab'] ?? 'modules';
+        $_SESSION['active_settings_tab'] = $current_tab;
+        
+        // Debug logging
+        error_log("Module toggle - current_tab from POST: " . ($_POST['current_tab'] ?? 'not set'));
+        error_log("Module toggle - setting session to: " . $current_tab);
+        
+        redirect('/admin/system_settings?tab=' . $current_tab);
     }
 }
 
 // Store active tab after all processing
 // Check URL parameter first, then session
 $active_tab = $_GET['tab'] ?? $_SESSION['active_settings_tab'] ?? 'general';
+
+// Debug logging
+error_log("Active tab detection - URL param: " . ($_GET['tab'] ?? 'not set'));
+error_log("Active tab detection - Session: " . ($_SESSION['active_settings_tab'] ?? 'not set'));
+error_log("Active tab detection - Final: " . $active_tab);
 
 // Get current settings
 $current_settings = [
@@ -1279,6 +1297,7 @@ include "../../includes/header.php";
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="action" value="toggle_extension">
                                     <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
+                                    <input type="hidden" name="current_tab" value="extensions">
                                     <button type="submit" class="btn <?php echo $extension['enabled'] ? 'btn-warning' : 'btn-success'; ?>">
                                         <i class="iw iw-<?php echo $extension['enabled'] ? 'pause' : 'play'; ?>"></i>
                                         <?php echo $extension['enabled'] ? 'Disable' : 'Enable'; ?>
@@ -1298,6 +1317,7 @@ include "../../includes/header.php";
                             <form method="POST">
                                 <input type="hidden" name="action" value="update_extension_settings">
                                 <input type="hidden" name="extension_name" value="<?php echo htmlspecialchars($name); ?>">
+                                <input type="hidden" name="current_tab" value="extensions">
                                 <?php echo $extension['settings_form']; ?>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="iw iw-save"></i> Save Settings
@@ -1331,6 +1351,7 @@ include "../../includes/header.php";
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="wiki">
+                                <input type="hidden" name="current_tab" value="modules">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_wiki', true) ? 'btn-warning' : 'btn-success'; ?>">
                                     <i class="iw iw-<?php echo get_system_setting('enable_wiki', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_wiki', true) ? 'Disable' : 'Enable'; ?>
@@ -1356,6 +1377,7 @@ include "../../includes/header.php";
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="social">
+                                <input type="hidden" name="current_tab" value="modules">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_social', true) ? 'btn-warning' : 'btn-success'; ?>">
                                     <i class="iw iw-<?php echo get_system_setting('enable_social', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_social', true) ? 'Disable' : 'Enable'; ?>
@@ -1381,6 +1403,7 @@ include "../../includes/header.php";
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="comments">
+                                <input type="hidden" name="current_tab" value="modules">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_comments', true) ? 'btn-warning' : 'btn-success'; ?>">
                                     <i class="iw iw-<?php echo get_system_setting('enable_comments', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_comments', true) ? 'Disable' : 'Enable'; ?>
@@ -1403,6 +1426,7 @@ include "../../includes/header.php";
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_name" value="analytics">
+                                <input type="hidden" name="current_tab" value="modules">
                                 <button type="submit" class="btn <?php echo get_system_setting('enable_analytics', true) ? 'btn-warning' : 'btn-success'; ?>">
                                     <i class="iw iw-<?php echo get_system_setting('enable_analytics', true) ? 'pause' : 'play'; ?>"></i>
                                     <?php echo get_system_setting('enable_analytics', true) ? 'Disable' : 'Enable'; ?>
@@ -1490,6 +1514,7 @@ include "../../includes/header.php";
                                         <form method="POST" style="display: inline;">
                                             <input type="hidden" name="action" value="activate_skin">
                                             <input type="hidden" name="skin_name" value="<?php echo htmlspecialchars($skin['name']); ?>">
+                                            <input type="hidden" name="current_tab" value="skins">
                                             <button type="submit" class="btn btn-primary btn-sm">
                                                 <i class="iw iw-check"></i> Activate
                                             </button>

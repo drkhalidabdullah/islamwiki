@@ -69,11 +69,6 @@ function showTab(tabName, element) {
         console.log('Removed active from:', tab.id);
     });
     
-    // Remove active class from all buttons
-    const buttons = document.querySelectorAll('.tab-button');
-    console.log('Found buttons:', buttons.length);
-    buttons.forEach(button => button.classList.remove('active'));
-    
     // Show selected tab
     const targetTab = document.getElementById(tabName + '-tab');
     console.log('Target tab:', targetTab);
@@ -84,16 +79,28 @@ function showTab(tabName, element) {
         console.error('Target tab not found:', tabName + '-tab');
     }
     
-    // Activate button
-    if (element) {
-        element.classList.add('active');
-        console.log('Activated button:', element);
-    }
+    // Activate button using the highlighting function
+    highlightActiveTab(tabName);
     
     // Store the active tab in URL for persistence
     const url = new URL(window.location);
     url.searchParams.set('tab', tabName);
     window.history.replaceState({}, '', url);
+    
+    // Update all current_tab hidden inputs in forms
+    const currentTabInputs = document.querySelectorAll('input[name="current_tab"]');
+    console.log('Found current_tab inputs:', currentTabInputs.length, 'for tab:', tabName);
+    currentTabInputs.forEach((input, index) => {
+        input.value = tabName;
+        console.log('Updated current_tab input', index, 'to:', tabName);
+    });
+    
+    // Ensure all forms have current_tab input (in case some were missed)
+    if (window.ensureCurrentTabInputs) {
+        setTimeout(() => {
+            window.ensureCurrentTabInputs(tabName);
+        }, 50);
+    }
 }
 
 // Make showTab available globally
@@ -112,6 +119,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show the active tab
     showTab(activeTab);
     
+    // Ensure the active tab is properly highlighted with multiple attempts
+    requestAnimationFrame(() => {
+        highlightActiveTab(activeTab);
+    });
+    
+    setTimeout(() => {
+        highlightActiveTab(activeTab);
+    }, 100);
+    
+    setTimeout(() => {
+        highlightActiveTab(activeTab);
+    }, 300);
+    
+    setTimeout(() => {
+        highlightActiveTab(activeTab);
+    }, 500);
+    
     // Add click handlers to all tab buttons
     const tabButtons = document.querySelectorAll('.tab-button');
     tabButtons.forEach(button => {
@@ -120,7 +144,159 @@ document.addEventListener('DOMContentLoaded', function() {
             const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'/)[1];
             console.log('Button clicked, switching to tab:', tabName);
             showTab(tabName, this);
+            
+            // Ensure all forms in the newly shown tab have current_tab input
+            setTimeout(() => {
+                ensureCurrentTabInputs(tabName);
+            }, 100);
         });
+    });
+    
+    // Function to ensure all forms have current_tab input
+    function ensureCurrentTabInputs(tabName) {
+        const forms = document.querySelectorAll('form');
+        console.log('Ensuring current_tab inputs for tab:', tabName, 'Found forms:', forms.length);
+        
+        forms.forEach((form, index) => {
+            let currentTabInput = form.querySelector('input[name="current_tab"]');
+            if (!currentTabInput) {
+                currentTabInput = document.createElement('input');
+                currentTabInput.type = 'hidden';
+                currentTabInput.name = 'current_tab';
+                form.appendChild(currentTabInput);
+                console.log('Added missing current_tab input to form', index);
+            }
+            currentTabInput.value = tabName;
+        });
+    }
+    
+    // Make function available globally
+    window.ensureCurrentTabInputs = ensureCurrentTabInputs;
+    
+    // Set up MutationObserver to handle dynamically added forms
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // Element node
+                        // Check if the added node is a form or contains forms
+                        const forms = node.tagName === 'FORM' ? [node] : node.querySelectorAll ? node.querySelectorAll('form') : [];
+                        forms.forEach(function(form) {
+                            console.log('New form detected, ensuring current_tab input');
+                            ensureCurrentTabInputs(getCurrentActiveTab());
+                        });
+                    }
+                });
+            }
+        });
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Helper function to get current active tab
+    function getCurrentActiveTab() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('tab') || 'general';
+    }
+    
+    // Function to ensure active tab is properly highlighted
+    function highlightActiveTab(tabName) {
+        console.log('Highlighting active tab:', tabName);
+        
+        // Remove active class from all tab buttons
+        const allButtons = document.querySelectorAll('.tab-button');
+        console.log('Found', allButtons.length, 'tab buttons');
+        allButtons.forEach((button, index) => {
+            button.classList.remove('active');
+            console.log('Removed active from button', index);
+        });
+        
+        // Add active class to the correct button
+        const targetButton = document.querySelector(`button[onclick*="showTab('${tabName}'"]`);
+        if (targetButton) {
+            targetButton.classList.add('active');
+            console.log('Added active class to button for tab:', tabName);
+            
+            // Force a style recalculation to ensure the CSS is applied
+            targetButton.style.display = 'none';
+            targetButton.offsetHeight; // Trigger reflow
+            targetButton.style.display = '';
+        } else {
+            console.error('Could not find button for tab:', tabName);
+            // Try alternative selector
+            const altButton = document.querySelector(`.tab-button[onclick*="${tabName}"]`);
+            if (altButton) {
+                altButton.classList.add('active');
+                console.log('Added active class to alternative button for tab:', tabName);
+            }
+        }
+    }
+    
+    // Make function available globally
+    window.highlightActiveTab = highlightActiveTab;
+    
+    // Add a function to force highlight the current active tab
+    window.forceHighlightActiveTab = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab') || 'general';
+        console.log('Force highlighting active tab:', activeTab);
+        highlightActiveTab(activeTab);
+    };
+    
+    // Special handling for modules tab
+    if (activeTab === 'modules') {
+        console.log('Modules tab is active, ensuring module forms have current_tab input');
+        setTimeout(() => {
+            ensureCurrentTabInputs('modules');
+        }, 200);
+    }
+    
+    // Add event listeners to all submit buttons to ensure current_tab is set
+    const submitButtons = document.querySelectorAll('button[type="submit"]');
+    submitButtons.forEach(button => {
+        const form = button.closest('form');
+        if (form) {
+            button.addEventListener('click', function() {
+                console.log('Submit button clicked, ensuring current_tab is set');
+                let currentTabInput = form.querySelector('input[name="current_tab"]');
+                if (!currentTabInput) {
+                    currentTabInput = document.createElement('input');
+                    currentTabInput.type = 'hidden';
+                    currentTabInput.name = 'current_tab';
+                    form.appendChild(currentTabInput);
+                    console.log('Added current_tab input to form');
+                }
+                
+                // Determine the correct tab based on the form's action
+                let tabValue = 'general'; // default
+                const actionInput = form.querySelector('input[name="action"]');
+                if (actionInput) {
+                    const action = actionInput.value;
+                    if (action === 'toggle_module') {
+                        tabValue = 'modules';
+                    } else if (action === 'toggle_extension' || action === 'update_extension_settings') {
+                        tabValue = 'extensions';
+                    } else if (action === 'activate_skin' || action === 'update_skin_settings') {
+                        tabValue = 'skins';
+                    } else if (action === 'update_security') {
+                        tabValue = 'security';
+                    } else if (action === 'update_email' || action === 'test_email') {
+                        tabValue = 'email';
+                    } else if (action === 'clear_cache') {
+                        // For cache clear, try to get the current tab from URL or use general
+                        const urlParams = new URLSearchParams(window.location.search);
+                        tabValue = urlParams.get('tab') || 'general';
+                    }
+                }
+                
+                currentTabInput.value = tabValue;
+                console.log('Set current_tab to', tabValue, 'for form with action:', actionInput ? actionInput.value : 'unknown');
+            });
+        }
     });
 });
 
@@ -179,21 +355,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add current tab tracking to forms
     const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        const currentTabInput = document.createElement('input');
-        currentTabInput.type = 'hidden';
-        currentTabInput.name = 'current_tab';
-        currentTabInput.value = 'general'; // Default to general
-        form.appendChild(currentTabInput);
-        
-        // Update current tab when switching tabs
-        const tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'/)[1];
-                currentTabInput.value = tabName;
-            });
-        });
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentActiveTab = urlParams.get('tab') || 'general';
+    
+    console.log('Found forms:', forms.length, 'Current active tab:', currentActiveTab);
+    
+    forms.forEach((form, index) => {
+        // Check if form already has a current_tab input
+        let currentTabInput = form.querySelector('input[name="current_tab"]');
+        if (!currentTabInput) {
+            currentTabInput = document.createElement('input');
+            currentTabInput.type = 'hidden';
+            currentTabInput.name = 'current_tab';
+            form.appendChild(currentTabInput);
+            console.log('Added current_tab input to form', index);
+        } else {
+            console.log('Form', index, 'already has current_tab input');
+        }
+        currentTabInput.value = currentActiveTab;
+        console.log('Set current_tab value to:', currentActiveTab, 'for form', index);
     });
 });
 
