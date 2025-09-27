@@ -108,9 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($extension_name) {
                 $extension = $extension_manager->getExtension($extension_name);
                 if ($extension) {
-                    $current_status = $extension->enabled;
+                    // Get the current status from the database using the correct setting key
+                    $setting_key = $extension_manager->getExtensionSettingKey($extension_name);
+                    $current_status = get_system_setting($setting_key, $extension->enabled);
                     $new_status = !$current_status;
-                    $setting_key = 'extension_' . $extension_name . '_enabled';
                     
                     if (set_system_setting($setting_key, $new_status, 'boolean')) {
                         $status_text = $new_status ? 'enabled' : 'disabled';

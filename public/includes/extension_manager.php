@@ -76,15 +76,34 @@ class ExtensionManager {
     public function getExtensionSettings() {
         $settings = [];
         foreach ($this->extensions as $name => $extension) {
+            // Read the current enabled state from database settings
+            // Use the extension's own setting key pattern
+            $setting_key = $this->getExtensionSettingKey($name);
+            $enabled = get_system_setting($setting_key, $extension->enabled);
+            
             $settings[$name] = [
                 'name' => $extension->name,
                 'version' => $extension->version,
                 'description' => $extension->description,
-                'enabled' => $extension->enabled,
+                'enabled' => $enabled,
                 'settings_form' => method_exists($extension, 'getSettingsForm') ? $extension->getSettingsForm() : ''
             ];
         }
         return $settings;
+    }
+    
+    /**
+     * Get the correct setting key for an extension's enabled state
+     */
+    public function getExtensionSettingKey($extension_name) {
+        // Map extension names to their actual setting keys
+        $setting_keys = [
+            'achievements' => 'achievements_enabled',
+            'seo' => 'seo_enabled',
+            'newsbar' => 'newsbar_enabled'
+        ];
+        
+        return $setting_keys[$extension_name] ?? 'extension_' . $extension_name . '_enabled';
     }
 }
 
