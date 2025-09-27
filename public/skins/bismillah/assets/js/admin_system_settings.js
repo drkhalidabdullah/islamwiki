@@ -15,6 +15,16 @@ function showToast(message, type = 'info') {
         </button>
     `;
     
+    // Calculate position for stacking toasts
+    const existingToasts = document.querySelectorAll('.toast');
+    const toastHeight = 60; // Approximate height of each toast
+    const spacing = 10; // Space between toasts
+    const topOffset = 80; // Base top position (below header)
+    
+    // Position this toast below existing ones
+    const topPosition = topOffset + (existingToasts.length * (toastHeight + spacing));
+    toast.style.top = `${topPosition}px`;
+    
     // Add toast styles if not already added
     if (!document.getElementById('toast-styles')) {
         const style = document.createElement('style');
@@ -22,26 +32,77 @@ function showToast(message, type = 'info') {
         style.textContent = `
             .toast {
                 position: fixed;
-                top: 20px;
+                top: 80px;
                 right: 20px;
                 background: #fff;
                 border: 1px solid #ddd;
                 border-radius: 8px;
                 padding: 1rem;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 10000;
+                z-index: 10002;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
                 min-width: 300px;
+                max-width: 400px;
                 animation: slideIn 0.3s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 14px;
+                line-height: 1.4;
             }
-            .toast-success { border-left: 4px solid #10b981; }
-            .toast-error { border-left: 4px solid #ef4444; }
-            .toast-info { border-left: 4px solid #3b82f6; }
-            .toast-content { display: flex; align-items: center; gap: 0.5rem; flex: 1; }
-            .toast-close { background: none; border: none; cursor: pointer; padding: 0.25rem; }
-            @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            .toast-success { 
+                border-left: 4px solid #10b981; 
+                background: #f0fdf4;
+                border-color: #bbf7d0;
+            }
+            .toast-error { 
+                border-left: 4px solid #ef4444; 
+                background: #fef2f2;
+                border-color: #fecaca;
+            }
+            .toast-info { 
+                border-left: 4px solid #3b82f6; 
+                background: #eff6ff;
+                border-color: #bfdbfe;
+            }
+            .toast-content { 
+                display: flex; 
+                align-items: center; 
+                gap: 0.5rem; 
+                flex: 1; 
+                color: #1f2937;
+                font-weight: 500;
+            }
+            .toast-content i {
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+            .toast-success .toast-content i { color: #10b981; }
+            .toast-error .toast-content i { color: #ef4444; }
+            .toast-info .toast-content i { color: #3b82f6; }
+            .toast-close { 
+                background: none; 
+                border: none; 
+                cursor: pointer; 
+                padding: 0.25rem; 
+                color: #6b7280;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+            .toast-close:hover {
+                background: rgba(0,0,0,0.1);
+                color: #374151;
+            }
+            @keyframes slideIn { 
+                from { 
+                    transform: translateX(100%); 
+                    opacity: 0; 
+                } 
+                to { 
+                    transform: translateX(0); 
+                    opacity: 1; 
+                } 
+            }
         `;
         document.head.appendChild(style);
     }
@@ -49,13 +110,44 @@ function showToast(message, type = 'info') {
     // Add to page
     document.body.appendChild(toast);
     
+    // Function to reposition toasts when one is removed
+    function repositionToasts() {
+        const allToasts = document.querySelectorAll('.toast');
+        const toastHeight = 60;
+        const spacing = 10;
+        const topOffset = 80;
+        
+        allToasts.forEach((toast, index) => {
+            const topPosition = topOffset + (index * (toastHeight + spacing));
+            toast.style.top = `${topPosition}px`;
+        });
+    }
+    
+    // Override the close button to reposition toasts
+    const closeButton = toast.querySelector('.toast-close');
+    closeButton.onclick = function() {
+        toast.remove();
+        repositionToasts();
+    };
+    
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (toast.parentElement) {
             toast.remove();
+            repositionToasts();
         }
     }, 5000);
 }
+
+// Test function for toasts (can be called from console)
+window.testToast = function(type = 'success') {
+    const messages = {
+        success: 'Module enabled successfully!',
+        error: 'Failed to enable module.',
+        info: 'This is an info message.'
+    };
+    showToast(messages[type] || messages.success, type);
+};
 
 // Define showTab function
 function showTab(tabName, element) {

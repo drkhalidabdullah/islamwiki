@@ -431,16 +431,25 @@ function showToast(message, type = 'info') {
         </button>
     `;
     
+    // Calculate position for stacking toasts
+    const existingToasts = document.querySelectorAll('.toast');
+    const toastHeight = 60;
+    const spacing = 10;
+    const topOffset = 80; // Position below header
+    
+    // Position this toast below existing ones
+    const topPosition = topOffset + (existingToasts.length * (toastHeight + spacing));
+    
     // Style the toast
     Object.assign(toast.style, {
         position: 'fixed',
-        top: '20px',
+        top: `${topPosition}px`,
         right: '20px',
         padding: '16px 20px',
         borderRadius: '8px',
         color: 'white',
         fontWeight: '500',
-        zIndex: '10000',
+        zIndex: '10002',
         transform: 'translateX(100%)',
         transition: 'all 0.3s ease',
         maxWidth: '400px',
@@ -504,6 +513,32 @@ function showToast(message, type = 'info') {
     
     document.body.appendChild(toast);
     
+    // Function to reposition toasts when one is removed
+    function repositionToasts() {
+        const allToasts = document.querySelectorAll('.toast');
+        const toastHeight = 60;
+        const spacing = 10;
+        const topOffset = 80;
+        
+        allToasts.forEach((toast, index) => {
+            const topPosition = topOffset + (index * (toastHeight + spacing));
+            toast.style.top = `${topPosition}px`;
+        });
+    }
+    
+    // Override the close button to reposition toasts
+    const closeButton = toast.querySelector('.toast-close');
+    closeButton.onclick = function() {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+                repositionToasts();
+            }
+        }, 300);
+    };
+    
     // Animate in
     setTimeout(() => {
         toast.style.transform = 'translateX(0)';
@@ -516,6 +551,7 @@ function showToast(message, type = 'info') {
         setTimeout(() => {
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
+                repositionToasts();
             }
         }, 300);
     }, 5000);
@@ -533,6 +569,17 @@ function getToastIcon(type) {
 
 // Make showToast globally available
 window.showToast = showToast;
+
+// Test function for toasts (can be called from console)
+window.testToast = function(type = 'success') {
+    const messages = {
+        success: 'Module enabled successfully!',
+        error: 'Failed to enable module.',
+        info: 'This is an info message.',
+        warning: 'This is a warning message.'
+    };
+    showToast(messages[type] || messages.success, type);
+};
 
 // Toast notification system
 <?php if ($toast_message): ?>
