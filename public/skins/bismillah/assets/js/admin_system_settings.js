@@ -171,8 +171,18 @@ function showTab(tabName, element) {
         console.error('Target tab not found:', tabName + '-tab');
     }
     
-    // Activate button using the highlighting function
-    highlightActiveTab(tabName);
+    // Handle active class for tab buttons when user clicks
+    if (element) {
+        // Remove active class from all tab buttons
+        const allButtons = document.querySelectorAll('.tab-button');
+        allButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        element.classList.add('active');
+        console.log('Added active class to clicked button for tab:', tabName);
+    }
     
     // Store the active tab in URL for persistence
     const url = new URL(window.location);
@@ -206,43 +216,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const activeTab = urlParams.get('tab') || 'general';
     
+    console.log('=== TAB DEBUGGING ===');
+    console.log('Current URL:', window.location.href);
+    console.log('URL search params:', window.location.search);
+    console.log('URL params object:', urlParams);
     console.log('Active tab from URL:', activeTab);
+    console.log('All tab buttons:', document.querySelectorAll('.tab-button'));
+    console.log('========================');
     
     // Show the active tab
     showTab(activeTab);
     
-    // Ensure the active tab is properly highlighted with multiple attempts
-    requestAnimationFrame(() => {
-        highlightActiveTab(activeTab);
-    });
+    // Don't override PHP-generated active classes - just ensure tab content is shown
+    // The PHP already sets the correct active class on the button
     
-    setTimeout(() => {
-        highlightActiveTab(activeTab);
-    }, 100);
-    
-    setTimeout(() => {
-        highlightActiveTab(activeTab);
-    }, 300);
-    
-    setTimeout(() => {
-        highlightActiveTab(activeTab);
-    }, 500);
-    
-    // Add click handlers to all tab buttons
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tabName = this.getAttribute('onclick').match(/showTab\('([^']+)'/)[1];
-            console.log('Button clicked, switching to tab:', tabName);
-            showTab(tabName, this);
-            
-            // Ensure all forms in the newly shown tab have current_tab input
-            setTimeout(() => {
-                ensureCurrentTabInputs(tabName);
-            }, 100);
-        });
-    });
+    // Tab buttons use onclick handlers - no need for additional event listeners
     
     // Function to ensure all forms have current_tab input
     function ensureCurrentTabInputs(tabName) {
@@ -295,49 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return urlParams.get('tab') || 'general';
     }
     
-    // Function to ensure active tab is properly highlighted
-    function highlightActiveTab(tabName) {
-        console.log('Highlighting active tab:', tabName);
-        
-        // Remove active class from all tab buttons
-        const allButtons = document.querySelectorAll('.tab-button');
-        console.log('Found', allButtons.length, 'tab buttons');
-        allButtons.forEach((button, index) => {
-            button.classList.remove('active');
-            console.log('Removed active from button', index);
-        });
-        
-        // Add active class to the correct button
-        const targetButton = document.querySelector(`button[onclick*="showTab('${tabName}'"]`);
-        if (targetButton) {
-            targetButton.classList.add('active');
-            console.log('Added active class to button for tab:', tabName);
-            
-            // Force a style recalculation to ensure the CSS is applied
-            targetButton.style.display = 'none';
-            targetButton.offsetHeight; // Trigger reflow
-            targetButton.style.display = '';
-        } else {
-            console.error('Could not find button for tab:', tabName);
-            // Try alternative selector
-            const altButton = document.querySelector(`.tab-button[onclick*="${tabName}"]`);
-            if (altButton) {
-                altButton.classList.add('active');
-                console.log('Added active class to alternative button for tab:', tabName);
-            }
-        }
-    }
-    
-    // Make function available globally
-    window.highlightActiveTab = highlightActiveTab;
-    
-    // Add a function to force highlight the current active tab
-    window.forceHighlightActiveTab = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const activeTab = urlParams.get('tab') || 'general';
-        console.log('Force highlighting active tab:', activeTab);
-        highlightActiveTab(activeTab);
-    };
+    // Removed complex highlighting functions - now handled directly in showTab
     
     // Special handling for modules tab
     if (activeTab === 'modules') {
@@ -390,29 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
-
-// Extension management functions
-function addNewsItem() {
-    const container = document.getElementById('news-items-container');
-    if (!container) return;
     
-    const newRow = document.createElement('div');
-    newRow.className = 'news-item-row';
-    newRow.innerHTML = `
-        <input type="text" name="news_item_time[]" placeholder="Time (e.g., 2 hours ago)" value="">
-        <input type="text" name="news_item_text[]" placeholder="News text" value="">
-        <button type="button" onclick="removeNewsItem(this)">Remove</button>
-    `;
-    container.appendChild(newRow);
-}
-
-function removeNewsItem(button) {
-    button.parentElement.remove();
-}
-
-// Maintenance mode toggle functionality
-document.addEventListener('DOMContentLoaded', function() {
+    // Maintenance mode toggle functionality
     const maintenanceToggle = document.querySelector('input[name="maintenance_mode"]');
     const maintenanceSettings = document.getElementById('maintenance-settings');
     
@@ -434,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add confirmation for maintenance mode toggle
-    const maintenanceForm = document.querySelector('form input[name="maintenance_mode"]').closest('form');
+    const maintenanceForm = document.querySelector('form input[name="maintenance_mode"]')?.closest('form');
     if (maintenanceForm) {
         maintenanceForm.addEventListener('submit', function(e) {
             if (maintenanceToggle && maintenanceToggle.checked) {
@@ -444,30 +369,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Add current tab tracking to forms
-    const forms = document.querySelectorAll('form');
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentActiveTab = urlParams.get('tab') || 'general';
-    
-    console.log('Found forms:', forms.length, 'Current active tab:', currentActiveTab);
-    
-    forms.forEach((form, index) => {
-        // Check if form already has a current_tab input
-        let currentTabInput = form.querySelector('input[name="current_tab"]');
-        if (!currentTabInput) {
-            currentTabInput = document.createElement('input');
-            currentTabInput.type = 'hidden';
-            currentTabInput.name = 'current_tab';
-            form.appendChild(currentTabInput);
-            console.log('Added current_tab input to form', index);
-        } else {
-            console.log('Form', index, 'already has current_tab input');
-        }
-        currentTabInput.value = currentActiveTab;
-        console.log('Set current_tab value to:', currentActiveTab, 'for form', index);
-    });
 });
+
+// Extension management functions
+function addNewsItem() {
+    const container = document.getElementById('news-items-container');
+    if (!container) return;
+    
+    const newRow = document.createElement('div');
+    newRow.className = 'news-item-row';
+    newRow.innerHTML = `
+        <input type="text" name="news_item_time[]" placeholder="Time (e.g., 2 hours ago)" value="">
+        <input type="text" name="news_item_text[]" placeholder="News text" value="">
+        <button type="button" onclick="removeNewsItem(this)">Remove</button>
+    `;
+    container.appendChild(newRow);
+}
+
+function removeNewsItem(button) {
+    button.parentElement.remove();
+}
+
 
 // Extension settings toggle
 function toggleExtensionSettings(extensionName) {
