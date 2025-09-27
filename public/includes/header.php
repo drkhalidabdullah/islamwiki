@@ -147,9 +147,11 @@ if ($toast_message) {
                 </a>
                 <?php endif; ?>
                 
+                <?php if (get_system_setting('achievements_enabled', false)): ?>
                 <a href="/achievements" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/achievements') !== false) ? 'active' : ''; ?>" title="Achievements">
                     <i class="iw iw-trophy"></i>
                 </a>
+                <?php endif; ?>
                 
                 <a href="/courses" class="sidebar-item <?php echo (strpos($_SERVER['REQUEST_URI'] ?? '', '/courses') !== false || strpos($_SERVER['REQUEST_URI'] ?? '', '/course/') !== false) ? 'active' : ''; ?>" title="Courses">
                     <i class="iw iw-book-open"></i>

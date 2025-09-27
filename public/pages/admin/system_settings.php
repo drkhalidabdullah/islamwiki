@@ -1300,8 +1300,8 @@ include "../../includes/header.php";
                                     </button>
                                 </form>
                                 <?php if ($extension['enabled'] && !empty($extension['settings_form'])): ?>
-                                <button type="button" class="btn btn-outline extension-settings-toggle" onclick="toggleExtensionSettings('<?php echo htmlspecialchars($name); ?>')" title="Toggle Settings">
-                                    <i class="iw iw-chevron-down"></i>
+                                <button type="button" class="btn btn-outline extension-settings-toggle" onclick="toggleExtensionSettings('<?php echo htmlspecialchars($name); ?>')" title="Show/Hide Extension Settings">
+                                    <i class="iw iw-chevron-down"></i> More Options
                                 </button>
                                 <?php endif; ?>
                             </div>

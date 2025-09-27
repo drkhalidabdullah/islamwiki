@@ -125,9 +125,11 @@ $active_tab = $active_tab ?? 'posts';
                     <a href="/user/<?php echo $profile_user['username']; ?>/about" class="nav-tab <?php echo $active_tab == 'about' ? 'active' : ''; ?>">
                         <i class="iw iw-info"></i> About
                     </a>
+                    <?php if (get_system_setting('achievements_enabled', false)): ?>
                     <a href="/user/<?php echo $profile_user['username']; ?>/achievements" class="nav-tab <?php echo $active_tab == 'achievements' ? 'active' : ''; ?>">
                         <i class="iw iw-trophy"></i> Achievements
                     </a>
+                    <?php endif; ?>
                     <a href="/user/<?php echo $profile_user['username']; ?>/activity" class="nav-tab <?php echo $active_tab == 'activity' ? 'active' : ''; ?>">
                         <i class="iw iw-chart-line"></i> Activity
                     </a>

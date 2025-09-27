@@ -393,19 +393,19 @@ function removeNewsItem(button) {
 
 // Extension settings toggle
 function toggleExtensionSettings(extensionName) {
-    const settingsDiv = document.getElementById(extensionName + '-settings');
-    const toggleButton = document.getElementById(extensionName + '-toggle');
+    const settingsDiv = document.getElementById('extension-settings-' + extensionName);
+    const toggleButton = document.querySelector(`button[onclick="toggleExtensionSettings('${extensionName}')"]`);
     
     if (!settingsDiv || !toggleButton) return;
     
     if (settingsDiv.style.display === 'none' || settingsDiv.style.display === '') {
         settingsDiv.style.display = 'block';
-        toggleButton.innerHTML = '<i class="iw iw-chevron-up"></i> Hide Settings';
-        toggleButton.title = 'Hide Settings';
+        toggleButton.innerHTML = '<i class="iw iw-chevron-up"></i> Hide Options';
+        toggleButton.title = 'Hide Extension Settings';
     } else {
         settingsDiv.style.display = 'none';
-        toggleButton.innerHTML = '<i class="iw iw-chevron-down"></i> Show Settings';
-        toggleButton.title = 'Show Settings';
+        toggleButton.innerHTML = '<i class="iw iw-chevron-down"></i> More Options';
+        toggleButton.title = 'Show Extension Settings';
     }
 }
 
