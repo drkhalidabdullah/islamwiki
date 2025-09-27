@@ -8,6 +8,12 @@ RewriteRule ^wiki/preview/?$ /modules/wiki/preview.php [L,QSA]
 # /wiki/Template:Title%20with%20spaces -> /modules/wiki/template.php?title=Template:Title with spaces
 RewriteRule ^wiki/Template:([a-zA-Z0-9\-_\s%20]+)/?$ /modules/wiki/template.php?title=Template:$1 [L,QSA,B]
 
+# Course namespace - special handling
+# /wiki/Course:Title/Lesson -> /modules/wiki/course_lesson.php?title=Course:Title/Lesson
+RewriteRule ^wiki/Course:([a-zA-Z0-9\-_]+)/([a-zA-Z0-9\-_]+)/?$ /modules/wiki/course_lesson.php?title=Course:$1/$2 [L,QSA]
+# /wiki/Course:Title -> /modules/wiki/course_article.php?title=Course:Title
+RewriteRule ^wiki/Course:([a-zA-Z0-9\-_]+)/?$ /modules/wiki/course_article.php?title=Course:$1 [L,QSA]
+
 # Wiki pretty URLs with namespace support
 # /wiki/Namespace:Title -> /modules/wiki/article.php?title=Namespace:Title
 RewriteRule ^wiki/([a-zA-Z0-9\-_]+):([a-zA-Z0-9\-_]+)/?$ /modules/wiki/article.php?title=$1:$2 [L,QSA]
@@ -64,10 +70,10 @@ RewriteRule ^settings/?$ /pages/user/settings.php [L,QSA]
 RewriteRule ^profile/?$ /pages/user/profile.php [L,QSA]
 RewriteRule ^achievements/?$ /pages/user/achievements.php [L,QSA]
 
-# Course pages
-RewriteRule ^courses/?$ /pages/courses.php [L,QSA]
-RewriteRule ^course/([a-zA-Z0-9\-_]+)/lesson/([a-zA-Z0-9\-_]+)/?$ /pages/lesson.php?course=$1&lesson=$2 [L,QSA]
-RewriteRule ^course/([a-zA-Z0-9\-_]+)/?$ /pages/course.php?slug=$1 [L,QSA]
+# Course pages - redirect to wiki system
+RewriteRule ^courses/?$ /wiki/Courses [R=301,L]
+RewriteRule ^course/([a-zA-Z0-9\-_]+)/lesson/([a-zA-Z0-9\-_]+)/?$ /wiki/Course:$1/$2 [R=301,L]
+RewriteRule ^course/([a-zA-Z0-9\-_]+)/?$ /wiki/Course:$1 [R=301,L]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/photos/?$ /pages/user/photos.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/about/?$ /pages/user/about.php?username=$1 [L,QSA]
 RewriteRule ^user/([a-zA-Z0-9\-_]+)/achievements/?$ /pages/user/user_profile.php?username=$1&tab=achievements [L,QSA]
