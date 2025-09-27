@@ -145,8 +145,8 @@ include "../../includes/header.php";
             <h1><i class="iw iw-tachometer-alt"></i> Admin Dashboard</h1>
             <p>Welcome back, <?php echo htmlspecialchars($current_user['display_name'] ?: $current_user['username']); ?>! Here's what's happening with your site.</p>
             <div class="welcome-actions">
-                <a href="/pages/wiki/create_article.php" class="btn btn-primary">
-                    <i class="iw iw-plus"></i> Create Article
+                <a href="/admin/system_settings" class="btn btn-primary">
+                    <i class="iw iw-cog"></i> System Settings
                 </a>
                 <a href="/admin/manage_users" class="btn btn-secondary">
                     <i class="iw iw-users"></i> Manage Users
@@ -298,211 +298,212 @@ include "../../includes/header.php";
         </div>
     </div>
 
-    <!-- Dashboard Content Grid -->
-    <div class="dashboard-grid">
-        <!-- Left Column -->
-        <div class="dashboard-left">
-            <!-- Maintenance Mode Status -->
-            <div class="dashboard-section maintenance-status-section">
-                <h2><i class="iw iw-tools"></i> Maintenance Mode</h2>
-                <div class="maintenance-status">
-                    <?php if (is_maintenance_mode()): ?>
-                        <div class="maintenance-active">
-                            <div class="maintenance-info">
-                                <div class="maintenance-status-indicator">
-                                    <i class="iw iw-circle status-warning"></i>
-                                    <span>Maintenance Mode Active</span>
-                                </div>
-                                <div class="maintenance-details">
-                                    <p><strong>Message:</strong> <?php echo htmlspecialchars(get_system_setting('maintenance_message', 'Site is under maintenance')); ?></p>
-                                    <p><strong>Estimated Time:</strong> <?php echo htmlspecialchars(get_system_setting('estimated_downtime', 'Unknown')); ?></p>
-                                </div>
-                            </div>
-                            <div class="maintenance-actions">
-                                <a href="/admin/system_settings" class="btn btn-warning btn-sm">
-                                    <i class="iw iw-cog"></i> Manage
-                                </a>
-                                <button onclick="toggleMaintenanceMode()" class="btn btn-success btn-sm">
-                                    <i class="iw iw-power-off"></i> Disable
-                                </button>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="maintenance-inactive">
-                            <div class="maintenance-info">
-                                <div class="maintenance-status-indicator">
-                                    <i class="iw iw-circle status-healthy"></i>
-                                    <span>Site is Online</span>
-                                </div>
-                                <div class="maintenance-details">
-                                    <p>All systems are operational and accessible to users.</p>
-                                </div>
-                            </div>
-                            <div class="maintenance-actions">
-                                <a href="/admin/system_settings" class="btn btn-primary btn-sm">
-                                    <i class="iw iw-cog"></i> Settings
-                                </a>
-                                <button onclick="toggleMaintenanceMode()" class="btn btn-warning btn-sm">
-                                    <i class="iw iw-tools"></i> Enable
-                                </button>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+        <!-- Admin Actions (Full Width) -->
+        <div class="dashboard-section">
+            <h2><i class="iw iw-cogs"></i> Admin Actions</h2>
+            
+            <!-- Most Common Actions -->
+            <div class="action-category">
+                <h3><i class="iw iw-star"></i> Most Used</h3>
+                <div class="action-grid">
+                    <a href="/pages/wiki/create_article.php" class="action-item primary">
+                        <i class="iw iw-plus"></i>
+                        <span>Create Article</span>
+                        <small>New wiki content</small>
+                    </a>
+                    <a href="/admin/manage_users" class="action-item primary">
+                        <i class="iw iw-users"></i>
+                        <span>Manage Users</span>
+                        <small>User accounts</small>
+                    </a>
+                    <a href="/admin/analytics" class="action-item primary">
+                        <i class="iw iw-chart-line"></i>
+                        <span>Analytics</span>
+                        <small>Site statistics</small>
+                    </a>
+                    <a href="/admin/system_settings" class="action-item primary">
+                        <i class="iw iw-cog"></i>
+                        <span>Settings</span>
+                        <small>System config</small>
+                    </a>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="dashboard-section">
-                <h2><i class="iw iw-clock"></i> Recent Activity</h2>
-                <div class="activity-list">
-                    <?php if (!empty($recent_activity)): ?>
-                        <?php foreach ($recent_activity as $activity): ?>
-                        <div class="activity-item <?php echo $activity['type']; ?>">
-                            <div class="activity-icon">
-                                <i class="<?php echo $activity['icon']; ?>"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h4><?php echo htmlspecialchars($activity['title']); ?></h4>
-                                <p><?php echo ucfirst($activity['type']); ?> • <?php echo format_date($activity['created_at']); ?></p>
-                            </div>
-                            <div class="activity-time">
-                                <?php echo time_ago($activity['created_at']); ?>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p class="no-activity">No recent activity</p>
-                    <?php endif; ?>
+            <!-- System Management -->
+            <div class="action-category">
+                <h3><i class="iw iw-tools"></i> System Management</h3>
+                <div class="action-grid">
+                    <a href="/admin/maintenance" class="action-item secondary">
+                        <i class="iw iw-wrench"></i>
+                        <span>Maintenance</span>
+                        <small>System maintenance</small>
+                    </a>
+                    <a href="/admin/manage_files" class="action-item secondary">
+                        <i class="iw iw-folder-open"></i>
+                        <span>File Manager</span>
+                        <small>Uploaded files</small>
+                    </a>
+                    <a href="/admin/manage_categories" class="action-item secondary">
+                        <i class="iw iw-tags"></i>
+                        <span>Categories</span>
+                        <small>Content organization</small>
+                    </a>
+                    <a href="/admin/content_moderation" class="action-item secondary">
+                        <i class="iw iw-shield-alt"></i>
+                        <span>Moderation</span>
+                        <small>Content review</small>
+                    </a>
                 </div>
             </div>
 
+            <!-- Advanced Tools -->
+            <div class="action-category">
+                <h3><i class="iw iw-cog"></i> Advanced Tools</h3>
+                <div class="action-grid">
+                    <a href="/admin/manage_redirects" class="action-item tertiary">
+                        <i class="iw iw-exchange-alt"></i>
+                        <span>Redirects</span>
+                        <small>URL redirects</small>
+                    </a>
+                    <a href="/admin/manage_permissions" class="action-item tertiary">
+                        <i class="iw iw-key"></i>
+                        <span>Permissions</span>
+                        <small>Access control</small>
+                    </a>
+                </div>
+            </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="dashboard-right">
-            <!-- Admin Actions -->
-            <div class="dashboard-section">
-                <h2><i class="iw iw-cogs"></i> Admin Actions</h2>
-                
-                <!-- Most Common Actions -->
-                <div class="action-category">
-                    <h3><i class="iw iw-star"></i> Most Used</h3>
-                    <div class="action-grid">
-                        <a href="/pages/wiki/create_article.php" class="action-item primary">
-                            <i class="iw iw-plus"></i>
-                            <span>Create Article</span>
-                            <small>New wiki content</small>
-                        </a>
-                        <a href="/admin/manage_users" class="action-item primary">
-                            <i class="iw iw-users"></i>
-                            <span>Manage Users</span>
-                            <small>User accounts</small>
-                        </a>
-                        <a href="/admin/analytics" class="action-item primary">
-                            <i class="iw iw-chart-line"></i>
-                            <span>Analytics</span>
-                            <small>Site statistics</small>
-                        </a>
-                        <a href="/admin/system_settings" class="action-item primary">
-                            <i class="iw iw-cog"></i>
-                            <span>Settings</span>
-                            <small>System config</small>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- System Management -->
-                <div class="action-category">
-                    <h3><i class="iw iw-tools"></i> System Management</h3>
-                    <div class="action-grid">
-                        <a href="/admin/maintenance" class="action-item secondary">
-                            <i class="iw iw-wrench"></i>
-                            <span>Maintenance</span>
-                            <small>System maintenance</small>
-                        </a>
-                        <a href="/admin/manage_files" class="action-item secondary">
-                            <i class="iw iw-folder-open"></i>
-                            <span>File Manager</span>
-                            <small>Uploaded files</small>
-                        </a>
-                        <a href="/admin/manage_categories" class="action-item secondary">
-                            <i class="iw iw-tags"></i>
-                            <span>Categories</span>
-                            <small>Content organization</small>
-                        </a>
-                        <a href="/admin/content_moderation" class="action-item secondary">
-                            <i class="iw iw-shield-alt"></i>
-                            <span>Moderation</span>
-                            <small>Content review</small>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Advanced Tools -->
-                <div class="action-category">
-                    <h3><i class="iw iw-cog"></i> Advanced Tools</h3>
-                    <div class="action-grid">
-                        <a href="/admin/manage_redirects" class="action-item tertiary">
-                            <i class="iw iw-exchange-alt"></i>
-                            <span>Redirects</span>
-                            <small>URL redirects</small>
-                        </a>
-                        <a href="/admin/manage_permissions" class="action-item tertiary">
-                            <i class="iw iw-key"></i>
-                            <span>Permissions</span>
-                            <small>Access control</small>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Popular Articles -->
-            <div class="dashboard-section">
-                <h2><i class="iw iw-fire"></i> Popular Articles</h2>
-                <div class="popular-articles">
-                    <?php if (!empty($popular_articles)): ?>
-                        <?php foreach ($popular_articles as $article): ?>
-                        <div class="popular-article">
-                            <div class="article-info">
-                                <h4><a href="/wiki/article.php?slug=<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h4>
-                                <p>By <?php echo htmlspecialchars($article['username']); ?></p>
-                            </div>
-                            <div class="article-stats">
-                                <span class="view-count">
-                                    <i class="iw iw-eye"></i> <?php echo number_format($article['view_count']); ?>
-                                </span>
-                            </div>
+        <!-- Bottom Grid Layout -->
+        <div class="dashboard-bottom-grid">
+            <!-- Column 1: Server Information -->
+            <div class="dashboard-column-1">
+                <div class="dashboard-section">
+                    <h2><i class="iw iw-server"></i> Server Info</h2>
+                    <div class="server-info">
+                        <div class="info-item">
+                            <span class="info-label">PHP Version</span>
+                            <span class="info-value"><?php echo $server_info['php_version']; ?></span>
                         </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No popular articles yet</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <!-- Server Information -->
-            <div class="dashboard-section">
-                <h2><i class="iw iw-server"></i> Server Info</h2>
-                <div class="server-info">
-                    <div class="info-item">
-                        <span class="info-label">PHP Version</span>
-                        <span class="info-value"><?php echo $server_info['php_version']; ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Memory Limit</span>
-                        <span class="info-value"><?php echo $server_info['memory_limit']; ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Upload Max</span>
-                        <span class="info-value"><?php echo $server_info['upload_max_filesize']; ?></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Max Execution</span>
-                        <span class="info-value"><?php echo $server_info['max_execution_time']; ?>s</span>
+                        <div class="info-item">
+                            <span class="info-label">Memory Limit</span>
+                            <span class="info-value"><?php echo $server_info['memory_limit']; ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Upload Max</span>
+                            <span class="info-value"><?php echo $server_info['upload_max_filesize']; ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Max Execution</span>
+                            <span class="info-value"><?php echo $server_info['max_execution_time']; ?>s</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Column 2: Maintenance Mode Status -->
+            <div class="dashboard-column-2">
+                <div class="dashboard-section maintenance-status-section">
+                    <h2><i class="iw iw-tools"></i> Maintenance Mode</h2>
+                    <div class="maintenance-status">
+                        <?php if (is_maintenance_mode()): ?>
+                            <div class="maintenance-active">
+                                <div class="maintenance-info">
+                                    <div class="maintenance-status-indicator">
+                                        <i class="iw iw-circle status-warning"></i>
+                                        <span>Maintenance Mode Active</span>
+                                    </div>
+                                    <div class="maintenance-details">
+                                        <p><strong>Message:</strong> <?php echo htmlspecialchars(get_system_setting('maintenance_message', 'Site is under maintenance')); ?></p>
+                                        <p><strong>Estimated Time:</strong> <?php echo htmlspecialchars(get_system_setting('estimated_downtime', 'Unknown')); ?></p>
+                                    </div>
+                                </div>
+                                <div class="maintenance-actions">
+                                    <a href="/admin/system_settings" class="btn btn-warning btn-sm">
+                                        <i class="iw iw-cog"></i> Manage
+                                    </a>
+                                    <button onclick="toggleMaintenanceMode()" class="btn btn-success btn-sm">
+                                        <i class="iw iw-power-off"></i> Disable
+                                    </button>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="maintenance-inactive">
+                                <div class="maintenance-info">
+                                    <div class="maintenance-status-indicator">
+                                        <i class="iw iw-circle status-healthy"></i>
+                                        <span>Site is Online</span>
+                                    </div>
+                                    <div class="maintenance-details">
+                                        <p>All systems are operational and accessible to users.</p>
+                                    </div>
+                                </div>
+                                <div class="maintenance-actions">
+                                    <a href="/admin/system_settings" class="btn btn-primary btn-sm">
+                                        <i class="iw iw-cog"></i> Settings
+                                    </a>
+                                    <button onclick="toggleMaintenanceMode()" class="btn btn-warning btn-sm">
+                                        <i class="iw iw-tools"></i> Enable
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Recent Activity -->
+            <div class="dashboard-column-3">
+                <div class="dashboard-section">
+                    <h2><i class="iw iw-clock"></i> Recent Activity</h2>
+                    <div class="activity-list">
+                        <?php if (!empty($recent_activity)): ?>
+                            <?php foreach ($recent_activity as $activity): ?>
+                            <div class="activity-item <?php echo $activity['type']; ?>">
+                                <div class="activity-icon">
+                                    <i class="<?php echo $activity['icon']; ?>"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4><?php echo htmlspecialchars($activity['title']); ?></h4>
+                                    <p><?php echo ucfirst($activity['type']); ?> • <?php echo format_date($activity['created_at']); ?></p>
+                                </div>
+                                <div class="activity-time">
+                                    <?php echo time_ago($activity['created_at']); ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="no-activity">No recent activity</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 4: Popular Articles -->
+            <div class="dashboard-column-4">
+                <div class="dashboard-section">
+                    <h2><i class="iw iw-fire"></i> Popular Articles</h2>
+                    <div class="popular-articles">
+                        <?php if (!empty($popular_articles)): ?>
+                            <?php foreach ($popular_articles as $article): ?>
+                            <div class="popular-article">
+                                <div class="article-info">
+                                    <h4><a href="/wiki/article.php?slug=<?php echo $article['slug']; ?>"><?php echo htmlspecialchars($article['title']); ?></a></h4>
+                                    <p>By <?php echo htmlspecialchars($article['username']); ?></p>
+                                </div>
+                                <div class="article-stats">
+                                    <span class="view-count">
+                                        <i class="iw iw-eye"></i> <?php echo number_format($article['view_count']); ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No popular articles yet</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
