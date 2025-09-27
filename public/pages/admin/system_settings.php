@@ -57,7 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Feature toggles - process all feature settings
             $settings['allow_registration'] = isset($_POST['allow_registration']) ? 1 : 0;
             $settings['require_email_verification'] = isset($_POST['require_email_verification']) ? 1 : 0;
-            $settings['enable_comments'] = isset($_POST['enable_comments']) ? 1 : 0;
+            // Comments are now part of the social module
+            // $settings['enable_comments'] = isset($_POST['enable_comments']) ? 1 : 0;
             $settings['enable_wiki'] = isset($_POST['enable_wiki']) ? 1 : 0;
             $settings['enable_social'] = isset($_POST['enable_social']) ? 1 : 0;
             $settings['enable_analytics'] = isset($_POST['enable_analytics']) ? 1 : 0;
@@ -331,8 +332,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (set_system_setting($setting_key, $new_status, 'boolean')) {
                 $status_text = $new_status ? 'enabled' : 'disabled';
-                show_message("Module '{$module_name}' {$status_text} successfully.", 'success');
-                log_activity('module_toggled', "Module '{$module_name}' {$status_text}");
+                
+                // If toggling social module, also update comments setting
+                if ($module_name === 'social') {
+                    set_system_setting('enable_comments', $new_status, 'boolean');
+                    show_message("Social module (including comments) {$status_text} successfully.", 'success');
+                    log_activity('module_toggled', "Social module (including comments) {$status_text}");
+                } else {
+                    show_message("Module '{$module_name}' {$status_text} successfully.", 'success');
+                    log_activity('module_toggled', "Module '{$module_name}' {$status_text}");
+                }
             } else {
                 show_message("Failed to {$status_text} module '{$module_name}'.", 'error');
             }
@@ -371,7 +380,7 @@ $current_settings = [
     'articles_per_page' => get_system_setting('articles_per_page', 10),
     'allow_registration' => get_system_setting('allow_registration', true),
     'require_email_verification' => get_system_setting('require_email_verification', false),
-    'enable_comments' => get_system_setting('enable_comments', true),
+    'enable_comments' => get_system_setting('enable_social', true), // Comments are now part of social module
     'enable_wiki' => get_system_setting('enable_wiki', true),
     'enable_social' => get_system_setting('enable_social', true),
     'maintenance_mode' => get_system_setting('maintenance_mode', false),
@@ -715,20 +724,6 @@ include "../../includes/header.php";
                             </label>
                         </div>
                         
-                        <div class="feature-toggle">
-                            <div class="toggle-content">
-                                <i class="iw iw-comments"></i>
-                                <div>
-                                    <strong>Comments</strong>
-                                    <small>Enable commenting system</small>
-                                </div>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" name="enable_comments" 
-                                       <?php echo $current_settings['enable_comments'] ? 'checked' : ''; ?>>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
                         
                         <div class="feature-toggle">
                             <div class="toggle-content">
@@ -1370,7 +1365,7 @@ include "../../includes/header.php";
                         <div class="module-header">
                             <div class="module-info">
                                 <h3><i class="iw iw-users"></i> Social Module</h3>
-                                <p>Social networking features including friends and messaging</p>
+                                <p>Social networking features including friends, messaging, and comments</p>
                             </div>
                         </div>
                         <div class="module-actions">
@@ -1389,31 +1384,12 @@ include "../../includes/header.php";
                             <a href="/friends" class="btn btn-primary">
                                 <i class="iw iw-users"></i> View Friends
                             </a>
-                        </div>
-                    </div>
-                    
-                    <div class="module-card">
-                        <div class="module-header">
-                            <div class="module-info">
-                                <h3><i class="iw iw-comments"></i> Comments Module</h3>
-                                <p>Commenting system for posts and articles</p>
-                            </div>
-                        </div>
-                        <div class="module-actions">
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="action" value="toggle_module">
-                                <input type="hidden" name="module_name" value="comments">
-                                <input type="hidden" name="current_tab" value="modules">
-                                <button type="submit" class="btn <?php echo get_system_setting('enable_comments', true) ? 'btn-warning' : 'btn-success'; ?>">
-                                    <i class="iw iw-<?php echo get_system_setting('enable_comments', true) ? 'pause' : 'play'; ?>"></i>
-                                    <?php echo get_system_setting('enable_comments', true) ? 'Disable' : 'Enable'; ?>
-                                </button>
-                            </form>
                             <a href="/admin/content_moderation" class="btn btn-secondary">
                                 <i class="iw iw-shield-alt"></i> Moderation
                             </a>
                         </div>
                     </div>
+                    
                     
                     <div class="module-card">
                         <div class="module-header">
