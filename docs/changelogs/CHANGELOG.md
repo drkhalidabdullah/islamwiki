@@ -1,5 +1,66 @@
 # Changelog
 
+## [0.0.0.22] - 2025-01-XX
+
+### 📚 **Courses System Integration & Wiki Unification**
+
+#### Revolutionary Courses System Integration
+- **Unified Content Management**: Courses now fully integrated into the wiki system
+- **Course Namespace**: Special Course namespace for organized educational content
+- **Progress Tracking**: Complete user progress tracking with lesson completion
+- **Course Statistics**: Student counts, completion rates, and time tracking
+- **Lesson Navigation**: Seamless navigation between course lessons
+- **URL Structure**: Clean URLs like `/wiki/Course:Introduction to Quran Reading`
+- **Backward Compatibility**: All old course URLs automatically redirect to new system
+
+#### Educational Features
+- **Course Overview Pages**: Comprehensive course information and lesson lists
+- **Individual Lessons**: Rich lesson content with navigation and progress tracking
+- **Course Categories**: Organized course categories (Quran Studies, Hadith Studies, etc.)
+- **Difficulty Levels**: Beginner, intermediate, and advanced course classifications
+- **Duration Tracking**: Estimated course and lesson durations
+- **Completion Certificates**: Course completion tracking and achievements
+
+#### Technical Improvements
+- **Database Integration**: Course data migrated to wiki articles with metadata
+- **Progress Tables**: New wiki-based progress tracking system
+- **URL Routing**: Enhanced .htaccess routing for course namespace
+- **Content Reusability**: Course lessons can be referenced from multiple courses
+- **SEO Benefits**: Course content now part of searchable wiki knowledge base
+- **Cross-linking**: Easy linking between course lessons and related wiki articles
+
+#### User Experience Enhancements
+- **Responsive Design**: Course pages optimized for all screen sizes
+- **Progress Visualization**: Progress bars and completion indicators
+- **Course Statistics**: Real-time course statistics and user progress
+- **Lesson Navigation**: Previous/Next lesson navigation with status indicators
+- **Course Index**: Comprehensive course catalog at `/wiki/Courses`
+
+#### Database Changes
+- **Wiki Articles Extension**: Added course-specific fields to wiki_articles table
+- **Course Metadata**: JSON metadata storage for course information
+- **Progress Tracking**: New wiki_course_progress and wiki_course_completions tables
+- **Namespace Support**: Course namespace for organized content structure
+- **Data Migration**: Complete migration of existing course data to wiki system
+
+#### URL Structure Changes
+- **Course Redirects**: `/courses` → `/wiki/Courses`
+- **Course Pages**: `/course/{slug}` → `/wiki/Course:{slug}`
+- **Lesson Pages**: `/course/{slug}/lesson/{lesson}` → `/wiki/Course:{slug}/{lesson}`
+- **301 Redirects**: All old URLs maintain backward compatibility
+
+#### New Files Added
+- **Course Article Handler**: `public/modules/wiki/course_article.php`
+- **Course Lesson Handler**: `public/modules/wiki/course_lesson.php`
+- **Migration Scripts**: Database migration for courses integration
+- **Course Categories**: Integrated course categories as wiki content categories
+
+#### Bug Fixes
+- **Course System**: Complete integration eliminates separate course system issues
+- **Content Management**: Unified system prevents content duplication
+- **URL Consistency**: All educational content now uses consistent URL structure
+- **Progress Tracking**: Fixed progress tracking with new wiki-based system
+
 ## [0.0.0.21] - 2025-09-23
 
 ### 🎨 **UI/UX Improvements & Authentication Experience**

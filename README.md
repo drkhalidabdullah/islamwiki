@@ -1,19 +1,53 @@
 # IslamWiki - Social Islamic Knowledge Platform
 
-[![Version](https://img.shields.io/badge/version-0.0.0.21-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
+[![Version](https://img.shields.io/badge/version-0.0.0.22-blue.svg)](https://github.com/drkhalidabdullah/islamwiki)
 [![PHP](https://img.shields.io/badge/PHP-7.4+-green.svg)](https://php.net)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](LICENSE)
 
-A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, and a powerful admin system.
+A modern, social Islamic knowledge platform that combines the best of Wikipedia and social media. Built with PHP and featuring a comprehensive wiki system, social networking, advanced search capabilities, integrated courses system, and a powerful admin system.
 
-## 🎯 Current Version: 0.0.0.21
+## 🎯 Current Version: 0.0.0.22
 
-**Latest Release:** September 2025  
+**Latest Release:** January 2025  
 **Status:** Production Ready ✅  
-**Type:** Feature Enhancement - UI Polish & User Experience
+**Type:** Major Feature Integration - Courses System
 
-## 🚀 What's New in v0.0.0.21
+## 🚀 What's New in v0.0.0.22
+
+### 📚 **Revolutionary Courses System Integration**
+- **Unified Content Management**: Courses now fully integrated into the wiki system
+- **Course Namespace**: Special Course namespace for organized educational content
+- **Progress Tracking**: Complete user progress tracking with lesson completion
+- **Course Statistics**: Student counts, completion rates, and time tracking
+- **Lesson Navigation**: Seamless navigation between course lessons
+- **URL Structure**: Clean URLs like `/wiki/Course:Introduction to Quran Reading`
+- **Backward Compatibility**: All old course URLs automatically redirect to new system
+
+### 🎓 **Educational Features**
+- **Course Overview Pages**: Comprehensive course information and lesson lists
+- **Individual Lessons**: Rich lesson content with navigation and progress tracking
+- **Course Categories**: Organized course categories (Quran Studies, Hadith Studies, etc.)
+- **Difficulty Levels**: Beginner, intermediate, and advanced course classifications
+- **Duration Tracking**: Estimated course and lesson durations
+- **Completion Certificates**: Course completion tracking and achievements
+
+### 🔧 **Technical Improvements**
+- **Database Integration**: Course data migrated to wiki articles with metadata
+- **Progress Tables**: New wiki-based progress tracking system
+- **URL Routing**: Enhanced .htaccess routing for course namespace
+- **Content Reusability**: Course lessons can be referenced from multiple courses
+- **SEO Benefits**: Course content now part of searchable wiki knowledge base
+- **Cross-linking**: Easy linking between course lessons and related wiki articles
+
+### 🎨 **User Experience Enhancements**
+- **Responsive Design**: Course pages optimized for all screen sizes
+- **Progress Visualization**: Progress bars and completion indicators
+- **Course Statistics**: Real-time course statistics and user progress
+- **Lesson Navigation**: Previous/Next lesson navigation with status indicators
+- **Course Index**: Comprehensive course catalog at `/wiki/Courses`
+
+## 🚀 Previous Release: v0.0.0.21
 
 ### 🎨 **Enhanced Authentication Experience**
 - **Clean Login/Register Pages**: Streamlined authentication interface with minimal distractions
@@ -118,6 +152,8 @@ A modern, social Islamic knowledge platform that combines the best of Wikipedia 
 - **Template System**: Support for complex MediaWiki-style templates
 - **Magic Words**: Support for `__NOTITLE__`, `__NOCAT__`, and other magic words
 - **Category System**: Full category management with automatic categorization
+- **Course Integration**: Courses are now wiki articles with special course functionality
+- **Educational Content**: Course lessons, progress tracking, and completion certificates
 
 ### 🔍 **Advanced Search System**
 - **Universal Search**: Search across articles, users, messages, and all content types
@@ -346,7 +382,13 @@ This project is licensed under the AGPL License - see the [LICENSE](LICENSE) fil
 
 ## 🎯 **Roadmap**
 
-### **Version 0.0.0.21** (Current)
+### **Version 0.0.0.22** (Current)
+- Revolutionary courses system integration into wiki
+- Unified content management for educational content
+- Complete progress tracking and course statistics
+- Enhanced URL structure with backward compatibility
+
+### **Version 0.0.0.21** (Previous)
 - Enhanced authentication experience with clean UI
 - Improved footer and layout architecture
 - Fixed courses system functionality

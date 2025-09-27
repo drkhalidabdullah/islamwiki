@@ -15,8 +15,9 @@ IslamWiki is a modern, social Islamic knowledge platform built with PHP and MySQ
 7. [API Architecture](#api-architecture)
 8. [Frontend Architecture](#frontend-architecture)
 9. [Header Dashboard System](#header-dashboard-system)
-10. [Security Architecture](#security-architecture)
-11. [Performance Considerations](#performance-considerations)
+10. [Courses System Architecture](#courses-system-architecture)
+11. [Security Architecture](#security-architecture)
+12. [Performance Considerations](#performance-considerations)
 
 ## System Overview
 
@@ -27,6 +28,8 @@ IslamWiki is a modern, social Islamic knowledge platform built with PHP and MySQ
 - **Admin System**: Comprehensive admin interface
 - **Feature Toggles**: Configurable feature system
 - **Permission System**: Role-based access control
+- **Courses System**: Integrated educational content management
+- **Wiki System**: Collaborative knowledge platform
 
 ### Technology Stack
 - **Backend**: PHP 7.4+
@@ -394,6 +397,143 @@ The Header Dashboard System is a modern, responsive navigation system that provi
 - **Secure Storage**: Secure data storage
 - **Access Logging**: Comprehensive access logging
 - **Audit Trail**: Complete audit trail
+
+## Courses System Architecture
+
+### Overview
+The courses system is fully integrated into the wiki platform, providing a unified content management system for educational content. Courses are implemented as special wiki articles with course-specific metadata and functionality.
+
+### Core Components
+
+#### Course Articles
+- **Course Type**: Special `course` type in wiki_articles table
+- **Course Metadata**: JSON metadata storage for course information
+- **Namespace**: Course namespace for organized content structure
+- **Categories**: Course categories integrated as wiki content categories
+
+#### Lesson Articles
+- **Lesson Type**: Special `lesson` type in wiki_articles table
+- **Parent Relationship**: Lessons linked to parent courses via parent_course_id
+- **Lesson Metadata**: Lesson-specific fields (type, duration, sort order)
+- **Content**: Rich lesson content using wiki editor
+
+#### Progress Tracking
+- **User Progress**: wiki_course_progress table for user progress tracking
+- **Completions**: wiki_course_completions table for course completion records
+- **Statistics**: Real-time course statistics and analytics
+- **Achievements**: Course completion tracking and badges
+
+### Database Schema
+
+#### Wiki Articles Extension
+```sql
+-- Course-specific fields added to wiki_articles table
+course_type ENUM('course', 'lesson', 'regular') DEFAULT 'regular'
+course_metadata JSON NULL
+parent_course_id BIGINT UNSIGNED NULL
+lesson_type ENUM('text', 'video', 'audio', 'quiz', 'assignment') DEFAULT 'text'
+lesson_duration INT DEFAULT 0
+lesson_sort_order INT DEFAULT 0
+difficulty_level ENUM('beginner', 'intermediate', 'advanced') DEFAULT 'beginner'
+estimated_duration INT DEFAULT 0
+thumbnail_url VARCHAR(500) NULL
+is_course_featured BOOLEAN DEFAULT FALSE
+```
+
+#### Progress Tracking Tables
+```sql
+-- User course progress
+wiki_course_progress (
+    user_id, course_article_id, current_lesson_id,
+    progress_percentage, time_spent, started_at, last_accessed_at
+)
+
+-- Course completions
+wiki_course_completions (
+    user_id, course_article_id, completed_at,
+    completion_percentage, time_spent, is_completed
+)
+```
+
+### URL Structure
+
+#### Course URLs
+- **Course Index**: `/wiki/Courses` - Complete course catalog
+- **Course Overview**: `/wiki/Course:Course Name` - Individual course pages
+- **Course Lessons**: `/wiki/Course:Course Name/Lesson Name` - Individual lessons
+
+#### URL Routing
+- **Course Namespace**: Special handling for Course namespace articles
+- **Lesson Navigation**: Hierarchical URL structure for lessons
+- **Backward Compatibility**: 301 redirects from old course URLs
+
+### Content Management
+
+#### Course Creation
+- **Wiki Editor**: Same rich text editor for all content
+- **Course Metadata**: Course-specific fields and settings
+- **Category Assignment**: Course categories for organization
+- **Difficulty Levels**: Beginner, intermediate, advanced classifications
+
+#### Lesson Management
+- **Parent-Child Relationship**: Lessons linked to parent courses
+- **Sort Order**: Lesson ordering within courses
+- **Lesson Types**: Text, video, audio, quiz, assignment support
+- **Duration Tracking**: Estimated lesson durations
+
+### User Experience
+
+#### Course Navigation
+- **Course Overview**: Comprehensive course information and lesson lists
+- **Lesson Navigation**: Previous/Next lesson navigation
+- **Progress Tracking**: Visual progress indicators and completion status
+- **Course Statistics**: Student counts, completion rates, time tracking
+
+#### Progress Visualization
+- **Progress Bars**: Visual progress indicators for courses and lessons
+- **Completion Status**: Clear indicators for completed, current, and locked lessons
+- **Achievement Badges**: Visual recognition for course completion
+- **Statistics Display**: Real-time course statistics and user progress
+
+### Integration Benefits
+
+#### Content Reusability
+- **Cross-linking**: Easy linking between course lessons and related wiki articles
+- **Content Sharing**: Course lessons can be referenced from multiple courses
+- **Search Integration**: Course content discoverable through wiki search
+- **Unified Editing**: Same interface for all content creation and editing
+
+#### SEO Benefits
+- **Searchable Content**: Course content now part of searchable wiki knowledge base
+- **Clean URLs**: SEO-friendly URLs for better search engine indexing
+- **Content Discovery**: Enhanced content discovery through unified system
+- **Internal Linking**: Better internal linking structure
+
+### Technical Implementation
+
+#### Course Handlers
+- **Course Article Handler**: `public/modules/wiki/course_article.php`
+- **Course Lesson Handler**: `public/modules/wiki/course_lesson.php`
+- **Specialized Routing**: Enhanced .htaccess routing for course namespace
+
+#### Data Migration
+- **Complete Migration**: All existing course data migrated to wiki system
+- **Progress Preservation**: User progress and completion data maintained
+- **Category Integration**: Course categories integrated as wiki content categories
+- **Metadata Preservation**: All course metadata preserved in new system
+
+### Security & Performance
+
+#### Security
+- **Access Control**: Same permission system as wiki articles
+- **Content Validation**: Comprehensive input validation and sanitization
+- **Progress Security**: Secure progress tracking and user data protection
+
+#### Performance
+- **Unified Caching**: Better caching strategies for all content
+- **Database Optimization**: More efficient queries and data structure
+- **Content Delivery**: Faster content delivery through unified system
+- **Reduced Complexity**: Single system reduces maintenance overhead
 
 ## Performance Considerations
 
