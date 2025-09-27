@@ -665,3 +665,54 @@ input:checked + .toggle-slider:before {
     font-size: 1rem;
     font-weight: 600;
 }
+
+/* Maintenance Settings Input Fields */
+.maintenance-settings input[type="text"],
+.maintenance-settings textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.75rem !important;
+    border: 1px solid var(--admin-border) !important;
+    border-radius: 6px !important;
+    font-size: 0.95rem !important;
+    background: var(--admin-bg-card) !important;
+    color: var(--admin-text) !important;
+    transition: border-color 0.3s ease !important;
+}
+
+.maintenance-settings input[type="text"]:focus,
+.maintenance-settings textarea:focus {
+    outline: none !important;
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.maintenance-settings textarea {
+    min-height: 100px !important;
+    resize: vertical !important;
+}
+
+.maintenance-settings label {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+    color: var(--admin-text) !important;
+    font-size: 0.9rem !important;
+}
+
+/* Override form-row grid layout for maintenance settings */
+.maintenance-settings .form-row {
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+}
+
+.maintenance-settings .form-group {
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.maintenance-settings .form-group:last-child {
+    margin-bottom: 0 !important;
+}
